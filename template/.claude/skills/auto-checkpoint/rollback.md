@@ -1,152 +1,152 @@
 # Auto-Checkpoint - Rollback Guide
 
-## 스마트 롤백 시스템
+## Smart Rollback System
 
-### 에러 발생 시 자동 분석
+### Auto Analysis on Error
 
 ```mermaid
 graph TD
-    A[에러 발생] --> B[에러 유형 분석]
-    B --> C[관련 체크포인트 검색]
-    C --> D[롤백 범위 계산]
-    D --> E[롤백 제안 표시]
-    E --> F{사용자 승인?}
-    F -->|Yes| G[롤백 실행]
-    F -->|No| H[수동 처리]
+    A[Error occurred] --> B[Analyze error type]
+    B --> C[Search related checkpoints]
+    C --> D[Calculate rollback scope]
+    D --> E[Display rollback suggestion]
+    E --> F{User approval?}
+    F -->|Yes| G[Execute rollback]
+    F -->|No| H[Manual handling]
 ```
 
-### 에러 유형별 롤백 전략
+### Rollback Strategy by Error Type
 
-| 에러 유형 | 권장 범위 | 자동 제안 |
-|----------|----------|----------|
-| 빌드 실패 | 파일 레벨 | ✅ |
-| 테스트 실패 | 함수 레벨 | ✅ |
-| 런타임 에러 | 파일 레벨 | ✅ |
-| 설정 에러 | 설정 파일만 | ✅ |
-| 심각한 오류 | 스테이지 레벨 | 확인 필요 |
+| Error Type | Recommended Scope | Auto Suggestion |
+|------------|------------------|-----------------|
+| Build failure | File level | ✅ |
+| Test failure | Function level | ✅ |
+| Runtime error | File level | ✅ |
+| Config error | Config files only | ✅ |
+| Severe error | Stage level | Confirmation required |
 
-## 롤백 범위
+## Rollback Scopes
 
-### 1. 파일 레벨 롤백
+### 1. File Level Rollback
 ```bash
-# 특정 파일만 체크포인트에서 복원
+# Restore specific file from checkpoint
 /restore --checkpoint "auto_task_5" --files "src/auth/UserService.ts"
 ```
 
-**적합한 상황**:
-- 단일 파일 변경으로 인한 오류
-- 특정 모듈 롤백
+**Suitable Situations**:
+- Error due to single file change
+- Rolling back specific module
 
-### 2. 함수 레벨 롤백
+### 2. Function Level Rollback
 ```bash
-# 특정 함수만 복원 (지원 언어: TS, JS, Python)
+# Restore specific function (Supported: TS, JS, Python)
 /restore --checkpoint "auto_task_5" --function "UserService.login"
 ```
 
-**적합한 상황**:
-- 리팩토링 중 특정 함수 문제
-- 부분적 로직 오류
+**Suitable Situations**:
+- Specific function issue during refactoring
+- Partial logic error
 
-### 3. 스테이지 레벨 롤백
+### 3. Stage Level Rollback
 ```bash
-# 전체 스테이지 상태 복원
+# Restore entire stage state
 /restore --checkpoint "stage_06_start"
 ```
 
-**적합한 상황**:
-- 광범위한 문제
-- 아키텍처 수준 변경 취소
+**Suitable Situations**:
+- Widespread issues
+- Canceling architecture-level changes
 
-### 4. 설정 파일만 롤백
+### 4. Config Files Only Rollback
 ```bash
 /restore --checkpoint "auto_change" --config-only
 ```
 
-**적합한 상황**:
-- 설정 변경으로 인한 오류
-- 환경 설정 문제
+**Suitable Situations**:
+- Error due to config changes
+- Environment configuration issues
 
-## 롤백 미리보기
+## Rollback Preview
 
 ```markdown
-## 롤백 미리보기
+## Rollback Preview
 
-**대상 체크포인트**: auto_task_5_20240120
-**롤백 범위**: 파일 레벨
+**Target Checkpoint**: auto_task_5_20240120
+**Rollback Scope**: File level
 
-### 복원될 파일 (3개)
-| 파일 | 현재 크기 | 복원 크기 | 변경량 |
-|------|----------|----------|--------|
-| src/auth/UserService.ts | 250줄 | 180줄 | -70줄 |
-| src/types/auth.ts | 50줄 | 45줄 | -5줄 |
-| tests/auth.test.ts | 100줄 | 80줄 | -20줄 |
+### Files to Restore (3)
+| File | Current Size | Restore Size | Change |
+|------|--------------|--------------|--------|
+| src/auth/UserService.ts | 250 lines | 180 lines | -70 lines |
+| src/types/auth.ts | 50 lines | 45 lines | -5 lines |
+| tests/auth.test.ts | 100 lines | 80 lines | -20 lines |
 
-### 잃게 될 변경사항
-- 비밀번호 해시 기능 추가 (UserService.ts:45-80)
-- 새 타입 정의 (auth.ts:40-50)
-- 관련 테스트 (auth.test.ts:70-100)
+### Changes to be Lost
+- Password hash function added (UserService.ts:45-80)
+- New type definitions (auth.ts:40-50)
+- Related tests (auth.test.ts:70-100)
 
-### 영향받는 의존성
-- LoginForm 컴포넌트 (import 확인 필요)
+### Affected Dependencies
+- LoginForm component (import check required)
 
-**이 롤백을 실행하시겠습니까? (y/n)**
+**Execute this rollback? (y/n)**
 ```
 
-## 롤백 실행 프로세스
+## Rollback Execution Process
 
-### 사전 작업
-1. 현재 상태 백업 체크포인트 생성
-2. 커밋되지 않은 변경사항 stash
+### Pre-work
+1. Create backup checkpoint of current state
+2. Stash uncommitted changes
 
-### 롤백 단계
-1. 체크포인트 유효성 검증
-2. 파일 추출
-3. 선택적 파일 복원
-4. 무결성 확인
-5. 상태 파일 업데이트
+### Rollback Steps
+1. Validate checkpoint
+2. Extract files
+3. Restore selected files
+4. Verify integrity
+5. Update state files
 
-### 사후 작업
-1. 검증 테스트 실행
-2. HANDOFF 업데이트
-3. 롤백 기록 저장
+### Post-work
+1. Run verification tests
+2. Update HANDOFF
+3. Save rollback history
 
-## 복구 가이드 자동 생성
+## Auto-Generated Recovery Guide
 
 ```markdown
-## 파일 롤백 완료
+## File Rollback Complete
 
-**체크포인트**: auto_task_5_20240120
-**복원된 파일**: 3개
-**시간**: 2024-01-20 14:45:00
+**Checkpoint**: auto_task_5_20240120
+**Files Restored**: 3
+**Time**: 2024-01-20 14:45:00
 
-### 복구된 파일
+### Recovered Files
 - src/auth/UserService.ts
 - src/types/auth.ts
 - tests/auth.test.ts
 
-### 권장 다음 단계
-1. 변경사항 확인: `git diff`
-2. 테스트 실행: `npm test`
-3. 문제가 해결되었다면:
-   - 원인 분석 후 다시 구현
-   - 더 작은 단위로 작업
-4. 문제가 지속된다면:
-   - 추가 롤백 필요 가능성
-   - `/restore --suggest` 실행
+### Recommended Next Steps
+1. Check changes: `git diff`
+2. Run tests: `npm test`
+3. If issue resolved:
+   - Analyze cause and re-implement
+   - Work in smaller units
+4. If issue persists:
+   - Additional rollback may be needed
+   - Run `/restore --suggest`
 ```
 
-## 안전 장치
+## Safety Measures
 
-### 롤백 차단 조건
-- 커밋되지 않은 변경사항 존재
-- 활성 프로세스 실행 중
-- 파일 잠금 상태
+### Rollback Block Conditions
+- Uncommitted changes exist
+- Active processes running
+- Files locked
 
-### 확인 필요 조건
-- 스테이지 레벨 롤백
-- 10개 이상 파일 영향
-- 프로덕션 관련 파일 포함
+### Confirmation Required Conditions
+- Stage level rollback
+- 10+ files affected
+- Production-related files included
 
-### 쿨다운
-- 연속 롤백 간 5분 대기
-- 같은 체크포인트 재롤백 경고
+### Cooldown
+- 5 minute wait between consecutive rollbacks
+- Warning on rolling back same checkpoint again

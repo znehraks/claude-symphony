@@ -1,93 +1,93 @@
-# 산출물 검증 프롬프트 - CI/CD & Deployment
+# Output Validation Prompt - CI/CD & Deployment
 
-## 검증 대상
+## Validation Targets
 
-| 산출물 | 필수 조건 | 검증 방법 |
-|--------|----------|----------|
-| `.github/workflows/` | CI 파이프라인 | 구조 확인 |
-| `deployment_config/` | 환경 설정 | 구조 확인 |
-| `deployment_log.md` | 배포 기록 | 항목 확인 |
-| `HANDOFF.md` | 최종 상태 | 항목 확인 |
+| Output | Required Condition | Validation Method |
+|--------|-------------------|-------------------|
+| `.github/workflows/` | CI pipeline | Structure verification |
+| `deployment_config/` | Environment settings | Structure verification |
+| `deployment_log.md` | Deployment records | Item verification |
+| `HANDOFF.md` | Final state | Item verification |
 
-## 검증 명령
+## Validation Command
 
 ```bash
 /validate --stage 10-deployment
 ```
 
-## 품질 기준
+## Quality Criteria
 
 ### .github/workflows/
-- [ ] CI 워크플로우 존재 (ci.yml)
-- [ ] CD 워크플로우 존재 (cd.yml)
-- [ ] 빌드 단계 포함
-- [ ] 테스트 단계 포함
-- [ ] 배포 단계 포함
+- [ ] CI workflow exists (ci.yml)
+- [ ] CD workflow exists (cd.yml)
+- [ ] Build step included
+- [ ] Test step included
+- [ ] Deploy step included
 
 ### deployment_config/
-- [ ] 환경 변수 관리
-- [ ] 시크릿 설정 가이드
-- [ ] 도메인/SSL 설정
+- [ ] Environment variable management
+- [ ] Secrets configuration guide
+- [ ] Domain/SSL configuration
 
 ### deployment_log.md
-- [ ] 스테이징 배포 기록
-- [ ] 프로덕션 배포 기록
-- [ ] 배포 URL
+- [ ] Staging deployment record
+- [ ] Production deployment record
+- [ ] Deployment URLs
 
-### HANDOFF.md (최종)
-- [ ] 프로젝트 완료 체크리스트
-- [ ] 운영 가이드 링크
-- [ ] 모니터링 설정 확인
+### HANDOFF.md (Final)
+- [ ] Project completion checklist
+- [ ] Operations guide links
+- [ ] Monitoring configuration verification
 
-## 자동 검증 스크립트
+## Auto Validation Script
 
 ```bash
-# GitHub Actions 워크플로우 확인
+# Check GitHub Actions workflows
 ls -la outputs/.github/workflows/
 
-# 워크플로우 유효성 검사 (yamllint)
+# Workflow validity check (yamllint)
 yamllint outputs/.github/workflows/*.yml
 
-# 배포 설정 확인
+# Check deployment configuration
 ls -la outputs/deployment_config/
 ```
 
-## CI/CD 검증
+## CI/CD Verification
 
-| 항목 | 기준 | 확인 |
-|------|------|------|
-| CI 워크플로우 | 존재 | - |
-| CD 워크플로우 | 존재 | - |
-| 스테이징 배포 | 성공 | - |
-| 프로덕션 배포 | 성공 | - |
-| 헬스 체크 | 통과 | - |
+| Item | Criteria | Verified |
+|------|----------|----------|
+| CI workflow | Exists | - |
+| CD workflow | Exists | - |
+| Staging deployment | Success | - |
+| Production deployment | Success | - |
+| Health check | Pass | - |
 
-## 모니터링 체크리스트
+## Monitoring Checklist
 
-- [ ] 에러 트래킹 설정 (Sentry 등)
-- [ ] 성능 모니터링 설정
-- [ ] 로그 수집 설정
-- [ ] 알림 설정
+- [ ] Error tracking configured (Sentry, etc.)
+- [ ] Performance monitoring configured
+- [ ] Log collection configured
+- [ ] Alerts configured
 
-## 문서 체크리스트
+## Documentation Checklist
 
-- [ ] 배포 가이드
-- [ ] 운영 매뉴얼
-- [ ] 트러블슈팅 가이드
-- [ ] 롤백 절차
+- [ ] Deployment guide
+- [ ] Operations manual
+- [ ] Troubleshooting guide
+- [ ] Rollback procedure
 
-## 파이프라인 완료 확인
+## Pipeline Completion Verification
 
 ```bash
-# 모든 스테이지 완료 확인
+# Verify all stages complete
 /status
 
-# 최종 검증
+# Final validation
 /validate --all
 ```
 
-## 실패 시 조치
+## Actions on Failure
 
-1. CI 실패 → 워크플로우 수정
-2. 배포 실패 → 설정 확인 및 재시도
-3. 헬스 체크 실패 → 로그 분석 및 수정
+1. CI failure → Fix workflow
+2. Deployment failure → Check configuration and retry
+3. Health check failure → Analyze logs and fix

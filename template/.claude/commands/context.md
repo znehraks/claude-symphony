@@ -1,46 +1,46 @@
 # /context
 
-컨텍스트 상태를 확인하고 관리합니다.
+Check and manage context state.
 
-## 사용법
+## Usage
 ```
-/context                 # 현재 상태 확인
-/context --save [desc]   # 스냅샷 저장
-/context --compress      # 압축 실행
-/context --restore       # 저장된 상태 복구
-/context --clean         # 오래된 스냅샷 정리
+/context                 # Check current state
+/context --save [desc]   # Save snapshot
+/context --compress      # Execute compression
+/context --restore       # Restore saved state
+/context --clean         # Clean old snapshots
 ```
 
-## 동작
+## Actions
 
-### 상태 확인 (`/context`)
-- 추정 토큰 사용량 표시
-- 임계값 대비 상태
-- 저장된 스냅샷 목록
+### State Check (`/context`)
+- Display estimated token usage
+- State relative to thresholds
+- List of saved snapshots
 
-### 스냅샷 저장 (`--save`)
-- 현재 상태를 state.md로 저장
-- 설명 추가 가능
-- state/context/ 디렉토리에 저장
+### Save Snapshot (`--save`)
+- Save current state as state.md
+- Can add description
+- Save to state/context/ directory
 
-### 압축 실행 (`--compress`)
-- context-compression 스킬 활성화
-- 불필요한 컨텍스트 정리
-- 핵심 정보만 유지
+### Execute Compression (`--compress`)
+- Activate context-compression skill
+- Clean unnecessary context
+- Keep only essential information
 
-### 복구 (`--restore`)
-- 저장된 스냅샷에서 복구
-- /clear 후 사용
+### Restore (`--restore`)
+- Restore from saved snapshot
+- Use after /clear
 
-## 실행 스크립트
+## Execution Script
 
 ```bash
 scripts/context-manager.sh "$ARGUMENTS"
 ```
 
-## 출력 예시
+## Output Examples
 
-### 상태 확인
+### State Check
 
 ```
 /context
@@ -49,83 +49,83 @@ scripts/context-manager.sh "$ARGUMENTS"
 📊 Context Status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-토큰 사용량: ~45,230 / 80,000
-상태: ████████████░░░░░░░░ 56% [정상]
+Token usage: ~45,230 / 80,000
+Status: ████████████░░░░░░░░ 56% [Normal]
 
-임계값:
-• 경고 (50k): 아직 여유 있음
-• 한도 (80k): ~35,000 토큰 남음
+Thresholds:
+• Warning (50k): Still have room
+• Limit (80k): ~35,000 tokens remaining
 
-현재 스테이지: 04-ui-ux
-대화 메시지: 28개
+Current stage: 04-ui-ux
+Conversation messages: 28
 
-[저장된 스냅샷]
-• state-20240120-1030.md (03-planning 완료 시점)
-• state-20240120-1430.md (04-ui-ux 시작)
+[Saved Snapshots]
+• state-20240120-1030.md (03-planning completion)
+• state-20240120-1430.md (04-ui-ux start)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-### 경고 상태
+### Warning State
 
 ```
 /context
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⚠️ Context Status - 경고
+⚠️ Context Status - Warning
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-토큰 사용량: ~52,000 / 80,000
-상태: ████████████████░░░░ 65% [경고]
+Token usage: ~52,000 / 80,000
+Status: ████████████████░░░░ 65% [Warning]
 
-⚠️ 경고 임계값(50k) 초과!
+⚠️ Warning threshold (50k) exceeded!
 
-권장 조치:
-1. /context --compress 로 압축
-2. /context --save 후 /clear
+Recommended actions:
+1. Compress with /context --compress
+2. /context --save then /clear
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-### 스냅샷 저장
+### Save Snapshot
 
 ```
-/context --save "UI 설계 완료"
+/context --save "UI design completed"
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 💾 Context Snapshot Saved
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-파일: state/context/state-20240120-1530.md
-설명: UI 설계 완료
-스테이지: 04-ui-ux
-토큰: ~45,000
+File: state/context/state-20240120-1530.md
+Description: UI design completed
+Stage: 04-ui-ux
+Tokens: ~45,000
 
-[저장 내용]
-✓ 현재 스테이지 정보
-✓ 진행 상황
-✓ 핵심 결정사항 (5개)
-✓ 참조 파일 목록
+[Saved Content]
+✓ Current stage information
+✓ Progress status
+✓ Key decisions (5)
+✓ Reference file list
 
-복구: /context --restore state-20240120-1530.md
+Recovery: /context --restore state-20240120-1530.md
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-## 옵션
+## Options
 
-| 옵션 | 설명 |
-|------|------|
-| (없음) | 현재 상태 확인 |
-| `--save [desc]` | 스냅샷 저장 |
-| `--compress` | 컨텍스트 압축 |
-| `--restore [file]` | 스냅샷 복구 |
-| `--list` | 스냅샷 목록 |
-| `--clean` | 오래된 스냅샷 정리 |
-| `--json` | JSON 형식 출력 |
+| Option | Description |
+|--------|-------------|
+| (none) | Check current state |
+| `--save [desc]` | Save snapshot |
+| `--compress` | Context compression |
+| `--restore [file]` | Restore snapshot |
+| `--list` | Snapshot list |
+| `--clean` | Clean old snapshots |
+| `--json` | JSON format output |
 
-## 설정 참조
+## Configuration Reference
 
-settings.json의 context 설정:
+settings.json context settings:
 
 ```json
 {
@@ -137,18 +137,18 @@ settings.json의 context 설정:
 }
 ```
 
-## 관련 스킬
+## Related Skills
 
-- `context-compression` - 자동 압축 스킬
+- `context-compression` - Auto compression skill
 
-## 관련 명령어
+## Related Commands
 
-- `/status` - 파이프라인 상태
-- `/checkpoint` - 체크포인트 생성
-- `/restore` - 체크포인트 복구
+- `/status` - Pipeline status
+- `/checkpoint` - Create checkpoint
+- `/restore` - Restore checkpoint
 
 ## Tips
 
-- 긴 작업 전 `/context --save` 권장
-- 50k 경고 시 `/context --compress` 실행
-- /clear 후 `/context --restore` 로 복구
+- Recommended: `/context --save` before long tasks
+- Run `/context --compress` at 50k warning
+- Recover with `/context --restore` after /clear

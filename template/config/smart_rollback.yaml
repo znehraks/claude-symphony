@@ -3,9 +3,9 @@
 
 smart_rollback:
   enabled: true
-  description: "지능형 롤백 제안 및 실행"
+  description: "Intelligent rollback suggestions and execution"
 
-  # 에러 발생 시 롤백 제안
+  # Rollback suggestions on error
   suggestion:
     on_error:
       enabled: true
@@ -18,22 +18,22 @@ smart_rollback:
     analysis:
       error_patterns:
         build_failure:
-          description: "빌드 실패"
+          description: "Build failure"
           common_causes: ["dependency", "syntax", "type_error"]
           suggested_scope: "file_level"
 
         test_failure:
-          description: "테스트 실패"
+          description: "Test failure"
           common_causes: ["logic_error", "state_change"]
           suggested_scope: "function_level"
 
         runtime_error:
-          description: "런타임 에러"
+          description: "Runtime error"
           common_causes: ["null_reference", "type_mismatch"]
           suggested_scope: "file_level"
 
         configuration_error:
-          description: "설정 에러"
+          description: "Configuration error"
           common_causes: ["invalid_config", "missing_env"]
           suggested_scope: "config_only"
 
@@ -46,42 +46,42 @@ smart_rollback:
         stability: 0.4
         relevance: 0.2
 
-  # 부분 롤백
+  # Partial rollback
   partial_rollback:
     enabled: true
-    description: "전체 롤백 대신 영향 범위만 선택적 복구"
+    description: "Selective recovery of affected scope only instead of full rollback"
 
     granularity:
       file_level:
-        description: "특정 파일만 롤백"
+        description: "Rollback specific files only"
         use_when: ["single_file_error", "isolated_change"]
 
       function_level:
-        description: "특정 함수/메서드만 롤백"
+        description: "Rollback specific functions/methods only"
         use_when: ["logic_error", "refactoring_issue"]
         supported_languages: ["typescript", "javascript", "python"]
 
       stage_level:
-        description: "특정 스테이지 전체 롤백"
+        description: "Rollback entire stage"
         use_when: ["major_failure", "architecture_change"]
 
       config_only:
-        description: "설정 파일만 롤백"
+        description: "Rollback config files only"
         use_when: ["configuration_error"]
         patterns: ["*.yaml", "*.json", "*.env*"]
 
-    # 의존성 분석
+    # Dependency analysis
     dependency_analysis:
       enabled: true
-      description: "롤백 시 영향받는 파일 자동 감지"
+      description: "Auto-detect affected files during rollback"
 
       include_dependents: true
       max_cascade_depth: 3
 
-  # 롤백 미리보기
+  # Rollback preview
   rollback_preview:
     enabled: true
-    description: "롤백 전 변경사항 미리보기"
+    description: "Preview changes before rollback"
 
     show_diff: true
     show_impact: true
@@ -90,20 +90,20 @@ smart_rollback:
 
     require_confirmation: true
     confirmation_prompt: |
-      ## 롤백 미리보기
+      ## Rollback Preview
 
-      **대상 체크포인트**: {{checkpoint_name}}
-      **롤백 범위**: {{scope}}
+      **Target Checkpoint**: {{checkpoint_name}}
+      **Rollback Scope**: {{scope}}
 
-      ### 영향받는 파일 ({{file_count}}개)
+      ### Affected Files ({{file_count}} files)
       {{affected_files}}
 
-      ### 변경사항 요약
+      ### Change Summary
       {{diff_summary}}
 
-      이 롤백을 실행하시겠습니까? (y/n)
+      Proceed with this rollback? (y/n)
 
-  # 롤백 실행
+  # Rollback execution
   execution:
     pre_rollback:
       - create_backup_checkpoint
@@ -122,33 +122,33 @@ smart_rollback:
       - update_handoff
       - notify_completion
 
-    # 실패 처리
+    # Failure handling
     on_failure:
       strategy: "restore_backup"
       notify: true
       log_details: true
 
-  # 안전 장치
+  # Safety measures
   safety:
-    # 롤백 불가 조건
+    # Rollback prevention conditions
     prevent_rollback_when:
       - uncommitted_changes: true
       - active_processes: true
       - locked_files: true
 
-    # 확인 필요 조건
+    # Confirmation required conditions
     require_confirmation_when:
       - scope: "stage_level"
       - files_affected: 10
       - includes_production: true
 
-    # 롤백 제한
+    # Rollback limits
     limits:
       max_rollback_stages: 2
       max_file_rollbacks: 50
       cooldown_minutes: 5
 
-# 롤백 히스토리
+# Rollback history
 history:
   enabled: true
   storage_path: "state/rollback_history/"
@@ -163,42 +163,42 @@ history:
 
   retention_days: 30
 
-# 복구 가이드
+# Recovery guide
 recovery_guide:
   enabled: true
-  description: "롤백 후 복구 작업 안내"
+  description: "Recovery instructions after rollback"
 
   templates:
     after_file_rollback: |
-      ## 파일 롤백 완료
+      ## File Rollback Complete
 
-      다음 파일이 복구되었습니다:
+      The following files have been restored:
       {{files}}
 
-      ### 권장 다음 단계
-      1. 변경사항 확인: `git diff`
-      2. 테스트 실행: `npm test`
-      3. 필요시 수정 후 재커밋
+      ### Recommended Next Steps
+      1. Review changes: `git diff`
+      2. Run tests: `npm test`
+      3. Modify and re-commit as needed
 
     after_stage_rollback: |
-      ## 스테이지 롤백 완료
+      ## Stage Rollback Complete
 
-      {{stage_id}}가 체크포인트로 복구되었습니다.
+      {{stage_id}} has been restored to checkpoint.
 
-      ### 복구 정보
-      - 체크포인트: {{checkpoint_name}}
-      - 복구된 파일: {{file_count}}개
+      ### Recovery Information
+      - Checkpoint: {{checkpoint_name}}
+      - Files restored: {{file_count}}
 
-      ### 권장 다음 단계
-      1. HANDOFF 확인: `stages/{{stage_id}}/HANDOFF.md`
-      2. 태스크 재검토
-      3. 스테이지 재시작
+      ### Recommended Next Steps
+      1. Review HANDOFF: `stages/{{stage_id}}/HANDOFF.md`
+      2. Review tasks
+      3. Restart stage
 
-# 통합 설정
+# Integration settings
 integration:
   git:
     auto_stash: true
-    create_branch: false  # true면 롤백용 브랜치 생성
+    create_branch: false  # Create rollback branch if true
 
   handoff:
     update_on_rollback: true

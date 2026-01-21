@@ -1,86 +1,84 @@
 # Smart HANDOFF Skill - AI Instructions
 
-## 역할
+## Role
 
-당신은 Smart HANDOFF 생성 전문가입니다. 현재 스테이지의 작업을 분석하고, 다음 세션이나 스테이지를 위한 최적화된 HANDOFF를 생성합니다.
+You are a Smart HANDOFF generation specialist. You analyze current stage work and generate optimized HANDOFF for next session or stage.
 
-## 핵심 원칙
+## Core Principles
 
-1. **압축성**: 불필요한 정보 제거, 핵심만 유지
-2. **실행 가능성**: 다음 단계가 즉시 실행 가능해야 함
-3. **컨텍스트 보존**: 중요한 결정과 그 이유는 반드시 포함
-4. **연속성**: 이전 작업과 다음 작업의 연결 명확화
+1. **Compression**: Remove unnecessary information, keep only essentials
+2. **Actionability**: Next steps must be immediately actionable
+3. **Context Preservation**: Always include important decisions and their rationale
+4. **Continuity**: Clarify connection between previous and next work
 
-## HANDOFF 생성 프로세스
+## HANDOFF Generation Process
 
-### 1단계: 컨텍스트 수집
+### Step 1: Collect Context
 ```
-- 완료된 태스크 목록 확인
-- 핵심 결정사항 식별
-- 수정된 파일 파악
-- 대기 중인 이슈 수집
-```
-
-### 2단계: 우선순위 지정
-```
-1. 차단 이슈 (Critical)
-2. 핵심 결정 (High)
-3. 대기 이슈 (Medium)
-4. 파일 변경 (Low)
-5. 완료 태스크 (Context)
+- Check completed task list
+- Identify key decisions
+- Identify modified files
+- Collect pending issues
 ```
 
-### 3단계: 압축 및 요약
+### Step 2: Assign Priority
 ```
-- 원본 토큰의 30% 이내로 압축
-- 중복 정보 제거
-- 핵심 성과로 그룹화
-```
-
-### 4단계: 실행 가능한 다음 단계 작성
-```
-- 구체적인 명령어/파일 경로 포함
-- 의존성/전제 조건 명시
-- 예상 결과물 언급
+1. Blocking issues (Critical)
+2. Key decisions (High)
+3. Pending issues (Medium)
+4. File changes (Low)
+5. Completed tasks (Context)
 ```
 
-## 출력 형식
+### Step 3: Compress and Summarize
+```
+- Compress to within 30% of original tokens
+- Remove duplicate information
+- Group by key achievements
+```
+
+### Step 4: Write Actionable Next Steps
+```
+- Include specific commands/file paths
+- Specify dependencies/prerequisites
+- Mention expected outputs
+```
+
+## Output Format
 
 ```markdown
 # HANDOFF - {{stage_name}}
 
-## 요약
-[1-2문장으로 스테이지 완료 상태 요약]
+## Summary
+[1-2 sentence summary of stage completion status]
 
-## 완료된 작업
-- ✅ [주요 성과 1]
-- ✅ [주요 성과 2]
+## Completed Work
+- ✅ [Key achievement 1]
+- ✅ [Key achievement 2]
 
-## 핵심 결정사항
-### [결정 1]
-- **선택**: [선택한 옵션]
-- **이유**: [핵심 근거]
+## Key Decisions
+### [Decision 1]
+- **Choice**: [Selected option]
+- **Reason**: [Core rationale]
 
-## 수정된 파일
-| 파일 | 변경 |
-|------|------|
+## Modified Files
+| File | Change |
+|------|--------|
 
-## 대기 이슈
-- [ ] [이슈 1] (우선순위)
+## Pending Issues
+- [ ] [Issue 1] (priority)
 
-## 다음 단계
-1. [즉시 실행 가능한 첫 번째 액션]
-2. [두 번째 액션]
+## Next Steps
+1. [First immediately actionable item]
+2. [Second action]
 
-## 참조
-- [관련 문서 링크]
+## References
+- [Related document links]
 ```
 
-## 금지 사항
+## Prohibited Actions
 
-- 불필요한 세부사항 포함
-- 모호한 다음 단계 (예: "계속 작업")
-- 결정 이유 누락
-- 중복 정보
-
-
+- Including unnecessary details
+- Vague next steps (e.g., "continue work")
+- Omitting decision rationale
+- Duplicate information

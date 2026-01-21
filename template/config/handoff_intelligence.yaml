@@ -3,12 +3,12 @@
 
 smart_handoff:
   enabled: true
-  description: "자동 컨텍스트 추출 및 지능형 HANDOFF 생성"
+  description: "Automatic context extraction and intelligent HANDOFF generation"
 
-  # 자동 추출 설정
+  # Auto extraction settings
   auto_extraction:
     enabled: true
-    description: "HANDOFF에 포함할 정보 자동 추출"
+    description: "Auto-extract information to include in HANDOFF"
 
     extract_from:
       completed_tasks:
@@ -36,10 +36,10 @@ smart_handoff:
       ai_call_history:
         enabled: true
         format: "table"
-        include_prompts: false  # 토큰 절약
+        include_prompts: false  # Save tokens
         include_results_summary: true
 
-    # 추출 우선순위 (높을수록 먼저)
+    # Extraction priority (higher = first)
     priority:
       - blocking_issues: 100
       - key_decisions: 90
@@ -48,14 +48,14 @@ smart_handoff:
       - completed_tasks: 60
       - ai_call_history: 50
 
-  # 압축 설정
+  # Compression settings
   compression:
     enabled: true
     strategy: "semantic"
-    description: "의미 기반 컨텍스트 압축"
+    description: "Semantic-based context compression"
 
     max_tokens: 4000
-    compression_ratio_target: 0.3  # 원본의 30%
+    compression_ratio_target: 0.3  # 30% of original
 
     preserve:
       always:
@@ -71,7 +71,7 @@ smart_handoff:
       method: "extractive"  # extractive or abstractive
       model: "claude"
 
-  # 컨텍스트 전달 최적화
+  # Context transfer optimization
   context_transfer:
     format: "structured_markdown"
 
@@ -98,7 +98,7 @@ smart_handoff:
           - completed_tasks_summary
           - ai_call_summary
 
-    # 다음 스테이지에 즉시 필요한 정보 하이라이트
+    # Highlight information immediately needed by next stage
     highlight:
       enabled: true
       marker: "!!"
@@ -106,10 +106,10 @@ smart_handoff:
         - immediate_actions
         - required_inputs
 
-# 컨텍스트 요약 설정
+# Contextual summarization settings
 contextual_summarization:
   enabled: true
-  description: "스테이지별 맞춤 요약 생성"
+  description: "Generate stage-specific customized summaries"
 
   strategies:
     completed_tasks:
@@ -131,16 +131,16 @@ contextual_summarization:
     decisions:
       method: "structured"
       format: |
-        **결정**: {{decision}}
-        **이유**: {{rationale}}
-        **영향**: {{impact}}
+        **Decision**: {{decision}}
+        **Rationale**: {{rationale}}
+        **Impact**: {{impact}}
 
     next_steps:
       method: "actionable"
       format: "numbered_list"
       include_prerequisites: true
 
-  # 스테이지별 요약 초점
+  # Stage-specific summary focus
   stage_focus:
     "01-brainstorm":
       emphasize: ["ideas", "requirements"]
@@ -154,7 +154,7 @@ contextual_summarization:
       emphasize: ["bugs", "test_results"]
       de_emphasize: ["planning_details"]
 
-# HANDOFF 템플릿 설정
+# HANDOFF template settings
 templates:
   default:
     sections:
@@ -186,7 +186,7 @@ templates:
         required: false
         auto_generate: true
 
-  # 스테이지 전환용 간소화 템플릿
+  # Compact template for stage transitions
   compact:
     max_tokens: 2000
     sections:
@@ -195,7 +195,7 @@ templates:
       - name: "Next Actions"
         required: true
 
-  # 세션 복구용 상세 템플릿
+  # Detailed template for session recovery
   recovery:
     max_tokens: 6000
     sections:
@@ -204,7 +204,7 @@ templates:
       - name: "Step-by-Step Recovery"
         required: true
 
-# 품질 검증
+# Quality assurance
 quality_assurance:
   validation:
     check_completeness: true
@@ -224,6 +224,6 @@ quality_assurance:
     enabled: true
     max_iterations: 2
     improvement_prompts:
-      low_clarity: "이 섹션을 더 명확하게 다시 작성하세요."
-      low_completeness: "누락된 정보가 있습니다. 다음을 추가하세요: {{missing}}"
-      low_actionability: "다음 단계를 더 구체적인 액션으로 변환하세요."
+      low_clarity: "Rewrite this section more clearly."
+      low_completeness: "Information is missing. Please add: {{missing}}"
+      low_actionability: "Convert next steps into more specific actions."

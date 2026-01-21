@@ -1,73 +1,73 @@
 # Persona Generation Prompt Template
 
-사용자 페르소나 생성을 위한 프롬프트
+Prompt for generating user personas
 
-## 사용 모델
+## Model
 Gemini
 
-## 프롬프트
+## Prompt
 
 ```
-당신은 UX 리서처이자 사용자 심리 전문가입니다.
+You are a UX researcher and user psychology expert.
 
-다음 프로젝트에 대한 상세 사용자 페르소나를 생성해주세요:
+Generate detailed user personas for the following project:
 
 ---
-프로젝트: {{PROJECT_NAME}}
-설명: {{PROJECT_DESCRIPTION}}
-대상 시장: {{TARGET_MARKET}}
+Project: {{PROJECT_NAME}}
+Description: {{PROJECT_DESCRIPTION}}
+Target Market: {{TARGET_MARKET}}
 ---
 
-## 페르소나 생성 요청
+## Persona Generation Request
 
-각 페르소나에 대해 다음 정보를 포함해주세요:
+Please include the following information for each persona:
 
-### 기본 정보
-- **이름**: (가상의 현실적인 이름)
-- **나이**:
-- **직업**:
-- **위치**:
-- **교육 수준**:
+### Basic Information
+- **Name**: (realistic fictional name)
+- **Age**:
+- **Occupation**:
+- **Location**:
+- **Education Level**:
 
-### 심리적 프로필
-- **성격 유형** (MBTI 참고):
-- **가치관**:
-- **라이프스타일**:
+### Psychological Profile
+- **Personality Type** (MBTI reference):
+- **Values**:
+- **Lifestyle**:
 
-### 목표와 동기
-- **주요 목표** (이 제품과 관련하여):
-- **숨겨진 동기**:
-- **성공의 정의**:
+### Goals and Motivations
+- **Primary Goals** (related to this product):
+- **Hidden Motivations**:
+- **Definition of Success**:
 
 ### Pain Points
-- **현재 해결책의 불만**:
-- **시간/비용 낭비 요소**:
-- **감정적 좌절감**:
+- **Frustrations with Current Solutions**:
+- **Time/Cost Waste Factors**:
+- **Emotional Frustrations**:
 
-### 기술 프로필
-- **기술 친숙도** (1-5):
-- **주로 사용하는 기기**:
-- **앱 사용 패턴**:
+### Technology Profile
+- **Technology Familiarity** (1-5):
+- **Primary Devices Used**:
+- **App Usage Patterns**:
 
-### 사용 시나리오
-- **제품을 발견하는 상황**:
-- **핵심 사용 사례**:
-- **기대하는 결과**:
+### Usage Scenarios
+- **Context of Discovering the Product**:
+- **Core Use Cases**:
+- **Expected Outcomes**:
 
-### 인용구
-이 페르소나가 할 법한 말:
+### Quote
+Something this persona would say:
 > "..."
 
-## 출력 형식
-3개 이상의 페르소나를 마크다운 형식으로 출력해주세요.
-각 페르소나는 명확히 구분되어야 합니다.
+## Output Format
+Please output 3 or more personas in markdown format.
+Each persona should be clearly separated.
 ```
 
-## 변수 치환
-- `{{PROJECT_NAME}}`: 프로젝트 이름
-- `{{PROJECT_DESCRIPTION}}`: 프로젝트 설명
-- `{{TARGET_MARKET}}`: 대상 시장
+## Variable Substitution
+- `{{PROJECT_NAME}}`: Project name
+- `{{PROJECT_DESCRIPTION}}`: Project description
+- `{{TARGET_MARKET}}`: Target market
 
-## 기대 출력
-- `outputs/personas.md`로 저장
-- 최소 3개 이상의 상세 페르소나
+## Expected Output
+- Save to `outputs/personas.md`
+- At least 3 detailed personas

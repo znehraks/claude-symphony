@@ -8,7 +8,7 @@ import { input } from '@inquirer/prompts';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 색상 코드
+// Color codes
 const colors = {
   reset: '\x1b[0m',
   green: '\x1b[32m',
@@ -44,24 +44,24 @@ function copyRecursiveSync(src, dest) {
 
 async function collectBriefInfo() {
   console.log('');
-  log('📝 프로젝트 브리프를 작성합니다. (Enter만 누르면 건너뜁니다)', 'yellow');
+  log('📝 Creating project brief. (Press Enter to skip)', 'yellow');
   console.log('');
 
   const info = {};
 
-  // 순차적으로 질문 (각 input()이 완료되어야 다음으로 진행)
-  info.description = await input({ message: '한 줄 설명:' });
-  info.problem = await input({ message: '문제 정의 (해결하려는 문제):' });
-  info.targetUser = await input({ message: '타겟 사용자:' });
-  info.successCriteria = await input({ message: '성공 기준:' });
-  info.constraintSchedule = await input({ message: '제약조건 - 일정:' });
-  info.constraintBudget = await input({ message: '제약조건 - 예산:' });
-  info.constraintTech = await input({ message: '제약조건 - 기술:' });
-  info.references = await input({ message: '참고 자료 (URL 또는 문서):' });
+  // Sequential questions (each input() must complete before proceeding)
+  info.description = await input({ message: 'One-line description:' });
+  info.problem = await input({ message: 'Problem definition (problem to solve):' });
+  info.targetUser = await input({ message: 'Target users:' });
+  info.successCriteria = await input({ message: 'Success criteria:' });
+  info.constraintSchedule = await input({ message: 'Constraints - Schedule:' });
+  info.constraintBudget = await input({ message: 'Constraints - Budget:' });
+  info.constraintTech = await input({ message: 'Constraints - Technology:' });
+  info.references = await input({ message: 'References (URL or documents):' });
 
-  // 핵심 기능 - 여러 개 입력 (별도 루프)
+  // Core features - multiple inputs (separate loop)
   console.log('');
-  log('핵심 기능 (빈 입력 시 종료):', 'reset');
+  log('Core features (empty input to finish):', 'reset');
   info.features = [];
   let featureNum = 1;
   while (true) {
@@ -75,68 +75,68 @@ async function collectBriefInfo() {
 }
 
 function generateBriefContent(projectName, info) {
-  // 핵심 기능 포맷팅
+  // Core features formatting
   let featuresContent;
   if (info.features && info.features.length > 0) {
     featuresContent = info.features.map((f, i) => `${i + 1}. ${f}`).join('\n');
   } else {
-    featuresContent = '1. [기능 1]\n2. [기능 2]\n3. [기능 3]';
+    featuresContent = '1. [Feature 1]\n2. [Feature 2]\n3. [Feature 3]';
   }
 
   return `# Project Brief
 
-## 프로젝트 이름
+## Project Name
 ${projectName}
 
-## 한 줄 설명
-${info.description || '[프로젝트를 한 줄로 설명해주세요]'}
+## One-line Description
+${info.description || '[Describe your project in one line]'}
 
-## 문제 정의
-${info.problem || '[해결하려는 문제는 무엇인가요?]'}
+## Problem Definition
+${info.problem || '[What problem are you trying to solve?]'}
 
-## 타겟 사용자
-${info.targetUser || '[주요 사용자는 누구인가요?]'}
+## Target Users
+${info.targetUser || '[Who are the main users?]'}
 
-## 핵심 기능 (초안)
+## Core Features (Draft)
 ${featuresContent}
 
-## 성공 기준
-${info.successCriteria || '[프로젝트가 성공했다고 판단하는 기준은?]'}
+## Success Criteria
+${info.successCriteria || '[What criteria define project success?]'}
 
-## 제약조건
-- 일정: ${info.constraintSchedule || ''}
-- 예산: ${info.constraintBudget || ''}
-- 기술: ${info.constraintTech || ''}
+## Constraints
+- Schedule: ${info.constraintSchedule || ''}
+- Budget: ${info.constraintBudget || ''}
+- Technology: ${info.constraintTech || ''}
 
-## 참고 자료
-- ${info.references || '[URL 또는 문서]'}
+## References
+- ${info.references || '[URL or documents]'}
 `;
 }
 
 async function main() {
   const args = process.argv.slice(2);
 
-  // 도움말 체크 (가장 먼저 처리)
+  // Help check (process first)
   if (args.includes('--help') || args.includes('-h')) {
     console.log(`
-${colors.cyan}claude-symphony${colors.reset} - Multi-AI Orchestration Framework 프로젝트 생성
+${colors.cyan}claude-symphony${colors.reset} - Multi-AI Orchestration Framework project creation
 
-${colors.yellow}사용법:${colors.reset}
+${colors.yellow}Usage:${colors.reset}
   npx claude-symphony <project-name>
-  npx claude-symphony .  (현재 디렉토리에 생성)
+  npx claude-symphony .  (create in current directory)
 
-${colors.yellow}옵션:${colors.reset}
-  --yes, -y    프롬프트 없이 기본값으로 생성
+${colors.yellow}Options:${colors.reset}
+  --yes, -y    Create with defaults (no prompts)
 
-${colors.yellow}예시:${colors.reset}
+${colors.yellow}Examples:${colors.reset}
   npx claude-symphony my-saas-app
   npx claude-symphony my-game
   npx claude-symphony my-project --yes
 
-${colors.yellow}생성 후:${colors.reset}
+${colors.yellow}After creation:${colors.reset}
   1. cd <project-name>
-  2. stages/01-brainstorm/inputs/project_brief.md 작성
-  3. /run-stage 01-brainstorm 실행
+  2. Edit stages/01-brainstorm/inputs/project_brief.md
+  3. Run /run-stage 01-brainstorm
 `);
     process.exit(0);
   }
@@ -144,9 +144,9 @@ ${colors.yellow}생성 후:${colors.reset}
   const skipPrompts = args.includes('--yes') || args.includes('-y');
   const projectName = args.find(arg => !arg.startsWith('-')) || '.';
 
-  // 프로젝트 이름 검증
+  // Project name validation
   if (projectName !== '.' && !/^[a-z0-9-]+$/.test(projectName)) {
-    log('오류: 프로젝트 이름은 영문 소문자, 숫자, 하이픈만 허용됩니다.', 'red');
+    log('Error: Project name must contain only lowercase letters, numbers, and hyphens.', 'red');
     process.exit(1);
   }
 
@@ -154,45 +154,45 @@ ${colors.yellow}생성 후:${colors.reset}
   const targetDir = path.resolve(projectName);
   const actualProjectName = projectName === '.' ? path.basename(targetDir) : projectName;
 
-  // 템플릿 존재 확인
+  // Template existence check
   if (!fs.existsSync(templateDir)) {
-    log(`오류: 템플릿 디렉토리를 찾을 수 없습니다: ${templateDir}`, 'red');
+    log(`Error: Template directory not found: ${templateDir}`, 'red');
     process.exit(1);
   }
 
-  // 대상 디렉토리 확인
+  // Target directory check
   if (projectName !== '.' && fs.existsSync(targetDir)) {
     const files = fs.readdirSync(targetDir);
     if (files.length > 0) {
-      log(`오류: 디렉토리가 비어있지 않습니다: ${targetDir}`, 'red');
+      log(`Error: Directory is not empty: ${targetDir}`, 'red');
       process.exit(1);
     }
   }
 
   console.log('');
   log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'cyan');
-  log(`🎼 claude-symphony 프로젝트 생성: ${actualProjectName}`, 'cyan');
+  log(`🎼 Creating claude-symphony project: ${actualProjectName}`, 'cyan');
   log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'cyan');
   console.log('');
 
-  // 1. 대상 디렉토리 생성
+  // 1. Create target directory
   if (!fs.existsSync(targetDir)) {
     fs.mkdirSync(targetDir, { recursive: true });
   }
-  log(`✓ 프로젝트 디렉토리: ${targetDir}`, 'green');
+  log(`✓ Project directory: ${targetDir}`, 'green');
 
-  // 2. 프로젝트 브리프 정보 수집 (--yes 플래그가 없을 때만)
+  // 2. Collect project brief info (only when --yes flag is not present)
   let briefInfo = {};
   if (!skipPrompts) {
     briefInfo = await collectBriefInfo();
   }
 
-  // 3. 템플릿 복사
-  log('  템플릿 복사 중...', 'blue');
+  // 3. Copy template
+  log('  Copying template...', 'blue');
   copyRecursiveSync(templateDir, targetDir);
-  log('✓ 템플릿 복사 완료', 'green');
+  log('✓ Template copy complete', 'green');
 
-  // 4. progress.json 초기화
+  // 4. Initialize progress.json
   const progressTemplatePath = path.join(targetDir, 'state', 'progress.json.template');
   const progressPath = path.join(targetDir, 'state', 'progress.json');
 
@@ -205,11 +205,11 @@ ${colors.yellow}생성 후:${colors.reset}
       .replace('{{STARTED_AT}}', timestamp);
 
     fs.writeFileSync(progressPath, progressContent);
-    fs.unlinkSync(progressTemplatePath); // 템플릿 파일 삭제
-    log('✓ progress.json 초기화 완료', 'green');
+    fs.unlinkSync(progressTemplatePath); // Delete template file
+    log('✓ progress.json initialized', 'green');
   }
 
-  // 5. project_brief.md 생성
+  // 5. Create project_brief.md
   const briefPath = path.join(targetDir, 'stages', '01-brainstorm', 'inputs', 'project_brief.md');
   const briefDir = path.dirname(briefPath);
 
@@ -219,25 +219,25 @@ ${colors.yellow}생성 후:${colors.reset}
 
   const briefContent = generateBriefContent(actualProjectName, briefInfo);
   fs.writeFileSync(briefPath, briefContent);
-  log('✓ project_brief.md 생성 완료', 'green');
+  log('✓ project_brief.md created', 'green');
 
-  // 6. 완료 메시지
+  // 6. Completion message
   console.log('');
   log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'green');
-  log(`✓ 프로젝트 '${actualProjectName}' 생성 완료!`, 'green');
+  log(`✓ Project '${actualProjectName}' created successfully!`, 'green');
   log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'green');
   console.log('');
-  log('다음 단계:', 'yellow');
+  log('Next steps:', 'yellow');
   if (projectName !== '.') {
     console.log(`  1. cd ${projectName}`);
-    console.log('  2. stages/01-brainstorm/inputs/project_brief.md 작성');
-    console.log('  3. /run-stage 01-brainstorm 실행');
+    console.log('  2. Edit stages/01-brainstorm/inputs/project_brief.md');
+    console.log('  3. Run /run-stage 01-brainstorm');
   } else {
-    console.log('  1. stages/01-brainstorm/inputs/project_brief.md 작성');
-    console.log('  2. /run-stage 01-brainstorm 실행');
+    console.log('  1. Edit stages/01-brainstorm/inputs/project_brief.md');
+    console.log('  2. Run /run-stage 01-brainstorm');
   }
   console.log('');
-  log('파이프라인 스테이지:', 'cyan');
+  log('Pipeline stages:', 'cyan');
   console.log('  01-brainstorm → 02-research → 03-planning → 04-ui-ux');
   console.log('  → 05-task-management → 06-implementation → 07-refactoring');
   console.log('  → 08-qa → 09-testing → 10-deployment');
@@ -245,6 +245,6 @@ ${colors.yellow}생성 후:${colors.reset}
 }
 
 main().catch(err => {
-  log(`오류: ${err.message}`, 'red');
+  log(`Error: ${err.message}`, 'red');
   process.exit(1);
 });

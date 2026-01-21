@@ -20,129 +20,129 @@
   },
 
   "hooks_info": {
-    "note": "실제 hooks 설정은 settings.local.json에 있음",
-    "stop": ".claude/hooks/stop.sh - 자동 /compact",
-    "session_start": ".claude/hooks/session-start.sh - 자동 복구"
+    "note": "Actual hooks settings are in settings.local.json",
+    "stop": ".claude/hooks/stop.sh - auto /compact",
+    "session_start": ".claude/hooks/session-start.sh - auto recovery"
   },
 
   "commands": {
     "init-project": {
-      "description": "새 프로젝트 초기화",
+      "description": "Initialize new project",
       "file": "commands/init-project.md"
     },
     "run-stage": {
-      "description": "스테이지 실행",
+      "description": "Run stage",
       "file": "commands/run-stage.md"
     },
     "handoff": {
-      "description": "핸드오프 문서 생성",
+      "description": "Generate handoff document",
       "file": "commands/handoff.md"
     },
     "checkpoint": {
-      "description": "체크포인트 생성",
+      "description": "Create checkpoint",
       "file": "commands/checkpoint.md"
     },
     "gemini": {
-      "description": "Gemini CLI 호출 (tmux)",
+      "description": "Call Gemini CLI (tmux)",
       "file": "commands/gemini.md"
     },
     "codex": {
-      "description": "Codex CLI 호출 (tmux)",
+      "description": "Call Codex CLI (tmux)",
       "file": "commands/codex.md"
     },
     "status": {
-      "description": "파이프라인 상태 확인",
+      "description": "Check pipeline status",
       "file": "commands/status.md"
     },
     "stages": {
-      "description": "스테이지 목록 및 상세",
+      "description": "Stage list and details",
       "file": "commands/stages.md"
     },
     "restore": {
-      "description": "체크포인트 복구",
+      "description": "Restore checkpoint",
       "file": "commands/restore.md"
     },
     "next": {
-      "description": "다음 스테이지 전환",
+      "description": "Transition to next stage",
       "file": "commands/next.md"
     },
     "context": {
-      "description": "컨텍스트 상태 관리",
+      "description": "Context state management",
       "file": "commands/context.md"
     },
     "brainstorm": {
-      "description": "01-brainstorm 스테이지 시작",
+      "description": "Start 01-brainstorm stage",
       "file": "commands/brainstorm.md"
     },
     "research": {
-      "description": "02-research 스테이지 시작",
+      "description": "Start 02-research stage",
       "file": "commands/research.md"
     },
     "planning": {
-      "description": "03-planning 스테이지 시작",
+      "description": "Start 03-planning stage",
       "file": "commands/planning.md"
     },
     "ui-ux": {
-      "description": "04-ui-ux 스테이지 시작",
+      "description": "Start 04-ui-ux stage",
       "file": "commands/ui-ux.md"
     },
     "tasks": {
-      "description": "05-task-management 스테이지 시작",
+      "description": "Start 05-task-management stage",
       "file": "commands/tasks.md"
     },
     "implement": {
-      "description": "06-implementation 스테이지 시작",
+      "description": "Start 06-implementation stage",
       "file": "commands/implement.md"
     },
     "refactor": {
-      "description": "07-refactoring 스테이지 시작",
+      "description": "Start 07-refactoring stage",
       "file": "commands/refactor.md"
     },
     "qa": {
-      "description": "08-qa 스테이지 시작",
+      "description": "Start 08-qa stage",
       "file": "commands/qa.md"
     },
     "test": {
-      "description": "09-testing 스테이지 시작",
+      "description": "Start 09-testing stage",
       "file": "commands/test.md"
     },
     "deploy": {
-      "description": "10-deployment 스테이지 시작",
+      "description": "Start 10-deployment stage",
       "file": "commands/deploy.md"
     },
     "collaborate": {
-      "description": "Multi-AI 협업 실행",
+      "description": "Run Multi-AI collaboration",
       "file": "commands/collaborate.md"
     },
     "benchmark": {
-      "description": "AI 모델 벤치마킹",
+      "description": "AI model benchmarking",
       "file": "commands/benchmark.md"
     },
     "fork": {
-      "description": "파이프라인 분기 관리",
+      "description": "Pipeline branch management",
       "file": "commands/fork.md"
     },
     "validate": {
-      "description": "산출물 검증 실행",
+      "description": "Run output validation",
       "file": "commands/validate.md"
     }
   },
 
   "skills": {
     "smart-handoff": {
-      "description": "스마트 컨텍스트 추출 및 HANDOFF 생성",
+      "description": "Smart context extraction and HANDOFF generation",
       "directory": "skills/smart-handoff"
     },
     "ai-collaboration": {
-      "description": "Multi-AI 협업 오케스트레이션",
+      "description": "Multi-AI collaboration orchestration",
       "directory": "skills/ai-collaboration"
     },
     "auto-checkpoint": {
-      "description": "자동 체크포인트 생성",
+      "description": "Automatic checkpoint generation",
       "directory": "skills/auto-checkpoint"
     },
     "output-validator": {
-      "description": "산출물 검증 및 품질 확인",
+      "description": "Output validation and quality verification",
       "directory": "skills/output-validator"
     }
   }

@@ -107,22 +107,22 @@ cd my-saas-app
 Edit `stages/01-brainstorm/inputs/project_brief.md`:
 
 ```markdown
-## 프로젝트 이름
+## Project Name
 my-saas-app
 
-## 한 줄 설명
-[프로젝트를 한 줄로 설명해주세요]
+## One-line Description
+[Describe your project in one line]
 
-## 문제 정의
-[해결하려는 문제는 무엇인가요?]
+## Problem Definition
+[What problem are you trying to solve?]
 
-## 타겟 사용자
-[주요 사용자는 누구인가요?]
+## Target Users
+[Who are the main users?]
 
-## 핵심 기능 (초안)
-1. [기능 1]
-2. [기능 2]
-3. [기능 3]
+## Core Features (Draft)
+1. [Feature 1]
+2. [Feature 2]
+3. [Feature 3]
 ```
 
 ## Packages
@@ -212,7 +212,7 @@ context:
   task_save_frequency: 5
 
 git:
-  commit_language: "Korean"
+  commit_language: "English"
   auto_commit: true
 ```
 

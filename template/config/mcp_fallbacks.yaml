@@ -1,34 +1,34 @@
 # MCP Fallback Configuration
-# claude-symphony MCP 도구 폴백 설정 (Issue #3 해결)
+# claude-symphony MCP tool fallback settings (Issue #3 resolution)
 
 mcp_fallbacks:
-  # 활성화 여부
+  # Enable/disable
   enabled: true
 
-  # 폴백 트리거 조건
+  # Fallback trigger conditions
   triggers:
-    - quota_exceeded       # 할당량 초과
-    - service_unavailable  # 서비스 불가
-    - timeout              # 타임아웃
-    - rate_limited         # 요청 제한
+    - quota_exceeded       # Quota exceeded
+    - service_unavailable  # Service unavailable
+    - timeout              # Timeout
+    - rate_limited         # Rate limited
 
-# 검색 도구 우선순위
+# Search tool priority
 search:
-  # 코드/문서 검색
+  # Code/documentation search
   code_documentation:
     primary: "context7"
     fallbacks:
       - "exa"
       - "web_search"
 
-    # 폴백 규칙
+    # Fallback rules
     rules:
       on_quota_exceeded: "use_fallback"
       on_timeout: "retry_then_fallback"
       retry_count: 2
       retry_delay_ms: 1000
 
-  # 웹 검색
+  # Web search
   web_search:
     primary: "exa"
     fallbacks:
@@ -38,13 +38,13 @@ search:
       on_quota_exceeded: "use_fallback"
       on_timeout: "use_fallback"
 
-  # Reddit/커뮤니티 검색
+  # Reddit/community search
   community:
     primary: "exa"
     fallbacks:
       - "web_search"
 
-    # 커뮤니티 검색 전용 설정
+    # Community search specific settings
     settings:
       include_domains:
         - "reddit.com"
@@ -52,7 +52,7 @@ search:
         - "dev.to"
         - "stackoverflow.com"
 
-# 브라우저/웹 도구 우선순위
+# Browser/web tool priority
 browser:
   primary: "playwright"
   fallbacks:
@@ -61,146 +61,146 @@ browser:
   rules:
     on_connection_failed: "use_fallback"
 
-# Notion 도구 (폴백 없음)
+# Notion tool (no fallback)
 notion:
   primary: "notion"
   fallbacks: []
 
-  # Notion은 폴백 불가, 에러 시 알림만
+  # Notion has no fallback, notify only on error
   on_error:
     action: "notify_user"
-    message: "Notion 연결 실패. MCP 설정을 확인하세요."
+    message: "Notion connection failed. Check MCP settings."
 
-# Figma 도구 (폴백 없음)
+# Figma tool (no fallback)
 figma:
   primary: "figma-dev-mode"
   fallbacks: []
 
   on_error:
     action: "notify_user"
-    message: "Figma 연결 실패. Dev Mode MCP 설정을 확인하세요."
+    message: "Figma connection failed. Check Dev Mode MCP settings."
 
-# 스테이지별 MCP 우선순위
+# Stage-specific MCP priority
 stage_preferences:
   "01-brainstorm":
-    search: ["exa", "web_search"]  # 웹 리서치 중심
-    reason: "커뮤니티/아이디어 검색에 Exa 우선"
+    search: ["exa", "web_search"]  # Web research focused
+    reason: "Exa preferred for community/idea search"
 
   "02-research":
     search: ["context7", "exa", "web_search"]
-    reason: "기술 문서 검색에 Context7 우선"
+    reason: "Context7 preferred for technical documentation search"
 
   "03-planning":
     search: ["context7", "exa"]
-    reason: "아키텍처 패턴/문서 검색"
+    reason: "Architecture pattern/documentation search"
 
   "04-ui-ux":
     browser: ["figma-dev-mode", "playwright"]
     search: ["exa", "web_search"]
-    reason: "UI 레퍼런스 검색"
+    reason: "UI reference search"
 
   "06-implementation":
     search: ["context7"]
-    reason: "라이브러리 문서 검색에 Context7 필수"
+    reason: "Context7 required for library documentation search"
 
   "09-testing":
     browser: ["playwright", "chrome-devtools"]
-    reason: "E2E 테스트에 Playwright 필수"
+    reason: "Playwright required for E2E testing"
 
-# 상태 모니터링
+# Status monitoring
 monitoring:
-  # 할당량 경고
+  # Quota warning
   quota_warning:
     threshold_percent: 80
     action: "warn_user"
 
-  # 사용량 로깅
+  # Usage logging
   usage_logging:
     enabled: true
     log_file: "state/mcp_usage.log"
 
-# 에러 처리
+# Error handling
 error_handling:
-  # 모든 폴백 실패 시
+  # When all fallbacks fail
   all_fallbacks_failed:
     action: "notify_user_and_continue"
     message: |
-      ⚠️ 모든 MCP 검색 도구가 실패했습니다.
-      - 수동 검색을 진행하거나
-      - MCP 서버 상태를 확인하세요.
+      All MCP search tools have failed.
+      - Proceed with manual search or
+      - Check MCP server status.
 
-  # 복구 불가 에러
+  # Fatal error
   fatal_error:
     action: "save_state_and_notify"
-    message: "MCP 치명적 오류. 상태를 저장하고 세션을 재시작하세요."
+    message: "MCP fatal error. Save state and restart session."
 
 # =============================================================================
-# AI 모델 폴백 설정 (외부 AI: Gemini, Codex)
+# AI Model Fallback Settings (External AI: Gemini, Codex)
 # =============================================================================
 ai_model_fallbacks:
   enabled: true
-  description: "외부 AI CLI 실패 시 ClaudeCode로 자동 폴백"
+  description: "Auto-fallback to ClaudeCode when external AI CLI fails"
 
-  # 폴백 트리거 조건
+  # Fallback trigger conditions
   triggers:
-    - cli_not_installed    # CLI 미설치
-    - authentication_failed # 인증 실패
-    - api_timeout          # API 타임아웃
-    - rate_limited         # 요청 제한
-    - service_error        # 서비스 오류
+    - cli_not_installed    # CLI not installed
+    - authentication_failed # Authentication failed
+    - api_timeout          # API timeout
+    - rate_limited         # Rate limited
+    - service_error        # Service error
 
-  # 스테이지별 AI 폴백 설정
+  # Stage-specific AI fallback settings
   stage_fallbacks:
     "01-brainstorm":
       primary: "gemini"
       fallback: "claudecode"
-      fallback_reason_template: "Gemini CLI 호출 실패: {{ERROR}} - ClaudeCode로 폴백"
+      fallback_reason_template: "Gemini CLI call failed: {{ERROR}} - Fallback to ClaudeCode"
 
     "03-planning":
       primary: "gemini"
       fallback: "claudecode"
-      fallback_reason_template: "Gemini CLI 호출 실패: {{ERROR}} - ClaudeCode로 폴백"
+      fallback_reason_template: "Gemini CLI call failed: {{ERROR}} - Fallback to ClaudeCode"
 
     "04-ui-ux":
       primary: "gemini"
       fallback: "claudecode"
-      fallback_reason_template: "Gemini CLI 호출 실패: {{ERROR}} - ClaudeCode로 폴백"
+      fallback_reason_template: "Gemini CLI call failed: {{ERROR}} - Fallback to ClaudeCode"
 
     "07-refactoring":
       primary: "codex"
       fallback: "claudecode"
-      fallback_reason_template: "Codex CLI 호출 실패: {{ERROR}} - ClaudeCode로 폴백"
+      fallback_reason_template: "Codex CLI call failed: {{ERROR}} - Fallback to ClaudeCode"
 
     "09-testing":
       primary: "codex"
       fallback: "claudecode"
-      fallback_reason_template: "Codex CLI 호출 실패: {{ERROR}} - ClaudeCode로 폴백"
+      fallback_reason_template: "Codex CLI call failed: {{ERROR}} - Fallback to ClaudeCode"
 
-  # 폴백 동작 설정
+  # Fallback behavior settings
   behavior:
-    # 자동 폴백 활성화
+    # Auto fallback enabled
     auto_fallback: true
 
-    # 재시도 설정
+    # Retry settings
     retry:
       enabled: true
       max_attempts: 2
       delay_ms: 3000
 
-    # 폴백 전 경고 표시
+    # Show warning before fallback
     show_warning_before_fallback: true
     warning_message: |
-      ⚠️ 외부 AI {{PRIMARY_MODEL}} 호출 실패
-      - 오류: {{ERROR_MESSAGE}}
-      - 폴백: {{FALLBACK_MODEL}}로 계속 진행
+      External AI {{PRIMARY_MODEL}} call failed
+      - Error: {{ERROR_MESSAGE}}
+      - Fallback: Continuing with {{FALLBACK_MODEL}}
 
-  # 폴백 기록 (HANDOFF.md에 포함)
+  # Fallback logging (included in HANDOFF.md)
   logging:
     enabled: true
     log_file: "state/ai_fallback.log"
     include_in_handoff: true
 
-    # 기록 형식
+    # Recording format
     format:
       timestamp: true
       stage: true
@@ -209,44 +209,44 @@ ai_model_fallbacks:
       error_reason: true
       result: true
 
-    # HANDOFF.md 폴백 섹션 템플릿
+    # HANDOFF.md fallback section template
     handoff_template: |
-      ### 폴백 기록
+      ### Fallback Log
 
-      | 시도한 AI | 실패 시간 | 오류 | 폴백 AI | 결과 |
-      |----------|----------|------|---------|------|
+      | Attempted AI | Failure Time | Error | Fallback AI | Result |
+      |--------------|--------------|-------|-------------|--------|
       {{#each FALLBACK_EVENTS}}
       | {{this.attempted_model}} | {{this.failure_time}} | {{this.error}} | {{this.fallback_model}} | {{this.result}} |
       {{/each}}
 
-# 사전 점검 스크립트 통합
+# Pre-run check script integration
 pre_run_check:
   enabled: true
   script: "scripts/pre-run-check.sh"
 
-  # 점검 항목
+  # Check items
   checks:
     - name: "gemini_cli"
       command: "which gemini"
       on_failure: "warn"
-      message: "Gemini CLI 미설치 - 01, 03, 04 스테이지에서 ClaudeCode 폴백 예상"
+      message: "Gemini CLI not installed - ClaudeCode fallback expected for stages 01, 03, 04"
 
     - name: "codex_cli"
       command: "which codex"
       on_failure: "warn"
-      message: "Codex CLI 미설치 - 07, 09 스테이지에서 ClaudeCode 폴백 예상"
+      message: "Codex CLI not installed - ClaudeCode fallback expected for stages 07, 09"
 
     - name: "tmux"
       command: "which tmux"
       on_failure: "error"
-      message: "tmux 미설치 - 외부 AI 호출 불가"
+      message: "tmux not installed - External AI calls not possible"
 
     - name: "gemini_wrapper"
       command: "test -x scripts/gemini-wrapper.sh"
       on_failure: "warn"
-      message: "gemini-wrapper.sh 실행 불가"
+      message: "gemini-wrapper.sh not executable"
 
     - name: "codex_wrapper"
       command: "test -x scripts/codex-wrapper.sh"
       on_failure: "warn"
-      message: "codex-wrapper.sh 실행 불가"
+      message: "codex-wrapper.sh not executable"

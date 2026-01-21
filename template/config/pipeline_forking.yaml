@@ -3,39 +3,39 @@
 
 pipeline_forking:
   enabled: true
-  description: "파이프라인 분기로 다양한 접근법 동시 탐색"
+  description: "Explore diverse approaches simultaneously through pipeline forking"
 
-  # 분기점 정의
+  # Fork point definitions
   fork_points:
     planning_stage:
       stage: "03-planning"
       condition: "multiple_architectures_proposed"
-      description: "여러 아키텍처 제안 시 분기하여 각각 탐색"
+      description: "Fork to explore each architecture when multiple are proposed"
       auto_fork: false
       max_forks: 3
 
     implementation_stage:
       stage: "06-implementation"
       condition: "alternative_approaches"
-      description: "구현 접근법이 여러 개일 때 병렬 탐색"
+      description: "Parallel exploration when multiple implementation approaches exist"
       auto_fork: false
       max_forks: 2
 
     refactoring_stage:
       stage: "07-refactoring"
       condition: "optimization_tradeoffs"
-      description: "최적화 방향이 여러 개일 때 비교"
+      description: "Compare when multiple optimization directions exist"
       auto_fork: false
       max_forks: 2
 
-  # 자동 분기 트리거
+  # Auto fork triggers
   auto_fork_triggers:
-    enabled: false  # 기본적으로 수동 분기
+    enabled: false  # Manual forking by default
 
     conditions:
       confidence_threshold:
         enabled: true
-        threshold: 0.6  # 확신도가 60% 미만일 때
+        threshold: 0.6  # When confidence is below 60%
         action: "suggest_fork"
 
       multiple_solutions:
@@ -51,7 +51,7 @@ pipeline_forking:
           - "breaking_change"
         action: "require_fork"
 
-  # 분기 관리
+  # Fork management
   fork_management:
     max_active_forks: 3
     naming_convention: "fork_{{stage}}_{{variant}}_{{timestamp}}"
@@ -63,22 +63,22 @@ pipeline_forking:
     isolation:
       separate_state: true
       separate_outputs: true
-      shared_inputs: true  # 입력은 공유
+      shared_inputs: true  # Inputs are shared
 
-    # 분기 상태 추적
+    # Fork state tracking
     tracking:
       progress: true
       metrics: true
       comparison_points: true
 
-  # 병합 전략
+  # Merge strategy
   merge_strategy:
     primary: "best_performer"
     fallback: "manual_selection"
 
     strategies:
       best_performer:
-        description: "메트릭 기반 최고 성능 분기 선택"
+        description: "Select best performing fork based on metrics"
         criteria:
           - metric: "code_quality"
             weight: 0.3
@@ -90,15 +90,15 @@ pipeline_forking:
             weight: 0.2
 
       manual_selection:
-        description: "사용자가 직접 분기 선택"
+        description: "User selects fork directly"
         require_justification: true
 
       cherry_pick:
-        description: "여러 분기에서 최적 부분만 선택"
+        description: "Select optimal parts from multiple forks"
         supported: true
         complexity: "high"
 
-  # 비교 설정
+  # Comparison settings
   comparison:
     enabled: true
 
@@ -129,46 +129,46 @@ pipeline_forking:
         - "radar_chart"
         - "bar_comparison"
 
-# 분기 생성 프로세스
+# Fork creation process
 creation_process:
   steps:
     - name: "validate_fork_point"
-      description: "분기점 유효성 검증"
+      description: "Validate fork point"
 
     - name: "create_fork_directory"
-      description: "분기 디렉토리 생성"
+      description: "Create fork directory"
 
     - name: "copy_current_state"
-      description: "현재 상태 복사"
+      description: "Copy current state"
 
     - name: "initialize_fork_config"
-      description: "분기 설정 초기화"
+      description: "Initialize fork configuration"
 
     - name: "create_fork_handoff"
-      description: "분기용 HANDOFF 생성"
+      description: "Create fork HANDOFF"
 
     - name: "register_fork"
-      description: "분기 등록"
+      description: "Register fork"
 
   fork_handoff_template: |
     # Fork HANDOFF - {{fork_name}}
 
-    ## 분기 정보
-    - **원본 스테이지**: {{source_stage}}
-    - **분기 이유**: {{fork_reason}}
-    - **분기 시점**: {{timestamp}}
-    - **탐색 방향**: {{exploration_direction}}
+    ## Fork Information
+    - **Source Stage**: {{source_stage}}
+    - **Fork Reason**: {{fork_reason}}
+    - **Fork Time**: {{timestamp}}
+    - **Exploration Direction**: {{exploration_direction}}
 
-    ## 분기 목표
+    ## Fork Objectives
     {{objectives}}
 
-    ## 평가 기준
+    ## Evaluation Criteria
     {{evaluation_criteria}}
 
-    ## 병합 조건
+    ## Merge Conditions
     {{merge_conditions}}
 
-# 분기 실행
+# Fork execution
 execution:
   parallel_execution:
     enabled: true
@@ -182,9 +182,9 @@ execution:
       - "stage_complete"
       - "milestone_reached"
 
-    timeout_minutes: 120  # 분기 최대 실행 시간
+    timeout_minutes: 120  # Maximum fork execution time
 
-# 정리 정책
+# Cleanup policy
 cleanup:
   auto_cleanup: true
 
@@ -198,25 +198,25 @@ cleanup:
     keep_abandoned: false
     retention_days: 7
 
-# 알림 설정
+# Notification settings
 notifications:
   on_fork_create:
     enabled: true
-    message: "파이프라인 분기 생성됨: {{fork_name}}"
+    message: "Pipeline fork created: {{fork_name}}"
 
   on_fork_complete:
     enabled: true
-    message: "분기 완료: {{fork_name}} - {{status}}"
+    message: "Fork complete: {{fork_name}} - {{status}}"
 
   on_comparison_ready:
     enabled: true
-    message: "분기 비교 준비 완료. {{fork_count}}개 분기 비교 가능"
+    message: "Fork comparison ready. {{fork_count}} forks available for comparison"
 
   on_merge:
     enabled: true
-    message: "분기 병합 완료: {{selected_fork}} 선택됨"
+    message: "Fork merge complete: {{selected_fork}} selected"
 
-# 통합 설정
+# Integration settings
 integration:
   git:
     create_branches: true

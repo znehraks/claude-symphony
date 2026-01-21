@@ -1,49 +1,49 @@
-# AI 협업 프롬프트 - Testing & E2E
+# AI Collaboration Prompt - Testing & E2E
 
-## 협업 모드: Test Generation Chain
+## Collaboration Mode: Test Generation Chain
 
-이 스테이지에서는 **테스트 생성 체인**을 사용하여 포괄적인 테스트를 작성합니다.
+This stage uses **test generation chain** to write comprehensive tests.
 
-### 참여 모델
-- **Codex**: 테스트 코드 생성
-- **ClaudeCode**: E2E 테스트, Playwright 통합
+### Participating Models
+- **Codex**: Test code generation
+- **ClaudeCode**: E2E tests, Playwright integration
 
-### 협업 프롬프트
+### Collaboration Prompt
 
 ```
-# 테스트 생성 체인
+# Test generation chain
 /collaborate --mode sequential --chain "codex:unit_tests -> codex:integration_tests -> claude:e2e_tests"
 ```
 
-### 테스트 계층
+### Test Layers
 
-| 계층 | 담당 AI | 도구 |
-|------|---------|------|
-| 단위 테스트 | Codex | Vitest/Jest |
-| 통합 테스트 | Codex | Testing Library |
-| E2E 테스트 | Claude | Playwright |
+| Layer | Responsible AI | Tools |
+|-------|---------------|-------|
+| Unit Tests | Codex | Vitest/Jest |
+| Integration Tests | Codex | Testing Library |
+| E2E Tests | Claude | Playwright |
 
-### Codex 활용
+### Codex Usage
 
 ```bash
-# 단위 테스트 생성
-/codex "다음 함수에 대한 단위 테스트 작성:
-[함수 코드]
-테스트 프레임워크: Vitest
-커버리지 목표: 80%"
+# Unit test generation
+/codex "Write unit tests for the following function:
+[function code]
+Test framework: Vitest
+Coverage target: 80%"
 
-# E2E 테스트 생성
-/codex "다음 사용자 플로우에 대한 Playwright 테스트:
-1. 로그인
-2. 핵심 기능
-3. 에러 시나리오"
+# E2E test generation
+/codex "Write Playwright tests for the following user flows:
+1. Login
+2. Core features
+3. Error scenarios"
 ```
 
-### MCP 서버: Playwright
+### MCP Server: Playwright
 
 ```javascript
-// E2E 테스트 예시
-test('로그인 플로우', async ({ page }) => {
+// E2E test example
+test('Login flow', async ({ page }) => {
   await page.goto('/login');
   await page.fill('[name="email"]', 'test@example.com');
   await page.fill('[name="password"]', 'password');
@@ -52,24 +52,24 @@ test('로그인 플로우', async ({ page }) => {
 });
 ```
 
-### 출력 형식
+### Output Format
 
 ```markdown
-## AI 협업 결과
+## AI Collaboration Results
 
-### Codex 단위 테스트
-- [파일]: [테스트 케이스 수]
+### Codex Unit Tests
+- [File]: [Test case count]
 ...
 
-### Codex 통합 테스트
-- [시나리오]: [커버리지]
+### Codex Integration Tests
+- [Scenario]: [Coverage]
 ...
 
-### Claude E2E 테스트
-- [플로우]: [테스트 케이스]
+### Claude E2E Tests
+- [Flow]: [Test cases]
 ...
 
-### 커버리지 요약
+### Coverage Summary
 - Statements: X%
 - Branches: X%
 - Functions: X%

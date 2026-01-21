@@ -3,7 +3,7 @@
 stage:
   id: "06-implementation"
   name: "Implementation"
-  description: "핵심 기능 구현"
+  description: "Core feature implementation"
 
 models:
   primary: "claudecode"
@@ -21,7 +21,7 @@ inputs:
     - name: "../05-task-management/outputs/tasks.md"
     - name: "../03-planning/outputs/architecture.md"
     - name: "../03-planning/outputs/implementation.yaml"
-      description: "구현 규칙 (Issue #10)"
+      description: "Implementation rules (Issue #10)"
     - name: "../05-task-management/HANDOFF.md"
   optional:
     - name: "../04-ui-ux/outputs/design_system.md"
@@ -30,9 +30,9 @@ inputs:
 outputs:
   required:
     - name: "source_code/"
-      description: "구현된 소스 코드"
+      description: "Implemented source code"
     - name: "implementation_log.md"
-      description: "구현 로그"
+      description: "Implementation log"
     - name: "HANDOFF.md"
 
 prompts:
@@ -48,15 +48,15 @@ prompts:
 
 completion:
   checklist:
-    - "프로젝트 스캐폴딩 완료"
-    - "공통 컴포넌트 구현"
-    - "핵심 기능 구현"
-    - "API 엔드포인트 구현"
-    - "체크포인트 생성"
+    - "Project scaffolding complete"
+    - "Common components implemented"
+    - "Core features implemented"
+    - "API endpoints implemented"
+    - "Checkpoint created"
 
 transition:
   next_stage: "07-refactoring"
   prerequisites:
     - "05-task-management"
   handoff_required: true
-  checkpoint_required: true  # 필수!
+  checkpoint_required: true  # Required!

@@ -3,7 +3,7 @@
 stage:
   id: "08-qa"
   name: "QA"
-  description: "품질 보증 및 코드 리뷰"
+  description: "Quality assurance and code review"
 
 models:
   primary: "claudecode"
@@ -25,9 +25,9 @@ inputs:
 outputs:
   required:
     - name: "qa_report.md"
-      description: "QA 보고서"
+      description: "QA report"
     - name: "bug_fixes.md"
-      description: "버그 수정 내역"
+      description: "Bug fix history"
     - name: "HANDOFF.md"
 
 prompts:
@@ -43,10 +43,10 @@ prompts:
 
 completion:
   checklist:
-    - "코드 리뷰 완료"
-    - "보안 검사 통과"
-    - "식별된 버그 수정"
-    - "QA 보고서 작성"
+    - "Code review complete"
+    - "Security inspection passed"
+    - "Identified bugs fixed"
+    - "QA report written"
 
 transition:
   next_stage: "09-testing"

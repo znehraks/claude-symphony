@@ -1,29 +1,29 @@
 # Output Validator - Validation Process
 
-## 검증 프로세스
+## Validation Process
 
 ```mermaid
 graph TD
-    A[검증 시작] --> B[스테이지 규칙 로드]
-    B --> C[필수 파일 확인]
-    C --> D{모든 파일 존재?}
-    D -->|No| E[누락 파일 리포트]
-    D -->|Yes| F[내용 검증]
-    F --> G{내용 요구사항 충족?}
-    G -->|No| H[내용 오류 리포트]
-    G -->|Yes| I[명령어 검증]
-    I --> J{모든 명령 통과?}
-    J -->|No| K[명령 실패 리포트]
-    J -->|Yes| L[품질 점수 계산]
-    L --> M[최종 리포트 생성]
+    A[Start validation] --> B[Load stage rules]
+    B --> C[Check required files]
+    C --> D{All files exist?}
+    D -->|No| E[Report missing files]
+    D -->|Yes| F[Content validation]
+    F --> G{Content requirements met?}
+    G -->|No| H[Report content errors]
+    G -->|Yes| I[Command validation]
+    I --> J{All commands pass?}
+    J -->|No| K[Report command failures]
+    J -->|Yes| L[Calculate quality score]
+    L --> M[Generate final report]
 ```
 
-## 단계별 검증
+## Step-by-Step Validation
 
-### 1. 필수 파일 확인
+### 1. Required File Check
 
 ```yaml
-# 검증 규칙 예시
+# Validation rule example
 required_outputs:
   ideas.md:
     exists: true
@@ -34,39 +34,39 @@ required_outputs:
     is_directory: true
 ```
 
-**검증 결과**:
+**Validation Results**:
 ```markdown
-## 파일 존재 확인
+## File Existence Check
 ✅ ideas.md (1,234 bytes)
 ✅ source_code/ (directory)
-❌ requirements_analysis.md (누락)
+❌ requirements_analysis.md (missing)
 ```
 
-### 2. 내용 검증
+### 2. Content Validation
 
 ```yaml
 content_checks:
   min_ideas: 5
   sections:
-    - "기능 요구사항"
-    - "비기능 요구사항"
+    - "Functional Requirements"
+    - "Non-functional Requirements"
   has_priorities: true
 ```
 
-**검증 방법**:
-- 마크다운 파싱으로 섹션 확인
-- 패턴 매칭으로 필수 요소 확인
-- 카운팅으로 최소 요건 확인
+**Validation Method**:
+- Markdown parsing for section check
+- Pattern matching for required elements
+- Counting for minimum requirements
 
-**검증 결과**:
+**Validation Results**:
 ```markdown
-## 내용 검증
-✅ ideas.md: 8개 아이디어 (최소 5개)
-⚠️ requirements_analysis.md: "비기능 요구사항" 섹션 누락
-✅ project_plan.md: 모든 필수 섹션 포함
+## Content Validation
+✅ ideas.md: 8 ideas (minimum 5)
+⚠️ requirements_analysis.md: "Non-functional Requirements" section missing
+✅ project_plan.md: All required sections included
 ```
 
-### 3. 명령어 검증
+### 3. Command Validation
 
 ```yaml
 validation_commands:
@@ -84,18 +84,18 @@ validation_commands:
     required: true
 ```
 
-**실행 및 결과**:
+**Execution and Results**:
 ```markdown
-## 명령어 검증
-✅ lint: 통과 (경고 2개)
-✅ typecheck: 통과
-❌ test: 실패 (3개 테스트 실패)
+## Command Validation
+✅ lint: Passed (2 warnings)
+✅ typecheck: Passed
+❌ test: Failed (3 tests failed)
    - tests/auth.test.ts: loginUser should return token
    - tests/auth.test.ts: logout should clear session
    - tests/user.test.ts: createUser validation
 ```
 
-### 4. 품질 점수 계산
+### 4. Quality Score Calculation
 
 ```yaml
 quality_metrics:
@@ -110,57 +110,57 @@ quality_metrics:
     target: 0.95
 ```
 
-**계산 결과**:
+**Calculation Results**:
 ```markdown
-## 품질 점수
-| 메트릭 | 현재 | 목표 | 점수 |
-|--------|------|------|------|
+## Quality Score
+| Metric | Current | Target | Score |
+|--------|---------|--------|-------|
 | Lint | 0.95 | 0.90 | ✅ 1.0 |
 | Coverage | 0.75 | 0.80 | ⚠️ 0.94 |
 | Types | 0.98 | 0.95 | ✅ 1.0 |
 
-**종합 점수**: 0.97 (가중 평균)
-**상태**: 통과 (최소 0.7)
+**Overall Score**: 0.97 (weighted average)
+**Status**: Pass (minimum 0.7)
 ```
 
-## 최종 리포트 형식
+## Final Report Format
 
 ```markdown
-# 산출물 검증 리포트
+# Output Validation Report
 
-## 스테이지: 06-implementation
-## 검증 시간: 2024-01-20 14:30:00
+## Stage: 06-implementation
+## Validation Time: 2024-01-20 14:30:00
 
-## 요약
-- **상태**: ⚠️ 부분 통과
-- **종합 점수**: 0.85
-- **통과 항목**: 8/10
-- **실패 항목**: 2
+## Summary
+- **Status**: ⚠️ Partial Pass
+- **Overall Score**: 0.85
+- **Passed Items**: 8/10
+- **Failed Items**: 2
 
-## 상세 결과
+## Detailed Results
 
-### ✅ 통과 항목
-1. 필수 파일 존재
-2. Lint 검사
-3. Type 검사
+### ✅ Passed Items
+1. Required files exist
+2. Lint check
+3. Type check
 ...
 
-### ❌ 실패 항목
-1. 테스트 실패 (3개)
-2. 커버리지 미달 (75% < 80%)
+### ❌ Failed Items
+1. Test failures (3)
+2. Coverage below target (75% < 80%)
 
-## 수정 필요 사항
-1. [ ] tests/auth.test.ts 수정
-2. [ ] 테스트 커버리지 5% 향상
+## Required Fixes
+1. [ ] Fix tests/auth.test.ts
+2. [ ] Increase test coverage by 5%
 
-## 권장 조치
-- 실패한 테스트 케이스 확인 및 수정
-- 누락된 테스트 추가
+## Recommended Actions
+- Review and fix failed test cases
+- Add missing tests
 ```
 
-## 실패 시 동작
+## Failure Behavior
 
-### 스테이지 전환 차단
+### Stage Transition Block
 ```yaml
 on_failure:
   action: "block_transition"
@@ -168,15 +168,15 @@ on_failure:
   require_justification: true
 ```
 
-### 오버라이드 프롬프트
+### Override Prompt
 ```markdown
-⚠️ 검증 실패로 스테이지 전환이 차단되었습니다.
+⚠️ Stage transition blocked due to validation failure.
 
-**실패 사항**:
-- 테스트 실패: 3개
-- 커버리지 미달: 75%
+**Failures**:
+- Test failures: 3
+- Coverage below target: 75%
 
-강제로 진행하시겠습니까?
-(이유를 입력하세요, 또는 'cancel'로 취소)
+Force proceed anyway?
+(Enter reason, or 'cancel' to abort)
 > _
 ```

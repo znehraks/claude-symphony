@@ -1,71 +1,71 @@
-# AI 협업 프롬프트 - Refactoring
+# AI Collaboration Prompt - Refactoring
 
-## 협업 모드: Sequential Review Chain
+## Collaboration Mode: Sequential Review Chain
 
-이 스테이지에서는 **순차적 리뷰 체인**을 사용하여 리팩토링 품질을 보장합니다.
+This stage uses **sequential review chain** to ensure refactoring quality.
 
-### 참여 모델
-- **Codex**: 코드 분석, 최적화
-- **ClaudeCode**: 복잡한 리팩토링, 검증
+### Participating Models
+- **Codex**: Code analysis, optimization
+- **ClaudeCode**: Complex refactoring, verification
 
-### 협업 프롬프트
+### Collaboration Prompt
 
 ```
-# 리뷰 체인: Codex 분석 → Claude 검증
+# Review chain: Codex analyze → Claude review
 /collaborate --mode sequential --chain "codex:analyze -> claude:review -> codex:refactor"
 ```
 
-### AI 벤치마킹
+### AI Benchmarking
 
-성능 최적화 비교:
+Performance optimization comparison:
 ```
 /benchmark --task "performance_optimization" --models "codex,claude"
 ```
 
-### 작업 흐름
+### Workflow
 
-1. **분석**: 정적 분석, 복잡도 측정
-2. **계획**: 리팩토링 우선순위 결정
-3. **실행**: 작은 단위로 리팩토링
-4. **검증**: 테스트 통과 확인
+1. **Analysis**: Static analysis, complexity measurement
+2. **Planning**: Determine refactoring priorities
+3. **Execution**: Refactor in small units
+4. **Verification**: Confirm tests pass
 
-### 체크포인트 필수
+### Checkpoint Required
 
 ```bash
-# 리팩토링 전 체크포인트
-/checkpoint --reason "리팩토링 시작 전 상태"
+# Checkpoint before refactoring
+/checkpoint --reason "State before refactoring"
 
-# 주요 리팩토링 후
-/checkpoint --reason "함수 X 리팩토링 완료"
+# After major refactoring
+/checkpoint --reason "Function X refactoring complete"
 ```
 
-### 롤백 준비
+### Rollback Preparation
 
 ```bash
-# 롤백 가능 상태 확인
+# Check rollback-ready state
 /restore --list
 
-# 필요시 부분 롤백
+# Partial rollback if needed
 /restore checkpoint_id --partial --files "src/utils/*"
 ```
 
-### 출력 형식
+### Output Format
 
 ```markdown
-## AI 협업 결과
+## AI Collaboration Results
 
-### Codex 분석
-- 복잡도 높은 함수 목록
-- 중복 코드 위치
-- 성능 병목
+### Codex Analysis
+- High complexity function list
+- Duplicate code locations
+- Performance bottlenecks
 
-### Claude 검증
-- 리팩토링 영향 범위
-- 테스트 필요 영역
-- 위험 요소
+### Claude Verification
+- Refactoring impact scope
+- Areas needing tests
+- Risk factors
 
-### 리팩토링 계획
-1. [우선순위 1 항목]
-2. [우선순위 2 항목]
+### Refactoring Plan
+1. [Priority 1 item]
+2. [Priority 2 item]
 ...
 ```

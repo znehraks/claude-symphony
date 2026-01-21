@@ -3,7 +3,7 @@
 stage:
   id: "09-testing"
   name: "Testing & E2E"
-  description: "테스트 코드 작성 및 E2E 테스트"
+  description: "Test code writing and E2E testing"
 
 models:
   primary: "codex"
@@ -22,18 +22,18 @@ mcp_servers:
 inputs:
   required:
     - name: "source_code/"
-      description: "테스트할 소스 코드"
+      description: "Source code to test"
     - name: "../08-qa/outputs/qa_report.md"
     - name: "../08-qa/HANDOFF.md"
 
 outputs:
   required:
     - name: "tests/"
-      description: "테스트 코드"
+      description: "Test code"
     - name: "test_report.md"
-      description: "테스트 결과 보고서"
+      description: "Test results report"
     - name: "coverage_report.md"
-      description: "커버리지 보고서"
+      description: "Coverage report"
     - name: "HANDOFF.md"
 
 prompts:
@@ -49,11 +49,11 @@ prompts:
 
 completion:
   checklist:
-    - "단위 테스트 작성 (커버리지 80%+)"
-    - "통합 테스트 작성"
-    - "E2E 테스트 작성"
-    - "모든 테스트 통과"
-    - "커버리지 보고서 생성"
+    - "Unit tests written (coverage 80%+)"
+    - "Integration tests written"
+    - "E2E tests written"
+    - "All tests passing"
+    - "Coverage report generated"
   validation:
     min_coverage: 80
 

@@ -1,52 +1,52 @@
 # claude-symphony Workflow Configuration
-# Claude Code settings.json과 별도로 관리되는 워크플로우 설정
+# Workflow settings managed separately from Claude Code settings.json
 
-# 스킬 설정
+# Skills settings
 skills:
   stage-transition:
-    description: "스테이지 전환 자동화"
+    description: "Stage transition automation"
     directory: ".claude/skills/stage-transition"
     triggers:
-      - "완료"
-      - "끝났어"
+      - "completed"
+      - "finished"
       - "done"
       - "finished"
       - "/handoff"
       - "/next"
 
   context-compression:
-    description: "컨텍스트 압축 및 관리"
+    description: "Context compression and management"
     directory: ".claude/skills/context-compression"
     triggers:
       - "token_warning"
       - "token_limit"
       - "/context --compress"
 
-# 훅 설정 (스크립트에서 직접 호출)
+# Hooks settings (called directly from scripts)
 hooks:
   pre-stage: ".claude/hooks/pre-stage.sh"
   post-stage: ".claude/hooks/post-stage.sh"
 
-# 컨텍스트 관리 (퍼센트 기반, 남은 컨텍스트 기준)
+# Context management (percentage-based, remaining context basis)
 context:
-  # 퍼센트 기반 임계값 (권장)
+  # Percentage-based thresholds (recommended)
   thresholds:
-    warning: 60      # 60% 남음 - 경고 배너 표시
-    action: 50       # 50% 남음 - 자동 저장, 압축 권장
-    critical: 40     # 40% 남음 - /clear 권고
+    warning: 60      # 60% remaining - display warning banner
+    action: 50       # 50% remaining - auto-save, recommend compression
+    critical: 40     # 40% remaining - recommend /clear
 
-  # 태스크 기반 자동 저장
-  task_save_frequency: 5  # 5개 태스크마다 저장
+  # Task-based auto-save
+  task_save_frequency: 5  # Save every 5 tasks
 
   auto_save: true
   state_dir: "state/context"
   state_file_pattern: "state_{timestamp}_{stage}.md"
 
-  # 레거시 절대값 (하위 호환용, 권장하지 않음)
+  # Legacy absolute values (for backward compatibility, not recommended)
   # warning_threshold: 50000
   # limit_threshold: 80000
 
-# 체크포인트 설정
+# Checkpoint settings
 checkpoints:
   directory: "state/checkpoints"
   required_stages:

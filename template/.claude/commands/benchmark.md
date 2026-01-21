@@ -1,44 +1,44 @@
 # /benchmark - AI Model Benchmarking Command
 
-AI 모델 성능을 비교하고 최적 모델을 선택합니다.
+Compare AI model performance and select the optimal model.
 
-## 사용법
+## Usage
 
 ```bash
 /benchmark [options]
 ```
 
-## 옵션
+## Options
 
-| 옵션 | 설명 | 기본값 |
-|------|------|--------|
-| `--task` | 벤치마크할 태스크 유형 | code_generation |
-| `--models` | 비교할 모델 (쉼표 구분) | claude,codex |
-| `--samples` | 샘플 태스크 수 | 3 |
-| `--metrics` | 측정 메트릭 | correctness,performance |
-| `--verbose` | 상세 출력 | false |
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--task` | Task type to benchmark | code_generation |
+| `--models` | Models to compare (comma-separated) | claude,codex |
+| `--samples` | Number of sample tasks | 3 |
+| `--metrics` | Metrics to measure | correctness,performance |
+| `--verbose` | Verbose output | false |
 
-## 벤치마크 태스크 유형
+## Benchmark Task Types
 
 ### code_generation
 ```bash
 /benchmark --task code_generation --models "claude,codex"
 ```
-- 메트릭: correctness, performance, style_compliance, readability
+- Metrics: correctness, performance, style_compliance, readability
 
 ### refactoring
 ```bash
 /benchmark --task refactoring --models "codex,claude"
 ```
-- 메트릭: complexity_reduction, test_coverage, maintainability
+- Metrics: complexity_reduction, test_coverage, maintainability
 
 ### test_generation
 ```bash
 /benchmark --task test_generation --models "codex,claude"
 ```
-- 메트릭: coverage, edge_cases, quality
+- Metrics: coverage, edge_cases, quality
 
-## 출력 형식
+## Output Format
 
 ```markdown
 # AI Benchmark Results
@@ -61,43 +61,43 @@ AI 모델 성능을 비교하고 최적 모델을 선택합니다.
 | Readability | 0.2 | 0.85 | 0.75 |
 
 ### Recommendation
-현재 태스크에 **Claude** 사용 권장
+**Claude** recommended for this task
 ```
 
-## 예시
+## Examples
 
 ```bash
-# 코드 생성 벤치마크
+# Code generation benchmark
 /benchmark --task code_generation
 
-# 상세 결과 출력
+# Detailed results output
 /benchmark --task refactoring --verbose
 
-# 특정 모델만 비교
+# Compare specific models only
 /benchmark --task test_generation --models "codex"
 ```
 
-## 결과 저장
+## Result Storage
 
-- 결과: `state/ai_benchmarks/`
-- 리포트: `state/ai_benchmarks/reports/`
+- Results: `state/ai_benchmarks/`
+- Reports: `state/ai_benchmarks/reports/`
 
-## 히스토리 조회
+## View History
 
 ```bash
-# 최근 벤치마크 결과 확인
+# Check latest benchmark results
 cat state/ai_benchmarks/latest.json
 
-# 주간 트렌드 확인
+# Check weekly trends
 scripts/ai-benchmark.sh --history weekly
 ```
 
-## 설정
+## Configuration
 
-`config/ai_benchmarking.yaml` 참조
+See `config/ai_benchmarking.yaml`
 
-## 관련 커맨드
+## Related Commands
 
-- `/collaborate` - AI 협업
-- `/gemini` - Gemini 직접 호출
-- `/codex` - Codex 직접 호출
+- `/collaborate` - AI collaboration
+- `/gemini` - Direct Gemini call
+- `/codex` - Direct Codex call

@@ -3,7 +3,7 @@
 stage:
   id: "05-task-management"
   name: "Task Management"
-  description: "태스크 분해 및 스프린트 계획"
+  description: "Task breakdown and sprint planning"
 
 models:
   primary: "claudecode"
@@ -28,32 +28,32 @@ inputs:
 outputs:
   required:
     - name: "tasks.md"
-      description: "태스크 목록"
+      description: "Task list"
     - name: "sprint_plan.md"
-      description: "스프린트 계획"
+      description: "Sprint plan"
     - name: "milestones.md"
-      description: "마일스톤 정의"
+      description: "Milestone definitions"
     - name: "HANDOFF.md"
 
-# Notion 연동 설정 (Issue #4, #5, #6, #8, #16 해결)
+# Notion integration settings (Issue #4, #5, #6, #8, #16 resolution)
 notion_integration:
   enabled: true
   schema: "templates/task_schema.yaml"
   guide: "templates/notion_integration.md"
 
-  # 태스크 생성 규칙
+  # Task creation rules
   task_creation:
-    mode: "sequential"     # 순차 생성 필수!
-    batch_size: 1          # 한 번에 하나씩
-    delay_ms: 100          # 생성 간 딜레이
+    mode: "sequential"     # Sequential creation required!
+    batch_size: 1          # One at a time
+    delay_ms: 100          # Delay between creations
 
-  # 필수 필드
+  # Required fields
   required_fields:
     - "Task Name"
-    - "Status"             # Issue #16: 필수!
-    - "Order"              # Issue #5: 정렬용!
+    - "Status"             # Issue #16: Required!
+    - "Order"              # Issue #5: For sorting!
 
-  # 기본값
+  # Defaults
   defaults:
     status: "To Do"
     priority: "Medium"
@@ -68,10 +68,10 @@ prompts:
 
 completion:
   checklist:
-    - "전체 태스크 목록 작성"
-    - "의존성 그래프 생성"
-    - "스프린트 3개 이상 계획"
-    - "마일스톤 산출물 정의"
+    - "Complete task list creation"
+    - "Generate dependency graph"
+    - "Plan 3+ sprints"
+    - "Define milestone deliverables"
 
 transition:
   next_stage: "06-implementation"

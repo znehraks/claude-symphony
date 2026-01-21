@@ -1,145 +1,145 @@
 # Stage Transition Prompt
 
-스테이지 전환 시 사용되는 프롬프트 템플릿입니다.
+Prompt templates used during stage transitions.
 
-## 완료 감지 프롬프트
+## Completion Detection Prompt
 
-사용자가 완료를 표현했을 때:
+When user expresses completion:
 
 ```
-스테이지 완료를 감지했습니다.
+Stage completion detected.
 
-현재 스테이지: {{CURRENT_STAGE}}
-상태: {{STATUS}}
+Current stage: {{CURRENT_STAGE}}
+Status: {{STATUS}}
 
-[완료 조건 검증]
+[Completion Criteria Validation]
 {{VALIDATION_RESULTS}}
 
 {{#if ALL_PASSED}}
-✅ 모든 조건이 충족되었습니다.
+✅ All criteria are met.
 
-다음 단계:
-1. HANDOFF.md를 생성하시겠습니까? [Y/n]
-2. 또는 /next로 바로 전환
+Next steps:
+1. Would you like to generate HANDOFF.md? [Y/n]
+2. Or transition directly with /next
 
 {{else}}
-⚠️ 일부 조건이 충족되지 않았습니다.
+⚠️ Some criteria are not met.
 
-필요 작업:
+Required actions:
 {{REQUIRED_ACTIONS}}
 
-강제 전환: /next --force (비권장)
+Force transition: /next --force (not recommended)
 {{/if}}
 ```
 
-## 전환 안내 프롬프트
+## Transition Guidance Prompt
 
-다음 스테이지로 전환할 때:
+When transitioning to next stage:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🔄 스테이지 전환 완료
+🔄 Stage Transition Complete
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 {{PREV_STAGE}} ✅ → {{NEXT_STAGE}} 🔄
 
-[{{NEXT_STAGE}} 스테이지 정보]
-• AI 모델: {{AI_MODEL}}
-• 실행 모드: {{MODE}}
-• 예상 시간: {{ESTIMATED_TIME}}
+[{{NEXT_STAGE}} Stage Information]
+• AI Model: {{AI_MODEL}}
+• Execution Mode: {{MODE}}
+• Estimated Time: {{ESTIMATED_TIME}}
 
-[입력 파일]
+[Input Files]
 {{INPUT_FILES}}
 
-[주요 작업]
+[Main Tasks]
 {{MAIN_TASKS}}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-시작 명령어: /{{SHORTCUT}} 또는 /run-stage {{STAGE_NUM}}
+Start command: /{{SHORTCUT}} or /run-stage {{STAGE_NUM}}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-## 스테이지별 전환 메시지
+## Stage-Specific Transition Messages
 
 ### 01 → 02 (brainstorm → research)
 
 ```
-🧠 브레인스토밍 완료!
+🧠 Brainstorming complete!
 
-아이디어가 정리되었습니다. 이제 리서치 단계입니다.
+Ideas have been organized. Now entering research phase.
 
-다음 작업:
-• ideas.md 기반 기술 조사
-• 경쟁 제품 분석
-• MCP 도구로 최신 정보 수집
+Next tasks:
+• Technical research based on ideas.md
+• Competitor analysis
+• Gather latest info with MCP tools
 
-시작: /research
+Start: /research
 ```
 
 ### 05 → 06 (task-management → implementation)
 
 ```
-📋 태스크 분해 완료!
+📋 Task breakdown complete!
 
-{{TASK_COUNT}}개 태스크가 {{SPRINT_COUNT}}개 스프린트로 계획되었습니다.
+{{TASK_COUNT}} tasks planned across {{SPRINT_COUNT}} sprints.
 
-⚠️ 중요: 06-implementation은 체크포인트 필수 스테이지입니다.
-주요 마일스톤마다 /checkpoint를 실행하세요.
+⚠️ Important: 06-implementation is a checkpoint-required stage.
+Run /checkpoint at major milestones.
 
-다음 작업:
-• 스프린트 1 태스크부터 구현
-• 단위 테스트 함께 작성
-• 마일스톤마다 체크포인트
+Next tasks:
+• Implement starting from Sprint 1 tasks
+• Write unit tests alongside
+• Checkpoint at each milestone
 
-시작: /implement
+Start: /implement
 ```
 
 ### 09 → 10 (testing → deployment)
 
 ```
-✅ 테스팅 완료!
+✅ Testing complete!
 
-테스트 결과:
-• 단위 테스트: {{UNIT_PASS}}/{{UNIT_TOTAL}} 통과
-• E2E 테스트: {{E2E_PASS}}/{{E2E_TOTAL}} 통과
-• 커버리지: {{COVERAGE}}%
+Test results:
+• Unit tests: {{UNIT_PASS}}/{{UNIT_TOTAL}} passed
+• E2E tests: {{E2E_PASS}}/{{E2E_TOTAL}} passed
+• Coverage: {{COVERAGE}}%
 
-🚀 마지막 단계입니다!
+🚀 Final stage!
 
-다음 작업:
-• CI/CD 파이프라인 설정
-• 환경별 배포 설정
-• 모니터링 구성
+Next tasks:
+• CI/CD pipeline setup
+• Environment-specific deployment config
+• Monitoring setup
 
-시작: /deploy
+Start: /deploy
 ```
 
-## 완료 축하 프롬프트
+## Completion Celebration Prompt
 
 ```
-🎉 파이프라인 완료!
+🎉 Pipeline Complete!
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-프로젝트: {{PROJECT_NAME}}
-총 소요 기간: {{DURATION}}
-체크포인트: {{CHECKPOINT_COUNT}}개
+Project: {{PROJECT_NAME}}
+Total Duration: {{DURATION}}
+Checkpoints: {{CHECKPOINT_COUNT}}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-[스테이지 요약]
-01 ✅ brainstorm     - 아이디어 정립
-02 ✅ research       - 기술 조사
-03 ✅ planning       - PRD 작성
-04 ✅ ui-ux          - 디자인
-05 ✅ task-mgmt      - 태스크 분해
-06 ✅ implementation - 구현
-07 ✅ refactoring    - 리팩토링
-08 ✅ qa             - 품질 검증
-09 ✅ testing        - 테스팅
-10 ✅ deployment     - 배포
+[Stage Summary]
+01 ✅ brainstorm     - Idea development
+02 ✅ research       - Technical research
+03 ✅ planning       - PRD creation
+04 ✅ ui-ux          - Design
+05 ✅ task-mgmt      - Task breakdown
+06 ✅ implementation - Implementation
+07 ✅ refactoring    - Refactoring
+08 ✅ qa             - Quality verification
+09 ✅ testing        - Testing
+10 ✅ deployment     - Deployment
 
-[문서]
-• state/handoffs/ - 모든 핸드오프 문서
-• state/checkpoints/ - 체크포인트
+[Documents]
+• state/handoffs/ - All handoff documents
+• state/checkpoints/ - Checkpoints
 
-수고하셨습니다! 🎊
+Great work! 🎊
 ```

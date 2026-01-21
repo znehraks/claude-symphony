@@ -1,5 +1,5 @@
 #!/bin/bash
-# next-stage.sh - 다음 스테이지로 전환
+# next-stage.sh - Transition to next stage
 # claude-symphony workflow pipeline
 
 set -e
@@ -8,7 +8,7 @@ PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PROGRESS_FILE="$PROJECT_ROOT/state/progress.json"
 STAGES_DIR="$PROJECT_ROOT/stages"
 
-# 색상 정의
+# Color definitions
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -18,7 +18,7 @@ WHITE='\033[1;37m'
 GRAY='\033[0;90m'
 NC='\033[0m' # No Color
 
-# 옵션 처리
+# Option handling
 FORCE_MODE=false
 PREVIEW_MODE=false
 NO_HANDOFF=false
@@ -33,33 +33,33 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
-# jq 확인
+# Check jq
 if ! command -v jq &> /dev/null; then
-    echo -e "${RED}오류:${NC} jq가 필요합니다."
+    echo -e "${RED}Error:${NC} jq is required."
     exit 1
 fi
 
-# progress.json 확인
+# Check progress.json
 if [ ! -f "$PROGRESS_FILE" ]; then
-    echo -e "${RED}오류:${NC} progress.json을 찾을 수 없습니다."
-    echo "  먼저 /init-project를 실행하세요."
+    echo -e "${RED}Error:${NC} Cannot find progress.json."
+    echo "  Please run /init-project first."
     exit 1
 fi
 
-# 스테이지 정보
+# Stage info
 declare -a STAGE_IDS=("01-brainstorm" "02-research" "03-planning" "04-ui-ux" "05-task-management" "06-implementation" "07-refactoring" "08-qa" "09-testing" "10-deployment")
 declare -a CHECKPOINT_REQUIRED=("false" "false" "false" "false" "false" "true" "true" "false" "false" "false")
 
-# 현재 스테이지 확인
+# Check current stage
 CURRENT_STAGE=$(jq -r '.current_stage // "none"' "$PROGRESS_FILE")
 
 if [ "$CURRENT_STAGE" == "none" ] || [ -z "$CURRENT_STAGE" ]; then
-    echo -e "${RED}오류:${NC} 진행 중인 스테이지가 없습니다."
-    echo "  /run-stage 01 또는 /brainstorm으로 시작하세요."
+    echo -e "${RED}Error:${NC} No stage in progress."
+    echo "  Start with /run-stage 01 or /brainstorm."
     exit 1
 fi
 
-# 현재 스테이지 인덱스 찾기
+# Find current stage index
 CURRENT_IDX=-1
 for i in "${!STAGE_IDS[@]}"; do
     if [ "${STAGE_IDS[$i]}" == "$CURRENT_STAGE" ]; then
@@ -69,21 +69,21 @@ for i in "${!STAGE_IDS[@]}"; do
 done
 
 if [ $CURRENT_IDX -eq -1 ]; then
-    echo -e "${RED}오류:${NC} 알 수 없는 스테이지: $CURRENT_STAGE"
+    echo -e "${RED}Error:${NC} Unknown stage: $CURRENT_STAGE"
     exit 1
 fi
 
-# 다음 스테이지 확인
+# Check next stage
 NEXT_IDX=$((CURRENT_IDX + 1))
 if [ $NEXT_IDX -ge ${#STAGE_IDS[@]} ]; then
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo -e "🎉 ${GREEN}파이프라인 완료!${NC}"
+    echo -e "🎉 ${GREEN}Pipeline Complete!${NC}"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo "모든 10개 스테이지가 완료되었습니다."
+    echo "All 10 stages have been completed."
     echo ""
-    echo "최종 검토:"
-    echo "  - /status 로 전체 상태 확인"
-    echo "  - state/handoffs/ 에서 핸드오프 문서 검토"
+    echo "Final review:"
+    echo "  - Check overall status with /status"
+    echo "  - Review handoff documents in state/handoffs/"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     exit 0
 fi
@@ -93,71 +93,71 @@ CURRENT_STAGE_DIR="$STAGES_DIR/$CURRENT_STAGE"
 NEXT_STAGE_DIR="$STAGES_DIR/$NEXT_STAGE"
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo -e "🔄 ${WHITE}스테이지 전환${NC}"
+echo -e "🔄 ${WHITE}Stage Transition${NC}"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo -e "현재: ${CYAN}$CURRENT_STAGE${NC} → 다음: ${GREEN}$NEXT_STAGE${NC}"
+echo -e "Current: ${CYAN}$CURRENT_STAGE${NC} → Next: ${GREEN}$NEXT_STAGE${NC}"
 echo ""
 
-# 완료 조건 검증
-echo -e "${BLUE}[완료 조건 검증]${NC}"
+# Validate completion conditions
+echo -e "${BLUE}[Completion Validation]${NC}"
 VALIDATION_FAILED=false
 
-# outputs 디렉토리 확인
+# Check outputs directory
 if [ -d "$CURRENT_STAGE_DIR/outputs" ]; then
     OUTPUT_COUNT=$(find "$CURRENT_STAGE_DIR/outputs" -type f 2>/dev/null | wc -l | tr -d ' ')
     if [ "$OUTPUT_COUNT" -gt 0 ]; then
-        echo -e "${GREEN}✓${NC} outputs 파일 존재 (${OUTPUT_COUNT}개)"
+        echo -e "${GREEN}✓${NC} Output files exist (${OUTPUT_COUNT} files)"
     else
-        echo -e "${RED}✗${NC} outputs 파일 없음"
+        echo -e "${RED}✗${NC} No output files"
         VALIDATION_FAILED=true
     fi
 else
-    echo -e "${RED}✗${NC} outputs 디렉토리 없음"
+    echo -e "${RED}✗${NC} No outputs directory"
     VALIDATION_FAILED=true
 fi
 
-# 체크포인트 필수 여부 확인
+# Check if checkpoint is required
 NEEDS_CHECKPOINT="${CHECKPOINT_REQUIRED[$CURRENT_IDX]}"
 if [ "$NEEDS_CHECKPOINT" == "true" ]; then
-    # 현재 스테이지의 체크포인트가 있는지 확인
+    # Check if checkpoint exists for current stage
     STAGE_NUM=$(echo "$CURRENT_STAGE" | cut -d'-' -f1)
     CP_EXISTS=$(ls -d "$PROJECT_ROOT/state/checkpoints/CP-$STAGE_NUM-"* 2>/dev/null | head -1 || true)
 
     if [ -n "$CP_EXISTS" ]; then
-        echo -e "${GREEN}✓${NC} 체크포인트 존재"
+        echo -e "${GREEN}✓${NC} Checkpoint exists"
     else
-        echo -e "${RED}✗${NC} 체크포인트 필수 (미생성)"
+        echo -e "${RED}✗${NC} Checkpoint required (not created)"
         VALIDATION_FAILED=true
     fi
 fi
 
 echo ""
 
-# 검증 실패 시
+# On validation failure
 if [ "$VALIDATION_FAILED" = true ] && [ "$FORCE_MODE" = false ]; then
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo -e "${YELLOW}⚠️  스테이지 전환 조건 미충족${NC}"
+    echo -e "${YELLOW}⚠️  Stage transition conditions not met${NC}"
     echo ""
-    echo "다음 단계:"
+    echo "Next steps:"
     if [ "$NEEDS_CHECKPOINT" == "true" ]; then
-        echo "  1. /checkpoint 실행"
+        echo "  1. Run /checkpoint"
     fi
-    echo "  2. outputs 파일 생성 확인"
-    echo "  3. /next --force 로 강제 전환 (비권장)"
+    echo "  2. Verify output files are generated"
+    echo "  3. Force transition with /next --force (not recommended)"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     exit 1
 fi
 
-# 미리보기 모드
+# Preview mode
 if [ "$PREVIEW_MODE" = true ]; then
-    echo -e "${YELLOW}[PREVIEW] 실제 전환을 실행하지 않습니다.${NC}"
+    echo -e "${YELLOW}[PREVIEW] Not executing actual transition.${NC}"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     exit 0
 fi
 
-# HANDOFF.md 생성
+# Generate HANDOFF.md
 if [ "$NO_HANDOFF" = false ]; then
-    echo -e "${BLUE}[HANDOFF.md 생성]${NC}"
+    echo -e "${BLUE}[Generating HANDOFF.md]${NC}"
 
     HANDOFF_FILE="$CURRENT_STAGE_DIR/HANDOFF.md"
     TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
@@ -166,41 +166,41 @@ if [ "$NO_HANDOFF" = false ]; then
     cat > "$HANDOFF_FILE" << EOF
 # Handoff: $CURRENT_STAGE → $NEXT_STAGE
 
-생성일: $TIMESTAMP_READABLE
+Created: $TIMESTAMP_READABLE
 
-## 완료된 작업
+## Completed Tasks
 
-- [x] $CURRENT_STAGE 스테이지 실행
-- [x] outputs 파일 생성
+- [x] Executed $CURRENT_STAGE stage
+- [x] Generated output files
 
-## 핵심 산출물
+## Key Deliverables
 
 $(find "$CURRENT_STAGE_DIR/outputs" -type f -name "*.md" -o -name "*.json" -o -name "*.yaml" 2>/dev/null | while read -r f; do echo "- $(basename "$f")"; done)
 
-## 다음 단계
+## Next Steps
 
-다음 스테이지 ($NEXT_STAGE) 시작을 위한 지침:
-1. stages/$NEXT_STAGE/CLAUDE.md 참조
-2. 입력 파일 확인: stages/$CURRENT_STAGE/outputs/
+Instructions for starting next stage ($NEXT_STAGE):
+1. Reference stages/$NEXT_STAGE/CLAUDE.md
+2. Input files: stages/$CURRENT_STAGE/outputs/
 
-## 참고사항
+## Notes
 
-- 자동 생성된 핸드오프 문서입니다.
-- 필요시 수동으로 보완해 주세요.
+- This is an auto-generated handoff document.
+- Please supplement manually if needed.
 EOF
 
-    echo -e "${GREEN}✓${NC} $HANDOFF_FILE 생성됨"
+    echo -e "${GREEN}✓${NC} $HANDOFF_FILE generated"
 
-    # 핸드오프 아카이브에 복사
+    # Copy to handoff archive
     mkdir -p "$PROJECT_ROOT/state/handoffs"
     cp "$HANDOFF_FILE" "$PROJECT_ROOT/state/handoffs/${CURRENT_STAGE}-HANDOFF.md"
 fi
 
-# 상태 업데이트
+# Update status
 echo ""
-echo -e "${BLUE}[상태 업데이트]${NC}"
+echo -e "${BLUE}[Status Update]${NC}"
 
-# progress.json 업데이트
+# Update progress.json
 jq ".current_stage = \"$NEXT_STAGE\" | \
     .stages.\"$CURRENT_STAGE\".status = \"completed\" | \
     .stages.\"$CURRENT_STAGE\".completed_at = \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\" | \
@@ -210,19 +210,19 @@ jq ".current_stage = \"$NEXT_STAGE\" | \
 
 echo -e "${GREEN}✓${NC} $CURRENT_STAGE: completed"
 echo -e "${GREEN}✓${NC} $NEXT_STAGE: in_progress"
-echo -e "${GREEN}✓${NC} progress.json 업데이트됨"
+echo -e "${GREEN}✓${NC} progress.json updated"
 
-# 완료 메시지
+# Completion message
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo -e "${GREEN}✅${NC} ${WHITE}$NEXT_STAGE${NC} 스테이지 시작!"
+echo -e "${GREEN}✅${NC} ${WHITE}$NEXT_STAGE${NC} stage started!"
 echo ""
-echo "다음 작업:"
-echo "  1. stages/$NEXT_STAGE/CLAUDE.md 참조"
-echo "  2. 입력 파일: stages/$CURRENT_STAGE/outputs/"
+echo "Next tasks:"
+echo "  1. Reference stages/$NEXT_STAGE/CLAUDE.md"
+echo "  2. Input files: stages/$CURRENT_STAGE/outputs/"
 
-# 단축 명령어 안내
+# Shortcut command guidance
 declare -a SHORTCUTS=("brainstorm" "research" "planning" "ui-ux" "tasks" "implement" "refactor" "qa" "test" "deploy")
-echo "  3. 단축 명령어: /${SHORTCUTS[$NEXT_IDX]}"
+echo "  3. Shortcut command: /${SHORTCUTS[$NEXT_IDX]}"
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

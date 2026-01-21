@@ -3,7 +3,7 @@
 stage:
   id: "04-ui-ux"
   name: "UI/UX Planning"
-  description: "사용자 인터페이스 및 경험 설계"
+  description: "User interface and experience design"
 
 models:
   primary: "gemini"
@@ -44,10 +44,10 @@ prompts:
 
 completion:
   checklist:
-    - "주요 화면 와이어프레임 5개 이상"
-    - "핵심 사용자 플로우 3개 이상"
-    - "디자인 시스템 기초 정의"
-    - "컴포넌트 목록 작성"
+    - "5+ main screen wireframes"
+    - "3+ core user flows"
+    - "Design system foundation definition"
+    - "Component list creation"
 
 transition:
   next_stage: "05-task-management"

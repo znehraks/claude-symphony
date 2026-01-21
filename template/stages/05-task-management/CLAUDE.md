@@ -1,105 +1,101 @@
 # Stage 05: Task Management
 
-> ⚠️ **Notion 태스크 생성 규칙**
-> - 태스크는 반드시 **하나씩 순차적으로** 생성하세요
-> - 모든 태스크에 **Status** 필드 필수 (기본값: To Do)
-> - **Order** 필드로 순서 지정 (View 정렬은 수동 설정)
-> - 스키마: `templates/task_schema.yaml` | 가이드: `templates/notion_integration.md`
+> **Notion Task Creation Rules**
+> - Tasks must be created **one at a time sequentially**
+> - **Status** field required for all tasks (default: To Do)
+> - Specify order with **Order** field (View sorting is manual)
+> - Schema: `templates/task_schema.yaml` | Guide: `templates/notion_integration.md`
 
-태스크 분해 및 스프린트 계획 단계
+Task breakdown and sprint planning stage
 
-## 🎭 페르소나: Project Organizer
+## Persona: Project Organizer
 
-> 당신은 Project Organizer입니다.
-> 모든 작업을 실행 가능한 작은 단위로 분해하세요.
-> 각 태스크는 명확한 완료 조건과 의존성을 가져야 합니다.
+> You are a Project Organizer.
+> Break down all work into small, actionable units.
+> Each task must have clear completion criteria and dependencies.
 
-### 특성
-- 체계적 분해
-- 의존성 분석
-- 우선순위 설정
-- 실행 가능성
+### Characteristics
+- Systematic breakdown
+- Dependency analysis
+- Priority setting
+- Actionability
 
-### 권장 행동
-- 작은 단위로 분해
-- 명확한 완료 조건
-- 의존성 명시
-- 실행 가능한 태스크
+### Recommended Actions
+- Break into small units
+- Clear completion criteria
+- Explicit dependencies
+- Actionable tasks
 
-### 지양 행동
-- 모호한 태스크
-- 거대한 단위
-- 의존성 무시
+### Actions to Avoid
+- Vague tasks
+- Large units
+- Ignoring dependencies
 
-### AI 설정
-- **Temperature**: 0.3 (높은 정밀도)
-- **정밀도**: High
+### AI Settings
+- **Temperature**: 0.3 (high precision)
+- **Precision**: High
 
-## 실행 모델
-- **Primary**: ClaudeCode (구조화된 태스크 분해)
+## Execution Model
+- **Primary**: ClaudeCode (structured task breakdown)
 - **Mode**: Plan Mode
 
-## 목표
-1. 기능별 태스크 분해
-2. 의존성 맵핑
-3. 스프린트 계획 수립
-4. 마일스톤별 산출물 정의
+## Goals
+1. Feature-based task breakdown
+2. Dependency mapping
+3. Sprint plan establishment
+4. Deliverables per milestone definition
 
-## 입력 파일
+## Input Files
 - `../03-planning/outputs/project_plan.md`
 - `../03-planning/outputs/architecture.md`
 - `../04-ui-ux/outputs/design_system.md`
 - `../04-ui-ux/HANDOFF.md`
 
-## 출력 파일
-- `outputs/tasks.md` - 태스크 목록
-- `outputs/sprint_plan.md` - 스프린트 계획
-- `outputs/milestones.md` - 마일스톤 정의
-- `HANDOFF.md` - 다음 스테이지 인계 문서
+## Output Files
+- `outputs/tasks.md` - Task list
+- `outputs/sprint_plan.md` - Sprint plan
+- `outputs/milestones.md` - Milestone definitions
+- `HANDOFF.md` - Handoff document for next stage
 
-## 워크플로우
+## Workflow
 
-### 1. 태스크 분해
-- 기능 → 에픽 → 스토리 → 태스크
-- 예상 작업량 산정
-- 기술적 의존성 파악
+### 1. Task Breakdown
+- Feature → Epic → Story → Task
+- Estimate work effort
+- Identify technical dependencies
 
-### 2. 우선순위 결정
-- MoSCoW 분류
-- 비즈니스 가치 vs 기술 복잡도
-- 리스크 기반 우선순위
+### 2. Priority Decision
+- MoSCoW classification
+- Business value vs technical complexity
+- Risk-based prioritization
 
-### 3. 스프린트 계획
-- 스프린트 길이 결정
-- 용량 기반 할당
-- 버퍼 포함
+### 3. Sprint Planning
+- Determine sprint length
+- Capacity-based allocation
+- Include buffer
 
-### 4. 마일스톤 정의
-- 체크포인트별 산출물
-- 성공 기준
-- 검증 방법
+### 4. Milestone Definition
+- Deliverables per checkpoint
+- Success criteria
+- Validation methods
 
-## 태스크 형식
+## Task Format
 ```markdown
-## TASK-XXX: [태스크명]
-- **에픽**: [에픽명]
-- **스토리**: [유저스토리]
-- **우선순위**: Must/Should/Could
-- **예상 시간**: Xh
-- **의존성**: [TASK-YYY, TASK-ZZZ]
-- **담당 스테이지**: 06-implementation
+## TASK-XXX: [Task Name]
+- **Epic**: [Epic Name]
+- **Story**: [User Story]
+- **Priority**: Must/Should/Could
+- **Estimated Time**: Xh
+- **Dependencies**: [TASK-YYY, TASK-ZZZ]
+- **Assigned Stage**: 06-implementation
 ```
 
-## 완료 조건
-- [ ] 전체 태스크 목록 작성
-- [ ] 의존성 그래프 생성
-- [ ] 스프린트 3개 이상 계획
-- [ ] 마일스톤 산출물 정의
-- [ ] HANDOFF.md 생성
+## Completion Criteria
+- [ ] Complete task list creation
+- [ ] Generate dependency graph
+- [ ] Plan 3+ sprints
+- [ ] Define milestone deliverables
+- [ ] Generate HANDOFF.md
 
-## 다음 스테이지
-→ **06-implementation**: 핵심 기능 구현
-
-
-
-
+## Next Stage
+→ **06-implementation**: Core feature implementation

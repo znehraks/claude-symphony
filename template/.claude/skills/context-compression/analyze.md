@@ -1,114 +1,114 @@
 # Context Analysis Logic
 
-현재 컨텍스트를 분석하여 압축 대상을 식별합니다.
+Analyze current context to identify compression targets.
 
-## 분석 프로세스
+## Analysis Process
 
-### 1. 토큰 추정
+### 1. Token Estimation
 
-대화 내용을 카테고리별로 분류하고 토큰을 추정합니다:
+Classify conversation content by category and estimate tokens:
 
 ```
-토큰 추정 공식:
-- 영어: 단어 수 × 1.3
-- 한국어: 글자 수 × 0.5
-- 코드: 줄 수 × 10
+Token estimation formula:
+- English: word count × 1.3
+- Korean: character count × 0.5
+- Code: line count × 10
 ```
 
-### 2. 카테고리 분류
+### 2. Category Classification
 
-| 카테고리 | 중요도 | 처리 |
-|----------|--------|------|
-| 결정사항 | 높음 | 유지 |
-| 요구사항 | 높음 | 유지 |
-| 아키텍처 | 높음 | 유지 |
-| 현재 작업 | 높음 | 유지 |
-| 토론/탐색 | 중간 | 요약 |
-| 코드 리뷰 | 중간 | 요약 |
-| 오류 로그 | 낮음 | 제거 |
-| 시행착오 | 낮음 | 제거 |
+| Category | Importance | Handling |
+|----------|-----------|----------|
+| Decisions | High | Keep |
+| Requirements | High | Keep |
+| Architecture | High | Keep |
+| Current work | High | Keep |
+| Discussion/Exploration | Medium | Summarize |
+| Code review | Medium | Summarize |
+| Error logs | Low | Remove |
+| Trial and error | Low | Remove |
 
-### 3. 식별 패턴
+### 3. Identification Patterns
 
-#### 결정사항 (유지)
+#### Decisions (Keep)
 ```
-키워드:
-- "결정", "선택", "확정"
-- "~로 하자", "~가 좋겠다"
-- "A 대신 B"
+Keywords:
+- "decided", "selected", "confirmed"
+- "let's go with", "would be good"
+- "A instead of B"
 
-구조:
-- 결정 내용
-- 선택 이유
-- 대안 (간략히)
-```
-
-#### 토론/탐색 (요약)
-```
-키워드:
-- "살펴보자", "검토", "분석"
-- "옵션 1", "옵션 2"
-- "어떻게 생각해?"
-
-압축:
-- 주요 논점만 유지
-- 최종 결론 강조
-- 중간 과정 생략
+Structure:
+- Decision content
+- Selection reason
+- Alternatives (briefly)
 ```
 
-#### 오류/시행착오 (제거)
+#### Discussion/Exploration (Summarize)
 ```
-키워드:
-- "에러", "실패", "수정"
-- "다시 시도"
+Keywords:
+- "let's look at", "review", "analyze"
+- "option 1", "option 2"
+- "what do you think?"
+
+Compression:
+- Keep only main points
+- Emphasize final conclusion
+- Omit intermediate process
+```
+
+#### Error/Trial and Error (Remove)
+```
+Keywords:
+- "error", "failed", "fix"
+- "try again"
 - "TypeError", "SyntaxError"
 
-예외 (유지):
-- 최종 해결책
-- 반복 가능한 문제
+Exceptions (Keep):
+- Final solution
+- Recurring issues
 ```
 
-### 4. 분석 결과 형식
+### 4. Analysis Result Format
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📊 컨텍스트 분석 결과
+📊 Context Analysis Results
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-총 추정 토큰: ~65,000
+Estimated total tokens: ~65,000
 
-[카테고리별 분포]
-결정사항      ████░░░░░░░░░░░░   5,000 (유지)
-요구사항      ██░░░░░░░░░░░░░░   2,000 (유지)
-현재 작업     ███░░░░░░░░░░░░░   3,000 (유지)
-토론/탐색     ████████████░░░░  40,000 (→ 8,000 요약)
-오류 로그     █████░░░░░░░░░░░  15,000 (제거)
+[Distribution by Category]
+Decisions      ████░░░░░░░░░░░░   5,000 (keep)
+Requirements   ██░░░░░░░░░░░░░░   2,000 (keep)
+Current work   ███░░░░░░░░░░░░░   3,000 (keep)
+Discussion     ████████████░░░░  40,000 (→ 8,000 summarize)
+Error logs     █████░░░░░░░░░░░  15,000 (remove)
 
-[압축 예상]
-- 압축 전: 65,000 토큰
-- 압축 후: 18,000 토큰
-- 절감: 72%
+[Compression Estimate]
+- Before compression: 65,000 tokens
+- After compression: 18,000 tokens
+- Reduction: 72%
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-압축하시겠습니까? [Y/n]
+Compress? [Y/n]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-## 자동 분석 트리거
+## Auto Analysis Triggers
 
-다음 상황에서 자동 분석 실행:
+Auto analysis runs in these situations:
 
-1. **토큰 경고 임계값 도달** (50,000)
-2. **스테이지 전환 전**
-3. **긴 대화 후** (메시지 20개 이상)
+1. **Token warning threshold reached** (50,000)
+2. **Before stage transition**
+3. **After long conversation** (20+ messages)
 
-## 분석 우선순위
+## Analysis Priorities
 
-스테이지에 따른 우선순위 조정:
+Priority adjustment by stage:
 
-| 스테이지 | 우선 유지 |
-|----------|----------|
-| 01-03 | 결정사항, 요구사항 |
-| 04-05 | 설계 내용, 태스크 |
-| 06-07 | 구현 결정, 코드 패턴 |
-| 08-10 | 이슈, 해결책 |
+| Stage | Keep Priority |
+|-------|--------------|
+| 01-03 | Decisions, Requirements |
+| 04-05 | Design content, Tasks |
+| 06-07 | Implementation decisions, Code patterns |
+| 08-10 | Issues, Solutions |

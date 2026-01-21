@@ -45,7 +45,7 @@ jobs:
         env:
           NODE_ENV: production
 
-      # Vercel 배포 예시
+      # Vercel deployment example
       - name: Deploy to Vercel (Staging)
         id: deploy
         uses: amondnet/vercel-action@v25

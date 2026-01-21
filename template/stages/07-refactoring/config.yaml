@@ -3,14 +3,14 @@
 stage:
   id: "07-refactoring"
   name: "Refactoring"
-  description: "코드 품질 개선 및 최적화"
+  description: "Code quality improvement and optimization"
 
 models:
   primary: "codex"
   secondary: "claudecode"
   collaboration: "sequential"
 
-# AI 자동 호출 설정 (Issue #12, #14 해결)
+# AI auto-invoke settings (Issue #12, #14 resolution)
 auto_invoke:
   enabled: true
   model: "codex"
@@ -19,7 +19,7 @@ auto_invoke:
   wrapper: "scripts/codex-wrapper.sh"
   flags: "--full-auto"
   required: true
-  message: "🤖 Codex 자동 호출: 코드 분석 및 리팩토링 시작"
+  message: "🤖 Codex auto-invoke: Starting code analysis and refactoring"
 
 execution:
   mode: "deep_dive"
@@ -36,9 +36,9 @@ inputs:
 outputs:
   required:
     - name: "refactored_code/"
-      description: "리팩토링된 코드"
+      description: "Refactored code"
     - name: "refactoring_report.md"
-      description: "리팩토링 보고서"
+      description: "Refactoring report"
     - name: "HANDOFF.md"
 
 prompts:
@@ -54,15 +54,15 @@ prompts:
 
 completion:
   checklist:
-    - "코드 품질 분석 완료"
-    - "중복 코드 제거"
-    - "성능 최적화 적용"
-    - "리팩토링 보고서 작성"
-    - "체크포인트 생성"
+    - "Code quality analysis complete"
+    - "Duplicate code removed"
+    - "Performance optimization applied"
+    - "Refactoring report written"
+    - "Checkpoint created"
 
 transition:
   next_stage: "08-qa"
   prerequisites:
     - "06-implementation"
   handoff_required: true
-  checkpoint_required: true  # 필수!
+  checkpoint_required: true  # Required!

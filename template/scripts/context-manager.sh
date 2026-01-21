@@ -1,5 +1,5 @@
 #!/bin/bash
-# context-manager.sh - 컨텍스트 상태 관리
+# context-manager.sh - Context state management
 # claude-symphony workflow pipeline
 
 set -e
@@ -9,7 +9,7 @@ PROGRESS_FILE="$PROJECT_ROOT/state/progress.json"
 CONTEXT_DIR="$PROJECT_ROOT/state/context"
 SETTINGS_FILE="$PROJECT_ROOT/.claude/settings.json"
 
-# 색상 정의
+# Color definitions
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -19,20 +19,20 @@ WHITE='\033[1;37m'
 GRAY='\033[0;90m'
 NC='\033[0m' # No Color
 
-# 기본값
+# Defaults
 WARNING_THRESHOLD=50000
 LIMIT_THRESHOLD=80000
 
-# 설정 파일에서 임계값 로드
+# Load thresholds from settings file
 if [ -f "$SETTINGS_FILE" ] && command -v jq &> /dev/null; then
     WARNING_THRESHOLD=$(jq -r '.context.warning_threshold // 50000' "$SETTINGS_FILE")
     LIMIT_THRESHOLD=$(jq -r '.context.limit_threshold // 80000' "$SETTINGS_FILE")
 fi
 
-# 컨텍스트 디렉토리 생성
+# Create context directory
 mkdir -p "$CONTEXT_DIR"
 
-# 옵션 처리
+# Option handling
 ACTION="status"
 DESCRIPTION=""
 RESTORE_FILE=""
@@ -54,7 +54,7 @@ while [[ "$#" -gt 0 ]]; do
     shift 2>/dev/null || true
 done
 
-# 현재 스테이지 가져오기
+# Get current stage
 get_current_stage() {
     if [ -f "$PROGRESS_FILE" ] && command -v jq &> /dev/null; then
         jq -r '.current_stage // "none"' "$PROGRESS_FILE"
@@ -63,14 +63,14 @@ get_current_stage() {
     fi
 }
 
-# 토큰 추정 (간단한 추정)
+# Estimate tokens (simple estimation)
 estimate_tokens() {
-    # 실제로는 대화 로그를 분석해야 하지만, 여기서는 placeholder
-    # 실제 구현에서는 Claude API나 로그 파일을 참조
+    # In practice, conversation logs should be analyzed, but this is a placeholder
+    # Actual implementation would reference Claude API or log files
     echo "45000"  # placeholder
 }
 
-# 진행률 바 생성
+# Generate progress bar
 progress_bar() {
     local percent=$1
     local width=20
@@ -82,20 +82,20 @@ progress_bar() {
     printf "]"
 }
 
-# 상태 표시
+# Show status
 show_status() {
     local CURRENT_STAGE=$(get_current_stage)
     local ESTIMATED_TOKENS=$(estimate_tokens)
     local PERCENT=$((ESTIMATED_TOKENS * 100 / LIMIT_THRESHOLD))
 
-    # 상태 결정
-    local STATUS_TEXT="정상"
+    # Determine status
+    local STATUS_TEXT="Normal"
     local STATUS_COLOR=$GREEN
     if [ "$ESTIMATED_TOKENS" -ge "$LIMIT_THRESHOLD" ]; then
-        STATUS_TEXT="한도 초과"
+        STATUS_TEXT="Limit Exceeded"
         STATUS_COLOR=$RED
     elif [ "$ESTIMATED_TOKENS" -ge "$WARNING_THRESHOLD" ]; then
-        STATUS_TEXT="경고"
+        STATUS_TEXT="Warning"
         STATUS_COLOR=$YELLOW
     fi
 
@@ -113,25 +113,25 @@ show_status() {
     fi
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
-    echo -e "토큰 사용량: ${CYAN}~${ESTIMATED_TOKENS}${NC} / ${LIMIT_THRESHOLD}"
-    echo -e "상태: $(progress_bar $PERCENT) ${PERCENT}% [${STATUS_COLOR}${STATUS_TEXT}${NC}]"
+    echo -e "Token usage: ${CYAN}~${ESTIMATED_TOKENS}${NC} / ${LIMIT_THRESHOLD}"
+    echo -e "Status: $(progress_bar $PERCENT) ${PERCENT}% [${STATUS_COLOR}${STATUS_TEXT}${NC}]"
     echo ""
-    echo "임계값:"
+    echo "Thresholds:"
     if [ "$ESTIMATED_TOKENS" -ge "$WARNING_THRESHOLD" ]; then
-        echo -e "• 경고 (${WARNING_THRESHOLD}): ${YELLOW}초과됨${NC}"
+        echo -e "• Warning (${WARNING_THRESHOLD}): ${YELLOW}Exceeded${NC}"
     else
-        echo -e "• 경고 (${WARNING_THRESHOLD}): 여유 있음"
+        echo -e "• Warning (${WARNING_THRESHOLD}): Within limit"
     fi
-    echo -e "• 한도 (${LIMIT_THRESHOLD}): ~$((LIMIT_THRESHOLD - ESTIMATED_TOKENS)) 토큰 남음"
+    echo -e "• Limit (${LIMIT_THRESHOLD}): ~$((LIMIT_THRESHOLD - ESTIMATED_TOKENS)) tokens remaining"
     echo ""
-    echo -e "현재 스테이지: ${CYAN}$CURRENT_STAGE${NC}"
+    echo -e "Current stage: ${CYAN}$CURRENT_STAGE${NC}"
 
-    # 저장된 스냅샷 목록
+    # List saved snapshots
     if [ -d "$CONTEXT_DIR" ]; then
         SNAPSHOTS=$(ls -1 "$CONTEXT_DIR"/state-*.md 2>/dev/null | wc -l | tr -d ' ')
         if [ "$SNAPSHOTS" -gt 0 ]; then
             echo ""
-            echo "[저장된 스냅샷]"
+            echo "[Saved Snapshots]"
             ls -1t "$CONTEXT_DIR"/state-*.md 2>/dev/null | head -3 | while read -r f; do
                 echo "• $(basename "$f")"
             done
@@ -140,19 +140,19 @@ show_status() {
 
     echo ""
 
-    # 경고 시 권장 조치
+    # Recommended actions when warning
     if [ "$ESTIMATED_TOKENS" -ge "$WARNING_THRESHOLD" ]; then
-        echo -e "${YELLOW}⚠️ 경고 임계값 초과!${NC}"
+        echo -e "${YELLOW}⚠️ Warning threshold exceeded!${NC}"
         echo ""
-        echo "권장 조치:"
-        echo "1. /context --compress 로 압축"
-        echo "2. /context --save 후 /clear"
+        echo "Recommended actions:"
+        echo "1. Compress with /context --compress"
+        echo "2. /context --save then /clear"
     fi
 
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 }
 
-# 스냅샷 저장
+# Save snapshot
 save_snapshot() {
     local CURRENT_STAGE=$(get_current_stage)
     local TIMESTAMP=$(date +%Y%m%d-%H%M)
@@ -161,36 +161,36 @@ save_snapshot() {
     local FILEPATH="$CONTEXT_DIR/$FILENAME"
 
     if [ -z "$DESCRIPTION" ]; then
-        DESCRIPTION="컨텍스트 스냅샷"
+        DESCRIPTION="Context snapshot"
     fi
 
     cat > "$FILEPATH" << EOF
-# 작업 상태 저장 - $TIMESTAMP_READABLE
+# Work State Save - $TIMESTAMP_READABLE
 
-## 설명
+## Description
 $DESCRIPTION
 
-## 현재 스테이지
+## Current Stage
 $CURRENT_STAGE
 
-## 진행 상황
+## Progress
 EOF
 
-    # progress.json에서 정보 추출
+    # Extract info from progress.json
     if [ -f "$PROGRESS_FILE" ] && command -v jq &> /dev/null; then
         echo "" >> "$FILEPATH"
-        echo "### 스테이지 상태" >> "$FILEPATH"
+        echo "### Stage Status" >> "$FILEPATH"
         jq -r '.stages | to_entries[] | "- \(.key): \(.value.status // "pending")"' "$PROGRESS_FILE" >> "$FILEPATH" 2>/dev/null || true
     fi
 
     cat >> "$FILEPATH" << EOF
 
-## 복구 지침
-1. 이 파일 읽기
-2. stages/$CURRENT_STAGE/CLAUDE.md 참조
-3. 작업 재개
+## Recovery Instructions
+1. Read this file
+2. Reference stages/$CURRENT_STAGE/CLAUDE.md
+3. Resume work
 
-## 참조 파일
+## Reference Files
 - state/progress.json
 - stages/$CURRENT_STAGE/outputs/
 EOF
@@ -199,20 +199,20 @@ EOF
     echo -e "💾 ${WHITE}Context Snapshot Saved${NC}"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
-    echo -e "파일: ${CYAN}$FILEPATH${NC}"
-    echo -e "설명: $DESCRIPTION"
-    echo -e "스테이지: $CURRENT_STAGE"
+    echo -e "File: ${CYAN}$FILEPATH${NC}"
+    echo -e "Description: $DESCRIPTION"
+    echo -e "Stage: $CURRENT_STAGE"
     echo ""
-    echo "[저장 내용]"
-    echo "✓ 현재 스테이지 정보"
-    echo "✓ 진행 상황"
-    echo "✓ 복구 지침"
+    echo "[Saved Contents]"
+    echo "✓ Current stage info"
+    echo "✓ Progress status"
+    echo "✓ Recovery instructions"
     echo ""
-    echo -e "복구: ${GREEN}/context --restore $FILENAME${NC}"
+    echo -e "Restore: ${GREEN}/context --restore $FILENAME${NC}"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 }
 
-# 스냅샷 목록
+# List snapshots
 list_snapshots() {
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo -e "📂 ${WHITE}Context Snapshots${NC}"
@@ -220,13 +220,13 @@ list_snapshots() {
     echo ""
 
     if [ ! -d "$CONTEXT_DIR" ] || [ -z "$(ls -A "$CONTEXT_DIR"/*.md 2>/dev/null)" ]; then
-        echo -e "  ${GRAY}저장된 스냅샷이 없습니다.${NC}"
+        echo -e "  ${GRAY}No saved snapshots.${NC}"
         echo ""
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         return
     fi
 
-    printf " ${GRAY}%-25s %-15s %s${NC}\n" "파일" "크기" "수정일"
+    printf " ${GRAY}%-25s %-15s %s${NC}\n" "File" "Size" "Modified"
     echo "─────────────────────────────────────────────────"
 
     ls -1t "$CONTEXT_DIR"/*.md 2>/dev/null | while read -r f; do
@@ -237,19 +237,19 @@ list_snapshots() {
 
     echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo -e "복구: ${GREEN}/context --restore [filename]${NC}"
+    echo -e "Restore: ${GREEN}/context --restore [filename]${NC}"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 }
 
-# 스냅샷 복구
+# Restore snapshot
 restore_snapshot() {
     local FILE="$RESTORE_FILE"
 
     if [ -z "$FILE" ]; then
-        # 최신 스냅샷 찾기
+        # Find latest snapshot
         FILE=$(ls -1t "$CONTEXT_DIR"/state-*.md 2>/dev/null | head -1)
         if [ -z "$FILE" ]; then
-            echo -e "${RED}오류:${NC} 복구할 스냅샷이 없습니다."
+            echo -e "${RED}Error:${NC} No snapshot to restore."
             exit 1
         fi
         FILE=$(basename "$FILE")
@@ -260,8 +260,8 @@ restore_snapshot() {
         FILEPATH="$CONTEXT_DIR/state-$FILE"
     fi
     if [ ! -f "$FILEPATH" ]; then
-        echo -e "${RED}오류:${NC} 파일을 찾을 수 없습니다: $FILE"
-        echo "  /context --list 로 목록을 확인하세요."
+        echo -e "${RED}Error:${NC} File not found: $FILE"
+        echo "  Check the list with /context --list."
         exit 1
     fi
 
@@ -269,38 +269,38 @@ restore_snapshot() {
     echo -e "📂 ${WHITE}Context Restore${NC}"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
-    echo -e "파일: ${CYAN}$(basename "$FILEPATH")${NC}"
+    echo -e "File: ${CYAN}$(basename "$FILEPATH")${NC}"
     echo ""
-    echo "[내용 미리보기]"
+    echo "[Content Preview]"
     echo "─────────────────────────────────────────────────"
     head -20 "$FILEPATH"
     echo "..."
     echo "─────────────────────────────────────────────────"
     echo ""
-    echo "이 파일의 내용을 참조하여 작업을 계속하세요."
+    echo "Reference this file's contents to continue work."
     echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 }
 
-# 압축 실행 (placeholder - 실제로는 AI가 처리)
+# Run compression (placeholder - actually handled by AI)
 compress_context() {
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo -e "🗜️ ${WHITE}Context Compression${NC}"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
-    echo "컨텍스트 압축을 실행합니다."
+    echo "Running context compression."
     echo ""
-    echo "이 작업은 AI가 대화 내용을 분석하여:"
-    echo "• 핵심 결정사항 유지"
-    echo "• 긴 토론 요약"
-    echo "• 불필요한 내용 제거"
+    echo "This operation analyzes conversation content to:"
+    echo "• Preserve key decisions"
+    echo "• Summarize long discussions"
+    echo "• Remove unnecessary content"
     echo ""
-    echo "context-compression 스킬이 활성화됩니다."
+    echo "The context-compression skill will be activated."
     echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 }
 
-# 자동 컨텍스트 관리 (Statusline API 트리거)
+# Auto context management (Statusline API trigger)
 auto_compact() {
     local LEVEL="${TRIGGER_LEVEL:-warning}"
     local TIMESTAMP=$(date +%Y%m%d-%H%M%S)
@@ -308,7 +308,7 @@ auto_compact() {
     local CURRENT_STAGE=$(get_current_stage)
     local TRIGGER_FILE="$CONTEXT_DIR/auto-trigger.json"
 
-    # 트리거 정보 읽기
+    # Read trigger info
     local REMAINING="50"
     if [ -f "$TRIGGER_FILE" ]; then
         REMAINING=$(jq -r '.remaining // 50' "$TRIGGER_FILE" 2>/dev/null || echo "50")
@@ -316,182 +316,182 @@ auto_compact() {
 
     echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo -e "🔄 ${WHITE}자동 컨텍스트 관리${NC}"
+    echo -e "🔄 ${WHITE}Auto Context Management${NC}"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
 
     if [ "$LEVEL" = "critical" ]; then
-        echo -e "${RED}⚠️ 크리티컬: 잔여 컨텍스트 40% 이하${NC}"
+        echo -e "${RED}⚠️ Critical: Remaining context below 40%${NC}"
     else
-        echo -e "${YELLOW}⚠️ 경고: 잔여 컨텍스트 50% 이하 (${REMAINING}%)${NC}"
+        echo -e "${YELLOW}⚠️ Warning: Remaining context below 50% (${REMAINING}%)${NC}"
     fi
     echo ""
 
-    # Step 1: 스냅샷 저장
-    echo "📸 스냅샷 저장 중..."
+    # Step 1: Save snapshot
+    echo "📸 Saving snapshot..."
 
     cat > "$SNAPSHOT_FILE" << EOF
-# 자동 저장된 컨텍스트 스냅샷
-- 저장 시간: $(date "+%Y-%m-%d %H:%M:%S")
-- 현재 스테이지: $CURRENT_STAGE
-- 트리거: 잔여 컨텍스트 ${REMAINING}% (레벨: $LEVEL)
+# Auto-saved Context Snapshot
+- Save time: $(date "+%Y-%m-%d %H:%M:%S")
+- Current stage: $CURRENT_STAGE
+- Trigger: Remaining context ${REMAINING}% (level: $LEVEL)
 
-## 현재 진행 상황
+## Current Progress
 EOF
 
-    # progress.json에서 스테이지 상태 추출
+    # Extract stage status from progress.json
     if [ -f "$PROGRESS_FILE" ] && command -v jq &> /dev/null; then
         echo "" >> "$SNAPSHOT_FILE"
-        echo "### 스테이지 상태" >> "$SNAPSHOT_FILE"
+        echo "### Stage Status" >> "$SNAPSHOT_FILE"
         jq -r '.stages | to_entries[] | select(.value.status != "pending") | "- \(.key): \(.value.status)"' "$PROGRESS_FILE" >> "$SNAPSHOT_FILE" 2>/dev/null || true
 
-        # 최근 체크포인트 정보
+        # Recent checkpoint info
         local CHECKPOINTS=$(jq -r '.checkpoints // [] | length' "$PROGRESS_FILE" 2>/dev/null || echo "0")
         if [ "$CHECKPOINTS" -gt 0 ]; then
             echo "" >> "$SNAPSHOT_FILE"
-            echo "### 체크포인트" >> "$SNAPSHOT_FILE"
-            echo "- 총 체크포인트: $CHECKPOINTS 개" >> "$SNAPSHOT_FILE"
-            jq -r '.checkpoints[-1] // empty | "- 최근: \(.name // .timestamp)"' "$PROGRESS_FILE" >> "$SNAPSHOT_FILE" 2>/dev/null || true
+            echo "### Checkpoints" >> "$SNAPSHOT_FILE"
+            echo "- Total checkpoints: $CHECKPOINTS" >> "$SNAPSHOT_FILE"
+            jq -r '.checkpoints[-1] // empty | "- Recent: \(.name // .timestamp)"' "$PROGRESS_FILE" >> "$SNAPSHOT_FILE" 2>/dev/null || true
         fi
     fi
 
     cat >> "$SNAPSHOT_FILE" << EOF
 
-## 복구 지침
-1. 이 파일 읽기
-2. stages/$CURRENT_STAGE/CLAUDE.md 참조
-3. stages/$CURRENT_STAGE/HANDOFF.md 참조 (있는 경우)
-4. 작업 재개
+## Recovery Instructions
+1. Read this file
+2. Reference stages/$CURRENT_STAGE/CLAUDE.md
+3. Reference stages/$CURRENT_STAGE/HANDOFF.md (if exists)
+4. Resume work
 
-## 참조 파일
+## Reference Files
 - state/progress.json
 - stages/$CURRENT_STAGE/outputs/
 EOF
 
-    echo -e "${GREEN}✓${NC} 스냅샷 저장 완료: $(basename "$SNAPSHOT_FILE")"
+    echo -e "${GREEN}✓${NC} Snapshot saved: $(basename "$SNAPSHOT_FILE")"
     echo ""
 
-    # progress.json에 스냅샷 기록
+    # Record snapshot in progress.json
     if [ -f "$PROGRESS_FILE" ] && command -v jq &> /dev/null; then
-        # context_snapshots 배열이 없으면 생성
+        # Create context_snapshots array if not exists
         local HAS_SNAPSHOTS=$(jq 'has("context_snapshots")' "$PROGRESS_FILE" 2>/dev/null || echo "false")
         if [ "$HAS_SNAPSHOTS" = "false" ]; then
             jq '. + {"context_snapshots": []}' "$PROGRESS_FILE" > "$PROGRESS_FILE.tmp" && mv "$PROGRESS_FILE.tmp" "$PROGRESS_FILE"
         fi
 
-        # 스냅샷 정보 추가
+        # Add snapshot info
         jq ".context_snapshots += [{\"file\": \"$SNAPSHOT_FILE\", \"reason\": \"auto-${LEVEL}\", \"remaining\": $REMAINING, \"timestamp\": \"$(date -Iseconds)\"}]" \
             "$PROGRESS_FILE" > "$PROGRESS_FILE.tmp" && mv "$PROGRESS_FILE.tmp" "$PROGRESS_FILE"
     fi
 
-    # Step 2: 권장 조치 안내
+    # Step 2: Guide recommended actions
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     if [ "$LEVEL" = "critical" ]; then
-        echo -e "${RED}⚠️ 컨텍스트 임계값 도달 (40% 이하)${NC}"
+        echo -e "${RED}⚠️ Context threshold reached (below 40%)${NC}"
         echo ""
-        echo -e "스냅샷이 자동 저장되었습니다: ${CYAN}$(basename "$SNAPSHOT_FILE")${NC}"
+        echo -e "Snapshot auto-saved: ${CYAN}$(basename "$SNAPSHOT_FILE")${NC}"
         echo ""
 
-        # 사용자 확인 프롬프트
-        echo -e "${WHITE}컨텍스트를 초기화하시겠습니까?${NC}"
+        # User confirmation prompt
+        echo -e "${WHITE}Would you like to clear the context?${NC}"
         echo ""
-        echo "  [y] /clear 실행 (스냅샷에서 복구 가능)"
-        echo "  [c] /compact 실행 (대화 요약 후 계속)"
-        echo "  [n] 취소 (수동으로 처리)"
+        echo "  [y] Run /clear (recoverable from snapshot)"
+        echo "  [c] Run /compact (summarize and continue)"
+        echo "  [n] Cancel (handle manually)"
         echo ""
-        read -p "선택 [y/c/n]: " -n 1 -r CLEAR_CHOICE
+        read -p "Choice [y/c/n]: " -n 1 -r CLEAR_CHOICE
         echo ""
         echo ""
 
         case $CLEAR_CHOICE in
             [Yy])
-                echo -e "${GREEN}✓${NC} /clear 실행 중..."
+                echo -e "${GREEN}✓${NC} Running /clear..."
                 echo ""
 
-                # 복구 정보 저장
+                # Save recovery info
                 echo "{\"action\": \"clear\", \"snapshot\": \"$SNAPSHOT_FILE\", \"timestamp\": \"$(date -Iseconds)\"}" > "$CONTEXT_DIR/pending-clear.json"
 
-                # tmux를 통해 /clear 자동 실행
+                # Auto-run /clear via tmux
                 if [ -n "$TMUX" ]; then
-                    # 현재 tmux 세션에서 실행
+                    # Run in current tmux session
                     sleep 1
                     tmux send-keys "/clear" Enter
-                    echo -e "${GREEN}✓${NC} /clear 명령이 전송되었습니다."
+                    echo -e "${GREEN}✓${NC} /clear command sent."
                 elif tmux list-sessions 2>/dev/null | grep -q "claude"; then
-                    # claude 세션 찾아서 전송
+                    # Find and send to claude session
                     CLAUDE_SESSION=$(tmux list-sessions 2>/dev/null | grep "claude" | head -1 | cut -d: -f1)
                     tmux send-keys -t "$CLAUDE_SESSION" "/clear" Enter
-                    echo -e "${GREEN}✓${NC} /clear 명령이 '$CLAUDE_SESSION' 세션으로 전송되었습니다."
+                    echo -e "${GREEN}✓${NC} /clear command sent to '$CLAUDE_SESSION' session."
                 else
-                    echo -e "${YELLOW}⚠️${NC} tmux 세션을 찾을 수 없습니다."
-                    echo "다음 명령을 수동으로 실행하세요:"
+                    echo -e "${YELLOW}⚠️${NC} Cannot find tmux session."
+                    echo "Please run the following command manually:"
                     echo -e "${CYAN}/clear${NC}"
                 fi
 
                 echo ""
-                echo "복구 시:"
+                echo "To restore:"
                 echo -e "${CYAN}/context --restore $(basename "$SNAPSHOT_FILE")${NC}"
                 ;;
             [Cc])
-                echo -e "${GREEN}✓${NC} /compact 실행 중..."
+                echo -e "${GREEN}✓${NC} Running /compact..."
                 echo ""
 
-                # tmux를 통해 /compact 자동 실행
+                # Auto-run /compact via tmux
                 if [ -n "$TMUX" ]; then
                     sleep 1
                     tmux send-keys "/compact" Enter
-                    echo -e "${GREEN}✓${NC} /compact 명령이 전송되었습니다."
+                    echo -e "${GREEN}✓${NC} /compact command sent."
                 elif tmux list-sessions 2>/dev/null | grep -q "claude"; then
                     CLAUDE_SESSION=$(tmux list-sessions 2>/dev/null | grep "claude" | head -1 | cut -d: -f1)
                     tmux send-keys -t "$CLAUDE_SESSION" "/compact" Enter
-                    echo -e "${GREEN}✓${NC} /compact 명령이 '$CLAUDE_SESSION' 세션으로 전송되었습니다."
+                    echo -e "${GREEN}✓${NC} /compact command sent to '$CLAUDE_SESSION' session."
                 else
-                    echo -e "${YELLOW}⚠️${NC} tmux 세션을 찾을 수 없습니다."
-                    echo "다음 명령을 수동으로 실행하세요:"
+                    echo -e "${YELLOW}⚠️${NC} Cannot find tmux session."
+                    echo "Please run the following command manually:"
                     echo -e "${CYAN}/compact${NC}"
                 fi
                 ;;
             *)
-                echo "취소되었습니다. 수동으로 /clear 또는 /compact를 실행하세요."
+                echo "Cancelled. Please run /clear or /compact manually."
                 ;;
         esac
     else
-        echo -e "${YELLOW}⚠️ /compact 실행을 권장합니다${NC}"
+        echo -e "${YELLOW}⚠️ Recommend running /compact${NC}"
         echo ""
-        echo "실행 후 자동으로 스냅샷에서 복구됩니다."
-        echo "저장된 스냅샷: $(basename "$SNAPSHOT_FILE")"
+        echo "Will auto-recover from snapshot after execution."
+        echo "Saved snapshot: $(basename "$SNAPSHOT_FILE")"
     fi
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-    # 터미널 벨 (알림)
+    # Terminal bell (notification)
     echo -e "\a"
 }
 
-# 오래된 스냅샷 정리
+# Clean old snapshots
 clean_snapshots() {
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo -e "🧹 ${WHITE}Clean Old Snapshots${NC}"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
 
-    # 7일 이상 된 스냅샷 찾기
+    # Find snapshots older than 7 days
     OLD_FILES=$(find "$CONTEXT_DIR" -name "state-*.md" -mtime +7 2>/dev/null)
 
     if [ -z "$OLD_FILES" ]; then
-        echo "정리할 오래된 스냅샷이 없습니다."
+        echo "No old snapshots to clean."
     else
-        echo "다음 파일이 삭제됩니다 (7일 이상):"
+        echo "The following files will be deleted (older than 7 days):"
         echo "$OLD_FILES" | while read -r f; do
             echo "  - $(basename "$f")"
         done
         echo ""
-        read -p "삭제하시겠습니까? [y/N] " -n 1 -r
+        read -p "Delete? [y/N] " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]]; then
             echo "$OLD_FILES" | xargs rm -f
-            echo -e "${GREEN}✓${NC} 정리 완료"
+            echo -e "${GREEN}✓${NC} Cleanup complete"
         else
-            echo "취소되었습니다."
+            echo "Cancelled."
         fi
     fi
 
@@ -499,7 +499,7 @@ clean_snapshots() {
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 }
 
-# 메인 로직
+# Main logic
 case $ACTION in
     status)
         show_status

@@ -1,81 +1,81 @@
 # /qa
 
-08-qa 스테이지를 바로 시작합니다.
+Start the 08-qa stage directly.
 
-## 사용법
+## Usage
 ```
 /qa [focus-area]
 ```
 
-## 스테이지 정보
+## Stage Information
 
-| 항목 | 값 |
-|------|-----|
-| 스테이지 | 08-qa |
-| AI 모델 | ClaudeCode |
-| 실행 모드 | Plan Mode + Sandbox |
-| 체크포인트 | 선택 |
+| Item | Value |
+|------|-------|
+| Stage | 08-qa |
+| AI Model | ClaudeCode |
+| Execution Mode | Plan Mode + Sandbox |
+| Checkpoint | Optional |
 
-## 동작
+## Actions
 
-1. **전제 조건 확인**
-   - 07-refactoring 완료 여부
-   - src/, tests/ 존재
+1. **Prerequisite Check**
+   - 07-refactoring completion status
+   - src/, tests/ exist
 
-2. **QA 실행**
-   - 코드 품질 검사
-   - 보안 취약점 스캔
-   - 성능 분석
+2. **Execute QA**
+   - Code quality inspection
+   - Security vulnerability scan
+   - Performance analysis
 
-3. **산출물 생성**
-   - qa-report.md - QA 보고서
-   - issues.json - 발견된 이슈
+3. **Output Generation**
+   - qa-report.md - QA report
+   - issues.json - Discovered issues
 
-## 실행
+## Execution
 
 ```bash
 scripts/run-stage.sh 08-qa "$ARGUMENTS"
 ```
 
-## 입력 파일
+## Input Files
 
 - `stages/06-implementation/outputs/src/`
 - `stages/07-refactoring/outputs/refactoring-report.md`
 
-## 출력 파일
+## Output Files
 
 - `stages/08-qa/outputs/qa-report.md`
 - `stages/08-qa/outputs/issues.json`
 - `stages/08-qa/outputs/security-audit.md`
 
-## QA 체크리스트
+## QA Checklist
 
-### 코드 품질
-- [ ] 린트 규칙 통과
-- [ ] 타입 체크 통과
-- [ ] 코드 복잡도 검사
-- [ ] 테스트 커버리지 확인
+### Code Quality
+- [ ] Lint rules passed
+- [ ] Type check passed
+- [ ] Code complexity inspection
+- [ ] Test coverage verification
 
-### 보안
-- [ ] 의존성 취약점 스캔
-- [ ] 하드코딩된 시크릿 검사
-- [ ] OWASP Top 10 검토
+### Security
+- [ ] Dependency vulnerability scan
+- [ ] Hardcoded secrets inspection
+- [ ] OWASP Top 10 review
 
-### 성능
-- [ ] 번들 크기 분석
-- [ ] 렌더링 성능
-- [ ] 메모리 사용량
+### Performance
+- [ ] Bundle size analysis
+- [ ] Rendering performance
+- [ ] Memory usage
 
-## 관련 명령어
+## Related Commands
 
-- `/run-stage 08` - 전제조건 확인 후 시작
-- `/next` - 다음 스테이지 (09-testing)
-- `/refactor` - 이전 스테이지
-- `/test` - 테스팅 바로 시작
+- `/run-stage 08` - Start after prerequisite check
+- `/next` - Next stage (09-testing)
+- `/refactor` - Previous stage
+- `/test` - Start testing directly
 
-## QA 도구
+## QA Tools
 
-- ESLint/Prettier - 코드 스타일
-- TypeScript - 타입 검사
-- npm audit - 보안 스캔
-- Coverage - 테스트 커버리지
+- ESLint/Prettier - Code style
+- TypeScript - Type checking
+- npm audit - Security scan
+- Coverage - Test coverage

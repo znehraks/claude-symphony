@@ -1,28 +1,28 @@
-# AI 협업 프롬프트 - CI/CD & Deployment
+# AI Collaboration Prompt - CI/CD & Deployment
 
-## 협업 모드: Deployment Chain
+## Collaboration Mode: Deployment Chain
 
-이 스테이지에서는 **배포 체인**을 사용하여 안전한 배포를 수행합니다.
+This stage uses **deployment chain** to perform safe deployment.
 
-### 참여 모델
-- **ClaudeCode**: CI/CD 설정, 배포 자동화
+### Participating Models
+- **ClaudeCode**: CI/CD configuration, deployment automation
 
-### 협업 프롬프트
+### Collaboration Prompt
 
 ```
-# 배포 체인
+# Deployment chain
 /collaborate --mode sequential --chain "claudecode:ci_setup -> claudecode:cd_setup -> claudecode:deploy"
 ```
 
-### 배포 단계
+### Deployment Steps
 
-| 단계 | 작업 | 검증 |
-|------|------|------|
-| CI 설정 | 빌드/테스트 파이프라인 | 테스트 통과 |
-| CD 설정 | 스테이징/프로덕션 파이프라인 | 환경 분리 |
-| 배포 | 실제 배포 실행 | 헬스 체크 |
+| Step | Task | Verification |
+|------|------|--------------|
+| CI Setup | Build/test pipeline | Tests pass |
+| CD Setup | Staging/production pipeline | Environment separation |
+| Deploy | Execute actual deployment | Health check |
 
-### CI/CD 파이프라인 구성
+### CI/CD Pipeline Configuration
 
 ```yaml
 # .github/workflows/ci.yml
@@ -41,40 +41,40 @@ jobs:
       - run: npm run build
 ```
 
-### 배포 플랫폼 선택
+### Deployment Platform Selection
 
-| 플랫폼 | 장점 | 권장 사용 |
-|--------|------|----------|
-| Vercel | Next.js 최적화 | 프론트엔드 |
-| Railway | 풀스택 지원 | 풀스택 앱 |
-| AWS | 확장성 | 엔터프라이즈 |
-| Cloudflare | Edge 배포 | 정적/Edge |
+| Platform | Advantages | Recommended Use |
+|----------|------------|-----------------|
+| Vercel | Next.js optimized | Frontend |
+| Railway | Full-stack support | Full-stack apps |
+| AWS | Scalability | Enterprise |
+| Cloudflare | Edge deployment | Static/Edge |
 
-### 롤백 전략
+### Rollback Strategy
 
 ```bash
-# 롤백 준비
-/checkpoint --reason "배포 전 상태"
+# Rollback preparation
+/checkpoint --reason "Pre-deployment state"
 
-# 롤백 실행 (필요시)
+# Execute rollback (if needed)
 /restore checkpoint_id
 ```
 
-### 출력 형식
+### Output Format
 
 ```markdown
-## 배포 결과
+## Deployment Results
 
-### CI 파이프라인
-- 빌드: 성공/실패
-- 테스트: 통과/실패
-- Lint: 통과/실패
+### CI Pipeline
+- Build: Success/Failure
+- Tests: Pass/Fail
+- Lint: Pass/Fail
 
-### CD 파이프라인
-- 스테이징: [URL]
-- 프로덕션: [URL]
+### CD Pipeline
+- Staging: [URL]
+- Production: [URL]
 
-### 모니터링
-- 에러 트래킹: [설정 여부]
-- 성능 모니터링: [설정 여부]
+### Monitoring
+- Error tracking: [Configured/Not configured]
+- Performance monitoring: [Configured/Not configured]
 ```

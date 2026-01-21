@@ -1,5 +1,5 @@
 #!/bin/bash
-# restore-checkpoint.sh - 체크포인트 복구
+# restore-checkpoint.sh - Checkpoint restoration
 # claude-symphony workflow pipeline
 
 set -e
@@ -8,7 +8,7 @@ PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PROGRESS_FILE="$PROJECT_ROOT/state/progress.json"
 CHECKPOINTS_DIR="$PROJECT_ROOT/state/checkpoints"
 
-# 색상 정의
+# Color definitions
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -18,7 +18,7 @@ WHITE='\033[1;37m'
 GRAY='\033[0;90m'
 NC='\033[0m' # No Color
 
-# 옵션 처리
+# Option handling
 LIST_MODE=false
 LATEST_MODE=false
 FORCE_MODE=false
@@ -39,13 +39,13 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
-# jq 확인
+# Check jq
 if ! command -v jq &> /dev/null; then
-    echo -e "${RED}오류:${NC} jq가 필요합니다."
+    echo -e "${RED}Error:${NC} jq is required."
     exit 1
 fi
 
-# 체크포인트 목록 함수
+# List checkpoints function
 list_checkpoints() {
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo -e "💾 ${WHITE}Checkpoint List${NC}"
@@ -53,8 +53,8 @@ list_checkpoints() {
 
     if [ ! -d "$CHECKPOINTS_DIR" ] || [ -z "$(ls -A "$CHECKPOINTS_DIR" 2>/dev/null)" ]; then
         echo ""
-        echo -e "  ${GRAY}체크포인트가 없습니다.${NC}"
-        echo -e "  ${GRAY}/checkpoint 명령어로 생성하세요.${NC}"
+        echo -e "  ${GRAY}No checkpoints available.${NC}"
+        echo -e "  ${GRAY}Create one with /checkpoint command.${NC}"
         echo ""
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         return 0
@@ -74,7 +74,7 @@ list_checkpoints() {
                 CREATED=$(jq -r '.created_at // "unknown"' "$META_FILE")
                 DESC=$(jq -r '.description // ""' "$META_FILE")
 
-                # 날짜 포맷팅
+                # Date formatting
                 if [[ "$OSTYPE" == "darwin"* ]]; then
                     CREATED_FMT=$(date -j -f "%Y-%m-%dT%H:%M:%SZ" "$CREATED" "+%Y-%m-%d %H:%M" 2>/dev/null || echo "$CREATED")
                 else
@@ -91,11 +91,11 @@ list_checkpoints() {
     done
 
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo -e "총 ${CYAN}${COUNT}개${NC} 체크포인트 | ${GREEN}/restore [ID]${NC}로 복구"
+    echo -e "Total ${CYAN}${COUNT}${NC} checkpoints | Restore with ${GREEN}/restore [ID]${NC}"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 }
 
-# 최신 체크포인트 찾기
+# Find latest checkpoint
 find_latest_checkpoint() {
     local latest=""
     local latest_time=0
@@ -106,7 +106,7 @@ find_latest_checkpoint() {
             if [ -f "$META_FILE" ]; then
                 CREATED=$(jq -r '.created_at // ""' "$META_FILE")
                 if [ -n "$CREATED" ]; then
-                    # 타임스탬프 비교 (간단히 문자열 비교)
+                    # Timestamp comparison (simple string comparison)
                     if [[ "$CREATED" > "$latest_time" ]]; then
                         latest_time="$CREATED"
                         latest=$(basename "$cp_dir")
@@ -119,14 +119,14 @@ find_latest_checkpoint() {
     echo "$latest"
 }
 
-# 복구 함수
+# Restore function
 restore_checkpoint() {
     local cp_id=$1
     local cp_dir="$CHECKPOINTS_DIR/$cp_id"
 
     if [ ! -d "$cp_dir" ]; then
-        echo -e "${RED}오류:${NC} 체크포인트를 찾을 수 없습니다: $cp_id"
-        echo "  /restore --list 로 목록을 확인하세요."
+        echo -e "${RED}Error:${NC} Checkpoint not found: $cp_id"
+        echo "  Use /restore --list to see available checkpoints."
         exit 1
     fi
 
@@ -136,20 +136,20 @@ restore_checkpoint() {
     CREATED=$(jq -r '.created_at // "unknown"' "$META_FILE")
 
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo -e "⚠️  ${WHITE}체크포인트 복구${NC}"
+    echo -e "⚠️  ${WHITE}Checkpoint Restoration${NC}"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo -e "체크포인트: ${CYAN}$cp_id${NC}"
-    echo -e "스테이지:   ${CYAN}$STAGE${NC}"
+    echo -e "Checkpoint: ${CYAN}$cp_id${NC}"
+    echo -e "Stage:      ${CYAN}$STAGE${NC}"
     if [ -n "$DESC" ] && [ "$DESC" != "null" ]; then
-        echo -e "설명:       $DESC"
+        echo -e "Description: $DESC"
     fi
-    echo -e "생성일:     $CREATED"
+    echo -e "Created:    $CREATED"
     echo ""
 
     if [ "$DRY_RUN" = true ]; then
-        echo -e "${YELLOW}[DRY-RUN] 실제 복구를 실행하지 않습니다.${NC}"
+        echo -e "${YELLOW}[DRY-RUN] Not executing actual restoration.${NC}"
         echo ""
-        echo "복구될 파일:"
+        echo "Files to be restored:"
         find "$cp_dir" -type f | while read -r f; do
             echo "  - $(basename "$f")"
         done
@@ -158,62 +158,62 @@ restore_checkpoint() {
     fi
 
     if [ "$FORCE_MODE" = false ]; then
-        echo -e "${YELLOW}⚠️  경고: 현재 상태가 해당 시점으로 복구됩니다.${NC}"
-        echo -e "   현재 변경사항이 손실될 수 있습니다."
+        echo -e "${YELLOW}⚠️  Warning: Current state will be restored to that point.${NC}"
+        echo -e "   Current changes may be lost."
         echo ""
-        read -p "복구를 진행하시겠습니까? [y/N] " -n 1 -r
+        read -p "Proceed with restoration? [y/N] " -n 1 -r
         echo
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-            echo -e "${YELLOW}취소되었습니다.${NC}"
+            echo -e "${YELLOW}Cancelled.${NC}"
             exit 0
         fi
     fi
 
     echo ""
-    echo "복구 중..."
+    echo "Restoring..."
 
-    # 현재 상태 백업 (옵션)
+    # Backup current state (optional)
     if [ "$BACKUP_MODE" = true ]; then
         BACKUP_ID="BACKUP-$(date +%Y%m%d-%H%M%S)"
         BACKUP_DIR="$CHECKPOINTS_DIR/$BACKUP_ID"
         mkdir -p "$BACKUP_DIR"
         cp "$PROGRESS_FILE" "$BACKUP_DIR/progress.json" 2>/dev/null || true
-        echo -e "${GREEN}✓${NC} 현재 상태 백업됨: $BACKUP_ID"
+        echo -e "${GREEN}✓${NC} Current state backed up: $BACKUP_ID"
     fi
 
-    # progress.json 복원
+    # Restore progress.json
     if [ -f "$cp_dir/progress.json" ]; then
         cp "$cp_dir/progress.json" "$PROGRESS_FILE"
-        echo -e "${GREEN}✓${NC} progress.json 복원됨"
+        echo -e "${GREEN}✓${NC} progress.json restored"
     fi
 
-    # outputs 복원
+    # Restore outputs
     STAGE_DIR="$PROJECT_ROOT/stages/$STAGE"
     if [ -d "$cp_dir/outputs" ]; then
         rm -rf "$STAGE_DIR/outputs" 2>/dev/null || true
         cp -r "$cp_dir/outputs" "$STAGE_DIR/"
         FILE_COUNT=$(find "$cp_dir/outputs" -type f | wc -l | tr -d ' ')
-        echo -e "${GREEN}✓${NC} outputs 파일 복원됨 (${FILE_COUNT}개)"
+        echo -e "${GREEN}✓${NC} Output files restored (${FILE_COUNT} files)"
     fi
 
-    # HANDOFF.md 복원
+    # Restore HANDOFF.md
     if [ -f "$cp_dir/HANDOFF.md" ]; then
         cp "$cp_dir/HANDOFF.md" "$STAGE_DIR/"
-        echo -e "${GREEN}✓${NC} HANDOFF.md 복원됨"
+        echo -e "${GREEN}✓${NC} HANDOFF.md restored"
     fi
 
-    # progress.json에서 현재 스테이지 업데이트
+    # Update current stage in progress.json
     jq ".current_stage = \"$STAGE\" | .stages.\"$STAGE\".status = \"in_progress\"" \
         "$PROGRESS_FILE" > "${PROGRESS_FILE}.tmp" && mv "${PROGRESS_FILE}.tmp" "$PROGRESS_FILE"
 
     echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo -e "${GREEN}✅${NC} 체크포인트 복구 완료!"
-    echo -e "현재 스테이지: ${CYAN}$STAGE${NC}"
+    echo -e "${GREEN}✅${NC} Checkpoint restoration complete!"
+    echo -e "Current stage: ${CYAN}$STAGE${NC}"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 }
 
-# 메인 로직
+# Main logic
 if [ "$LIST_MODE" = true ]; then
     list_checkpoints
     exit 0
@@ -222,10 +222,10 @@ fi
 if [ "$LATEST_MODE" = true ]; then
     CP_ID=$(find_latest_checkpoint)
     if [ -z "$CP_ID" ]; then
-        echo -e "${RED}오류:${NC} 복구할 체크포인트가 없습니다."
+        echo -e "${RED}Error:${NC} No checkpoints available to restore."
         exit 1
     fi
-    echo -e "최신 체크포인트: ${CYAN}$CP_ID${NC}"
+    echo -e "Latest checkpoint: ${CYAN}$CP_ID${NC}"
     restore_checkpoint "$CP_ID"
     exit 0
 fi
@@ -235,13 +235,13 @@ if [ -n "$CP_ID" ]; then
     exit 0
 fi
 
-# 인자 없으면 도움말
-echo "사용법:"
-echo "  /restore --list          체크포인트 목록 보기"
-echo "  /restore --latest        최신 체크포인트로 복구"
-echo "  /restore [CP-ID]         특정 체크포인트로 복구"
+# Show help if no arguments
+echo "Usage:"
+echo "  /restore --list          View checkpoint list"
+echo "  /restore --latest        Restore to latest checkpoint"
+echo "  /restore [CP-ID]         Restore to specific checkpoint"
 echo ""
-echo "옵션:"
-echo "  --force     확인 없이 복구"
-echo "  --backup    복구 전 현재 상태 백업"
-echo "  --dry-run   실제 복구 없이 미리보기"
+echo "Options:"
+echo "  --force     Restore without confirmation"
+echo "  --backup    Backup current state before restoration"
+echo "  --dry-run   Preview without actual restoration"

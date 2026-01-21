@@ -1,51 +1,51 @@
-# AI 협업 프롬프트 - Research
+# AI Collaboration Prompt - Research
 
-## 협업 모드: Parallel + Sequential
+## Collaboration Mode: Parallel + Sequential
 
-이 스테이지에서는 **병렬 리서치** 후 **순차적 통합**을 진행합니다.
+This stage uses **parallel research** followed by **sequential integration**.
 
-### 참여 모델
-- **Claude**: 심층 분석, 기술 문서 합성
-- **Gemini**: 시장 트렌드, 경쟁사 분석
+### Participating Models
+- **Claude**: In-depth analysis, technical document synthesis
+- **Gemini**: Market trends, competitor analysis
 
-### 협업 프롬프트
+### Collaboration Prompt
 
 ```
-# 병렬 리서치
-/collaborate --mode parallel --models claude,gemini --task "기술 및 시장 리서치"
+# Parallel Research
+/collaborate --mode parallel --models claude,gemini --task "technology and market research"
 
-# 순차적 통합 (Claude가 Gemini 결과 검토)
+# Sequential Integration (Claude reviews Gemini results)
 /collaborate --mode sequential --chain "gemini:market_research -> claude:synthesis"
 ```
 
-### 작업 분담
+### Task Distribution
 
-| AI | 담당 영역 | 출력 |
-|----|----------|------|
-| Gemini | 시장 분석, 경쟁사 조사 | market_analysis.md |
-| Claude | 기술 스택 분석, 실현 가능성 | tech_research.md, feasibility_report.md |
+| AI | Responsibility | Output |
+|----|----------------|--------|
+| Gemini | Market analysis, competitor research | market_analysis.md |
+| Claude | Tech stack analysis, feasibility | tech_research.md, feasibility_report.md |
 
-### MCP 서버 활용
+### MCP Server Usage
 
-- **firecrawl**: 웹 크롤링 (Gemini 활용)
-- **exa**: AI 검색 (Claude 활용)
-- **context7**: 문서 검색 (Claude 활용)
+- **firecrawl**: Web crawling (Gemini usage)
+- **exa**: AI search (Claude usage)
+- **context7**: Document search (Claude usage)
 
-### 출력 형식
+### Output Format
 
 ```markdown
-## AI 협업 결과
+## AI Collaboration Results
 
-### Gemini 리서치 (시장)
-- 경쟁사 분석
-- 시장 트렌드
+### Gemini Research (Market)
+- Competitor analysis
+- Market trends
 ...
 
-### Claude 리서치 (기술)
-- 기술 스택 비교
-- 실현 가능성 평가
+### Claude Research (Technology)
+- Tech stack comparison
+- Feasibility assessment
 ...
 
-### 통합 인사이트
-- [핵심 발견]
+### Integrated Insights
+- [Key findings]
 ```

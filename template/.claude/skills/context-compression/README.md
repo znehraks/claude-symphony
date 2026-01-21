@@ -1,114 +1,114 @@
 # Context Compression Skill
 
-토큰 사용량을 모니터링하고 컨텍스트를 압축하는 스킬입니다.
+A skill for monitoring token usage and compressing context.
 
-## 트리거 조건
+## Trigger Conditions
 
-이 스킬은 다음 조건에서 자동 활성화됩니다:
+This skill auto-activates under these conditions:
 
-1. **토큰 임계값 도달**
-   - 50,000 토큰 (warning_threshold): 경고
-   - 80,000 토큰 (limit_threshold): 압축 필수
+1. **Token threshold reached**
+   - 50,000 tokens (warning_threshold): Warning
+   - 80,000 tokens (limit_threshold): Compression required
 
-2. **스테이지 전환 시**
-   - 이전 스테이지 컨텍스트 정리
-   - 필수 정보만 유지
+2. **On stage transition**
+   - Clean up previous stage context
+   - Keep only essential information
 
-3. **명시적 호출**
-   - `/context --compress` 명령
+3. **Explicit call**
+   - `/context --compress` command
 
-## 기능
+## Features
 
-### 1. 컨텍스트 분석 (analyze.md)
-- 현재 토큰 사용량 추정
-- 카테고리별 분류
-- 압축 가능 영역 식별
+### 1. Context Analysis (analyze.md)
+- Estimate current token usage
+- Categorize by type
+- Identify compressible areas
 
-### 2. 압축 실행 (compress.md)
-- 중요도 기반 필터링
-- 요약 생성
-- state.md 저장
+### 2. Compression Execution (compress.md)
+- Importance-based filtering
+- Summary generation
+- Save to state.md
 
-### 3. 복구 지원 (prompts/compression.md)
-- 저장된 컨텍스트 로드
-- 작업 상태 복원
+### 3. Recovery Support (prompts/compression.md)
+- Load saved context
+- Restore work state
 
-## 스킬 파일 구조
+## Skill File Structure
 
 ```
 context-compression/
-├── README.md           # 이 파일
-├── analyze.md          # 컨텍스트 분석 로직
-├── compress.md         # 압축 로직
+├── README.md           # This file
+├── analyze.md          # Context analysis logic
+├── compress.md         # Compression logic
 └── prompts/
-    └── compression.md  # 압축 프롬프트
+    └── compression.md  # Compression prompts
 ```
 
-## 압축 전략
+## Compression Strategy
 
-### 유지 (Keep)
-- ✅ 결정사항 및 이유
-- ✅ 요구사항 명세
-- ✅ 아키텍처 선택
-- ✅ 현재 작업 상태
-- ✅ 에러 해결책 (최종)
+### Keep
+- ✅ Decisions and rationale
+- ✅ Requirements specification
+- ✅ Architecture choices
+- ✅ Current work state
+- ✅ Error solutions (final)
 
-### 요약 (Summarize)
-- 📝 긴 토론 과정
-- 📝 탐색/조사 과정
-- 📝 여러 대안 비교
+### Summarize
+- 📝 Long discussion processes
+- 📝 Exploration/investigation processes
+- 📝 Multiple alternative comparisons
 
-### 제거 (Remove)
-- ❌ 오류 시행착오 과정
-- ❌ 중복된 시도
-- ❌ 임시 출력/로그
-- ❌ 이미 적용된 코드 diff
+### Remove
+- ❌ Error trial and error processes
+- ❌ Repeated attempts
+- ❌ Temporary output/logs
+- ❌ Already applied code diffs
 
-## 사용 예시
+## Usage Examples
 
-### 자동 경고
+### Auto Warning
 
 ```
-⚠️ 토큰 사용량 경고
+⚠️ Token Usage Warning
 
-현재: ~52,000 토큰 (50,000 초과)
+Current: ~52,000 tokens (exceeded 50,000)
 
-권장 조치:
-1. /context --compress 실행
-2. 또는 /clear 후 state.md 복구
+Recommended actions:
+1. Run /context --compress
+2. Or /clear then recover state.md
 
-계속 진행하면 80,000에서 자동 저장됩니다.
+Continuing will auto-save at 80,000.
 ```
 
-### 수동 압축
+### Manual Compression
 
 ```
 /context --compress
 
-컨텍스트 압축 중...
+Compressing context...
 
-[분석]
-- 총 토큰: ~65,000
-- 결정사항: ~5,000 (유지)
-- 토론 내용: ~40,000 (요약 → 8,000)
-- 오류 로그: ~20,000 (제거)
+[Analysis]
+- Total tokens: ~65,000
+- Decisions: ~5,000 (keep)
+- Discussions: ~40,000 (summarize → 8,000)
+- Error logs: ~20,000 (remove)
 
-[결과]
-- 압축 후: ~13,000 토큰
-- 절감: 80%
+[Result]
+- After compression: ~13,000 tokens
+- Reduction: 80%
 
-state/context/state.md에 저장됨
+Saved to state/context/state.md
 ```
 
-## 관련 명령어
+## Related Commands
 
-- `/context` - 컨텍스트 상태 확인
-- `/context --compress` - 압축 실행
-- `/context --save` - 스냅샷 저장
+- `/context` - Check context state
+- `/context --compress` - Execute compression
+- `/context --save` - Save snapshot
 
-## 설정
+## Configuration
 
-settings.json에서 임계값 조정:
+Adjust thresholds in settings.json:
 
 ```json
 {

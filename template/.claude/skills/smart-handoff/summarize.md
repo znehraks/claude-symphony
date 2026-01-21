@@ -1,94 +1,94 @@
 # Smart HANDOFF - Contextual Summarization
 
-## 자동 요약 생성
+## Auto Summary Generation
 
-### 1. 완료된 작업 → 핵심 성과
+### 1. Completed Work → Key Achievements
 
-**입력**: 상세한 태스크 목록
-**출력**: 압축된 성과 요약
-
-```markdown
-## 변환 예시
-
-### Before (상세)
-- [x] UserService 클래스 생성
-- [x] 로그인 메서드 구현
-- [x] 회원가입 메서드 구현
-- [x] 비밀번호 해시 처리 추가
-- [x] 에러 핸들링 추가
-
-### After (압축)
-✅ **사용자 인증 시스템 구현 완료**
-- UserService: 로그인/회원가입/비밀번호 해시
-```
-
-### 2. 파일 변경 → 영향도 분석
+**Input**: Detailed task list
+**Output**: Compressed achievement summary
 
 ```markdown
-## 영향도 분석 템플릿
+## Transformation Example
 
-### 고영향 변경
-| 파일 | 변경 | 영향 범위 |
-|------|------|----------|
-| src/auth/UserService.ts | 신규 | 인증 전체 |
+### Before (Detailed)
+- [x] Create UserService class
+- [x] Implement login method
+- [x] Implement signup method
+- [x] Add password hash handling
+- [x] Add error handling
 
-### 저영향 변경
-- config 파일 업데이트 (3개)
-- 테스트 파일 추가 (2개)
+### After (Compressed)
+✅ **User authentication system implementation complete**
+- UserService: login/signup/password hash
 ```
 
-### 3. 결정 사항 → 구조화된 기록
+### 2. File Changes → Impact Analysis
 
 ```markdown
-## 결정 기록 형식
+## Impact Analysis Template
 
-### 🔷 [결정 제목]
-- **결정**: [최종 선택]
-- **이유**: [핵심 근거 1-2문장]
-- **영향**: [영향받는 영역]
+### High Impact Changes
+| File | Change | Impact Scope |
+|------|--------|--------------|
+| src/auth/UserService.ts | New | All authentication |
+
+### Low Impact Changes
+- Config file updates (3)
+- Test file additions (2)
 ```
 
-### 4. 다음 단계 → 즉시 실행 가능 형태
+### 3. Decisions → Structured Record
 
 ```markdown
-## 다음 단계 형식
+## Decision Record Format
 
-### 즉시 실행 (다음 세션 시작 시)
-1. `npm install` - 의존성 설치
-2. `src/components/` 디렉토리에서 작업 재개
-3. UserProfile 컴포넌트 구현
-
-### 참조 필요
-- 아키텍처: `stages/03-planning/outputs/architecture.md`
-- 디자인: `stages/04-ui-ux/outputs/design_system.md`
+### 🔷 [Decision Title]
+- **Decision**: [Final choice]
+- **Reason**: [Core rationale in 1-2 sentences]
+- **Impact**: [Affected areas]
 ```
 
-## 스테이지별 요약 초점
+### 4. Next Steps → Immediately Actionable Format
+
+```markdown
+## Next Steps Format
+
+### Immediate Actions (On next session start)
+1. `npm install` - Install dependencies
+2. Resume work in `src/components/` directory
+3. Implement UserProfile component
+
+### References Needed
+- Architecture: `stages/03-planning/outputs/architecture.md`
+- Design: `stages/04-ui-ux/outputs/design_system.md`
+```
+
+## Stage-Specific Summary Focus
 
 ### 01-brainstorm
-- **강조**: 아이디어, 요구사항
-- **약화**: 기술적 세부사항
+- **Emphasize**: Ideas, requirements
+- **Minimize**: Technical details
 
 ### 06-implementation
-- **강조**: 코드 변경, 기술 결정
-- **약화**: 아이디어/기획
+- **Emphasize**: Code changes, technical decisions
+- **Minimize**: Ideas/planning
 
 ### 08-qa
-- **강조**: 버그, 테스트 결과
-- **약화**: 계획 세부사항
+- **Emphasize**: Bugs, test results
+- **Minimize**: Plan details
 
-## 압축 비율
+## Compression Ratios
 
-| 원본 토큰 | 목표 압축 | 최대 토큰 |
-|----------|----------|----------|
+| Original Tokens | Target Compression | Max Tokens |
+|-----------------|-------------------|------------|
 | < 2000 | 100% | 2000 |
 | 2000-5000 | 50% | 2500 |
 | 5000-10000 | 30% | 3000 |
 | > 10000 | 25% | 4000 |
 
-## 품질 검증
+## Quality Verification
 
-생성된 요약 검증 기준:
-- **명확성**: 모호한 표현 없음
-- **완전성**: 핵심 정보 누락 없음
-- **실행 가능성**: 다음 단계가 구체적
+Generated summary verification criteria:
+- **Clarity**: No ambiguous expressions
+- **Completeness**: No missing key information
+- **Actionability**: Next steps are specific

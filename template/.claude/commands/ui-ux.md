@@ -1,61 +1,61 @@
 # /ui-ux
 
-04-ui-ux 스테이지를 바로 시작합니다.
+Start the 04-ui-ux stage directly.
 
-## 사용법
+## Usage
 ```
 /ui-ux
 ```
 
-## 스테이지 정보
+## Stage Information
 
-| 항목 | 값 |
-|------|-----|
-| 스테이지 | 04-ui-ux |
-| AI 모델 | Gemini |
-| 실행 모드 | Plan Mode |
-| 체크포인트 | 선택 |
+| Item | Value |
+|------|-------|
+| Stage | 04-ui-ux |
+| AI Model | Gemini |
+| Execution Mode | Plan Mode |
+| Checkpoint | Optional |
 
-## 동작
+## Actions
 
-1. **전제 조건 확인**
-   - 03-planning 완료 여부
-   - PRD.md 존재
+1. **Prerequisite Check**
+   - 03-planning completion status
+   - PRD.md exists
 
-2. **UI/UX 설계**
-   - 와이어프레임 설계
-   - 컴포넌트 명세
-   - 디자인 시스템
+2. **UI/UX Design**
+   - Wireframe design
+   - Component specification
+   - Design system
 
-3. **산출물 생성**
-   - wireframes/ - 와이어프레임 파일
-   - component-spec.md - 컴포넌트 명세
-   - design-system.md - 디자인 시스템
+3. **Output Generation**
+   - wireframes/ - Wireframe files
+   - component-spec.md - Component specification
+   - design-system.md - Design system
 
-## 실행
+## Execution
 
 ```bash
 scripts/run-stage.sh 04-ui-ux "$ARGUMENTS"
 ```
 
-## 입력 파일
+## Input Files
 
 - `stages/03-planning/outputs/PRD.md`
 - `stages/03-planning/outputs/architecture.md`
 
-## 출력 파일
+## Output Files
 
 - `stages/04-ui-ux/outputs/wireframes/`
 - `stages/04-ui-ux/outputs/component-spec.md`
 - `stages/04-ui-ux/outputs/design-system.md`
 
-## 관련 명령어
+## Related Commands
 
-- `/run-stage 04` - 전제조건 확인 후 시작
-- `/next` - 다음 스테이지 (05-task-management)
-- `/planning` - 이전 스테이지
+- `/run-stage 04` - Start after prerequisite check
+- `/next` - Next stage (05-task-management)
+- `/planning` - Previous stage
 
-## 도구 활용
+## Tool Utilization
 
-- Figma MCP - 디자인 컨텍스트 (설정 시)
-- 21st Magic - UI 컴포넌트 영감
+- Figma MCP - Design context (if configured)
+- 21st Magic - UI component inspiration

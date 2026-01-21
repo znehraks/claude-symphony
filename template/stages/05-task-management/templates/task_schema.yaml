@@ -1,19 +1,19 @@
 # Task Schema Definition
-# claude-symphony 태스크 관리 스키마 (Issue #4, #6, #8, #16 해결)
+# claude-symphony Task Management Schema (Issue #4, #6, #8, #16 Resolution)
 
 schema:
   name: "Project Tasks"
   version: "1.0.0"
 
-# 필수 필드 정의
+# Required field definitions
 fields:
-  # 태스크 이름 (Title)
+  # Task name (Title)
   - name: "Task Name"
     type: "title"
     required: true
-    description: "태스크 제목"
+    description: "Task title"
 
-  # 상태 필드 (Issue #16: Status 필드 필수!)
+  # Status field (Issue #16: Status field required!)
   - name: "Status"
     type: "select"
     required: true
@@ -30,7 +30,7 @@ fields:
       - name: "Blocked"
         color: "red"
 
-  # 우선순위
+  # Priority
   - name: "Priority"
     type: "select"
     required: false
@@ -43,14 +43,14 @@ fields:
       - name: "Low"
         color: "green"
 
-  # 정렬용 순서 (Issue #5, #6, #8 해결)
+  # Order for sorting (Issue #5, #6, #8 resolution)
   - name: "Order"
     type: "number"
     required: true
-    description: "태스크 순서 (정렬용)"
+    description: "Task order (for sorting)"
     auto_increment: true
 
-  # 스프린트
+  # Sprint
   - name: "Sprint"
     type: "select"
     required: false
@@ -59,29 +59,29 @@ fields:
       - name: "Sprint 2"
       - name: "Sprint 3"
 
-  # 담당자
+  # Assignee
   - name: "Assignee"
     type: "text"
     required: false
 
-  # 예상 시간
+  # Estimated time
   - name: "Estimate"
     type: "text"
     required: false
-    description: "예상 소요 시간 (예: 2h, 1d)"
+    description: "Estimated time (e.g., 2h, 1d)"
 
-  # 마감일
+  # Due date
   - name: "Due Date"
     type: "date"
     required: false
 
-  # 의존성
+  # Dependencies
   - name: "Depends On"
     type: "text"
     required: false
-    description: "선행 태스크 ID (콤마로 구분)"
+    description: "Prerequisite task IDs (comma-separated)"
 
-  # 스테이지
+  # Stage
   - name: "Stage"
     type: "select"
     required: false
@@ -91,44 +91,44 @@ fields:
       - name: "08-qa"
       - name: "09-testing"
 
-# 태스크 생성 규칙 (Issue #6, #8 해결: 순차 생성!)
+# Task creation rules (Issue #6, #8 resolution: Sequential creation!)
 creation_rules:
-  # 병렬 생성 금지 - 순서 보장
+  # Parallel creation prohibited - order guarantee
   mode: "sequential"
   batch_size: 1
 
-  # 순차 생성 절차
+  # Sequential creation procedure
   procedure:
     - step: 1
       action: "create_single_task"
-      description: "단일 태스크 생성"
+      description: "Create single task"
     - step: 2
       action: "verify_order_field"
-      description: "Order 필드 확인"
+      description: "Verify Order field"
     - step: 3
       action: "create_next_task"
-      description: "다음 태스크 생성 (Order + 1)"
+      description: "Create next task (Order + 1)"
 
-  # 금지 사항
+  # Prohibited actions
   prohibited:
-    - "batch_create"      # 일괄 생성 금지
-    - "parallel_create"   # 병렬 생성 금지
+    - "batch_create"      # Batch creation prohibited
+    - "parallel_create"   # Parallel creation prohibited
 
-  # 권장 사항
+  # Recommended actions
   recommended:
-    - "explicit_order"    # 명시적 Order 값 지정
-    - "status_to_do"      # Status = "To Do"로 생성
-    - "sequential_naming" # 순차적 이름 부여
+    - "explicit_order"    # Explicit Order value specification
+    - "status_to_do"      # Create with Status = "To Do"
+    - "sequential_naming" # Sequential naming
 
-# Notion 데이터베이스 생성 템플릿
+# Notion database creation template
 notion_template:
   database_name: "{{PROJECT_NAME}} Tasks"
 
   properties:
     - "Task Name"    # title
-    - "Status"       # select (필수!)
+    - "Status"       # select (required!)
     - "Priority"     # select
-    - "Order"        # number (정렬용!)
+    - "Order"        # number (for sorting!)
     - "Sprint"       # select
     - "Assignee"     # text
     - "Estimate"     # text
@@ -136,7 +136,7 @@ notion_template:
     - "Depends On"   # text
     - "Stage"        # select
 
-  # 기본 뷰 설정
+  # Default view settings
   views:
     - name: "Board View"
       type: "board"

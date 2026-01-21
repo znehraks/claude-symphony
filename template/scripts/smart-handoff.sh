@@ -1,6 +1,6 @@
 #!/bin/bash
 # claude-symphony Smart HANDOFF Script
-# 스마트 컨텍스트 추출 및 HANDOFF 생성
+# Smart context extraction and HANDOFF generation
 
 set -e
 
@@ -9,18 +9,18 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 PROGRESS_FILE="$PROJECT_ROOT/state/progress.json"
 CONTEXT_DIR="$PROJECT_ROOT/state/context"
 
-# 색상 정의
+# Color definitions
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-# 로그 함수
+# Log functions
 log_info() { echo -e "${BLUE}[HANDOFF]${NC} $1"; }
 log_success() { echo -e "${GREEN}[HANDOFF]${NC} $1"; }
 log_warning() { echo -e "${YELLOW}[HANDOFF]${NC} $1"; }
 
-# 현재 스테이지 확인
+# Get current stage
 get_current_stage() {
     if [ -f "$PROGRESS_FILE" ]; then
         cat "$PROGRESS_FILE" 2>/dev/null | grep -o '"current_stage"[[:space:]]*:[[:space:]]*"[^"]*"' | cut -d'"' -f4
@@ -29,15 +29,15 @@ get_current_stage() {
     fi
 }
 
-# Git 변경 파일 추출
+# Extract changed files from Git
 extract_changed_files() {
-    log_info "변경된 파일 추출 중..."
+    log_info "Extracting changed files..."
 
     if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
-        echo "### 수정된 파일"
+        echo "### Modified Files"
         echo ""
-        echo "| 파일 | 변경 유형 | 변경량 |"
-        echo "|------|----------|--------|"
+        echo "| File | Change Type | Changes |"
+        echo "|------|-------------|---------|"
 
         git diff --stat HEAD~10 2>/dev/null | head -20 | while read -r line; do
             if [[ "$line" =~ ^[[:space:]]*([^|]+)\|[[:space:]]*([0-9]+) ]]; then
@@ -49,16 +49,16 @@ extract_changed_files() {
 
         echo ""
     else
-        echo "Git 저장소가 아닙니다."
+        echo "Not a Git repository."
     fi
 }
 
-# 최근 커밋 추출
+# Extract recent commits
 extract_recent_commits() {
-    log_info "최근 커밋 추출 중..."
+    log_info "Extracting recent commits..."
 
     if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
-        echo "### 최근 커밋"
+        echo "### Recent Commits"
         echo ""
 
         git log --oneline -5 2>/dev/null | while read -r line; do
@@ -69,83 +69,83 @@ extract_recent_commits() {
     fi
 }
 
-# HANDOFF 템플릿 생성
+# Generate HANDOFF template
 generate_handoff() {
     local stage="$1"
     local mode="$2"
     local stage_dir="$PROJECT_ROOT/stages/$stage"
     local handoff_file="$stage_dir/HANDOFF.md"
 
-    log_info "HANDOFF 생성 중: $stage"
+    log_info "Generating HANDOFF: $stage"
 
     mkdir -p "$stage_dir"
 
-    # 타임스탬프
+    # Timestamp
     local timestamp=$(date +%Y-%m-%d\ %H:%M:%S)
 
     cat > "$handoff_file" << EOF
 # HANDOFF - $stage
 
-> 생성 시간: $timestamp
-> 모드: $mode
+> Generated: $timestamp
+> Mode: $mode
 
-## 요약
+## Summary
 
-[스테이지 완료 상태를 1-2문장으로 요약]
+[Summarize stage completion status in 1-2 sentences]
 
-## 완료된 작업
+## Completed Tasks
 
-- [ ] 완료된 작업 1
-- [ ] 완료된 작업 2
-- [ ] 완료된 작업 3
+- [ ] Completed task 1
+- [ ] Completed task 2
+- [ ] Completed task 3
 
-## 핵심 결정사항
+## Key Decisions
 
-### 결정 1
-- **선택**: [선택한 옵션]
-- **이유**: [선택 이유]
-- **대안**: [고려한 대안]
+### Decision 1
+- **Choice**: [Selected option]
+- **Reason**: [Selection rationale]
+- **Alternatives**: [Considered alternatives]
 
 $(extract_changed_files)
 
 $(extract_recent_commits)
 
-## 대기 이슈
+## Pending Issues
 
-- [ ] 이슈 1 (우선순위: 높음)
-- [ ] 이슈 2 (우선순위: 중간)
+- [ ] Issue 1 (Priority: High)
+- [ ] Issue 2 (Priority: Medium)
 
-## 다음 단계
+## Next Steps
 
-1. [즉시 실행 가능한 첫 번째 액션]
-2. [두 번째 액션]
-3. [세 번째 액션]
+1. [First immediately actionable item]
+2. [Second action]
+3. [Third action]
 
-## 참조
+## References
 
-- 이전 HANDOFF: [링크]
-- 관련 문서: [링크]
+- Previous HANDOFF: [link]
+- Related documents: [link]
 
 ---
 
-## AI 호출 기록
+## AI Call Log
 
-| AI | 시간 | 목적 | 결과 |
-|----|------|------|------|
+| AI | Time | Purpose | Result |
+|----|------|---------|--------|
 | - | - | - | - |
 
 EOF
 
-    log_success "HANDOFF 생성 완료: $handoff_file"
+    log_success "HANDOFF generated: $handoff_file"
 }
 
-# 컴팩트 모드 HANDOFF
+# Compact mode HANDOFF
 generate_compact_handoff() {
     local stage="$1"
     local stage_dir="$PROJECT_ROOT/stages/$stage"
     local handoff_file="$stage_dir/HANDOFF.md"
 
-    log_info "컴팩트 HANDOFF 생성 중: $stage"
+    log_info "Generating compact HANDOFF: $stage"
 
     mkdir -p "$stage_dir"
 
@@ -156,29 +156,29 @@ generate_compact_handoff() {
 
 ## Critical
 
-[차단 이슈 및 즉시 해결 필요 사항]
+[Blocking issues and items requiring immediate resolution]
 
 ## Next Actions
 
-1. [첫 번째 즉시 실행 액션]
-2. [두 번째 액션]
+1. [First immediately actionable item]
+2. [Second action]
 
 ## Context
 
-[최소 필수 컨텍스트]
+[Minimum essential context]
 
 EOF
 
-    log_success "컴팩트 HANDOFF 생성 완료: $handoff_file"
+    log_success "Compact HANDOFF generated: $handoff_file"
 }
 
-# 복구용 상세 HANDOFF
+# Recovery detailed HANDOFF
 generate_recovery_handoff() {
     local stage="$1"
     local stage_dir="$PROJECT_ROOT/stages/$stage"
     local handoff_file="$stage_dir/HANDOFF_RECOVERY.md"
 
-    log_info "복구용 HANDOFF 생성 중: $stage"
+    log_info "Generating recovery HANDOFF: $stage"
 
     mkdir -p "$stage_dir"
 
@@ -189,14 +189,14 @@ generate_recovery_handoff() {
 
 ## Full Context
 
-### 현재 상태
-[상세 상태 설명]
+### Current State
+[Detailed state description]
 
-### 완료된 모든 작업
-[상세 작업 목록]
+### All Completed Tasks
+[Complete task list]
 
-### 모든 결정사항
-[결정사항 전체 목록]
+### All Decisions
+[Full decision list]
 
 $(extract_changed_files)
 
@@ -204,33 +204,33 @@ $(extract_recent_commits)
 
 ## Step-by-Step Recovery
 
-### 1단계: 환경 확인
+### Step 1: Verify Environment
 \`\`\`bash
-# 필요한 명령어
+# Required commands
 \`\`\`
 
-### 2단계: 상태 복원
-[복원 절차]
+### Step 2: Restore State
+[Restoration procedure]
 
-### 3단계: 작업 재개
-[재개 절차]
+### Step 3: Resume Work
+[Resume procedure]
 
-## 관련 체크포인트
+## Related Checkpoints
 
-- [체크포인트 목록]
+- [Checkpoint list]
 
 EOF
 
-    log_success "복구용 HANDOFF 생성 완료: $handoff_file"
+    log_success "Recovery HANDOFF generated: $handoff_file"
 }
 
-# 메인 실행
+# Main execution
 main() {
     local mode="${1:-default}"
     local stage="${2:-$(get_current_stage)}"
 
     if [ "$stage" = "unknown" ]; then
-        log_warning "현재 스테이지를 확인할 수 없습니다. 기본값 사용"
+        log_warning "Cannot determine current stage. Using default value"
         stage="00-unknown"
     fi
 
@@ -245,7 +245,7 @@ main() {
             generate_recovery_handoff "$stage"
             ;;
         *)
-            echo "사용법: $0 [default|compact|recovery] [stage_id]"
+            echo "Usage: $0 [default|compact|recovery] [stage_id]"
             exit 1
             ;;
     esac

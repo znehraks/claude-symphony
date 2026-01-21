@@ -1,61 +1,61 @@
 # Git Configuration
-# claude-symphony Git 자동 커밋 규칙 (Issue #15 해결)
+# claude-symphony Git auto-commit rules (Issue #15 resolution)
 
 git:
-  # 자동 커밋 설정
+  # Auto-commit settings
   auto_commit:
     enabled: true
 
-    # 트리거 이벤트
+    # Trigger events
     triggers:
-      on_task_complete: true      # 태스크 완료 시
-      on_stage_complete: true     # 스테이지 완료 시
-      on_checkpoint: true         # 체크포인트 생성 시
-      on_milestone: true          # 마일스톤 완료 시
+      on_task_complete: true      # On task completion
+      on_stage_complete: true     # On stage completion
+      on_checkpoint: true         # On checkpoint creation
+      on_milestone: true          # On milestone completion
 
-  # 커밋 메시지 규칙 (Conventional Commits)
+  # Commit message rules (Conventional Commits)
   commit_convention:
     format: "<type>(<scope>): <description>"
 
-    # 커밋 타입
+    # Commit types
     types:
       - name: "feat"
-        description: "새로운 기능 추가"
+        description: "New feature"
         stages: ["06-implementation"]
 
       - name: "fix"
-        description: "버그 수정"
+        description: "Bug fix"
         stages: ["08-qa"]
 
       - name: "refactor"
-        description: "코드 리팩토링"
+        description: "Code refactoring"
         stages: ["07-refactoring"]
 
       - name: "test"
-        description: "테스트 추가/수정"
+        description: "Test addition/modification"
         stages: ["09-testing"]
 
       - name: "docs"
-        description: "문서 수정"
+        description: "Documentation modification"
         stages: ["all"]
 
       - name: "chore"
-        description: "기타 변경사항"
+        description: "Other changes"
         stages: ["10-deployment"]
 
       - name: "style"
-        description: "코드 스타일 변경"
+        description: "Code style changes"
         stages: ["04-ui-ux", "06-implementation"]
 
       - name: "perf"
-        description: "성능 개선"
+        description: "Performance improvement"
         stages: ["07-refactoring"]
 
       - name: "ci"
-        description: "CI/CD 설정"
+        description: "CI/CD configuration"
         stages: ["10-deployment"]
 
-    # 스테이지별 스코프 매핑
+    # Stage-specific scope mapping
     scope_mapping:
       "01-brainstorm": "brainstorm"
       "02-research": "research"
@@ -68,46 +68,46 @@ git:
       "09-testing": "test"
       "10-deployment": "deploy"
 
-    # 설명 규칙
+    # Description rules
     description_rules:
       max_length: 72
-      language: "Korean"         # Korean | English
-      start_with_verb: true      # 동사로 시작
-      no_period_at_end: true     # 끝에 마침표 없음
+      language: "English"         # Korean | English
+      start_with_verb: true       # Start with verb
+      no_period_at_end: true      # No period at end
 
-  # 커밋 메시지 예시
+  # Commit message examples
   examples:
-    task_complete: "feat(impl): 사용자 인증 기능 구현"
-    stage_complete: "chore(impl): Stage 06 완료 - HANDOFF.md 생성"
-    bug_fix: "fix(qa): 로그인 세션 만료 버그 수정"
-    refactor: "refactor(refactor): 인증 서비스 코드 최적화"
-    test: "test(test): 사용자 인증 E2E 테스트 추가"
+    task_complete: "feat(impl): implement user authentication"
+    stage_complete: "chore(impl): complete Stage 06 - generate HANDOFF.md"
+    bug_fix: "fix(qa): fix login session expiry bug"
+    refactor: "refactor(refactor): optimize auth service code"
+    test: "test(test): add user authentication E2E tests"
 
-  # 브랜치 규칙
+  # Branch rules
   branch:
-    # 브랜치 네이밍
+    # Branch naming
     naming:
       feature: "feature/{stage}-{task-id}"
       bugfix: "bugfix/{issue-id}"
       release: "release/v{version}"
 
-    # 기본 브랜치
+    # Default branch
     default: "main"
     develop: "develop"
 
-    # 스테이지별 브랜치 전략
+    # Stage-specific branch strategy
     strategy: "feature-branch"   # feature-branch | trunk-based
 
-  # 자동화 동작
+  # Automation actions
   automation:
-    # 태스크 완료 시
+    # On task completion
     on_task_complete:
       actions:
         - "stage_changes"
         - "generate_commit_message"
         - "commit"
 
-    # 스테이지 완료 시
+    # On stage completion
     on_stage_complete:
       actions:
         - "stage_all_changes"
@@ -115,13 +115,13 @@ git:
         - "commit"
         - "create_tag"
 
-    # 체크포인트 시
+    # On checkpoint
     on_checkpoint:
       actions:
         - "commit_all"
         - "create_checkpoint_tag"
 
-  # 커밋 메시지 생성 템플릿
+  # Commit message generation templates
   templates:
     task_complete: |
       {{type}}({{scope}}): {{description}}
@@ -130,14 +130,14 @@ git:
       Stage: {{stage_id}}
 
     stage_complete: |
-      chore({{scope}}): Stage {{stage_number}} 완료
+      chore({{scope}}): complete Stage {{stage_number}}
 
-      완료된 작업:
+      Completed tasks:
       {{#each completed_tasks}}
       - {{this}}
       {{/each}}
 
-      다음 스테이지: {{next_stage}}
+      Next stage: {{next_stage}}
 
     checkpoint: |
       chore(checkpoint): {{description}}
@@ -146,16 +146,16 @@ git:
       Checkpoint: {{checkpoint_id}}
       Created: {{timestamp}}
 
-# 금지 사항
+# Prohibited actions
 prohibited:
-  - "커밋 메시지 없이 커밋"
-  - "WIP 커밋 (임시 저장용)"
-  - "대문자 시작 (영어의 경우)"
-  - "의미 없는 커밋 메시지"
+  - "Commit without commit message"
+  - "WIP commits (temporary saves)"
+  - "Starting with uppercase (for English)"
+  - "Meaningless commit messages"
 
-# 권장 사항
+# Recommended actions
 recommended:
-  - "작은 단위 커밋"
-  - "의미 있는 커밋 메시지"
-  - "관련 파일만 스테이징"
-  - "커밋 전 lint/format 실행"
+  - "Commit in small units"
+  - "Meaningful commit messages"
+  - "Stage only related files"
+  - "Run lint/format before commit"

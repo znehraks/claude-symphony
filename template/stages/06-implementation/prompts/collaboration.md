@@ -1,64 +1,64 @@
-# AI 협업 프롬프트 - Implementation
+# AI Collaboration Prompt - Implementation
 
-## 협업 모드: Sequential Handoff
+## Collaboration Mode: Sequential Handoff
 
-이 스테이지에서는 **순차적 전달** 모드를 사용하여 구현 → 리뷰 → 개선 사이클을 진행합니다.
+This stage uses **sequential handoff** mode to run the implement → review → improve cycle.
 
-### 참여 모델
-- **ClaudeCode**: 코드 생성, 구현
+### Participating Models
+- **ClaudeCode**: Code generation, implementation
 
-### 협업 프롬프트
+### Collaboration Prompt
 
 ```
-# 구현 → 셀프 리뷰 → 개선
+# Implement → Self Review → Improve
 /collaborate --mode sequential --chain "claudecode:implement -> claudecode:review -> claudecode:improve"
 ```
 
-### AI 벤치마킹 (선택적)
+### AI Benchmarking (Optional)
 
-복잡한 알고리즘 구현 시:
+For complex algorithm implementation:
 ```
 /benchmark --task "sorting_algorithm" --models "claude,codex"
 ```
 
-### 작업 흐름
+### Workflow
 
-1. **스캐폴딩**: 프로젝트 초기화
-2. **공통 컴포넌트**: 디자인 시스템 기반
-3. **기능 구현**: 스프린트 태스크 순차 구현
-4. **통합**: API/DB 연동
+1. **Scaffolding**: Project initialization
+2. **Common Components**: Based on design system
+3. **Feature Implementation**: Sequential implementation of sprint tasks
+4. **Integration**: API/DB integration
 
-### 체크포인트 트리거
+### Checkpoint Triggers
 
-- 스프린트 완료 시
-- 주요 기능 완료 시
-- 100줄 이상 변경 시
+- On sprint completion
+- On major feature completion
+- On 100+ lines changed
 
 ```
-/checkpoint --reason "스프린트 1 완료"
+/checkpoint --reason "Sprint 1 complete"
 ```
 
-### implementation.yaml 준수
+### Follow implementation.yaml
 
-구현 전 반드시 확인:
+Check before implementation:
 ```yaml
-# 예시 규칙
+# Example rules
 component_type: functional
 styling: tailwind
 state_management: zustand
 naming: camelCase
 ```
 
-### 출력 형식
+### Output Format
 
 ```markdown
-## 구현 로그
+## Implementation Log
 
-### [날짜] - [태스크]
-- 구현 내용
-- 변경된 파일
-- 테스트 결과
+### [Date] - [Task]
+- Implementation details
+- Modified files
+- Test results
 
-### 체크포인트
+### Checkpoint
 - checkpoint_YYYYMMDD_HHMMSS
 ```

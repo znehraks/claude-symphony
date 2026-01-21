@@ -9,7 +9,7 @@ pipeline:
 stages:
   - id: "01-brainstorm"
     name: "Brainstorming"
-    description: "발산적 아이디어 생성 및 요구사항 탐색"
+    description: "Divergent idea generation and requirements exploration"
     models: ["gemini", "claudecode"]
     mode: "yolo"
     container: true
@@ -24,7 +24,7 @@ stages:
 
   - id: "02-research"
     name: "Research"
-    description: "기술 리서치 및 시장 분석"
+    description: "Technical research and market analysis"
     models: ["claude"]
     mode: "plan"
     mcp_servers: ["firecrawl", "exa", "context7"]
@@ -39,7 +39,7 @@ stages:
 
   - id: "03-planning"
     name: "Planning"
-    description: "시스템 아키텍처 및 기술 스택 결정"
+    description: "System architecture and tech stack decisions"
     models: ["gemini"]
     mode: "plan"
     inputs:
@@ -54,7 +54,7 @@ stages:
 
   - id: "04-ui-ux"
     name: "UI/UX Planning"
-    description: "사용자 인터페이스 및 경험 설계"
+    description: "User interface and experience design"
     models: ["gemini"]
     mode: "plan"
     inputs:
@@ -69,7 +69,7 @@ stages:
 
   - id: "05-task-management"
     name: "Task Management"
-    description: "태스크 분해 및 스프린트 계획"
+    description: "Task breakdown and sprint planning"
     models: ["claudecode"]
     mode: "plan"
     inputs:
@@ -84,7 +84,7 @@ stages:
 
   - id: "06-implementation"
     name: "Implementation"
-    description: "핵심 기능 구현"
+    description: "Core feature implementation"
     models: ["claudecode"]
     mode: "plan_sandbox"
     sandbox: true
@@ -101,7 +101,7 @@ stages:
 
   - id: "07-refactoring"
     name: "Refactoring"
-    description: "코드 품질 개선 및 최적화"
+    description: "Code quality improvement and optimization"
     models: ["codex"]
     mode: "deep_dive"
     inputs:
@@ -116,7 +116,7 @@ stages:
 
   - id: "08-qa"
     name: "QA"
-    description: "품질 보증 및 코드 리뷰"
+    description: "Quality assurance and code review"
     models: ["claudecode"]
     mode: "plan_sandbox"
     sandbox: true
@@ -131,7 +131,7 @@ stages:
 
   - id: "09-testing"
     name: "Testing & E2E"
-    description: "테스트 코드 작성 및 E2E 테스트"
+    description: "Test code writing and E2E testing"
     models: ["codex"]
     mode: "sandbox_playwright"
     sandbox: true
@@ -148,7 +148,7 @@ stages:
 
   - id: "10-deployment"
     name: "CI/CD & Deployment"
-    description: "배포 파이프라인 설정 및 배포"
+    description: "Deployment pipeline setup and deployment"
     models: ["claudecode"]
     mode: "headless"
     inputs:
@@ -234,7 +234,7 @@ transitions:
 # Ensures tests are run at key stages to catch bugs early
 test_first_flow:
   enabled: true
-  description: "구현/리팩토링 단계 후 즉시 테스트 실행으로 버그 조기 발견"
+  description: "Run tests immediately after implementation/refactoring stages for early bug detection"
 
   # Stages requiring tests after completion
   test_gates:
@@ -242,53 +242,53 @@ test_first_flow:
       required_tests:
         - type: "smoke"
           command: "npm run dev"
-          description: "개발 서버 실행 확인"
+          description: "Verify dev server starts"
           timeout: 60
         - type: "lint"
           command: "npm run lint"
-          description: "정적 분석"
+          description: "Static analysis"
           timeout: 120
         - type: "typecheck"
           command: "npm run typecheck"
-          description: "타입 체크"
+          description: "Type checking"
           timeout: 120
         - type: "playwright_smoke"
           command: "npx playwright test --grep @smoke"
-          description: "UI 기본 동작 확인"
+          description: "Verify basic UI functionality"
           timeout: 180
-          optional: true  # Playwright 설정 없으면 건너뜀
+          optional: true  # Skip if Playwright not configured
       on_failure:
         action: "block_handoff"
-        message: "테스트 실패 - 문제 해결 후 HANDOFF 진행"
+        message: "Tests failed - resolve issues before proceeding with HANDOFF"
 
     - stage: "07-refactoring"
       required_tests:
         - type: "regression"
           command: "npm run test"
-          description: "기존 테스트 실행 (회귀 방지)"
+          description: "Run existing tests (regression prevention)"
           timeout: 300
         - type: "lint"
           command: "npm run lint"
-          description: "리팩토링 후 코드 품질 확인"
+          description: "Verify code quality after refactoring"
           timeout: 120
       on_failure:
         action: "warn_and_continue"
-        message: "회귀 테스트 실패 - 주의 필요"
+        message: "Regression tests failed - attention required"
 
     - stage: "08-qa"
       required_tests:
         - type: "full_test"
           command: "npm run test"
-          description: "전체 테스트 스위트"
+          description: "Full test suite"
           timeout: 600
         - type: "e2e"
           command: "npx playwright test"
-          description: "E2E 테스트"
+          description: "E2E tests"
           timeout: 600
           optional: true
       on_failure:
         action: "block_handoff"
-        message: "QA 테스트 실패 - 버그 수정 필요"
+        message: "QA tests failed - bug fixes required"
 
   # Test result tracking
   tracking:
@@ -311,11 +311,11 @@ forking:
   fork_points:
     - stage: "03-planning"
       condition: "multiple_architectures_proposed"
-      description: "아키텍처 대안 탐색용 분기"
+      description: "Fork for architecture alternative exploration"
 
     - stage: "06-implementation"
       condition: "technology_alternatives"
-      description: "기술 스택 대안 탐색용 분기"
+      description: "Fork for tech stack alternative exploration"
 
   # Fork management
   management:

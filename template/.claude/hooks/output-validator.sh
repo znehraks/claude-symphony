@@ -1,6 +1,6 @@
 #!/bin/bash
 # claude-symphony Output Validator Hook
-# 스테이지 산출물 검증
+# Stage output validation
 
 set -e
 
@@ -10,32 +10,32 @@ CONFIG_FILE="$PROJECT_ROOT/config/output_validation.yaml"
 PROGRESS_FILE="$PROJECT_ROOT/state/progress.json"
 VALIDATIONS_DIR="$PROJECT_ROOT/state/validations"
 
-# 색상 정의
+# Color definitions
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-# 결과 아이콘
+# Result icons
 PASS="✅"
 FAIL="❌"
 WARN="⚠️"
 INFO="ℹ️"
 
-# 로그 함수
+# Log functions
 log_pass() { echo -e "${GREEN}${PASS}${NC} $1"; }
 log_fail() { echo -e "${RED}${FAIL}${NC} $1"; }
 log_warn() { echo -e "${YELLOW}${WARN}${NC} $1"; }
 log_info() { echo -e "${BLUE}${INFO}${NC} $1"; }
 
-# 검증 결과 저장
+# Validation results storage
 TOTAL_CHECKS=0
 PASSED_CHECKS=0
 FAILED_CHECKS=0
 WARNINGS=0
 
-# 현재 스테이지 확인
+# Get current stage
 get_current_stage() {
     if [ -f "$PROGRESS_FILE" ]; then
         cat "$PROGRESS_FILE" 2>/dev/null | grep -o '"current_stage"[[:space:]]*:[[:space:]]*"[^"]*"' | cut -d'"' -f4
@@ -44,7 +44,7 @@ get_current_stage() {
     fi
 }
 
-# 파일 존재 확인
+# Check file exists
 check_file_exists() {
     local file_path="$1"
     local required="$2"
@@ -53,23 +53,23 @@ check_file_exists() {
     TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
 
     if [ -e "$full_path" ]; then
-        log_pass "$file_path 존재"
+        log_pass "$file_path exists"
         PASSED_CHECKS=$((PASSED_CHECKS + 1))
         return 0
     else
         if [ "$required" = "true" ]; then
-            log_fail "$file_path 누락"
+            log_fail "$file_path missing"
             FAILED_CHECKS=$((FAILED_CHECKS + 1))
             return 1
         else
-            log_warn "$file_path 누락 (선택사항)"
+            log_warn "$file_path missing (optional)"
             WARNINGS=$((WARNINGS + 1))
             return 0
         fi
     fi
 }
 
-# 디렉토리 확인
+# Check directory exists
 check_directory_exists() {
     local dir_path="$1"
     local full_path="$PROJECT_ROOT/$dir_path"
@@ -77,17 +77,17 @@ check_directory_exists() {
     TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
 
     if [ -d "$full_path" ]; then
-        log_pass "$dir_path 디렉토리 존재"
+        log_pass "$dir_path directory exists"
         PASSED_CHECKS=$((PASSED_CHECKS + 1))
         return 0
     else
-        log_fail "$dir_path 디렉토리 누락"
+        log_fail "$dir_path directory missing"
         FAILED_CHECKS=$((FAILED_CHECKS + 1))
         return 1
     fi
 }
 
-# 파일 최소 크기 확인
+# Check file minimum size
 check_file_size() {
     local file_path="$1"
     local min_size="$2"
@@ -98,18 +98,18 @@ check_file_size() {
         TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
 
         if [ "$size" -ge "$min_size" ]; then
-            log_pass "$file_path 크기 충족 (${size} bytes >= ${min_size})"
+            log_pass "$file_path size met (${size} bytes >= ${min_size})"
             PASSED_CHECKS=$((PASSED_CHECKS + 1))
             return 0
         else
-            log_fail "$file_path 크기 미달 (${size} bytes < ${min_size})"
+            log_fail "$file_path size insufficient (${size} bytes < ${min_size})"
             FAILED_CHECKS=$((FAILED_CHECKS + 1))
             return 1
         fi
     fi
 }
 
-# 마크다운 섹션 확인
+# Check markdown sections
 check_markdown_sections() {
     local file_path="$1"
     shift
@@ -121,43 +121,43 @@ check_markdown_sections() {
             TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
 
             if grep -q "^#.*$section" "$full_path" || grep -q "^##.*$section" "$full_path"; then
-                log_pass "$file_path: '$section' 섹션 존재"
+                log_pass "$file_path: '$section' section exists"
                 PASSED_CHECKS=$((PASSED_CHECKS + 1))
             else
-                log_fail "$file_path: '$section' 섹션 누락"
+                log_fail "$file_path: '$section' section missing"
                 FAILED_CHECKS=$((FAILED_CHECKS + 1))
             fi
         done
     fi
 }
 
-# 명령어 실행 검증
+# Run validation command
 run_validation_command() {
     local name="$1"
     local command="$2"
     local required="$3"
 
     TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
-    log_info "실행 중: $name ($command)"
+    log_info "Running: $name ($command)"
 
     if eval "$command" > /dev/null 2>&1; then
-        log_pass "$name 통과"
+        log_pass "$name passed"
         PASSED_CHECKS=$((PASSED_CHECKS + 1))
         return 0
     else
         if [ "$required" = "true" ]; then
-            log_fail "$name 실패"
+            log_fail "$name failed"
             FAILED_CHECKS=$((FAILED_CHECKS + 1))
             return 1
         else
-            log_warn "$name 실패 (선택사항)"
+            log_warn "$name failed (optional)"
             WARNINGS=$((WARNINGS + 1))
             return 0
         fi
     fi
 }
 
-# 스테이지별 검증
+# Stage-specific validation
 validate_stage() {
     local stage="$1"
     local stage_dir="$PROJECT_ROOT/stages/$stage"
@@ -165,11 +165,11 @@ validate_stage() {
 
     echo ""
     echo "=========================================="
-    echo "  산출물 검증: $stage"
+    echo "  Output Validation: $stage"
     echo "=========================================="
     echo ""
 
-    # HANDOFF.md 확인 (모든 스테이지 공통)
+    # HANDOFF.md check (common for all stages)
     check_file_exists "stages/$stage/HANDOFF.md" "true"
 
     case "$stage" in
@@ -177,7 +177,7 @@ validate_stage() {
             check_file_exists "stages/$stage/outputs/ideas.md" "true"
             check_file_size "stages/$stage/outputs/ideas.md" 500
             check_file_exists "stages/$stage/outputs/requirements_analysis.md" "true"
-            check_markdown_sections "stages/$stage/outputs/requirements_analysis.md" "기능" "비기능"
+            check_markdown_sections "stages/$stage/outputs/requirements_analysis.md" "Functional" "Non-functional"
             ;;
 
         "02-research")
@@ -196,7 +196,7 @@ validate_stage() {
             check_directory_exists "stages/$stage/outputs/source_code"
             check_file_exists "stages/$stage/outputs/implementation_log.md" "true"
 
-            # 빌드 검증
+            # Build validation
             if [ -f "$PROJECT_ROOT/package.json" ]; then
                 run_validation_command "lint" "npm run lint --prefix $PROJECT_ROOT" "true"
                 run_validation_command "typecheck" "npm run typecheck --prefix $PROJECT_ROOT" "true"
@@ -208,47 +208,47 @@ validate_stage() {
             check_file_exists "stages/$stage/outputs/test_report.md" "true"
             check_file_exists "stages/$stage/outputs/coverage_report.md" "true"
 
-            # 테스트 검증
+            # Test validation
             if [ -f "$PROJECT_ROOT/package.json" ]; then
                 run_validation_command "test" "npm run test --prefix $PROJECT_ROOT" "true"
             fi
             ;;
 
         *)
-            log_info "스테이지 $stage에 대한 특정 검증 규칙 없음"
+            log_info "No specific validation rules for stage $stage"
             ;;
     esac
 }
 
-# 결과 요약 출력
+# Print result summary
 print_summary() {
     echo ""
     echo "=========================================="
-    echo "  검증 결과 요약"
+    echo "  Validation Result Summary"
     echo "=========================================="
     echo ""
-    echo "총 검사: $TOTAL_CHECKS"
-    echo -e "${GREEN}통과: $PASSED_CHECKS${NC}"
-    echo -e "${RED}실패: $FAILED_CHECKS${NC}"
-    echo -e "${YELLOW}경고: $WARNINGS${NC}"
+    echo "Total checks: $TOTAL_CHECKS"
+    echo -e "${GREEN}Passed: $PASSED_CHECKS${NC}"
+    echo -e "${RED}Failed: $FAILED_CHECKS${NC}"
+    echo -e "${YELLOW}Warnings: $WARNINGS${NC}"
     echo ""
 
-    # 점수 계산
+    # Calculate score
     if [ "$TOTAL_CHECKS" -gt 0 ]; then
         local score=$(echo "scale=2; $PASSED_CHECKS / $TOTAL_CHECKS" | bc)
-        echo "점수: $score"
+        echo "Score: $score"
 
         if [ "$FAILED_CHECKS" -eq 0 ]; then
-            echo -e "${GREEN}${PASS} 검증 통과${NC}"
+            echo -e "${GREEN}${PASS} Validation passed${NC}"
             return 0
         else
-            echo -e "${RED}${FAIL} 검증 실패 - 스테이지 전환 차단됨${NC}"
+            echo -e "${RED}${FAIL} Validation failed - Stage transition blocked${NC}"
             return 1
         fi
     fi
 }
 
-# 결과 저장
+# Save results
 save_results() {
     local stage="$1"
     local timestamp=$(date +%Y%m%d_%H%M%S)
@@ -268,13 +268,13 @@ save_results() {
 EOF
 }
 
-# 메인 실행
+# Main execution
 main() {
     local stage="${1:-$(get_current_stage)}"
     local verbose="${2:-false}"
 
     if [ "$stage" = "unknown" ]; then
-        log_fail "현재 스테이지를 확인할 수 없습니다."
+        log_fail "Cannot determine current stage."
         exit 1
     fi
 
@@ -283,7 +283,7 @@ main() {
     print_summary
 }
 
-# 직접 실행 시에만 main 호출
+# Call main only when executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     main "$@"
 fi

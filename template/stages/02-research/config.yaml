@@ -3,7 +3,7 @@
 stage:
   id: "02-research"
   name: "Research"
-  description: "기술 리서치 및 시장 분석"
+  description: "Technical research and market analysis"
 
 models:
   primary: "claude"
@@ -24,23 +24,23 @@ mcp_servers:
 inputs:
   required:
     - name: "../01-brainstorm/outputs/requirements_analysis.md"
-      description: "요구사항 분석 결과"
+      description: "Requirements analysis results"
     - name: "../01-brainstorm/HANDOFF.md"
-      description: "이전 스테이지 핸드오프"
+      description: "Previous stage handoff"
   optional:
     - name: "../01-brainstorm/outputs/ideas.md"
-      description: "브레인스토밍 아이디어"
+      description: "Brainstorming ideas"
 
 outputs:
   required:
     - name: "tech_research.md"
-      description: "기술 리서치 결과"
+      description: "Technical research results"
     - name: "market_analysis.md"
-      description: "시장 분석"
+      description: "Market analysis"
     - name: "feasibility_report.md"
-      description: "실현 가능성 보고서"
+      description: "Feasibility report"
     - name: "HANDOFF.md"
-      description: "다음 스테이지 인계 문서"
+      description: "Handoff document for next stage"
 
 prompts:
   - name: "tech_stack"
@@ -55,10 +55,10 @@ prompts:
 
 completion:
   checklist:
-    - "기술 스택 비교 분석 완료"
-    - "경쟁사 3개 이상 심층 분석"
-    - "실현 가능성 보고서 작성"
-    - "HANDOFF.md 생성"
+    - "Complete technology stack comparison analysis"
+    - "In-depth analysis of 3+ competitors"
+    - "Write feasibility report"
+    - "Generate HANDOFF.md"
 
 transition:
   next_stage: "03-planning"

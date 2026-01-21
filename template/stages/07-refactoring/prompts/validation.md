@@ -1,76 +1,76 @@
-# 산출물 검증 프롬프트 - Refactoring
+# Output Validation Prompt - Refactoring
 
-## 검증 대상
+## Validation Targets
 
-| 산출물 | 필수 조건 | 검증 방법 |
-|--------|----------|----------|
-| `refactored_code/` | 동작 유지 | 테스트 통과 |
-| `refactored_code/` | 품질 개선 | 메트릭 비교 |
-| `refactoring_report.md` | 변경 내역 | 구조 확인 |
-| `HANDOFF.md` | 체크포인트 참조 | 항목 확인 |
+| Output | Required Condition | Validation Method |
+|--------|-------------------|-------------------|
+| `refactored_code/` | Behavior maintained | Tests pass |
+| `refactored_code/` | Quality improved | Metric comparison |
+| `refactoring_report.md` | Change history | Structure verification |
+| `HANDOFF.md` | Checkpoint reference | Item verification |
 
-## 검증 명령
+## Validation Command
 
 ```bash
 /validate --stage 07-refactoring
 ```
 
-## 품질 기준
+## Quality Criteria
 
 ### refactored_code/
-- [ ] 모든 기존 테스트 통과
-- [ ] Lint 에러 없음
-- [ ] 타입 에러 없음
-- [ ] 복잡도 감소 (목표: 20%↓)
-- [ ] 중복 코드 감소 (목표: 50%↓)
+- [ ] All existing tests pass
+- [ ] No lint errors
+- [ ] No type errors
+- [ ] Complexity reduced (target: 20%↓)
+- [ ] Duplicate code reduced (target: 50%↓)
 
 ### refactoring_report.md
-- [ ] 리팩토링된 함수/클래스 목록
-- [ ] 변경 전후 비교
-- [ ] 성능 개선 측정값
-- [ ] 남은 기술 부채
+- [ ] List of refactored functions/classes
+- [ ] Before/after comparison
+- [ ] Performance improvement measurements
+- [ ] Remaining technical debt
 
 ### HANDOFF.md
-- [ ] 완료된 리팩토링 목록
-- [ ] 체크포인트 참조
-- [ ] QA 필요 영역
+- [ ] Completed refactoring list
+- [ ] Checkpoint reference
+- [ ] Areas needing QA
 
-## 자동 검증 스크립트
+## Auto Validation Script
 
 ```bash
-# 테스트 통과 확인
+# Verify tests pass
 npm run test
 
-# Lint 검사
+# Lint check
 npm run lint
 
-# 번들 사이즈 비교
+# Bundle size comparison
 npm run build && du -sh dist/
 
-# 복잡도 측정 (선택적)
+# Complexity measurement (optional)
 npx complexity-report src/**/*.ts
 ```
 
-## 품질 메트릭 비교
+## Quality Metrics Comparison
 
-| 메트릭 | 이전 | 이후 | 개선율 |
-|--------|------|------|--------|
-| 평균 복잡도 | - | - | - |
-| 중복 코드 | - | - | - |
-| 번들 사이즈 | - | - | - |
+| Metric | Before | After | Improvement |
+|--------|--------|-------|-------------|
+| Average complexity | - | - | - |
+| Duplicate code | - | - | - |
+| Bundle size | - | - | - |
 
-## 회귀 테스트
+## Regression Tests
 
 ```bash
-# 전체 테스트 실행
+# Run full tests
 npm run test
 
-# E2E 테스트 실행 (있는 경우)
+# Run E2E tests (if available)
 npm run test:e2e
 ```
 
-## 실패 시 조치
+## Actions on Failure
 
-1. 테스트 실패 → 체크포인트로 롤백 후 재시도
-2. 성능 저하 → 변경 사항 검토 및 최적화
-3. 타입 에러 → 타입 수정 후 재검증
+1. Test failure → Rollback to checkpoint and retry
+2. Performance degradation → Review changes and optimize
+3. Type errors → Fix types and re-verify

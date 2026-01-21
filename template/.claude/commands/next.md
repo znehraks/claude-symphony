@@ -1,125 +1,125 @@
 # /next
 
-현재 스테이지를 완료하고 다음 스테이지로 전환합니다.
+Complete the current stage and transition to the next stage.
 
-## 사용법
+## Usage
 ```
 /next
-/next --force    # 조건 검증 건너뛰기
-/next --preview  # 전환 미리보기
+/next --force    # Skip condition verification
+/next --preview  # Preview transition
 ```
 
-## 동작
+## Actions
 
-1. **현재 스테이지 완료 조건 검증**
-   - outputs 파일 존재 확인
-   - 필수 체크포인트 확인 (해당 시)
-   - config.yaml의 completion_criteria 검증
+1. **Verify Current Stage Completion Criteria**
+   - Check outputs files exist
+   - Check required checkpoints (if applicable)
+   - Verify completion_criteria in config.yaml
 
-2. **HANDOFF.md 자동 생성**
-   - 완료된 작업 요약
-   - 핵심 결정사항
-   - 다음 단계 안내
+2. **Auto-Generate HANDOFF.md**
+   - Completed work summary
+   - Key decisions
+   - Next step guidance
 
-3. **상태 업데이트**
-   - 현재 스테이지: `completed`
-   - 다음 스테이지: `in_progress`
-   - progress.json 업데이트
+3. **Update State**
+   - Current stage: `completed`
+   - Next stage: `in_progress`
+   - Update progress.json
 
-4. **다음 스테이지 시작**
-   - 다음 스테이지 CLAUDE.md 로드
-   - 입력 파일 확인
+4. **Start Next Stage**
+   - Load next stage CLAUDE.md
+   - Check input files
 
-## 실행 스크립트
+## Execution Script
 
 ```bash
 scripts/next-stage.sh "$ARGUMENTS"
 ```
 
-## 출력 예시
+## Output Examples
 
-### 성공적인 전환
+### Successful Transition
 ```
 /next
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🔄 스테이지 전환
+🔄 Stage Transition
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-현재: 04-ui-ux → 다음: 05-task-management
+Current: 04-ui-ux → Next: 05-task-management
 
-[완료 조건 검증]
-✓ wireframes/ 디렉토리 존재
-✓ component-spec.md 생성됨
-✓ design-system.md 생성됨
+[Completion Criteria Verification]
+✓ wireframes/ directory exists
+✓ component-spec.md generated
+✓ design-system.md generated
 
-[HANDOFF.md 생성]
-✓ stages/04-ui-ux/HANDOFF.md 생성됨
+[HANDOFF.md Generation]
+✓ stages/04-ui-ux/HANDOFF.md created
 
-[상태 업데이트]
+[State Update]
 ✓ 04-ui-ux: completed
 ✓ 05-task-management: in_progress
-✓ progress.json 업데이트됨
+✓ progress.json updated
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ 05-task-management 스테이지 시작!
+✅ 05-task-management stage started!
 
-다음 작업:
-1. stages/05-task-management/CLAUDE.md 참조
-2. PRD.md 기반 태스크 분해 시작
-3. /tasks 명령어로 바로 시작 가능
+Next tasks:
+1. Reference stages/05-task-management/CLAUDE.md
+2. Start task breakdown based on PRD.md
+3. Can start directly with /tasks command
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-### 조건 미충족
+### Criteria Not Met
 ```
 /next
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⚠️  스테이지 전환 불가
+⚠️  Stage Transition Not Possible
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-현재: 06-implementation
+Current: 06-implementation
 
-[완료 조건 검증]
-✓ src/ 디렉토리 존재
-✓ 구현 파일 생성됨
-✗ 체크포인트 필수 (미생성)
-✗ tests/ 통과 확인 필요
+[Completion Criteria Verification]
+✓ src/ directory exists
+✓ Implementation files generated
+✗ Checkpoint required (not created)
+✗ tests/ pass confirmation needed
 
-다음 단계:
-1. /checkpoint 실행
-2. 테스트 실행 후 결과 확인
-3. /next --force로 강제 전환 (비권장)
+Next steps:
+1. Run /checkpoint
+2. Run tests and verify results
+3. Force transition with /next --force (not recommended)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-## 옵션
+## Options
 
-| 옵션 | 설명 |
-|------|------|
-| `--force` | 완료 조건 검증 건너뛰기 (비권장) |
-| `--preview` | 전환 미리보기만 (실제 전환 안 함) |
-| `--no-handoff` | HANDOFF.md 생성 안 함 |
+| Option | Description |
+|--------|-------------|
+| `--force` | Skip completion criteria verification (not recommended) |
+| `--preview` | Preview only (no actual transition) |
+| `--no-handoff` | Skip HANDOFF.md generation |
 
-## 완료 조건 (스테이지별)
+## Completion Criteria (By Stage)
 
-| 스테이지 | 필수 outputs | 체크포인트 |
-|----------|-------------|-----------|
+| Stage | Required Outputs | Checkpoint |
+|-------|------------------|------------|
 | 01-brainstorm | ideas.md, decisions.md | - |
 | 02-research | research.md, tech-stack.md | - |
 | 03-planning | PRD.md, architecture.md | - |
 | 04-ui-ux | wireframes/, components.md | - |
 | 05-task-mgmt | tasks.json, sprints.md | - |
-| 06-implementation | src/, tests/ | ✅ 필수 |
-| 07-refactoring | (변경된 src/) | ✅ 필수 |
+| 06-implementation | src/, tests/ | ✅ Required |
+| 07-refactoring | (modified src/) | ✅ Required |
 | 08-qa | qa-report.md | - |
 | 09-testing | test-results.md | - |
-| 10-deployment | CI/CD 완료 | - |
+| 10-deployment | CI/CD complete | - |
 
-## 관련 명령어
+## Related Commands
 
-- `/status` - 현재 상태 확인
-- `/handoff` - HANDOFF.md만 생성
-- `/checkpoint` - 체크포인트 생성
-- `/run-stage [id]` - 특정 스테이지로 이동
+- `/status` - Check current status
+- `/handoff` - Generate HANDOFF.md only
+- `/checkpoint` - Create checkpoint
+- `/run-stage [id]` - Move to specific stage

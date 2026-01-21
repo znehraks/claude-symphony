@@ -1,31 +1,31 @@
 # /status
 
-파이프라인 전체 상태를 한눈에 확인합니다.
+Check the overall pipeline status at a glance.
 
-## 사용법
+## Usage
 ```
 /status
 ```
 
-## 동작
+## Actions
 
-1. **progress.json 읽기**
-   - 현재 스테이지 확인
-   - 각 스테이지 완료 상태
+1. **Read progress.json**
+   - Check current stage
+   - Check completion status for each stage
 
-2. **시각적 상태 표시**
-   - 진행률 바 (프로그레스)
-   - 각 스테이지 상태 아이콘
-   - 체크포인트 수
-   - 토큰 사용량 (컨텍스트)
+2. **Display Visual Status**
+   - Progress bar
+   - Status icon for each stage
+   - Checkpoint count
+   - Token usage (context)
 
-## 실행 스크립트
+## Execution Script
 
 ```bash
 scripts/show-status.sh
 ```
 
-## 출력 예시
+## Output Example
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -33,41 +33,41 @@ scripts/show-status.sh
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Progress: [████████░░░░░░░░░░░░] 40% (4/10)
 
- 01 ✅ brainstorm     완료     [Gemini+Claude]
- 02 ✅ research       완료     [Claude+MCP]
- 03 ✅ planning       완료     [Gemini]
- 04 🔄 ui-ux         진행중    [Gemini]
- 05 ⏳ task-mgmt     대기      [ClaudeCode]
- 06 ⏳ implementation 대기      [ClaudeCode]
- 07 ⏳ refactoring   대기      [Codex]
- 08 ⏳ qa            대기      [ClaudeCode]
- 09 ⏳ testing       대기      [Codex]
- 10 ⏳ deployment    대기      [ClaudeCode]
+ 01 ✅ brainstorm     completed  [Gemini+Claude]
+ 02 ✅ research       completed  [Claude+MCP]
+ 03 ✅ planning       completed  [Gemini]
+ 04 🔄 ui-ux         in progress [Gemini]
+ 05 ⏳ task-mgmt     pending     [ClaudeCode]
+ 06 ⏳ implementation pending     [ClaudeCode]
+ 07 ⏳ refactoring   pending     [Codex]
+ 08 ⏳ qa            pending     [ClaudeCode]
+ 09 ⏳ testing       pending     [Codex]
+ 10 ⏳ deployment    pending     [ClaudeCode]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-체크포인트: 2개 | 마지막 핸드오프: 03-planning
+Checkpoints: 2 | Last handoff: 03-planning
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-## 상태 아이콘
+## Status Icons
 
-| 아이콘 | 의미 |
-|--------|------|
-| ✅ | 완료 (completed) |
-| 🔄 | 진행중 (in_progress) |
-| ⏳ | 대기 (pending) |
-| ❌ | 실패 (failed) |
-| ⏸️ | 일시중지 (paused) |
+| Icon | Meaning |
+|------|---------|
+| ✅ | Completed |
+| 🔄 | In Progress |
+| ⏳ | Pending |
+| ❌ | Failed |
+| ⏸️ | Paused |
 
-## 옵션
+## Options
 
-| 옵션 | 설명 |
-|------|------|
-| `--json` | JSON 형식으로 출력 |
-| `--brief` | 간략한 한 줄 상태만 출력 |
+| Option | Description |
+|--------|-------------|
+| `--json` | Output in JSON format |
+| `--brief` | Output brief single-line status only |
 
-## 사용 사례
+## Use Cases
 
-- 새 세션 시작 시 현재 상태 파악
-- 작업 전 진행 상황 확인
-- 팀원에게 현재 상태 공유
+- Check current status when starting new session
+- Verify progress before starting work
+- Share current status with team members

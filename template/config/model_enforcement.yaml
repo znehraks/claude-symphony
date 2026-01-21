@@ -1,10 +1,10 @@
 # AI Model Enforcement Configuration
-# claude-symphony AI 모델 역할 분담 및 강제 실행 설정
+# claude-symphony AI model role distribution and enforcement settings
 
 model_enforcement:
   enabled: true
 
-  # ClaudeCode 직접 처리 가능 (외부 AI 호출 불필요)
+  # ClaudeCode direct handling (no external AI call needed)
   claudecode_direct:
     operations:
       - "npm run lint"
@@ -15,38 +15,38 @@ model_enforcement:
       - "git add"
       - "git commit"
       - "ls/cat/find"
-      - "파일 읽기"
-      - "간단한 수정 (< 10줄)"
-      - "설정 파일 편집"
-      - "문서 작성/수정"
+      - "File reading"
+      - "Simple modifications (< 10 lines)"
+      - "Config file editing"
+      - "Documentation writing/editing"
 
     characteristics:
       - max_lines_change: 10
       - complexity: "low"
       - no_architectural_impact: true
 
-  # 외부 AI 강제 호출 필요
+  # External AI call required
   external_ai_required:
-    # Gemini 필수 태스크
+    # Gemini required tasks
     gemini_tasks:
-      - "발산적 아이디어 생성"
-      - "창의적 브레인스토밍"
-      - "웹 리서치 (Reddit, HackerNews)"
-      - "시장 조사"
-      - "사용자 페르소나 생성"
-      - "UI/UX 디자인 아이디어"
+      - "Divergent idea generation"
+      - "Creative brainstorming"
+      - "Web research (Reddit, HackerNews)"
+      - "Market research"
+      - "User persona creation"
+      - "UI/UX design ideas"
 
-    # Codex 필수 태스크
+    # Codex required tasks
     codex_tasks:
-      - "코드 리팩토링 (> 10줄)"
-      - "성능 최적화"
-      - "복잡한 버그 수정"
-      - "아키텍처 개선"
-      - "디자인 패턴 적용"
-      - "테스트 코드 생성"
-      - "E2E 테스트 작성"
+      - "Code refactoring (> 10 lines)"
+      - "Performance optimization"
+      - "Complex bug fixes"
+      - "Architecture improvements"
+      - "Design pattern application"
+      - "Test code generation"
+      - "E2E test writing"
 
-# 스테이지별 자동 호출 설정
+# Stage-specific auto-invoke settings
 stage_auto_invoke:
   "01-brainstorm":
     model: "gemini"
@@ -85,57 +85,57 @@ stage_auto_invoke:
     wrapper: "scripts/codex-wrapper.sh"
     flags: "--full-auto"
 
-# 역할 분담 가이드라인
+# Role distribution guidelines
 role_guidelines:
   claudecode:
     strengths:
-      - "파일 시스템 조작"
-      - "빌드/테스트 실행"
-      - "Git 작업"
-      - "문서 구조화"
-      - "코드 리뷰 (읽기)"
+      - "File system operations"
+      - "Build/test execution"
+      - "Git operations"
+      - "Documentation structuring"
+      - "Code review (reading)"
     avoid:
-      - "대규모 코드 생성"
-      - "창의적 아이디어 요청"
-      - "웹 리서치 기반 작업"
+      - "Large-scale code generation"
+      - "Creative idea requests"
+      - "Web research-based tasks"
 
   gemini:
     strengths:
-      - "창의적 아이디어"
-      - "웹 리서치"
-      - "시장 분석"
-      - "UI/UX 컨셉"
+      - "Creative ideas"
+      - "Web research"
+      - "Market analysis"
+      - "UI/UX concepts"
     avoid:
-      - "코드 작성/수정"
-      - "파일 시스템 조작"
-      - "Git 작업"
+      - "Code writing/editing"
+      - "File system operations"
+      - "Git operations"
 
   codex:
     strengths:
-      - "코드 작성/수정"
-      - "리팩토링"
-      - "테스트 작성"
-      - "버그 수정"
+      - "Code writing/editing"
+      - "Refactoring"
+      - "Test writing"
+      - "Bug fixing"
     avoid:
-      - "창의적 아이디어"
-      - "웹 리서치"
-      - "문서 작성"
+      - "Creative ideas"
+      - "Web research"
+      - "Documentation writing"
 
-# 강제 실행 검증
+# Enforcement validation
 enforcement_validation:
   warn_on_violation: true
   block_on_violation: false
 
-  # 위반 감지 규칙
+  # Violation detection rules
   violation_rules:
     - condition: "refactoring_without_codex"
       stage: "07-refactoring"
-      message: "⚠️ 리팩토링 작업은 Codex를 통해 수행해주세요. /codex 명령 사용"
+      message: "Refactoring tasks should be performed through Codex. Use /codex command"
 
     - condition: "brainstorm_without_gemini"
       stage: "01-brainstorm"
-      message: "⚠️ 아이디어 생성은 Gemini를 통해 수행해주세요. /gemini 명령 사용"
+      message: "Idea generation should be performed through Gemini. Use /gemini command"
 
     - condition: "large_code_change_direct"
       threshold_lines: 10
-      message: "⚠️ 10줄 이상 코드 변경은 Codex 사용을 권장합니다."
+      message: "For code changes over 10 lines, using Codex is recommended."

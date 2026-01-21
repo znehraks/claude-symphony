@@ -1,24 +1,24 @@
 # Output Validator Skill
 
-스테이지별 산출물 검증 스킬
+Stage-specific output validation skill
 
-## 개요
+## Overview
 
-각 스테이지의 산출물이 요구사항을 충족하는지 자동으로 검증합니다:
-- 필수 파일 존재 확인
-- 파일 내용 검증
-- 검증 명령어 실행 (lint, test 등)
-- 품질 점수 계산
+Automatically validates that each stage's outputs meet requirements:
+- Required file existence check
+- File content validation
+- Validation command execution (lint, test, etc.)
+- Quality score calculation
 
-## 트리거
+## Trigger
 
-- 스테이지 완료 시 자동 실행
-- `/validate` 명령어
-- `/next` 명령어 전 자동 체크
+- Auto-runs on stage completion
+- `/validate` command
+- Auto-check before `/next` command
 
-## 기능
+## Features
 
-### 1. 파일 존재 확인
+### 1. File Existence Check
 ```yaml
 required_outputs:
   ideas.md:
@@ -26,14 +26,14 @@ required_outputs:
     min_size_bytes: 500
 ```
 
-### 2. 내용 검증
+### 2. Content Validation
 ```yaml
 content_checks:
   min_ideas: 5
-  has_sections: ["기능", "비기능"]
+  has_sections: ["functional", "non-functional"]
 ```
 
-### 3. 명령어 검증
+### 3. Command Validation
 ```yaml
 validation_commands:
   - name: "lint"
@@ -41,46 +41,46 @@ validation_commands:
     required: true
 ```
 
-### 4. 품질 점수
+### 4. Quality Score
 ```yaml
 quality_metrics:
   lint_score: 0.9
   test_coverage: 0.8
 ```
 
-## 파일 구조
+## File Structure
 
 ```
 output-validator/
-├── README.md          # 이 파일
-├── validate.md        # 검증 프로세스 가이드
+├── README.md          # This file
+├── validate.md        # Validation process guide
 └── prompts/
-    └── CLAUDE.md      # AI 지침
+    └── CLAUDE.md      # AI instructions
 ```
 
-## 설정
+## Configuration
 
-`config/output_validation.yaml` 참조
+See `config/output_validation.yaml`
 
-## 사용 예시
+## Usage Examples
 
 ```bash
-# 현재 스테이지 검증
+# Validate current stage
 /validate
 
-# 특정 스테이지 검증
+# Validate specific stage
 /validate --stage 06
 
-# 상세 리포트
+# Detailed report
 /validate --verbose
 
-# 자동 수정 제안
+# Auto-fix suggestions
 /validate --fix
 ```
 
-## 출력
+## Output
 
-- 검증 결과 리포트
-- 품질 점수
-- 수정 제안 (실패 시)
-- `state/validations/` 저장
+- Validation result report
+- Quality score
+- Fix suggestions (on failure)
+- Saved to `state/validations/`

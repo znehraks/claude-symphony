@@ -1,5 +1,5 @@
 #!/bin/bash
-# list-stages.sh - 스테이지 목록 및 상세 정보 표시
+# list-stages.sh - Stage list and details display
 # claude-symphony workflow pipeline
 
 set -e
@@ -8,7 +8,7 @@ PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PROGRESS_FILE="$PROJECT_ROOT/state/progress.json"
 STAGES_DIR="$PROJECT_ROOT/stages"
 
-# 색상 정의
+# Color definitions
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -18,7 +18,7 @@ WHITE='\033[1;37m'
 GRAY='\033[0;90m'
 NC='\033[0m' # No Color
 
-# 옵션 및 인자 처리
+# Options and arguments handling
 OUTPUT_JSON=false
 FILTER_PENDING=false
 FILTER_COMPLETED=false
@@ -35,27 +35,27 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
-# jq 확인
+# Check jq
 if ! command -v jq &> /dev/null; then
-    echo -e "${RED}오류:${NC} jq가 필요합니다."
+    echo -e "${RED}Error:${NC} jq is required."
     exit 1
 fi
 
-# 스테이지 정보 배열
+# Stage info arrays
 declare -a STAGE_IDS=("01-brainstorm" "02-research" "03-planning" "04-ui-ux" "05-task-management" "06-implementation" "07-refactoring" "08-qa" "09-testing" "10-deployment")
 declare -a STAGE_NAMES=("brainstorm" "research" "planning" "ui-ux" "task-management" "implementation" "refactoring" "qa" "testing" "deployment")
 declare -a STAGE_AI=("Gemini+Claude" "Claude+MCP" "Gemini" "Gemini" "ClaudeCode" "ClaudeCode" "Codex" "ClaudeCode" "Codex" "ClaudeCode")
 declare -a STAGE_MODES=("YOLO" "Plan Mode" "Plan Mode" "Plan Mode" "Plan Mode" "Plan+Sandbox" "Deep Dive" "Plan+Sandbox" "Playwright" "Headless")
 declare -a STAGE_SHORTCUTS=("brainstorm" "research" "planning" "ui-ux" "tasks" "implement" "refactor" "qa" "test" "deploy")
 
-# 현재 스테이지 가져오기
+# Get current stage
 if [ -f "$PROGRESS_FILE" ]; then
     CURRENT_STAGE=$(jq -r '.current_stage // "none"' "$PROGRESS_FILE")
 else
     CURRENT_STAGE="none"
 fi
 
-# 상태 아이콘 반환
+# Return status icon
 status_icon() {
     case $1 in
         completed) echo "✅" ;;
@@ -66,13 +66,13 @@ status_icon() {
     esac
 }
 
-# 특정 스테이지 상세 보기
+# Show specific stage details
 show_stage_detail() {
     local num=$1
     local idx=$((num - 1))
 
     if [ $idx -lt 0 ] || [ $idx -ge 10 ]; then
-        echo -e "${RED}오류:${NC} 유효한 스테이지 번호를 입력하세요 (01-10)"
+        echo -e "${RED}Error:${NC} Please enter a valid stage number (01-10)"
         exit 1
     fi
 
@@ -84,7 +84,7 @@ show_stage_detail() {
     local STAGE_PATH="$STAGES_DIR/$STAGE_ID"
     local CONFIG_PATH="$STAGE_PATH/config.yaml"
 
-    # 상태 가져오기
+    # Get status
     if [ -f "$PROGRESS_FILE" ]; then
         STATUS=$(jq -r ".stages.\"$STAGE_ID\".status // \"pending\"" "$PROGRESS_FILE")
     else
@@ -98,9 +98,9 @@ show_stage_detail() {
     echo -e "Mode:        ${CYAN}$MODE${NC}"
     echo -e "Status:      $(status_icon $STATUS) $STATUS"
 
-    # config.yaml에서 추가 정보 가져오기
+    # Get additional info from config.yaml
     if [ -f "$CONFIG_PATH" ]; then
-        # timeout 추출 (yq가 있으면 사용, 없으면 grep)
+        # Extract timeout (use yq if available, otherwise grep)
         if command -v yq &> /dev/null; then
             TIMEOUT=$(yq -r '.timeout // "60"' "$CONFIG_PATH")
             CHECKPOINT=$(yq -r '.checkpoint_required // false' "$CONFIG_PATH")
@@ -108,9 +108,9 @@ show_stage_detail() {
             TIMEOUT=$(grep "timeout:" "$CONFIG_PATH" 2>/dev/null | head -1 | awk '{print $2}' || echo "60")
             CHECKPOINT=$(grep "checkpoint_required:" "$CONFIG_PATH" 2>/dev/null | head -1 | awk '{print $2}' || echo "false")
         fi
-        echo -e "Timeout:     ${TIMEOUT}분"
+        echo -e "Timeout:     ${TIMEOUT}min"
         if [ "$CHECKPOINT" == "true" ]; then
-            echo -e "Checkpoint:  ${YELLOW}필수${NC}"
+            echo -e "Checkpoint:  ${YELLOW}Required${NC}"
         fi
     fi
 
@@ -129,7 +129,7 @@ show_stage_detail() {
         echo -e " ${GRAY}• $PREV_STAGE/outputs/*${NC}"
     fi
     if [ -z "$(find "$STAGE_PATH/inputs" -type f 2>/dev/null)" ] && [ $idx -eq 0 ]; then
-        echo " (없음 - 첫 번째 스테이지)"
+        echo " (None - first stage)"
     fi
 
     echo ""
@@ -144,28 +144,28 @@ show_stage_detail() {
         done
     fi
     if [ -d "$STAGE_PATH/templates" ]; then
-        echo -e " ${GRAY}(템플릿 참조: templates/)${NC}"
+        echo -e " ${GRAY}(Reference templates: templates/)${NC}"
     fi
 
     echo ""
 
     # Quick Commands
     echo -e "${BLUE}[Quick Commands]${NC}"
-    echo " • /$SHORTCUT      - 이 스테이지 바로 시작"
-    printf " • /run-stage %02d  - 전제조건 확인 후 시작\n" "$num"
+    echo " • /$SHORTCUT      - Start this stage directly"
+    printf " • /run-stage %02d  - Start after checking prerequisites\n" "$num"
 
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 }
 
-# 특정 스테이지 상세 보기
+# Show specific stage details
 if [ -n "$STAGE_NUM" ]; then
-    # 앞의 0 제거
+    # Remove leading zeros
     STAGE_NUM=$((10#$STAGE_NUM))
     show_stage_detail "$STAGE_NUM"
     exit 0
 fi
 
-# JSON 출력
+# JSON output
 if [ "$OUTPUT_JSON" = true ]; then
     echo "["
     for i in "${!STAGE_IDS[@]}"; do
@@ -183,7 +183,7 @@ if [ "$OUTPUT_JSON" = true ]; then
     exit 0
 fi
 
-# 목록 표시
+# Display list
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo -e "📋 ${WHITE}Pipeline Stages${NC}"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -196,13 +196,13 @@ for i in "${!STAGE_IDS[@]}"; do
     AI="${STAGE_AI[$i]}"
     MODE="${STAGE_MODES[$i]}"
 
-    # 상태 가져오기
+    # Get status
     STATUS="pending"
     if [ -f "$PROGRESS_FILE" ]; then
         STATUS=$(jq -r ".stages.\"$STAGE_ID\".status // \"pending\"" "$PROGRESS_FILE")
     fi
 
-    # 필터링
+    # Filtering
     if [ "$FILTER_PENDING" = true ] && [ "$STATUS" != "pending" ]; then
         continue
     fi
@@ -213,7 +213,7 @@ for i in "${!STAGE_IDS[@]}"; do
     ICON=$(status_icon "$STATUS")
     NUM=$(printf "%02d" $((i + 1)))
 
-    # 현재 스테이지 표시
+    # Mark current stage
     if [ "$STAGE_ID" == "$CURRENT_STAGE" ]; then
         ARROW=" ${YELLOW}←${NC}"
     else
@@ -225,7 +225,7 @@ done
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-# 다음 단계 안내
+# Next step guidance
 if [ "$CURRENT_STAGE" != "none" ] && [ -n "$CURRENT_STAGE" ]; then
     CURRENT_NUM=$(echo "$CURRENT_STAGE" | cut -d'-' -f1)
     CURRENT_NUM=$((10#$CURRENT_NUM))
@@ -233,13 +233,13 @@ if [ "$CURRENT_STAGE" != "none" ] && [ -n "$CURRENT_STAGE" ]; then
 
     if [ $NEXT_NUM -le 10 ]; then
         NEXT_SHORTCUT="${STAGE_SHORTCUTS[$((NEXT_NUM - 1))]}"
-        printf "현재: ${CYAN}%s${NC} | 다음: ${GREEN}/run-stage %02d${NC} 또는 ${GREEN}/%s${NC}\n" \
+        printf "Current: ${CYAN}%s${NC} | Next: ${GREEN}/run-stage %02d${NC} or ${GREEN}/%s${NC}\n" \
             "$CURRENT_STAGE" "$NEXT_NUM" "$NEXT_SHORTCUT"
     else
-        echo -e "현재: ${CYAN}$CURRENT_STAGE${NC} | ${GREEN}파이프라인 완료!${NC}"
+        echo -e "Current: ${CYAN}$CURRENT_STAGE${NC} | ${GREEN}Pipeline complete!${NC}"
     fi
 else
-    echo -e "시작: ${GREEN}/init-project [name]${NC} 또는 ${GREEN}/run-stage 01${NC}"
+    echo -e "Start: ${GREEN}/init-project [name]${NC} or ${GREEN}/run-stage 01${NC}"
 fi
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

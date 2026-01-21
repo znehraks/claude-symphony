@@ -1,103 +1,103 @@
 # AI Logging Configuration
-# claude-symphony AI 호출 검증 및 로깅 규칙 (개선 제안 #2, #3 해결)
+# claude-symphony AI call verification and logging rules (Improvement suggestions #2, #3 resolution)
 
 ai_logging:
-  # 활성화 여부
+  # Enable/disable
   enabled: true
 
-  # 로그 저장 위치
+  # Log storage location
   log_file: "state/ai_calls.log"
 
-# Gemini 호출 검증 체크리스트 (개선 제안 #2)
+# Gemini call verification checklist (Improvement suggestion #2)
 gemini_verification:
-  # 호출 전 체크리스트
+  # Pre-call checklist
   pre_call_checklist:
     - name: "cli_installed"
       check: "which gemini"
-      description: "Gemini CLI 설치 확인"
+      description: "Verify Gemini CLI installation"
 
     - name: "wrapper_exists"
       check: "test -f scripts/gemini-wrapper.sh"
-      description: "래퍼 스크립트 존재 확인"
+      description: "Verify wrapper script exists"
 
     - name: "prompt_file_ready"
       check: "test -f ${PROMPT_FILE}"
-      description: "프롬프트 파일 준비 확인"
+      description: "Verify prompt file is ready"
 
-  # 호출 후 체크리스트
+  # Post-call checklist
   post_call_checklist:
     - name: "tmux_session_active"
       check: "tmux has-session -t ax-gemini 2>/dev/null"
-      description: "tmux 세션 활성 확인"
+      description: "Verify tmux session is active"
 
     - name: "output_saved"
       check: "test -f outputs/${OUTPUT_FILE}"
-      description: "출력 파일 저장 확인"
+      description: "Verify output file is saved"
 
-# Codex 호출 검증 체크리스트
+# Codex call verification checklist
 codex_verification:
   pre_call_checklist:
     - name: "cli_installed"
       check: "which codex"
-      description: "Codex CLI 설치 확인"
+      description: "Verify Codex CLI installation"
 
     - name: "wrapper_exists"
       check: "test -f scripts/codex-wrapper.sh"
-      description: "래퍼 스크립트 존재 확인"
+      description: "Verify wrapper script exists"
 
     - name: "sandbox_ready"
       check: "docker ps | grep -q codex-sandbox || true"
-      description: "샌드박스 준비 확인 (선택)"
+      description: "Verify sandbox is ready (optional)"
 
   post_call_checklist:
     - name: "tmux_session_active"
       check: "tmux has-session -t ax-codex 2>/dev/null"
-      description: "tmux 세션 활성 확인"
+      description: "Verify tmux session is active"
 
     - name: "output_saved"
       check: "test -f outputs/${OUTPUT_FILE}"
-      description: "출력 파일 저장 확인"
+      description: "Verify output file is saved"
 
-# HANDOFF.md AI 호출 로그 포함 설정 (개선 제안 #3)
+# HANDOFF.md AI call log inclusion settings (Improvement suggestion #3)
 handoff_ai_log:
-  # 활성화 여부
+  # Enable/disable
   enabled: true
 
-  # 로그 테이블 형식
+  # Log table format
   format: |
-    ## AI 호출 기록
+    ## AI Call Log
 
-    | AI | 호출 시간 | 프롬프트 파일 | 결과 파일 | 상태 |
-    |----|----------|--------------|----------|------|
+    | AI | Call Time | Prompt File | Result File | Status |
+    |----|-----------|-------------|-------------|--------|
     {{#each ai_calls}}
     | {{model}} | {{timestamp}} | {{prompt_file}} | {{output_file}} | {{status}} |
     {{/each}}
 
-  # 포함할 정보
+  # Information to include
   include:
-    - model              # AI 모델명 (Gemini, Codex, ClaudeCode)
-    - timestamp          # 호출 시간
-    - prompt_file        # 프롬프트 파일 경로
-    - output_file        # 출력 파일 경로
-    - status             # 성공/실패
-    - duration_seconds   # 실행 시간 (선택)
+    - model              # AI model name (Gemini, Codex, ClaudeCode)
+    - timestamp          # Call time
+    - prompt_file        # Prompt file path
+    - output_file        # Output file path
+    - status             # Success/failure
+    - duration_seconds   # Execution time (optional)
 
-# 스테이지별 AI 호출 추적
+# Stage-specific AI call tracking
 stage_tracking:
-  # 각 스테이지에서 호출된 AI 추적
+  # Track AI calls per stage
   enabled: true
 
-  # 추적 항목
+  # Tracking items
   track:
-    - stage_id           # 스테이지 ID
-    - ai_model           # 사용된 AI 모델
-    - call_count         # 호출 횟수
-    - total_duration     # 총 소요 시간
-    - success_rate       # 성공률
+    - stage_id           # Stage ID
+    - ai_model           # AI model used
+    - call_count         # Number of calls
+    - total_duration     # Total duration
+    - success_rate       # Success rate
 
-# 로그 형식
+# Log format
 log_format:
-  # 단일 호출 로그
+  # Single call log
   single_call: |
     [{{timestamp}}] {{stage_id}} - {{model}}
     Prompt: {{prompt_file}}
@@ -105,25 +105,25 @@ log_format:
     Status: {{status}}
     Duration: {{duration}}s
 
-  # 일일 요약
+  # Daily summary
   daily_summary: |
-    === AI 호출 일일 요약 ({{date}}) ===
-    총 호출: {{total_calls}}
+    === AI Call Daily Summary ({{date}}) ===
+    Total Calls: {{total_calls}}
     Gemini: {{gemini_calls}}
     Codex: {{codex_calls}}
     ClaudeCode: {{claude_calls}}
-    성공률: {{success_rate}}%
+    Success Rate: {{success_rate}}%
 
-# 경고 설정
+# Alert settings
 alerts:
-  # 연속 실패 시 경고
+  # Alert on consecutive failures
   consecutive_failures:
     threshold: 3
     action: "notify_user"
-    message: "⚠️ AI 호출이 {{count}}회 연속 실패했습니다. 설정을 확인하세요."
+    message: "AI calls have failed {{count}} times consecutively. Please check settings."
 
-  # 응답 시간 초과 경고
+  # Slow response warning
   slow_response:
     threshold_seconds: 300
     action: "warn"
-    message: "⚠️ AI 응답이 {{threshold}}초를 초과했습니다."
+    message: "AI response exceeded {{threshold}} seconds."

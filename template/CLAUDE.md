@@ -1,11 +1,11 @@
 # claude-symphony - Multi-AI Orchestration Framework
 
-10단계 소프트웨어 개발 워크플로우 오케스트레이션 시스템
+10-Stage Software Development Workflow Orchestration System
 
-## 파이프라인 개요
+## Pipeline Overview
 
-| 단계 | 이름 | AI 모델 | 실행 모드 |
-|------|------|---------|-----------|
+| Stage | Name | AI Model | Execution Mode |
+|-------|------|----------|----------------|
 | 01 | Brainstorming | Gemini + ClaudeCode | YOLO (Container) |
 | 02 | Research | Claude | Plan Mode |
 | 03 | Planning | Gemini | Plan Mode |
@@ -17,112 +17,112 @@
 | 09 | Testing & E2E | Codex | Sandbox + Playwright |
 | 10 | CI/CD & Deployment | ClaudeCode | Headless |
 
-## 컨텍스트 관리 규칙
+## Context Management Rules
 
-> 설정 파일: `config/context.yaml`
+> Configuration file: `config/context.yaml`
 
-### 퍼센트 기반 임계값 (남은 컨텍스트 기준)
+### Percentage-Based Thresholds (Based on Remaining Context)
 
-| 임계값 | 트리거 | 동작 |
-|--------|--------|------|
-| **60%** (warning) | 경고 표시 | 압축 비율 계산, 배너 표시 |
-| **50%** (action) | 자동 저장 | `state/context/`에 상태 저장, 압축 권장 |
-| **40%** (critical) | `/clear` 권고 | 강제 저장, 복구 HANDOFF 생성 |
+| Threshold | Trigger | Action |
+|-----------|---------|--------|
+| **60%** (warning) | Display warning | Calculate compression ratio, show banner |
+| **50%** (action) | Auto-save | Save state to `state/context/`, recommend compression |
+| **40%** (critical) | `/clear` recommended | Force save, generate recovery HANDOFF |
 
-### 태스크 기반 자동 저장
-- **5개 태스크 완료마다** 상태 자동 저장
-- 저장 위치: `state/context/state_{timestamp}_{stage}.md`
+### Task-Based Auto-Save
+- **Auto-save every 5 completed tasks**
+- Save location: `state/context/state_{timestamp}_{stage}.md`
 
-### 상태 저장 형식
-> 템플릿: `state/templates/phase_state.md.template`
+### State Save Format
+> Template: `state/templates/phase_state.md.template`
 
 ```markdown
-# 작업 상태 저장 - {{TIMESTAMP}}
+# Work State Save - {{TIMESTAMP}}
 
-## 컨텍스트 상태
-- 남은 컨텍스트: {{REMAINING_PERCENT}}%
-- 저장 트리거: {{TRIGGER_REASON}}
+## Context State
+- Remaining context: {{REMAINING_PERCENT}}%
+- Save trigger: {{TRIGGER_REASON}}
 
-## 현재 스테이지
+## Current Stage
 {{STAGE_ID}}: {{STAGE_NAME}}
 
-## 진행 상황
-- 완료: [목록]
-- 진행 중: [현재 작업]
-- 대기: [남은 작업]
+## Progress
+- Completed: [list]
+- In progress: [current task]
+- Pending: [remaining tasks]
 
-## 핵심 컨텍스트
-- 주요 결정사항
-- 수정된 파일
-- 활성 이슈/버그
+## Key Context
+- Major decisions
+- Modified files
+- Active issues/bugs
 
-## AI 호출 기록
-| AI | 시간 | 프롬프트 | 결과 |
-|----|------|---------|------|
+## AI Call Log
+| AI | Time | Prompt | Result |
+|----|------|--------|--------|
 
-## 복구 지침
-1. 이 파일 읽기
-2. {{HANDOFF_FILE}} 참조
-3. {{CURRENT_TASK}}부터 재개
+## Recovery Instructions
+1. Read this file
+2. Reference {{HANDOFF_FILE}}
+3. Resume from {{CURRENT_TASK}}
 ```
 
-### 컨텍스트 압축 전략
-1. **summarize_completed**: 완료된 작업을 요약으로 대체
-2. **externalize_code**: 코드 블록을 파일 참조로 대체
-3. **handoff_generation**: 현재 상태를 HANDOFF.md로 외부화
+### Context Compression Strategies
+1. **summarize_completed**: Replace completed work with summaries
+2. **externalize_code**: Replace code blocks with file references
+3. **handoff_generation**: Externalize current state to HANDOFF.md
 
-## 스테이지 전환 프로토콜
+## Stage Transition Protocol
 
-### 필수 순서
-1. 현재 스테이지의 모든 outputs 생성 확인
-2. `HANDOFF.md` 생성 (필수)
-3. 체크포인트 생성 (구현/리팩토링 스테이지)
-4. `state/progress.json` 업데이트
-5. 다음 스테이지 `CLAUDE.md` 로드
+### Required Sequence
+1. Verify all outputs for current stage are generated
+2. Generate `HANDOFF.md` (required)
+3. Create checkpoint (implementation/refactoring stages)
+4. Update `state/progress.json`
+5. Load next stage `CLAUDE.md`
 
-### HANDOFF.md 필수 포함 항목
-- 완료된 작업 체크리스트
-- 핵심 결정사항 및 이유
-- 성공/실패한 접근법
-- 다음 단계 즉시 실행 작업
-- 체크포인트 참조 (해당시)
+### Required HANDOFF.md Contents
+- Completed tasks checklist
+- Key decisions and rationale
+- Successful/failed approaches
+- Immediate next steps for next stage
+- Checkpoint references (if applicable)
 
-## 슬래시 커맨드
+## Slash Commands
 
-### 기본 명령어
-| 커맨드 | 설명 |
-|--------|------|
-| `/init-project` | 새 프로젝트 초기화 |
-| `/run-stage [id]` | 특정 스테이지 실행 |
-| `/handoff` | 현재 스테이지 HANDOFF.md 생성 |
-| `/checkpoint` | 체크포인트 생성 |
-| `/gemini [prompt]` | Gemini CLI 호출 |
-| `/codex [prompt]` | Codex CLI 호출 |
+### Basic Commands
+| Command | Description |
+|---------|-------------|
+| `/init-project` | Initialize new project |
+| `/run-stage [id]` | Run specific stage |
+| `/handoff` | Generate current stage HANDOFF.md |
+| `/checkpoint` | Create checkpoint |
+| `/gemini [prompt]` | Call Gemini CLI |
+| `/codex [prompt]` | Call Codex CLI |
 
-### Multi-AI 명령어
-| 커맨드 | 설명 |
-|--------|------|
-| `/collaborate` | Multi-AI 협업 실행 |
-| `/benchmark` | AI 모델 벤치마킹 |
-| `/fork` | 파이프라인 분기 관리 |
-| `/validate` | 산출물 검증 실행 |
+### Multi-AI Commands
+| Command | Description |
+|---------|-------------|
+| `/collaborate` | Run Multi-AI collaboration |
+| `/benchmark` | AI model benchmarking |
+| `/fork` | Pipeline branch management |
+| `/validate` | Run output validation |
 
-### 가시성 명령어
-| 커맨드 | 설명 |
-|--------|------|
-| `/status` | 파이프라인 전체 상태 확인 |
-| `/stages` | 스테이지 목록 및 상세 |
-| `/context` | 컨텍스트(토큰) 상태 관리 |
+### Visibility Commands
+| Command | Description |
+|---------|-------------|
+| `/status` | Check pipeline status |
+| `/stages` | Stage list and details |
+| `/context` | Context (token) state management |
 
-### 네비게이션 명령어
-| 커맨드 | 설명 |
-|--------|------|
-| `/next` | 다음 스테이지로 전환 |
-| `/restore` | 체크포인트에서 복구 |
+### Navigation Commands
+| Command | Description |
+|---------|-------------|
+| `/next` | Transition to next stage |
+| `/restore` | Restore from checkpoint |
 
-### 스테이지 단축 명령어
-| 커맨드 | 스테이지 |
-|--------|----------|
+### Stage Shortcut Commands
+| Command | Stage |
+|---------|-------|
 | `/brainstorm` | 01-brainstorm |
 | `/research` | 02-research |
 | `/planning` | 03-planning |
@@ -134,395 +134,394 @@
 | `/test` | 09-testing |
 | `/deploy` | 10-deployment |
 
-## 스킬 (자동 활성화)
+## Skills (Auto-Activated)
 
-| 스킬 | 트리거 | 설명 |
-|------|--------|------|
-| `stage-transition` | "완료", "/next" | 스테이지 완료 감지 및 전환 자동화 |
-| `context-compression` | 토큰 50k+ | 컨텍스트 압축 및 상태 저장 |
-| `smart-handoff` | 스테이지 완료 | 스마트 컨텍스트 추출 및 HANDOFF 생성 |
-| `ai-collaboration` | `/collaborate` | Multi-AI 협업 오케스트레이션 |
-| `auto-checkpoint` | 트리거 조건 충족 | 자동 체크포인트 생성 |
-| `output-validator` | `/validate`, 스테이지 완료 | 산출물 검증 및 품질 확인 |
+| Skill | Trigger | Description |
+|-------|---------|-------------|
+| `stage-transition` | "completed", "/next" | Stage completion detection and transition automation |
+| `context-compression` | Token 50k+ | Context compression and state save |
+| `smart-handoff` | Stage completion | Smart context extraction and HANDOFF generation |
+| `ai-collaboration` | `/collaborate` | Multi-AI collaboration orchestration |
+| `auto-checkpoint` | Trigger conditions met | Automatic checkpoint generation |
+| `output-validator` | `/validate`, stage completion | Output validation and quality verification |
 
-## Git 자동 커밋 규칙
+## Git Auto-Commit Rules
 
-> 설정 파일: `config/git.yaml`
+> Configuration file: `config/git.yaml`
 
-### 자동 커밋 트리거
-- **태스크 완료 시**: 관련 파일 커밋
-- **스테이지 완료 시**: 전체 변경사항 커밋 + 태그 생성
-- **체크포인트 생성 시**: 체크포인트 커밋 + 태그
+### Auto-Commit Triggers
+- **On task completion**: Commit related files
+- **On stage completion**: Commit all changes + create tag
+- **On checkpoint creation**: Checkpoint commit + tag
 
-### 커밋 메시지 형식 (Conventional Commits)
+### Commit Message Format (Conventional Commits)
 ```
 <type>(<scope>): <description>
 ```
 
-| 스테이지 | 타입 | 스코프 | 예시 |
-|---------|------|--------|------|
-| 06-implementation | `feat` | `impl` | `feat(impl): 사용자 인증 구현` |
-| 07-refactoring | `refactor` | `refactor` | `refactor(refactor): 인증 서비스 최적화` |
-| 08-qa | `fix` | `qa` | `fix(qa): 세션 만료 버그 수정` |
-| 09-testing | `test` | `test` | `test(test): E2E 테스트 추가` |
-| 10-deployment | `ci` | `deploy` | `ci(deploy): GitHub Actions 설정` |
+| Stage | Type | Scope | Example |
+|-------|------|-------|---------|
+| 06-implementation | `feat` | `impl` | `feat(impl): implement user authentication` |
+| 07-refactoring | `refactor` | `refactor` | `refactor(refactor): optimize auth service` |
+| 08-qa | `fix` | `qa` | `fix(qa): fix session expiry bug` |
+| 09-testing | `test` | `test` | `test(test): add E2E tests` |
+| 10-deployment | `ci` | `deploy` | `ci(deploy): configure GitHub Actions` |
 
-### 커밋 원칙
-- 작은 단위로 자주 커밋
-- 의미 있는 커밋 메시지 작성
-- 커밋 전 lint/format 실행
+### Commit Principles
+- Commit frequently in small units
+- Write meaningful commit messages
+- Run lint/format before commit
 
-## AI 호출 로깅
+## AI Call Logging
 
-> 설정 파일: `config/ai_logging.yaml`
+> Configuration file: `config/ai_logging.yaml`
 
-### AI 호출 기록
-- 모든 AI 호출(Gemini, Codex, ClaudeCode)은 HANDOFF.md에 기록됩니다
-- 호출 시간, 프롬프트 파일, 결과 파일, 상태를 추적합니다
+### AI Call Recording
+- All AI calls (Gemini, Codex, ClaudeCode) are recorded in HANDOFF.md
+- Track call time, prompt file, result file, and status
 
-### Gemini 호출 검증 체크리스트
-| 단계 | 확인 항목 | 명령어 |
-|------|----------|--------|
-| 1 | CLI 설치 확인 | `which gemini` |
-| 2 | 래퍼 사용 | `scripts/gemini-wrapper.sh` |
-| 3 | tmux 세션 확인 | `tmux attach -t symphony-gemini` |
-| 4 | 출력 파일 저장 | `outputs/` 디렉토리 |
+### Gemini Call Verification Checklist
+| Step | Check Item | Command |
+|------|------------|---------|
+| 1 | CLI installation check | `which gemini` |
+| 2 | Use wrapper | `scripts/gemini-wrapper.sh` |
+| 3 | tmux session check | `tmux attach -t symphony-gemini` |
+| 4 | Save output file | `outputs/` directory |
 
-### AI 호출 로그 형식 (HANDOFF.md)
+### AI Call Log Format (HANDOFF.md)
 ```markdown
-## AI 호출 기록
-| AI | 호출 시간 | 프롬프트 | 결과 | 상태 |
-|----|----------|---------|------|------|
-| Gemini | 14:30 | prompts/ideation.md | outputs/ideas.md | 성공 |
+## AI Call Log
+| AI | Call Time | Prompt | Result | Status |
+|----|-----------|--------|--------|--------|
+| Gemini | 14:30 | prompts/ideation.md | outputs/ideas.md | Success |
 ```
 
-## 문답 자동 기록 (Q&A Logging)
+## Q&A Auto-Recording (Q&A Logging)
 
-> 설정 파일: `config/qa_logging.yaml`
+> Configuration file: `config/qa_logging.yaml`
 
-### 자동 기록 트리거
-- **스테이지 완료 시**: 해당 스테이지의 주요 Q&A 기록
-- **이슈 발견 시**: 문제와 해결 방법 기록
-- **프로세스 변경 요청 시**: 변경 내용과 이유 기록
+### Auto-Recording Triggers
+- **On stage completion**: Record key Q&A for that stage
+- **On issue discovery**: Record problem and solution
+- **On process change request**: Record changes and rationale
 
-### 기록 형식
+### Recording Format
 ```markdown
 ### Q{{number}}: {{title}}
-**질문**: {{question}}
-**답변**: {{answer}}
-**해결 방법**: {{solution}}
-**향후 개선 제안**: {{suggestion}}
+**Question**: {{question}}
+**Answer**: {{answer}}
+**Solution**: {{solution}}
+**Future Improvement Suggestions**: {{suggestion}}
 ```
 
-### 기록 대상 파일
-- 기본: `feedback.md`
-- 백업: `state/qa_backups/`
+### Recording Target Files
+- Default: `feedback.md`
+- Backup: `state/qa_backups/`
 
-### 카테고리
-- `workflow_improvements`: 워크플로우 개선
-- `tool_usage`: 도구 사용법
-- `process_changes`: 프로세스 변경
-- `bug_fixes`: 버그 수정
-- `best_practices`: 모범 사례
+### Categories
+- `workflow_improvements`: Workflow improvements
+- `tool_usage`: Tool usage
+- `process_changes`: Process changes
+- `bug_fixes`: Bug fixes
+- `best_practices`: Best practices
 
-## 금지 사항
+## Prohibited Actions
 
-- HANDOFF.md 없이 스테이지 전환
-- 체크포인트 없이 파괴적 작업 (구현/리팩토링)
-- 단일 세션에 복수 스테이지 혼합
-- 이전 스테이지 outputs 수정
-- WIP 커밋, 의미 없는 커밋 메시지
+- Stage transition without HANDOFF.md
+- Destructive operations without checkpoint (implementation/refactoring)
+- Mixing multiple stages in single session
+- Modifying previous stage outputs
+- WIP commits, meaningless commit messages
 
-## 디렉토리 구조 (Issue #17 해결)
+## Directory Structure (Issue #17 Resolution)
 
-### ⚠️ 핵심 구분: TEMPLATE_ROOT vs PROJECT_ROOT
+### ⚠️ Key Distinction: TEMPLATE_ROOT vs PROJECT_ROOT
 
 ```
-TEMPLATE_ROOT (파이프라인 관리)     PROJECT_ROOT (소스코드)
-/my-new-project/                   /my-new-project/[project-name]/
-├── stages/        ← 산출물        ├── src/
-│   └── XX-stage/                  ├── public/
-│       └── outputs/               ├── package.json
-├── config/                        └── ...
+TEMPLATE_ROOT (Pipeline Management)    PROJECT_ROOT (Source Code)
+/my-new-project/                       /my-new-project/[project-name]/
+├── stages/        ← Outputs           ├── src/
+│   └── XX-stage/                      ├── public/
+│       └── outputs/                   ├── package.json
+├── config/                            └── ...
 ├── state/
 └── CLAUDE.md
 ```
 
-### 경로 규칙
+### Path Rules
 
-| 유형 | 저장 위치 | 예시 |
-|------|----------|------|
-| 산출물 (문서) | `stages/XX/outputs/` | `ideas.md`, `architecture.md` |
-| 소스 코드 | `[project-name]/src/` | 컴포넌트, API |
-| 상태 파일 | `state/` | `progress.json`, 체크포인트 |
+| Type | Save Location | Example |
+|------|---------------|---------|
+| Outputs (documents) | `stages/XX/outputs/` | `ideas.md`, `architecture.md` |
+| Source code | `[project-name]/src/` | Components, API |
+| State files | `state/` | `progress.json`, checkpoints |
 | HANDOFF | `stages/XX/` | `HANDOFF.md` |
 
-### ⚠️ 금지: PROJECT_ROOT에 stages/ 생성
+### ⚠️ Prohibited: Creating stages/ in PROJECT_ROOT
 ```
-❌ 잘못된 구조
+❌ Incorrect structure
 /my-new-project/my-app/
-├── stages/        ← 여기에 생성하면 안됨!
+├── stages/        ← Should not be created here!
 └── src/
 
-✅ 올바른 구조
+✅ Correct structure
 /my-new-project/
-├── stages/        ← TEMPLATE_ROOT에만 존재
+├── stages/        ← Only exists in TEMPLATE_ROOT
 └── my-app/
     └── src/       ← PROJECT_ROOT
 ```
 
-### 파이프라인 파일 구조
+### Pipeline File Structure
 
 ```
 config/
-  pipeline.yaml        # 파이프라인 정의
-  models.yaml          # AI 모델 할당
-  context.yaml         # 컨텍스트 관리 설정
-  model_enforcement.yaml  # AI 역할 분담
-  git.yaml             # Git 자동 커밋 규칙
-  mcp_fallbacks.yaml   # MCP 폴백 설정
-  ai_logging.yaml      # AI 호출 로깅 설정
-  qa_logging.yaml      # 문답 자동 기록 설정
-  implementation.yaml.template  # 구현 규칙 템플릿
+  pipeline.yaml        # Pipeline definition
+  models.yaml          # AI model assignment
+  context.yaml         # Context management settings
+  model_enforcement.yaml  # AI role distribution
+  git.yaml             # Git auto-commit rules
+  mcp_fallbacks.yaml   # MCP fallback settings
+  ai_logging.yaml      # AI call logging settings
+  qa_logging.yaml      # Q&A auto-recording settings
+  implementation.yaml.template  # Implementation rules template
 
 stages/
   XX-stage-name/
-    CLAUDE.md          # 스테이지 AI 지침
-    config.yaml        # 스테이지 설정
-    prompts/           # 프롬프트 템플릿
-    templates/         # 출력 템플릿
-    inputs/            # 입력 파일 (이전 스테이지 링크)
-    outputs/           # 출력 파일 (산출물)
-    HANDOFF.md         # 생성된 핸드오프
+    CLAUDE.md          # Stage AI instructions
+    config.yaml        # Stage settings
+    prompts/           # Prompt templates
+    templates/         # Output templates
+    inputs/            # Input files (previous stage links)
+    outputs/           # Output files (deliverables)
+    HANDOFF.md         # Generated handoff
 
 state/
-  progress.json        # 파이프라인 진행 상황
-  checkpoints/         # 체크포인트 저장
-  context/             # 컨텍스트 상태 저장
-  handoffs/            # 핸드오프 아카이브
-  templates/           # 상태 템플릿
+  progress.json        # Pipeline progress
+  checkpoints/         # Checkpoint storage
+  context/             # Context state storage
+  handoffs/            # Handoff archive
+  templates/           # State templates
 ```
 
-## 디자인 패턴 적용
+## Design Patterns Applied
 
-1. **Sequential Workflow Architecture** - 순차적 단계 정의 및 자동 진행
-2. **Stateless Orchestration** - 무상태 컨텍스트 전달 (HANDOFF.md)
-3. **Orchestrator-Workers** - 병렬 에이전트 실행 (Brainstorm 스테이지)
-4. **Proactive State Externalization** - 외부 상태 파일 관리
-5. **State Machine Workflow** - 상태 전이 관리 (progress.json)
-6. **Layered Configuration** - 계층화된 설정 구조 (global → stage)
+1. **Sequential Workflow Architecture** - Sequential stage definition and auto-progression
+2. **Stateless Orchestration** - Stateless context transfer (HANDOFF.md)
+3. **Orchestrator-Workers** - Parallel agent execution (Brainstorm stage)
+4. **Proactive State Externalization** - External state file management
+5. **State Machine Workflow** - State transition management (progress.json)
+6. **Layered Configuration** - Hierarchical configuration structure (global → stage)
 
 ---
 
 ## Multi-AI Orchestration
 
-> 설정 파일: `config/ai_collaboration.yaml`, `config/ai_benchmarking.yaml`
+> Configuration files: `config/ai_collaboration.yaml`, `config/ai_benchmarking.yaml`
 
-### AI 협업 모드
+### AI Collaboration Modes
 
-| 모드 | 설명 | 사용 스테이지 |
-|------|------|--------------|
-| `parallel` | 동일 작업을 여러 AI로 동시 실행 | 01-brainstorm, 02-research |
-| `sequential` | AI 간 순차 전달 (리뷰 체인) | 06-implementation, 07-refactoring |
-| `debate` | AI 간 토론으로 최적 결론 도출 | 03-planning, 04-ui-ux |
+| Mode | Description | Used In Stages |
+|------|-------------|----------------|
+| `parallel` | Execute same task with multiple AIs simultaneously | 01-brainstorm, 02-research |
+| `sequential` | Sequential handoff between AIs (review chain) | 06-implementation, 07-refactoring |
+| `debate` | AI debate to reach optimal conclusions | 03-planning, 04-ui-ux |
 
-### AI 모델 전문화
+### AI Model Specialization
 
-| AI 모델 | 강점 | 최적 스테이지 |
-|--------|------|--------------|
-| Claude | 정확한 코드 생성, 로직 분석 | 06-implementation, 08-qa |
-| Gemini | 창의적 아이디어, 빠른 탐색 | 01-brainstorm, 03-planning |
-| Codex | 깊이 있는 분석, 리팩토링 | 07-refactoring, 09-testing |
+| AI Model | Strengths | Optimal Stages |
+|----------|-----------|----------------|
+| Claude | Accurate code generation, logic analysis | 06-implementation, 08-qa |
+| Gemini | Creative ideas, rapid exploration | 01-brainstorm, 03-planning |
+| Codex | Deep analysis, refactoring | 07-refactoring, 09-testing |
 
-### 사용 방법
+### Usage
 ```bash
-# 병렬 협업 실행
-/collaborate --mode parallel --models claude,gemini --task "아이디어 생성"
+# Parallel collaboration execution
+/collaborate --mode parallel --models claude,gemini --task "idea generation"
 
-# 토론 모드
+# Debate mode
 /collaborate --mode debate --rounds 3
 
-# AI 벤치마킹
+# AI benchmarking
 /benchmark --task code_generation --models claude,codex
 ```
 
 ---
 
-## Smart HANDOFF 시스템
+## Smart HANDOFF System
 
-> 설정 파일: `config/handoff_intelligence.yaml`, `config/memory_integration.yaml`
+> Configuration files: `config/handoff_intelligence.yaml`, `config/memory_integration.yaml`
 
-### 자동 추출 항목
-- 완료된 작업 (`completed_tasks`)
-- 핵심 결정사항 (`key_decisions`)
-- 수정된 파일 (`modified_files`)
-- 대기 이슈 (`pending_issues`)
-- AI 호출 기록 (`ai_call_history`)
+### Auto-Extracted Items
+- Completed tasks (`completed_tasks`)
+- Key decisions (`key_decisions`)
+- Modified files (`modified_files`)
+- Pending issues (`pending_issues`)
+- AI call history (`ai_call_history`)
 
-### 컨텍스트 압축
-- **전략**: 의미 기반 압축 (`semantic`)
-- **목표 비율**: 원본의 30%
-- **보존 항목**: 핵심 결정, 차단 이슈, 파일 변경
+### Context Compression
+- **Strategy**: Semantic-based compression (`semantic`)
+- **Target ratio**: 30% of original
+- **Preserved items**: Key decisions, blocking issues, file changes
 
-### AI 메모리 통합
-- claude-mem MCP와 연동
-- 스테이지 완료 시 자동 메모리 저장
-- 스테이지 시작 시 이전 컨텍스트 주입
+### AI Memory Integration
+- Integration with claude-mem MCP
+- Auto-save to memory on stage completion
+- Previous context injection on stage start
 
-### HANDOFF 모드
+### HANDOFF Modes
 ```bash
-# 기본 (스마트) HANDOFF
+# Default (smart) HANDOFF
 /handoff
 
-# 컴팩트 모드 (최소 필수 정보만)
+# Compact mode (minimum essential info only)
 /handoff --compact
 
-# 복구용 상세 HANDOFF
+# Detailed recovery HANDOFF
 /handoff --recovery
 ```
 
 ---
 
-## 자동 체크포인트 시스템
+## Auto-Checkpoint System
 
-> 설정 파일: `config/auto_checkpoint.yaml`, `config/smart_rollback.yaml`
+> Configuration files: `config/auto_checkpoint.yaml`, `config/smart_rollback.yaml`
 
-### 자동 생성 트리거
+### Auto-Generation Triggers
 
-| 트리거 | 조건 | 동작 |
-|--------|------|------|
-| 태스크 기반 | 5개 태스크 완료 | 체크포인트 생성 |
-| 파일 변경 | 100줄 이상 변경 | 체크포인트 생성 |
-| 파괴적 작업 | rm, delete, drop 패턴 | 강제 체크포인트 |
-| 시간 기반 | 30분 경과 | 체크포인트 생성 |
+| Trigger | Condition | Action |
+|---------|-----------|--------|
+| Task-based | 5 tasks completed | Create checkpoint |
+| File change | 100+ lines changed | Create checkpoint |
+| Destructive operation | rm, delete, drop patterns | Force checkpoint |
+| Time-based | 30 minutes elapsed | Create checkpoint |
 
-### 보존 정책
-- 최대 보존: 10개
-- 마일스톤 유지: 스테이지 완료 체크포인트는 영구 보존
+### Retention Policy
+- Max retention: 10
+- Milestone retention: Stage completion checkpoints preserved permanently
 
-### 스마트 롤백
+### Smart Rollback
 ```bash
-# 체크포인트 목록
+# Checkpoint list
 /restore --list
 
-# 특정 체크포인트로 롤백
+# Rollback to specific checkpoint
 /restore checkpoint_20240101_120000
 
-# 부분 롤백 (파일 레벨)
+# Partial rollback (file level)
 /restore checkpoint_id --partial --files "src/auth/*"
 ```
 
 ---
 
-## 파이프라인 분기 (Forking)
+## Pipeline Forking
 
-> 설정 파일: `config/pipeline_forking.yaml`
+> Configuration file: `config/pipeline_forking.yaml`
 
-### 분기 시점
-- 아키텍처 대안 제안 시 (03-planning)
-- 기술적 선택지 존재 시 (06-implementation)
+### Fork Points
+- When architecture alternatives are proposed (03-planning)
+- When technical choices exist (06-implementation)
 
-### 분기 관리
-- **최대 활성 분기**: 3개
-- **병합 전략**: 최고 성능 기준 (`best_performer`)
+### Fork Management
+- **Max active forks**: 3
+- **Merge strategy**: Best performer basis (`best_performer`)
 
-### 비교 메트릭
-- 코드 품질 (`code_quality`)
-- 성능 (`performance`)
-- 유지보수성 (`maintainability`)
+### Comparison Metrics
+- Code quality (`code_quality`)
+- Performance (`performance`)
+- Maintainability (`maintainability`)
 
-### 사용 방법
+### Usage
 ```bash
-# 분기 생성
-/fork create --reason "아키텍처 대안 탐색" --direction "microservices"
+# Create fork
+/fork create --reason "architecture alternative exploration" --direction "microservices"
 
-# 분기 목록
+# Fork list
 /fork list
 
-# 분기 비교
+# Compare forks
 /fork compare
 
-# 분기 병합
+# Merge fork
 /fork merge fork_name
 
-# 분기 삭제
+# Delete fork
 /fork delete fork_name
 ```
 
 ---
 
-## 스테이지 페르소나
+## Stage Personas
 
-> 설정 파일: `config/stage_personas.yaml`
+> Configuration file: `config/stage_personas.yaml`
 
-각 스테이지에 최적화된 AI 행동 특성을 정의합니다.
+Defines optimized AI behavior characteristics for each stage.
 
-| 스테이지 | 페르소나 | 특성 | Temperature |
-|---------|---------|------|-------------|
-| 01-brainstorm | Creative Explorer | 발산적 사고, 제약 없는 아이디어 | 0.9 |
-| 02-research | Analytical Investigator | 체계적 분석, 깊이 있는 조사 | 0.5 |
-| 03-planning | Strategic Architect | 장기적 관점, 구조적 사고 | 0.6 |
-| 06-implementation | Precise Builder | 정확한 구현, 에러 방지 | 0.3 |
-| 07-refactoring | Code Surgeon | 깊이 있는 분석, 성능 최적화 | 0.5 |
-| 08-qa | Quality Guardian | 철저한 검증, 위험 감지 | 0.4 |
+| Stage | Persona | Characteristics | Temperature |
+|-------|---------|-----------------|-------------|
+| 01-brainstorm | Creative Explorer | Divergent thinking, unconstrained ideas | 0.9 |
+| 02-research | Analytical Investigator | Systematic analysis, in-depth investigation | 0.5 |
+| 03-planning | Strategic Architect | Long-term perspective, structural thinking | 0.6 |
+| 06-implementation | Precise Builder | Accurate implementation, error prevention | 0.3 |
+| 07-refactoring | Code Surgeon | Deep analysis, performance optimization | 0.5 |
+| 08-qa | Quality Guardian | Thorough verification, risk detection | 0.4 |
 
 ---
 
-## 산출물 검증
+## Output Validation
 
-> 설정 파일: `config/output_validation.yaml`
+> Configuration file: `config/output_validation.yaml`
 
-### 검증 항목
+### Validation Items
 
-| 스테이지 | 필수 산출물 | 검증 명령 |
-|---------|-----------|----------|
-| 01-brainstorm | `ideas.md` (최소 5개 아이디어) | - |
-| 06-implementation | `src/` (lint, typecheck 통과) | `npm run lint`, `npm run typecheck` |
-| 09-testing | `tests/` (커버리지 80%+) | `npm run test:coverage` |
+| Stage | Required Outputs | Validation Command |
+|-------|------------------|-------------------|
+| 01-brainstorm | `ideas.md` (minimum 5 ideas) | - |
+| 06-implementation | `src/` (lint, typecheck pass) | `npm run lint`, `npm run typecheck` |
+| 09-testing | `tests/` (coverage 80%+) | `npm run test:coverage` |
 
-### 품질 메트릭
-- 코드 품질 기준: 0.8
-- 테스트 커버리지 기준: 80%
+### Quality Metrics
+- Code quality threshold: 0.8
+- Test coverage threshold: 80%
 
-### 사용 방법
+### Usage
 ```bash
-# 현재 스테이지 검증
+# Validate current stage
 /validate
 
-# 특정 스테이지 검증
+# Validate specific stage
 /validate --stage 06-implementation
 
-# 자동 수정 포함
+# Include auto-fix
 /validate --fix
 
-# 상세 출력
+# Verbose output
 /validate --verbose
 
-# 실패해도 진행 (비권장)
+# Proceed despite failure (not recommended)
 /validate --force
 ```
 
 ---
 
-## 신규 설정 파일
+## New Configuration Files
 
-| 파일 | 설명 |
-|------|------|
-| `config/ai_collaboration.yaml` | AI 협업 모드 설정 |
-| `config/ai_benchmarking.yaml` | AI 벤치마킹 설정 |
-| `config/handoff_intelligence.yaml` | 스마트 HANDOFF 설정 |
-| `config/memory_integration.yaml` | AI 메모리 통합 설정 |
-| `config/auto_checkpoint.yaml` | 자동 체크포인트 설정 |
-| `config/smart_rollback.yaml` | 스마트 롤백 설정 |
-| `config/pipeline_forking.yaml` | 파이프라인 분기 설정 |
-| `config/stage_personas.yaml` | 스테이지 페르소나 설정 |
-| `config/output_validation.yaml` | 산출물 검증 설정 |
+| File | Description |
+|------|-------------|
+| `config/ai_collaboration.yaml` | AI collaboration mode settings |
+| `config/ai_benchmarking.yaml` | AI benchmarking settings |
+| `config/handoff_intelligence.yaml` | Smart HANDOFF settings |
+| `config/memory_integration.yaml` | AI memory integration settings |
+| `config/auto_checkpoint.yaml` | Auto-checkpoint settings |
+| `config/smart_rollback.yaml` | Smart rollback settings |
+| `config/pipeline_forking.yaml` | Pipeline forking settings |
+| `config/stage_personas.yaml` | Stage persona settings |
+| `config/output_validation.yaml` | Output validation settings |
 
-## 신규 State 디렉토리
+## New State Directories
 
-| 디렉토리 | 설명 |
-|---------|------|
-| `state/ai_benchmarks/` | AI 벤치마크 결과 저장 |
-| `state/forks/` | 파이프라인 분기 상태 저장 |
-| `state/validations/` | 검증 결과 저장 |
-
+| Directory | Description |
+|-----------|-------------|
+| `state/ai_benchmarks/` | AI benchmark results storage |
+| `state/forks/` | Pipeline fork state storage |
+| `state/validations/` | Validation results storage |

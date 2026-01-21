@@ -1,39 +1,39 @@
 # Stage Validation Logic
 
-현재 스테이지의 완료 조건을 검증합니다.
+Validates completion criteria for current stage.
 
-## 검증 프로세스
+## Validation Process
 
-### 1. 현재 스테이지 식별
+### 1. Identify Current Stage
 
 ```bash
-# progress.json에서 현재 스테이지 확인
+# Check current stage from progress.json
 CURRENT_STAGE=$(jq -r '.current_stage' state/progress.json)
 ```
 
-### 2. 완료 조건 로드
+### 2. Load Completion Criteria
 
-각 스테이지별 필수 outputs:
+Required outputs per stage:
 
-| 스테이지 | 필수 파일 | 체크포인트 |
-|----------|----------|------------|
+| Stage | Required Files | Checkpoint |
+|-------|---------------|------------|
 | 01-brainstorm | ideas.md, decisions.md | - |
 | 02-research | research.md, tech-stack.md | - |
 | 03-planning | PRD.md, architecture.md | - |
 | 04-ui-ux | wireframes/, component-spec.md | - |
 | 05-task-management | tasks.json, sprints.md | - |
-| 06-implementation | src/, tests/ | ✅ 필수 |
-| 07-refactoring | src/ (수정됨) | ✅ 필수 |
+| 06-implementation | src/, tests/ | ✅ Required |
+| 07-refactoring | src/ (modified) | ✅ Required |
 | 08-qa | qa-report.md | - |
 | 09-testing | test-results.md | - |
-| 10-deployment | CI/CD 파일 | - |
+| 10-deployment | CI/CD files | - |
 
-### 3. 파일 존재 확인
+### 3. File Existence Check
 
 ```bash
 STAGE_DIR="stages/$CURRENT_STAGE/outputs"
 
-# 필수 파일 체크
+# Check required files
 check_required_files() {
     local files=("$@")
     local missing=()
@@ -48,61 +48,61 @@ check_required_files() {
 }
 ```
 
-### 4. 체크포인트 확인 (해당 시)
+### 4. Checkpoint Check (When Applicable)
 
 ```bash
-# 06, 07 스테이지는 체크포인트 필수
+# Stages 06, 07 require checkpoint
 if [[ "$CURRENT_STAGE" == "06-"* ]] || [[ "$CURRENT_STAGE" == "07-"* ]]; then
     STAGE_NUM=$(echo "$CURRENT_STAGE" | cut -d'-' -f1)
     CP_EXISTS=$(ls -d state/checkpoints/CP-$STAGE_NUM-* 2>/dev/null | head -1)
 
     if [ -z "$CP_EXISTS" ]; then
-        echo "⚠️ 체크포인트 필수: /checkpoint 실행 필요"
+        echo "⚠️ Checkpoint required: Run /checkpoint"
     fi
 fi
 ```
 
-## 검증 결과 형식
+## Validation Result Format
 
-### 성공
+### Success
 
 ```
-✅ 스테이지 완료 조건 충족
+✅ Stage completion criteria met
 
 [04-ui-ux]
-✓ wireframes/ 존재 (3개 파일)
-✓ component-spec.md 생성됨
-✓ design-system.md 생성됨
+✓ wireframes/ exists (3 files)
+✓ component-spec.md generated
+✓ design-system.md generated
 
-다음 단계: /next 또는 /tasks
+Next step: /next or /tasks
 ```
 
-### 실패
+### Failure
 
 ```
-⚠️ 스테이지 완료 조건 미충족
+⚠️ Stage completion criteria not met
 
 [06-implementation]
-✓ src/ 존재
-✓ tests/ 존재
-✗ 체크포인트 없음
+✓ src/ exists
+✓ tests/ exists
+✗ No checkpoint
 
-필요 작업:
-1. /checkpoint "구현 완료" 실행
-2. /next로 전환
+Required actions:
+1. Run /checkpoint "implementation complete"
+2. Transition with /next
 ```
 
-## 자동 액션
+## Auto Actions
 
-검증 결과에 따른 자동 제안:
+Auto-suggestions based on validation results:
 
-1. **모든 조건 충족**
-   → HANDOFF.md 생성 제안
-   → `/next` 명령어 안내
+1. **All criteria met**
+   → Suggest HANDOFF.md generation
+   → Guide `/next` command
 
-2. **일부 조건 미충족**
-   → 누락된 항목 안내
-   → 해결 방법 제안
+2. **Some criteria not met**
+   → Guide missing items
+   → Suggest resolution methods
 
-3. **체크포인트 필요**
-   → `/checkpoint` 명령어 안내
+3. **Checkpoint needed**
+   → Guide `/checkpoint` command

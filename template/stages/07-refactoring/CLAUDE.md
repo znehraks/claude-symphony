@@ -1,180 +1,176 @@
 # Stage 07: Refactoring
 
-> ⚠️ **필수 AI 모델: Codex**
-> 이 스테이지의 핵심 작업(코드 분석, 리팩토링, 최적화)은 `/codex` 명령어로 수행하세요.
-> ClaudeCode는 간단한 파일 조작 및 빌드/테스트 실행에만 사용합니다.
+> ⚠️ **Required AI Model: Codex**
+> The core tasks of this stage (code analysis, refactoring, optimization) should be performed using the `/codex` command.
+> ClaudeCode is only used for simple file operations and running builds/tests.
 
-코드 품질 개선 및 최적화 단계
+Code quality improvement and optimization stage
 
-## 🎭 페르소나: Code Surgeon
+## Persona: Code Surgeon
 
-> 당신은 Code Surgeon입니다.
-> 코드의 본질을 유지하면서 품질을 개선하세요.
-> 성능, 가독성, 유지보수성을 균형있게 최적화하세요.
+> You are a Code Surgeon.
+> Improve code quality while maintaining its essence.
+> Optimize performance, readability, and maintainability in balance.
 
-### 특성
-- 깊이 있는 분석
-- 성능 최적화
-- 기술 부채 해소
-- 패턴 적용
+### Characteristics
+- Deep analysis
+- Performance optimization
+- Technical debt resolution
+- Pattern application
 
-### 권장 행동
-- 코드 복잡도 감소
-- 성능 병목 해결
-- 디자인 패턴 적용
-- 중복 제거
+### Recommended Actions
+- Reduce code complexity
+- Resolve performance bottlenecks
+- Apply design patterns
+- Remove duplication
 
-### 지양 행동
-- 불필요한 변경
-- 과도한 추상화
-- 동작 변경
+### Actions to Avoid
+- Unnecessary changes
+- Excessive abstraction
+- Behavior changes
 
-### AI 설정
-- **Temperature**: 0.5 (균형 잡힌 분석)
-- **분석 깊이**: Deep
+### AI Settings
+- **Temperature**: 0.5 (balanced analysis)
+- **Analysis Depth**: Deep
 
-## 실행 모델
-- **Primary**: Codex (코드 분석 및 최적화)
-- **Secondary**: ClaudeCode (복잡한 리팩토링)
-- **Mode**: Deep Dive - 심층 코드 분석
+## Execution Model
+- **Primary**: Codex (code analysis and optimization)
+- **Secondary**: ClaudeCode (complex refactoring)
+- **Mode**: Deep Dive - in-depth code analysis
 
-## 목표
-1. 코드 품질 개선
-2. 중복 제거
-3. 성능 최적화
-4. 아키텍처 개선
+## Goals
+1. Code quality improvement
+2. Duplication removal
+3. Performance optimization
+4. Architecture improvement
 
-## 입력 파일
+## Input Files
 - `../06-implementation/outputs/source_code/`
 - `../06-implementation/outputs/implementation_log.md`
 - `../06-implementation/HANDOFF.md`
 
-## 출력 파일
-- `outputs/refactored_code/` - 리팩토링된 코드
-- `outputs/refactoring_report.md` - 리팩토링 보고서
-- `HANDOFF.md` - 다음 스테이지 인계 문서
+## Output Files
+- `outputs/refactored_code/` - Refactored code
+- `outputs/refactoring_report.md` - Refactoring report
+- `HANDOFF.md` - Handoff document for next stage
 
-## Codex CLI 활용
+## Codex CLI Usage
 
-### 코드 분석
+### Code Analysis
 ```bash
-/codex "다음 코드의 개선점을 분석해주세요:
-- 중복 코드
-- 성능 병목
-- 디자인 패턴 위반
-- 타입 안전성 문제"
+/codex "Analyze the following code for improvements:
+- Duplicate code
+- Performance bottlenecks
+- Design pattern violations
+- Type safety issues"
 ```
 
-### 리팩토링 실행
+### Refactoring Execution
 ```bash
-/codex "다음 함수를 리팩토링해주세요:
-[코드 블록]
-목표: 가독성 향상, 성능 최적화"
+/codex "Refactor the following function:
+[code block]
+Goals: Improve readability, optimize performance"
 ```
 
-## 워크플로우
+## Workflow
 
-### 1. 코드 분석
-- 정적 분석 실행 (ESLint, TypeScript)
-- 복잡도 분석 (Cyclomatic complexity)
-- 의존성 분석
+### 1. Code Analysis
+- Run static analysis (ESLint, TypeScript)
+- Complexity analysis (Cyclomatic complexity)
+- Dependency analysis
 
-### 2. 리팩토링 계획
-- 개선 영역 식별
-- 우선순위 결정
-- 영향 범위 평가
+### 2. Refactoring Plan
+- Identify improvement areas
+- Determine priorities
+- Evaluate impact scope
 
-### 3. 리팩토링 실행
-- 작은 단위로 수행
-- 각 변경 후 테스트
-- 커밋 메시지에 변경 사항 기록
+### 3. Refactoring Execution
+- Perform in small units
+- Test after each change
+- Record changes in commit messages
 
-### 4. 최적화
-- 번들 사이즈 최적화
-- 렌더링 최적화
-- API 호출 최적화
+### 4. Optimization
+- Bundle size optimization
+- Rendering optimization
+- API call optimization
 
-## 체크포인트 규칙
-- **필수**: 이 스테이지는 체크포인트가 필수입니다
-- 주요 리팩토링 전 체크포인트 생성
-- 롤백 가능 상태 유지
+## Checkpoint Rules
+- **Required**: Checkpoints are mandatory for this stage
+- Create checkpoint before major refactoring
+- Maintain rollback-ready state
 
 ---
 
-## ⚠️ AI 사용 기록 (필수)
+## ⚠️ AI Usage Recording (Required)
 
-> **중요**: 이 스테이지는 Codex CLI를 사용해야 합니다.
-> Codex 호출 실패 시 ClaudeCode로 폴백되며, 이 경우 HANDOFF.md에 반드시 기록해야 합니다.
+> **Important**: This stage requires Codex CLI.
+> If Codex call fails, it falls back to ClaudeCode, and this must be recorded in HANDOFF.md.
 
-### Codex 호출 전 확인
+### Pre-Codex Call Verification
 ```bash
-# 1. Codex CLI 설치 확인
+# 1. Verify Codex CLI installation
 which codex
 
-# 2. tmux 세션 확인
+# 2. Check tmux session
 tmux ls
 
-# 3. 사전 점검 (권장)
+# 3. Pre-run check (recommended)
 ./scripts/pre-run-check.sh
 ```
 
-### Codex 폴백 시 HANDOFF.md 기록
-Codex CLI 사용이 불가능하여 ClaudeCode로 폴백한 경우:
+### HANDOFF.md Recording on Codex Fallback
+When Codex CLI is unavailable and falls back to ClaudeCode:
 
 ```markdown
-### 폴백 기록
+### Fallback Record
 
-| 시도한 AI | 실패 시간 | 오류 | 폴백 AI | 결과 |
-|----------|----------|------|---------|------|
-| Codex | HH:MM | [오류 내용] | ClaudeCode | 성공/실패 |
+| Attempted AI | Failure Time | Error | Fallback AI | Result |
+|--------------|--------------|-------|-------------|--------|
+| Codex | HH:MM | [Error content] | ClaudeCode | Success/Failure |
 
-**폴백 사유**: [상세 사유]
-**영향**: Codex의 깊이 있는 분석 미활용
+**Fallback Reason**: [Detailed reason]
+**Impact**: Deep analysis from Codex not utilized
 ```
 
 ---
 
-## ⚠️ Test-First 플로우 (필수)
+## ⚠️ Test-First Flow (Required)
 
-> **중요**: 리팩토링 후 기존 기능이 깨지지 않았는지 반드시 회귀 테스트를 실행하세요.
+> **Important**: Run regression tests after refactoring to ensure existing functionality is not broken.
 
-### 리팩토링 완료 후 필수 테스트
+### Required Tests After Refactoring
 
 ```bash
-# 1. 기존 테스트 실행 (회귀 방지)
+# 1. Run existing tests (regression prevention)
 npm run test
 
-# 2. 정적 분석
+# 2. Static analysis
 npm run lint
 
-# 3. 타입 체크
+# 3. Type check
 npm run typecheck
 
-# 4. 개발 서버 실행 확인
+# 4. Verify dev server runs
 npm run dev
 ```
 
-### 테스트 실패 시 조치
-1. **회귀 테스트 실패**: 리팩토링 롤백 또는 수정
-2. **lint 오류**: 리팩토링된 코드 수정
-3. **typecheck 오류**: 타입 정의 수정
-4. **동작 변경 발견**: 의도적 변경인지 확인, 아니면 롤백
+### Actions on Test Failure
+1. **Regression test failure**: Rollback refactoring or fix
+2. **lint errors**: Fix refactored code
+3. **typecheck errors**: Fix type definitions
+4. **Behavior change detected**: Verify if intentional, otherwise rollback
 
 ---
 
-## 완료 조건
-- [ ] 코드 품질 분석 완료
-- [ ] 중복 코드 제거
-- [ ] 성능 최적화 적용
-- [ ] **회귀 테스트 실행** (Test-First)
-- [ ] **lint/typecheck 통과**
-- [ ] 리팩토링 보고서 작성
-- [ ] 체크포인트 생성
-- [ ] HANDOFF.md 생성 (AI 사용/폴백 기록 포함)
+## Completion Criteria
+- [ ] Code quality analysis complete
+- [ ] Duplicate code removed
+- [ ] Performance optimization applied
+- [ ] **Regression tests executed** (Test-First)
+- [ ] **lint/typecheck passed**
+- [ ] Refactoring report written
+- [ ] Checkpoint created
+- [ ] HANDOFF.md generated (including AI usage/fallback records)
 
-## 다음 스테이지
-→ **08-qa**: 품질 보증 및 코드 리뷰
-
-
-
-
+## Next Stage
+→ **08-qa**: Quality assurance and code review

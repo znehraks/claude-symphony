@@ -1,77 +1,77 @@
 # Auto-Checkpoint Skill
 
-자동 체크포인트 생성 및 스마트 롤백 스킬
+Automatic checkpoint creation and smart rollback skill
 
-## 개요
+## Overview
 
-작업 안전망을 위한 자동 체크포인트 시스템:
-- 조건 기반 자동 체크포인트 생성
-- 스마트 롤백 제안 및 실행
-- 파이프라인 분기 지원
+Automatic checkpoint system for work safety:
+- Condition-based automatic checkpoint creation
+- Smart rollback suggestion and execution
+- Pipeline forking support
 
-## 트리거
+## Trigger
 
-### 자동 트리거
-- 5개 태스크 완료마다
-- 100줄 이상 파일 변경 시
-- 파괴적 작업 감지 시
-- 30분 간격 (변경 있을 때)
-- 스테이지 완료 시
+### Auto Trigger
+- Every 5 completed tasks
+- When 100+ lines of file changes
+- When destructive action detected
+- 30 minute intervals (when changes exist)
+- On stage completion
 
-### 수동 트리거
-- `/checkpoint` 명령어
+### Manual Trigger
+- `/checkpoint` command
 
-## 기능
+## Features
 
-### 1. 자동 체크포인트 (trigger.md)
-- 조건 감지 및 체크포인트 생성
-- 메타데이터 기록
-- Git 태그 연동
+### 1. Auto Checkpoint (trigger.md)
+- Condition detection and checkpoint creation
+- Metadata recording
+- Git tag integration
 
-### 2. 스마트 롤백 (rollback.md)
-- 에러 분석 및 관련 체크포인트 찾기
-- 부분 롤백 지원 (파일/함수/스테이지)
-- 롤백 미리보기
+### 2. Smart Rollback (rollback.md)
+- Error analysis and finding related checkpoints
+- Partial rollback support (file/function/stage)
+- Rollback preview
 
-### 3. 파이프라인 분기
-- 여러 접근법 동시 탐색
-- 분기 비교 및 병합
+### 3. Pipeline Forking
+- Explore multiple approaches simultaneously
+- Fork comparison and merge
 
-## 파일 구조
+## File Structure
 
 ```
 auto-checkpoint/
-├── README.md          # 이 파일
-├── trigger.md         # 체크포인트 트리거 가이드
-├── rollback.md        # 롤백 가이드
+├── README.md          # This file
+├── trigger.md         # Checkpoint trigger guide
+├── rollback.md        # Rollback guide
 └── prompts/
-    └── CLAUDE.md      # AI 지침
+    └── CLAUDE.md      # AI instructions
 ```
 
-## 설정
+## Configuration
 
-- `config/auto_checkpoint.yaml` - 자동 체크포인트
-- `config/smart_rollback.yaml` - 스마트 롤백
-- `config/pipeline_forking.yaml` - 파이프라인 분기
+- `config/auto_checkpoint.yaml` - Auto checkpoint
+- `config/smart_rollback.yaml` - Smart rollback
+- `config/pipeline_forking.yaml` - Pipeline forking
 
-## 사용 예시
+## Usage Examples
 
 ```bash
-# 수동 체크포인트 생성
+# Manual checkpoint creation
 /checkpoint --name "feature-complete"
 
-# 롤백 제안 보기
+# View rollback suggestions
 /restore --suggest
 
-# 특정 체크포인트로 롤백
+# Rollback to specific checkpoint
 /restore --checkpoint "stage_06_complete_20240120"
 
-# 파이프라인 분기
-/fork --reason "아키텍처 대안 탐색"
+# Pipeline fork
+/fork --reason "Architecture alternative exploration"
 ```
 
-## 저장 위치
+## Storage Locations
 
-- 체크포인트: `state/checkpoints/`
-- 분기: `state/forks/`
-- 롤백 히스토리: `state/rollback_history/`
+- Checkpoints: `state/checkpoints/`
+- Forks: `state/forks/`
+- Rollback history: `state/rollback_history/`

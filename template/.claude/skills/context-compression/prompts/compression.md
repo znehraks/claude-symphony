@@ -1,145 +1,145 @@
 # Context Compression Prompts
 
-컨텍스트 압축 및 복구 시 사용되는 프롬프트 템플릿입니다.
+Prompt templates used for context compression and recovery.
 
-## 토큰 경고 프롬프트
+## Token Warning Prompts
 
-### 50,000 토큰 (경고)
-
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⚠️ 컨텍스트 사용량 경고
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-현재 토큰: ~{{CURRENT_TOKENS}} / 80,000
-상태: {{PERCENTAGE}}% 사용
-
-권장 조치:
-1. /context --compress 로 압축
-2. 또는 /context --save 로 저장 후 /clear
-
-현재 스테이지: {{CURRENT_STAGE}}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
-### 80,000 토큰 (한도)
+### 50,000 Tokens (Warning)
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🔴 컨텍스트 한도 도달
+⚠️ Context Usage Warning
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-토큰 한도(80,000)에 도달했습니다.
+Current tokens: ~{{CURRENT_TOKENS}} / 80,000
+Status: {{PERCENTAGE}}% used
 
-자동 저장 실행 중...
+Recommended actions:
+1. Compress with /context --compress
+2. Or /context --save then /clear
 
-[저장 내용]
-• 현재 스테이지: {{CURRENT_STAGE}}
-• 진행 상황: {{PROGRESS}}
-• 결정사항: {{DECISION_COUNT}}개
-
-저장 위치: state/context/state.md
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-/clear 후 작업을 계속하려면 state.md를 참조하세요.
+Current stage: {{CURRENT_STAGE}}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-## 압축 결과 프롬프트
+### 80,000 Tokens (Limit)
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ 컨텍스트 압축 완료
+🔴 Context Limit Reached
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-[압축 요약]
-• 압축 전: {{BEFORE_TOKENS}} 토큰
-• 압축 후: {{AFTER_TOKENS}} 토큰
-• 절감: {{SAVED_PERCENTAGE}}%
+Token limit (80,000) has been reached.
 
-[유지된 항목]
-• 결정사항: {{DECISION_COUNT}}개
-• 요구사항: {{REQUIREMENT_COUNT}}개
-• 현재 작업: {{CURRENT_TASK}}
+Executing auto-save...
 
-[요약된 항목]
-• 토론: {{DISCUSSION_COUNT}}개 → {{SUMMARY_COUNT}}개
-• 코드 리뷰: {{REVIEW_COUNT}}개
+[Saved Content]
+• Current stage: {{CURRENT_STAGE}}
+• Progress: {{PROGRESS}}
+• Decisions: {{DECISION_COUNT}}
 
-[제거된 항목]
-• 오류 로그: {{ERROR_COUNT}}개
-• 시행착오: {{RETRY_COUNT}}개
+Save location: state/context/state.md
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-저장: state/context/state.md
+To continue after /clear, reference state.md.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-## 복구 프롬프트
-
-### 복구 제안
+## Compression Result Prompt
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📂 저장된 컨텍스트 발견
+✅ Context Compression Complete
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-저장 시점: {{SAVED_AT}}
-스테이지: {{STAGE}}
-진행 상황: {{PROGRESS_SUMMARY}}
+[Compression Summary]
+• Before: {{BEFORE_TOKENS}} tokens
+• After: {{AFTER_TOKENS}} tokens
+• Reduction: {{SAVED_PERCENTAGE}}%
 
-복구하시겠습니까?
+[Kept Items]
+• Decisions: {{DECISION_COUNT}}
+• Requirements: {{REQUIREMENT_COUNT}}
+• Current task: {{CURRENT_TASK}}
 
-[Y] 복구하고 계속
-[N] 새로 시작
-[V] 내용 미리보기
+[Summarized Items]
+• Discussions: {{DISCUSSION_COUNT}} → {{SUMMARY_COUNT}}
+• Code reviews: {{REVIEW_COUNT}}
+
+[Removed Items]
+• Error logs: {{ERROR_COUNT}}
+• Trial/errors: {{RETRY_COUNT}}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Saved: state/context/state.md
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-### 복구 완료
+## Recovery Prompts
+
+### Recovery Suggestion
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ 컨텍스트 복구 완료
+📂 Saved Context Found
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-[복구된 상태]
-• 스테이지: {{CURRENT_STAGE}}
-• 진행: {{COMPLETED}}/{{TOTAL}} 완료
-• 다음 작업: {{NEXT_TASK}}
+Save time: {{SAVED_AT}}
+Stage: {{STAGE}}
+Progress: {{PROGRESS_SUMMARY}}
 
-[핵심 결정사항]
+Would you like to recover?
+
+[Y] Recover and continue
+[N] Start fresh
+[V] Preview content
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+### Recovery Complete
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Context Recovery Complete
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Recovered State]
+• Stage: {{CURRENT_STAGE}}
+• Progress: {{COMPLETED}}/{{TOTAL}} complete
+• Next task: {{NEXT_TASK}}
+
+[Key Decisions]
 {{#each DECISIONS}}
 • {{this.title}}: {{this.choice}}
 {{/each}}
 
-[참조 파일]
+[Reference Files]
 • stages/{{STAGE}}/CLAUDE.md
 • stages/{{STAGE}}/outputs/
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-{{NEXT_TASK}}부터 계속하시겠습니까?
+Continue from {{NEXT_TASK}}?
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-## state.md 미리보기 프롬프트
+## state.md Preview Prompt
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📄 state.md 미리보기
+📄 state.md Preview
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-# 작업 상태 저장 - {{TIMESTAMP}}
+# Work State Save - {{TIMESTAMP}}
 
-## 현재 스테이지
+## Current Stage
 {{STAGE_ID}}: {{STAGE_NAME}}
 
-## 진행 상황
-- 완료: {{COMPLETED_LIST}}
-- 진행 중: {{CURRENT}}
-- 대기: {{PENDING_LIST}}
+## Progress
+- Completed: {{COMPLETED_LIST}}
+- In progress: {{CURRENT}}
+- Pending: {{PENDING_LIST}}
 
-## 핵심 결정사항
+## Key Decisions
 {{#each DECISIONS}}
 - {{this.title}}: {{this.choice}} ({{this.reason}})
 {{/each}}
@@ -147,26 +147,26 @@
 ...
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[R] 복구 / [E] 편집 후 복구 / [C] 취소
+[R] Recover / [E] Edit then recover / [C] Cancel
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-## 스테이지 전환 시 압축 제안
+## Stage Transition Compression Suggestion
 
 ```
-스테이지 전환 감지: {{PREV}} → {{NEXT}}
+Stage transition detected: {{PREV}} → {{NEXT}}
 
-이전 스테이지 컨텍스트를 정리하시겠습니까?
+Would you like to clean up previous stage context?
 
-[정리 대상]
-• {{PREV}} 관련 토론: ~{{TOKENS}} 토큰
-• 시행착오 기록: ~{{ERROR_TOKENS}} 토큰
+[Items to Clean]
+• {{PREV}} related discussions: ~{{TOKENS}} tokens
+• Trial/error records: ~{{ERROR_TOKENS}} tokens
 
-[유지 항목]
-• HANDOFF.md 내용
-• 핵심 결정사항
+[Items to Keep]
+• HANDOFF.md content
+• Key decisions
 
-[Y] 정리 후 전환
-[N] 그대로 전환
-[S] 전체 저장 후 전환
+[Y] Clean then transition
+[N] Transition as-is
+[S] Save all then transition
 ```

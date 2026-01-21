@@ -1,69 +1,69 @@
 # /planning
 
-03-planning 스테이지를 바로 시작합니다.
+Start the 03-planning stage directly.
 
-## 사용법
+## Usage
 ```
 /planning
 ```
 
-## 스테이지 정보
+## Stage Information
 
-| 항목 | 값 |
-|------|-----|
-| 스테이지 | 03-planning |
-| AI 모델 | Gemini |
-| 실행 모드 | Plan Mode |
-| 체크포인트 | 선택 |
+| Item | Value |
+|------|-------|
+| Stage | 03-planning |
+| AI Model | Gemini |
+| Execution Mode | Plan Mode |
+| Checkpoint | Optional |
 
-## 동작
+## Actions
 
-1. **전제 조건 확인**
-   - 02-research 완료 여부
-   - research.md, tech-stack.md 존재
+1. **Prerequisite Check**
+   - 02-research completion status
+   - research.md, tech-stack.md exist
 
-2. **기획 실행**
-   - PRD (Product Requirements Document) 작성
-   - 아키텍처 설계
-   - 기술 명세
+2. **Execute Planning**
+   - PRD (Product Requirements Document) writing
+   - Architecture design
+   - Technical specification
 
-3. **산출물 생성**
-   - PRD.md - 제품 요구사항 문서
-   - architecture.md - 아키텍처 설계
+3. **Output Generation**
+   - PRD.md - Product Requirements Document
+   - architecture.md - Architecture design
 
-## 실행
+## Execution
 
 ```bash
 scripts/run-stage.sh 03-planning "$ARGUMENTS"
 ```
 
-## 입력 파일
+## Input Files
 
 - `stages/02-research/outputs/research.md`
 - `stages/02-research/outputs/tech-stack.md`
 
-## 출력 파일
+## Output Files
 
 - `stages/03-planning/outputs/PRD.md`
 - `stages/03-planning/outputs/architecture.md`
 
-## 관련 명령어
+## Related Commands
 
-- `/run-stage 03` - 전제조건 확인 후 시작
-- `/next` - 다음 스테이지 (04-ui-ux)
-- `/research` - 이전 스테이지
-- `/gemini` - Gemini CLI 직접 호출
+- `/run-stage 03` - Start after prerequisite check
+- `/next` - Next stage (04-ui-ux)
+- `/research` - Previous stage
+- `/gemini` - Direct Gemini CLI call
 
-## PRD 구조
+## PRD Structure
 
 ```markdown
-# PRD: [프로젝트명]
+# PRD: [Project Name]
 
-## 개요
-## 목표
-## 기능 요구사항
-## 비기능 요구사항
-## 기술 스택
-## 일정
-## 위험 요소
+## Overview
+## Goals
+## Functional Requirements
+## Non-Functional Requirements
+## Tech Stack
+## Timeline
+## Risk Factors
 ```

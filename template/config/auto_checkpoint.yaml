@@ -3,27 +3,27 @@
 
 auto_checkpoint:
   enabled: true
-  description: "자동 체크포인트 생성 및 관리"
+  description: "Automatic checkpoint creation and management"
 
-  # 트리거 조건
+  # Trigger conditions
   triggers:
-    # 태스크 완료 기반
+    # Task completion based
     task_based:
       enabled: true
       condition: "tasks_completed"
-      threshold: 5  # 5개 태스크 완료마다
+      threshold: 5  # Every 5 tasks completed
       action: "create_checkpoint"
       naming: "auto_task_{{count}}_{{timestamp}}"
 
-    # 파일 변경 기반
+    # File change based
     file_change_based:
       enabled: true
       condition: "major_file_change"
-      threshold: 100  # 100줄 이상 변경
+      threshold: 100  # 100+ lines changed
       action: "create_checkpoint"
       naming: "auto_change_{{timestamp}}"
 
-      # 파일 유형별 가중치
+      # File type weights
       file_weights:
         "*.ts": 1.0
         "*.tsx": 1.0
@@ -34,7 +34,7 @@ auto_checkpoint:
         "*.json": 0.5
         "*.md": 0.3
 
-    # 파괴적 작업 전
+    # Before destructive operations
     before_destructive:
       enabled: true
       condition: "destructive_action_detected"
@@ -48,16 +48,16 @@ auto_checkpoint:
       naming: "pre_destructive_{{timestamp}}"
       require_confirmation: true
 
-    # 시간 기반
+    # Time based
     time_based:
       enabled: true
       condition: "interval"
       interval_minutes: 30
       action: "create_checkpoint"
       naming: "auto_interval_{{timestamp}}"
-      only_if_changes: true  # 변경이 있을 때만
+      only_if_changes: true  # Only when there are changes
 
-    # 스테이지 기반
+    # Stage based
     stage_based:
       enabled: true
       conditions:
@@ -67,7 +67,7 @@ auto_checkpoint:
       action: "create_checkpoint"
       naming: "stage_{{stage_id}}_{{status}}_{{timestamp}}"
 
-  # 보존 정책
+  # Retention policy
   retention:
     max_checkpoints: 20
     max_age_days: 30
@@ -80,13 +80,13 @@ auto_checkpoint:
       - user_created
       - tagged
 
-    # 자동 정리
+    # Auto cleanup
     auto_cleanup:
       enabled: true
       schedule: "daily"
       preserve_minimum: 5
 
-  # 체크포인트 내용
+  # Checkpoint content
   checkpoint_content:
     include:
       - source_code: true
@@ -103,7 +103,7 @@ auto_checkpoint:
       - "__pycache__/"
       - ".cache/"
 
-    # 메타데이터
+    # Metadata
     metadata:
       - timestamp
       - stage_id
@@ -112,7 +112,7 @@ auto_checkpoint:
       - file_changes_summary
       - git_commit_hash
 
-  # 스토리지 설정
+  # Storage settings
   storage:
     base_path: "state/checkpoints/"
     format: "tar.gz"  # tar.gz, zip, directory
@@ -120,61 +120,61 @@ auto_checkpoint:
 
     naming_convention: "{{stage}}_{{trigger}}_{{timestamp}}"
 
-    # 외부 스토리지 백업 (옵션)
+    # External storage backup (optional)
     external_backup:
       enabled: false
       provider: null  # s3, gcs, azure
       path: null
 
-# 체크포인트 생성 프로세스
+# Checkpoint creation process
 creation_process:
   steps:
     - name: "validate_state"
-      description: "현재 상태 유효성 검증"
+      description: "Validate current state"
       required: true
 
     - name: "collect_files"
-      description: "포함할 파일 수집"
+      description: "Collect files to include"
       required: true
 
     - name: "generate_metadata"
-      description: "메타데이터 생성"
+      description: "Generate metadata"
       required: true
 
     - name: "create_archive"
-      description: "아카이브 생성"
+      description: "Create archive"
       required: true
 
     - name: "verify_integrity"
-      description: "무결성 검증"
+      description: "Verify integrity"
       required: true
 
     - name: "cleanup_old"
-      description: "오래된 체크포인트 정리"
+      description: "Clean up old checkpoints"
       required: false
 
-  # 실패 처리
+  # Failure handling
   on_failure:
     retry: 2
     fallback: "skip_with_warning"
     notify: true
 
-# 알림 설정
+# Notification settings
 notifications:
   on_create:
     enabled: true
-    message: "체크포인트 생성됨: {{name}}"
+    message: "Checkpoint created: {{name}}"
 
   on_cleanup:
     enabled: true
-    message: "오래된 체크포인트 정리됨: {{count}}개"
+    message: "Old checkpoints cleaned up: {{count}} items"
 
   on_threshold:
     enabled: true
-    threshold: 15  # 15개 초과 시
-    message: "체크포인트가 {{count}}개입니다. 정리가 필요할 수 있습니다."
+    threshold: 15  # When exceeding 15
+    message: "You have {{count}} checkpoints. Cleanup may be needed."
 
-# Git 통합
+# Git integration
 git_integration:
   tag_checkpoints: true
   tag_prefix: "checkpoint/"
@@ -186,4 +186,4 @@ git_integration:
     Trigger: {{trigger_reason}}
     Files: {{file_count}}
 
-  push_tags: false  # true면 원격에 태그 푸시
+  push_tags: false  # Push tags to remote if true

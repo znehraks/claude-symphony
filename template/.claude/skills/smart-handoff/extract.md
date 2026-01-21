@@ -1,76 +1,76 @@
 # Smart HANDOFF - Context Extraction
 
-## 자동 컨텍스트 추출 프로세스
+## Auto Context Extraction Process
 
-### 1. 완료된 태스크 수집
-
-```markdown
-## 추출 대상
-- TodoWrite 완료 항목
-- 커밋된 변경사항
-- 생성된 산출물
-
-## 형식
-- [ ] 완료된 태스크 (timestamp)
-```
-
-### 2. 핵심 결정사항 추출
-
-대화에서 다음 패턴 감지:
-- "결정했습니다", "선택했습니다", "채택했습니다"
-- "A 대신 B를 사용", "이유는..."
-- 아키텍처/기술 스택 선택
+### 1. Collect Completed Tasks
 
 ```markdown
-## 결정 형식
-**결정**: [결정 내용]
-**이유**: [선택 이유]
-**대안**: [고려한 대안]
+## Extraction Target
+- TodoWrite completed items
+- Committed changes
+- Generated outputs
+
+## Format
+- [ ] Completed task (timestamp)
 ```
 
-### 3. 수정된 파일 목록화
+### 2. Extract Key Decisions
+
+Detect following patterns from conversation:
+- "decided", "selected", "adopted"
+- "use B instead of A", "because..."
+- Architecture/tech stack selection
+
+```markdown
+## Decision Format
+**Decision**: [Decision content]
+**Reason**: [Selection reason]
+**Alternatives**: [Considered alternatives]
+```
+
+### 3. List Modified Files
 
 ```bash
-# Git 기반 변경 파일 추출
+# Extract changed files via Git
 git diff --name-only HEAD~10
 ```
 
 ```markdown
-## 파일 형식
-| 파일 | 변경 유형 | 주요 변경 |
-|------|----------|----------|
+## File Format
+| File | Change Type | Key Changes |
+|------|-------------|-------------|
 ```
 
-### 4. 대기 중인 이슈 식별
+### 4. Identify Pending Issues
 
-감지 패턴:
+Detection patterns:
 - "TODO:", "FIXME:", "HACK:"
-- "나중에", "다음에", "추후"
-- 미해결 에러/경고
+- "later", "next time", "afterwards"
+- Unresolved errors/warnings
 
 ```markdown
-## 이슈 형식
-- [ ] 이슈 설명 (우선순위: 높음/중간/낮음)
+## Issue Format
+- [ ] Issue description (Priority: High/Medium/Low)
 ```
 
-### 5. AI 호출 기록 정리
+### 5. Organize AI Call History
 
 ```markdown
-## AI 호출 기록
-| AI | 시간 | 목적 | 결과 요약 |
-|----|------|------|----------|
+## AI Call History
+| AI | Time | Purpose | Result Summary |
+|----|------|---------|----------------|
 ```
 
-## 추출 우선순위
+## Extraction Priority
 
-1. **Critical (100)**: 차단 이슈
-2. **Key Decisions (90)**: 핵심 결정사항
-3. **Pending Issues (80)**: 대기 이슈
-4. **File Changes (70)**: 파일 변경
-5. **Completed Tasks (60)**: 완료 태스크
-6. **AI History (50)**: AI 호출 기록
+1. **Critical (100)**: Blocking issues
+2. **Key Decisions (90)**: Core decisions
+3. **Pending Issues (80)**: Pending issues
+4. **File Changes (70)**: File changes
+5. **Completed Tasks (60)**: Completed tasks
+6. **AI History (50)**: AI call history
 
-## 구현
+## Implementation
 
-스크립트: `scripts/smart-handoff.sh`
-설정: `config/handoff_intelligence.yaml`
+Script: `scripts/smart-handoff.sh`
+Config: `config/handoff_intelligence.yaml`

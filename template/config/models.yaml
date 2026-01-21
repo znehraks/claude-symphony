@@ -20,12 +20,12 @@ models:
       headless: "CI/CD headless mode"
     context_limit: 200000
 
-    # AI Specialization (신규)
+    # AI Specialization (new)
     strengths:
-      - "정확한 코드 생성"
-      - "복잡한 로직 분석"
-      - "에러 디버깅"
-      - "MCP 통합"
+      - "Accurate code generation"
+      - "Complex logic analysis"
+      - "Error debugging"
+      - "MCP integration"
     best_for:
       - "06-implementation"
       - "08-qa"
@@ -49,12 +49,12 @@ models:
       plan: "Plan mode with structured research"
     context_limit: 200000
 
-    # AI Specialization (신규)
+    # AI Specialization (new)
     strengths:
-      - "심층 리서치"
-      - "문서 분석 및 요약"
-      - "기술 타당성 검토"
-      - "구조화된 보고서 작성"
+      - "In-depth research"
+      - "Document analysis and summarization"
+      - "Technical feasibility review"
+      - "Structured report writing"
     best_for:
       - "02-research"
     temperature_range:
@@ -78,12 +78,12 @@ models:
     invocation: "tmux"
     wrapper_script: "scripts/gemini-wrapper.sh"
 
-    # AI Specialization (신규)
+    # AI Specialization (new)
     strengths:
-      - "창의적 아이디어 생성"
-      - "다양한 관점 탐색"
-      - "빠른 아이디어 발산"
-      - "시각적 콘텐츠 분석"
+      - "Creative idea generation"
+      - "Diverse perspective exploration"
+      - "Rapid idea divergence"
+      - "Visual content analysis"
     best_for:
       - "01-brainstorm"
       - "03-planning"
@@ -109,12 +109,12 @@ models:
     invocation: "tmux"
     wrapper_script: "scripts/codex-wrapper.sh"
 
-    # AI Specialization (신규)
+    # AI Specialization (new)
     strengths:
-      - "깊이 있는 코드 분석"
-      - "리팩토링 및 최적화"
-      - "테스트 생성"
-      - "기술 부채 해소"
+      - "Deep code analysis"
+      - "Refactoring and optimization"
+      - "Test generation"
+      - "Technical debt resolution"
     best_for:
       - "07-refactoring"
       - "09-testing"
@@ -123,10 +123,10 @@ models:
       max: 0.6
       default: 0.5
 
-# 동적 모델 선택 설정 (신규)
+# Dynamic model selection settings (new)
 dynamic_selection:
   enabled: true
-  description: "태스크 특성에 따른 최적 AI 모델 자동 선택"
+  description: "Automatic selection of optimal AI model based on task characteristics"
 
   criteria:
     task_type:
@@ -163,9 +163,9 @@ dynamic_selection:
       min_samples: 3
 
   override_rules:
-    # Stage assignment 우선
+    # Stage assignment priority
     stage_assignment_priority: true
-    # 사용자 지정 우선
+    # User preference priority
     user_preference_priority: true
 
   fallback:

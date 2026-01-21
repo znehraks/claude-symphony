@@ -1,64 +1,64 @@
 # /deploy
 
-10-deployment 스테이지를 바로 시작합니다.
+Start the 10-deployment stage directly.
 
-## 사용법
+## Usage
 ```
 /deploy [environment]
 ```
 
-## 스테이지 정보
+## Stage Information
 
-| 항목 | 값 |
-|------|-----|
-| 스테이지 | 10-deployment |
-| AI 모델 | ClaudeCode |
-| 실행 모드 | Headless |
-| 체크포인트 | 선택 |
+| Item | Value |
+|------|-------|
+| Stage | 10-deployment |
+| AI Model | ClaudeCode |
+| Execution Mode | Headless |
+| Checkpoint | Optional |
 
-## 동작
+## Actions
 
-1. **전제 조건 확인**
-   - 09-testing 완료 여부
-   - test-results.md 존재
-   - 모든 테스트 통과
+1. **Prerequisite Check**
+   - 09-testing completion status
+   - test-results.md exists
+   - All tests passed
 
-2. **배포 실행**
-   - CI/CD 파이프라인 설정
-   - 환경별 배포
-   - 모니터링 설정
+2. **Execute Deployment**
+   - CI/CD pipeline setup
+   - Environment-specific deployment
+   - Monitoring setup
 
-3. **산출물 생성**
-   - CI/CD 설정 파일
+3. **Output Generation**
+   - CI/CD configuration files
    - deployment-log.md
 
-## 실행
+## Execution
 
 ```bash
 scripts/run-stage.sh 10-deployment "$ARGUMENTS"
 ```
 
-## 입력 파일
+## Input Files
 
 - `stages/09-testing/outputs/test-results.md`
 - `stages/06-implementation/outputs/src/`
-- 모든 이전 스테이지 outputs
+- All previous stage outputs
 
-## 출력 파일
+## Output Files
 
 - `.github/workflows/ci.yaml`
 - `.github/workflows/cd.yaml`
 - `stages/10-deployment/outputs/deployment-log.md`
 
-## 배포 환경
+## Deployment Environments
 
-| 환경 | 설명 |
-|------|------|
-| dev | 개발 환경 |
-| staging | 스테이징 |
-| prod | 프로덕션 |
+| Environment | Description |
+|-------------|-------------|
+| dev | Development environment |
+| staging | Staging |
+| prod | Production |
 
-## CI/CD 워크플로우
+## CI/CD Workflow
 
 ```
 Push
@@ -72,31 +72,31 @@ CD (Deploy)
 Health Check
 ```
 
-## 관련 명령어
+## Related Commands
 
-- `/run-stage 10` - 전제조건 확인 후 시작
-- `/test` - 이전 스테이지
-- `/status` - 파이프라인 상태
+- `/run-stage 10` - Start after prerequisite check
+- `/test` - Previous stage
+- `/status` - Pipeline status
 
-## 배포 체크리스트
+## Deployment Checklist
 
-- [ ] 환경 변수 설정
-- [ ] 시크릿 설정 (GitHub Secrets)
-- [ ] 도메인/DNS 설정
-- [ ] SSL 인증서
-- [ ] 모니터링 설정
-- [ ] 롤백 계획
+- [ ] Environment variables configured
+- [ ] Secrets configured (GitHub Secrets)
+- [ ] Domain/DNS configured
+- [ ] SSL certificate
+- [ ] Monitoring configured
+- [ ] Rollback plan
 
-## 완료 시
+## On Completion
 
-🎉 **파이프라인 완료!**
+🎉 **Pipeline Complete!**
 
-모든 10개 스테이지가 완료되었습니다.
-- `/status`로 최종 상태 확인
-- `state/handoffs/`에서 전체 문서 검토
+All 10 stages completed.
+- Check final status with `/status`
+- Review all documents in `state/handoffs/`
 
 ## Tips
 
-- prod 배포 전 staging 검증
-- 롤백 스크립트 준비
-- 배포 후 스모크 테스트
+- Verify in staging before prod deployment
+- Prepare rollback script
+- Run smoke tests after deployment

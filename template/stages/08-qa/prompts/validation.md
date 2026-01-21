@@ -1,71 +1,71 @@
-# 산출물 검증 프롬프트 - QA
+# Output Validation Prompt - QA
 
-## 검증 대상
+## Validation Targets
 
-| 산출물 | 필수 조건 | 검증 방법 |
-|--------|----------|----------|
-| `qa_report.md` | 리뷰 결과 포함 | 구조 확인 |
-| `bug_fixes.md` | 수정 내역 | 항목 확인 |
-| 소스 코드 | 보안 검사 통과 | 자동 스캔 |
-| `HANDOFF.md` | 테스트 필요 항목 | 항목 확인 |
+| Output | Required Condition | Validation Method |
+|--------|-------------------|-------------------|
+| `qa_report.md` | Review results included | Structure verification |
+| `bug_fixes.md` | Fix history | Item verification |
+| Source code | Security inspection passed | Auto scan |
+| `HANDOFF.md` | Items needing testing | Item verification |
 
-## 검증 명령
+## Validation Command
 
 ```bash
 /validate --stage 08-qa
 ```
 
-## 품질 기준
+## Quality Criteria
 
 ### qa_report.md
-- [ ] 코드 리뷰 결과
-- [ ] 보안 검사 결과
-- [ ] 성능 검토 결과
-- [ ] 발견된 버그 목록
-- [ ] 권장 사항
+- [ ] Code review results
+- [ ] Security inspection results
+- [ ] Performance review results
+- [ ] Discovered bugs list
+- [ ] Recommendations
 
 ### bug_fixes.md
-- [ ] 수정된 버그 목록
-- [ ] 각 버그의 원인 분석
-- [ ] 해결 방법
-- [ ] 회귀 방지 조치
+- [ ] Fixed bugs list
+- [ ] Root cause analysis for each bug
+- [ ] Resolution method
+- [ ] Regression prevention measures
 
-### 소스 코드
-- [ ] Critical 버그 0개
-- [ ] High 버그 0개
-- [ ] 보안 취약점 해결
+### Source Code
+- [ ] 0 Critical bugs
+- [ ] 0 High bugs
+- [ ] Security vulnerabilities resolved
 
 ### HANDOFF.md
-- [ ] 테스트 필요 영역
-- [ ] 남은 Medium/Low 이슈
-- [ ] 다음 단계 권고
+- [ ] Areas needing testing
+- [ ] Remaining Medium/Low issues
+- [ ] Next step recommendations
 
-## 자동 검증 스크립트
+## Auto Validation Script
 
 ```bash
-# 보안 취약점 검사
+# Security vulnerability scan
 npm audit --audit-level=high
 
-# Lint 검사
+# Lint check
 npm run lint
 
-# 타입 검사
+# Type check
 npm run typecheck
 
-# 테스트 실행
+# Run tests
 npm run test
 ```
 
-## 보안 메트릭
+## Security Metrics
 
-| 메트릭 | 기준 | 실제 |
-|--------|------|------|
-| Critical 취약점 | 0 | - |
-| High 취약점 | 0 | - |
-| Medium 취약점 | < 5 | - |
+| Metric | Criteria | Actual |
+|--------|----------|--------|
+| Critical vulnerabilities | 0 | - |
+| High vulnerabilities | 0 | - |
+| Medium vulnerabilities | < 5 | - |
 
-## 실패 시 조치
+## Actions on Failure
 
-1. 보안 취약점 → 즉시 수정 후 재검증
-2. 테스트 실패 → 버그 수정 후 재실행
-3. Lint 에러 → 코드 수정
+1. Security vulnerability → Fix immediately and re-verify
+2. Test failure → Fix bug and re-run
+3. Lint error → Fix code

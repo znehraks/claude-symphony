@@ -1,174 +1,174 @@
 # /validate - Output Validation Command
 
-현재 스테이지의 산출물을 검증합니다.
+Validate the outputs of the current stage.
 
-## 사용법
+## Usage
 
 ```bash
 /validate [options]
 ```
 
-## 옵션
+## Options
 
-| 옵션 | 설명 | 기본값 |
-|------|------|--------|
-| `--stage` | 검증할 스테이지 ID | 현재 스테이지 |
-| `--verbose` | 상세 출력 | false |
-| `--fix` | 자동 수정 제안 | false |
-| `--skip-commands` | 명령어 검증 건너뛰기 | false |
-| `--force` | 실패해도 통과 처리 | false |
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--stage` | Stage ID to validate | Current stage |
+| `--verbose` | Detailed output | false |
+| `--fix` | Auto-fix suggestions | false |
+| `--skip-commands` | Skip command validation | false |
+| `--force` | Pass even on failure | false |
 
-## 검증 항목
+## Validation Items
 
-### 1. 필수 파일 존재
+### 1. Required File Existence
 ```bash
 /validate
-# → ideas.md ✅, requirements_analysis.md ❌ (누락)
+# → ideas.md ✅, requirements_analysis.md ❌ (missing)
 ```
 
-### 2. 파일 내용 검증
+### 2. File Content Validation
 ```bash
 /validate --verbose
-# → ideas.md: 8개 아이디어 (최소 5개) ✅
-# → 필수 섹션: 기능 요구사항 ✅, 비기능 요구사항 ❌
+# → ideas.md: 8 ideas (minimum 5) ✅
+# → Required sections: Functional Requirements ✅, Non-Functional Requirements ❌
 ```
 
-### 3. 명령어 검증
+### 3. Command Validation
 ```bash
 /validate
 # → npm run lint ✅
 # → npm run typecheck ✅
-# → npm run test ❌ (3개 실패)
+# → npm run test ❌ (3 failures)
 ```
 
-### 4. 품질 점수
+### 4. Quality Score
 ```bash
 /validate
-# → 종합 점수: 0.85/1.0
+# → Overall score: 0.85/1.0
 ```
 
-## 출력 형식
+## Output Format
 
-### 간단 출력
+### Simple Output
 ```
-✅ 검증 통과: 06-implementation (점수: 0.95)
-```
-
-### 실패 시
-```
-❌ 검증 실패: 06-implementation
-
-실패 항목:
-1. 테스트 실패 (3개)
-2. 커버리지 미달 (75% < 80%)
-
-수정 필요:
-- [ ] tests/auth.test.ts:45 수정
-- [ ] 테스트 커버리지 5% 향상
+✅ Validation passed: 06-implementation (score: 0.95)
 ```
 
-### 상세 출력 (--verbose)
+### On Failure
+```
+❌ Validation failed: 06-implementation
+
+Failed items:
+1. Test failures (3)
+2. Coverage below target (75% < 80%)
+
+Fixes needed:
+- [ ] Fix tests/auth.test.ts:45
+- [ ] Improve test coverage by 5%
+```
+
+### Verbose Output (--verbose)
 ```markdown
-# 산출물 검증 리포트
+# Output Validation Report
 
-## 스테이지: 06-implementation
-## 상태: ⚠️ 부분 통과
-## 점수: 0.85
+## Stage: 06-implementation
+## Status: ⚠️ Partial Pass
+## Score: 0.85
 
-### 파일 검증
-| 파일 | 상태 | 상세 |
-|------|------|------|
-| source_code/ | ✅ | 디렉토리 존재 |
-| implementation_log.md | ✅ | 필수 형식 충족 |
+### File Validation
+| File | Status | Details |
+|------|--------|---------|
+| source_code/ | ✅ | Directory exists |
+| implementation_log.md | ✅ | Required format met |
 
-### 명령어 검증
-| 명령 | 결과 | 시간 |
-|------|------|------|
+### Command Validation
+| Command | Result | Time |
+|---------|--------|------|
 | lint | ✅ | 2.3s |
 | typecheck | ✅ | 4.1s |
 | test | ❌ | 15.2s |
 
-### 품질 메트릭
-| 메트릭 | 현재 | 목표 | 상태 |
-|--------|------|------|------|
+### Quality Metrics
+| Metric | Current | Target | Status |
+|--------|---------|--------|--------|
 | Lint | 0.95 | 0.90 | ✅ |
 | Coverage | 0.75 | 0.80 | ❌ |
 ```
 
-## 자동 수정 제안
+## Auto-Fix Suggestions
 
 ```bash
 /validate --fix
 ```
 
 ```markdown
-## 자동 수정 제안
+## Auto-Fix Suggestions
 
-### 1. 누락된 섹션 추가
-**파일**: requirements_analysis.md
-**제안**: "비기능 요구사항" 섹션 추가
+### 1. Add Missing Section
+**File**: requirements_analysis.md
+**Suggestion**: Add "Non-Functional Requirements" section
 
-### 2. 테스트 수정
-**파일**: tests/auth.test.ts:45
-**원인**: 반환 타입 불일치
-**수정안**:
+### 2. Fix Test
+**File**: tests/auth.test.ts:45
+**Cause**: Return type mismatch
+**Fix**:
 ```typescript
 expect(result).toHaveProperty('token');
-// 변경 →
+// Change to →
 expect(result.data).toHaveProperty('token');
 ```
 
-자동 수정을 적용하시겠습니까? (y/n)
+Apply auto-fixes? (y/n)
 ```
 
-## 강제 통과
+## Force Pass
 
 ```bash
 /validate --force
 ```
 
 ```
-⚠️ 검증 실패 항목이 있습니다.
-강제로 통과 처리하시겠습니까?
+⚠️ There are failed validation items.
+Force pass anyway?
 
-이유를 입력하세요:
-> 테스트 환경 문제로 일시적 실패, 로컬에서 통과 확인됨
+Enter reason:
+> Temporary failure due to test environment issue, verified locally
 
-✅ 강제 통과 처리됨 (이유 기록됨)
+✅ Force passed (reason recorded)
 ```
 
-## 예시
+## Examples
 
 ```bash
-# 현재 스테이지 검증
+# Validate current stage
 /validate
 
-# 특정 스테이지 상세 검증
+# Validate specific stage with details
 /validate --stage 06 --verbose
 
-# 자동 수정 제안 포함
+# Include auto-fix suggestions
 /validate --fix
 
-# 빠른 검증 (명령어 건너뛰기)
+# Quick validation (skip commands)
 /validate --skip-commands
 ```
 
-## 검증 결과 저장
+## Validation Results Storage
 
-- 결과: `state/validations/{stage}_{timestamp}.json`
-- 리포트: `state/validations/{stage}_{timestamp}.md`
+- Results: `state/validations/{stage}_{timestamp}.json`
+- Report: `state/validations/{stage}_{timestamp}.md`
 
-## 설정
+## Configuration
 
-`config/output_validation.yaml` 참조
+See `config/output_validation.yaml`
 
-## 스테이지 전환 시 자동 실행
+## Auto-Run on Stage Transition
 
-`/next` 명령어 실행 시 자동으로 검증이 수행됩니다.
-검증 실패 시 스테이지 전환이 차단됩니다.
+Validation runs automatically when executing `/next` command.
+Stage transition is blocked if validation fails.
 
-## 관련 커맨드
+## Related Commands
 
-- `/next` - 다음 스테이지 전환
-- `/status` - 파이프라인 상태
-- `/stages` - 스테이지 목록
+- `/next` - Next stage transition
+- `/status` - Pipeline status
+- `/stages` - Stage list

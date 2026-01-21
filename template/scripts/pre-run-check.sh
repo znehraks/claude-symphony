@@ -1,10 +1,10 @@
 #!/bin/bash
-# pre-run-check.sh - 파이프라인 실행 전 사전 점검 스크립트
+# pre-run-check.sh - Pre-pipeline execution check script
 # claude-symphony workflow pipeline
 #
-# 이 스크립트는 파이프라인 실행 전에 모든 필수 도구와 설정이 올바른지 확인합니다.
+# This script verifies all required tools and settings are correct before running the pipeline.
 
-# 색상 정의
+# Color definitions
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -12,15 +12,15 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-# 카운터
+# Counters
 PASS_COUNT=0
 FAIL_COUNT=0
 WARN_COUNT=0
 
-# 결과 저장
+# Store results
 RESULTS=()
 
-# 헤더 출력
+# Print header
 print_header() {
     echo ""
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
@@ -29,14 +29,14 @@ print_header() {
     echo ""
 }
 
-# 섹션 헤더
+# Section header
 print_section() {
     echo ""
     echo -e "${BLUE}▸ $1${NC}"
     echo -e "${BLUE}──────────────────────────────────────${NC}"
 }
 
-# 결과 출력 함수
+# Result output functions
 check_pass() {
     echo -e "  ${GREEN}✓${NC} $1"
     PASS_COUNT=$((PASS_COUNT + 1))
@@ -56,93 +56,93 @@ check_warn() {
 }
 
 # =============================================================================
-# 1. AI CLI 설치 확인
+# 1. AI CLI Installation Check
 # =============================================================================
 check_ai_cli() {
-    print_section "AI CLI 설치 확인"
+    print_section "AI CLI Installation Check"
 
     # Gemini CLI
     if command -v gemini &> /dev/null; then
         GEMINI_PATH=$(which gemini)
-        check_pass "Gemini CLI 설치됨: $GEMINI_PATH"
+        check_pass "Gemini CLI installed: $GEMINI_PATH"
     else
-        check_fail "Gemini CLI 미설치 - 01, 03, 04 스테이지에서 문제 발생 예상"
+        check_fail "Gemini CLI not installed - Issues expected in stages 01, 03, 04"
     fi
 
     # Codex CLI
     if command -v codex &> /dev/null; then
         CODEX_PATH=$(which codex)
-        check_pass "Codex CLI 설치됨: $CODEX_PATH"
+        check_pass "Codex CLI installed: $CODEX_PATH"
     else
-        check_fail "Codex CLI 미설치 - 07, 09 스테이지에서 문제 발생 예상"
+        check_fail "Codex CLI not installed - Issues expected in stages 07, 09"
     fi
 
-    # Claude Code (현재 환경)
-    check_pass "Claude Code: 현재 실행 중"
+    # Claude Code (current environment)
+    check_pass "Claude Code: Currently running"
 }
 
 # =============================================================================
-# 2. tmux 확인
+# 2. tmux Check
 # =============================================================================
 check_tmux() {
-    print_section "tmux 환경 확인"
+    print_section "tmux Environment Check"
 
     if command -v tmux &> /dev/null; then
         TMUX_VERSION=$(tmux -V)
-        check_pass "tmux 설치됨: $TMUX_VERSION"
+        check_pass "tmux installed: $TMUX_VERSION"
     else
-        check_fail "tmux 미설치 - 외부 AI 호출 불가"
+        check_fail "tmux not installed - External AI calls not possible"
         return
     fi
 
-    # 기존 세션 확인
+    # Check existing sessions
     if tmux has-session -t ax-gemini 2>/dev/null; then
-        check_pass "tmux 세션 'ax-gemini' 활성"
+        check_pass "tmux session 'ax-gemini' active"
     else
-        check_warn "tmux 세션 'ax-gemini' 없음 - 필요시 자동 생성됨"
+        check_warn "tmux session 'ax-gemini' not found - Will be auto-created when needed"
     fi
 
     if tmux has-session -t ax-codex 2>/dev/null; then
-        check_pass "tmux 세션 'ax-codex' 활성"
+        check_pass "tmux session 'ax-codex' active"
     else
-        check_warn "tmux 세션 'ax-codex' 없음 - 필요시 자동 생성됨"
+        check_warn "tmux session 'ax-codex' not found - Will be auto-created when needed"
     fi
 }
 
 # =============================================================================
-# 3. 래퍼 스크립트 확인
+# 3. Wrapper Scripts Check
 # =============================================================================
 check_wrapper_scripts() {
-    print_section "래퍼 스크립트 확인"
+    print_section "Wrapper Scripts Check"
 
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
     # gemini-wrapper.sh
     if [[ -x "$SCRIPT_DIR/gemini-wrapper.sh" ]]; then
-        check_pass "gemini-wrapper.sh 실행 가능"
+        check_pass "gemini-wrapper.sh executable"
     elif [[ -f "$SCRIPT_DIR/gemini-wrapper.sh" ]]; then
-        check_warn "gemini-wrapper.sh 존재하나 실행 권한 없음"
-        echo -e "      ${YELLOW}해결: chmod +x $SCRIPT_DIR/gemini-wrapper.sh${NC}"
+        check_warn "gemini-wrapper.sh exists but not executable"
+        echo -e "      ${YELLOW}Fix: chmod +x $SCRIPT_DIR/gemini-wrapper.sh${NC}"
     else
-        check_fail "gemini-wrapper.sh 없음"
+        check_fail "gemini-wrapper.sh not found"
     fi
 
     # codex-wrapper.sh
     if [[ -x "$SCRIPT_DIR/codex-wrapper.sh" ]]; then
-        check_pass "codex-wrapper.sh 실행 가능"
+        check_pass "codex-wrapper.sh executable"
     elif [[ -f "$SCRIPT_DIR/codex-wrapper.sh" ]]; then
-        check_warn "codex-wrapper.sh 존재하나 실행 권한 없음"
-        echo -e "      ${YELLOW}해결: chmod +x $SCRIPT_DIR/codex-wrapper.sh${NC}"
+        check_warn "codex-wrapper.sh exists but not executable"
+        echo -e "      ${YELLOW}Fix: chmod +x $SCRIPT_DIR/codex-wrapper.sh${NC}"
     else
-        check_fail "codex-wrapper.sh 없음"
+        check_fail "codex-wrapper.sh not found"
     fi
 }
 
 # =============================================================================
-# 4. 설정 파일 확인
+# 4. Configuration Files Check
 # =============================================================================
 check_config_files() {
-    print_section "설정 파일 확인"
+    print_section "Configuration Files Check"
 
     CONFIG_DIR="$(dirname "$(dirname "${BASH_SOURCE[0]}")")/config"
 
@@ -156,42 +156,42 @@ check_config_files() {
 
     for config in "${required_configs[@]}"; do
         if [[ -f "$CONFIG_DIR/$config" ]]; then
-            check_pass "$config 존재"
+            check_pass "$config exists"
         else
-            check_fail "$config 없음"
+            check_fail "$config not found"
         fi
     done
 }
 
 # =============================================================================
-# 5. 상태 파일 확인
+# 5. State Files Check
 # =============================================================================
 check_state_files() {
-    print_section "상태 파일 확인"
+    print_section "State Files Check"
 
     STATE_DIR="$(dirname "$(dirname "${BASH_SOURCE[0]}")")/state"
 
     if [[ -f "$STATE_DIR/progress.json" ]]; then
         CURRENT_STAGE=$(grep -o '"current_stage"[^,]*' "$STATE_DIR/progress.json" 2>/dev/null | cut -d'"' -f4)
-        check_pass "progress.json 존재 (현재 스테이지: ${CURRENT_STAGE:-알 수 없음})"
+        check_pass "progress.json exists (current stage: ${CURRENT_STAGE:-unknown})"
     else
-        check_warn "progress.json 없음 - 새 파이프라인으로 시작"
+        check_warn "progress.json not found - Starting as new pipeline"
     fi
 
-    # 체크포인트 디렉토리
+    # Checkpoints directory
     if [[ -d "$STATE_DIR/checkpoints" ]]; then
         CP_COUNT=$(ls -1 "$STATE_DIR/checkpoints" 2>/dev/null | wc -l | tr -d ' ')
-        check_pass "체크포인트 디렉토리 존재 ($CP_COUNT개 체크포인트)"
+        check_pass "Checkpoints directory exists ($CP_COUNT checkpoints)"
     else
-        check_warn "체크포인트 디렉토리 없음"
+        check_warn "Checkpoints directory not found"
     fi
 }
 
 # =============================================================================
-# 6. 스테이지 파일 확인
+# 6. Stage Files Check
 # =============================================================================
 check_stage_files() {
-    print_section "스테이지 파일 확인"
+    print_section "Stage Files Check"
 
     STAGES_DIR="$(dirname "$(dirname "${BASH_SOURCE[0]}")")/stages"
 
@@ -212,75 +212,75 @@ check_stage_files() {
         if [[ -f "$STAGES_DIR/$stage/CLAUDE.md" ]]; then
             check_pass "$stage/CLAUDE.md"
         else
-            check_fail "$stage/CLAUDE.md 없음"
+            check_fail "$stage/CLAUDE.md not found"
         fi
     done
 }
 
 # =============================================================================
-# 7. AI CLI 간단 테스트 (선택적)
+# 7. AI CLI Simple Test (Optional)
 # =============================================================================
 test_ai_cli() {
-    print_section "AI CLI 연결 테스트 (선택적)"
+    print_section "AI CLI Connection Test (Optional)"
 
-    echo -e "  ${YELLOW}이 테스트는 실제 API 호출을 수행합니다.${NC}"
-    echo -e "  ${YELLOW}건너뛰려면 Enter, 실행하려면 'y' 입력:${NC}"
+    echo -e "  ${YELLOW}This test will make actual API calls.${NC}"
+    echo -e "  ${YELLOW}Press Enter to skip, or type 'y' to run:${NC}"
     read -r -t 10 response
 
     if [[ "$response" != "y" ]]; then
-        check_warn "AI 연결 테스트 건너뜀"
+        check_warn "AI connection test skipped"
         return
     fi
 
-    # Gemini 테스트
+    # Gemini test
     if command -v gemini &> /dev/null; then
-        echo -e "  ${BLUE}Gemini 테스트 중...${NC}"
+        echo -e "  ${BLUE}Testing Gemini...${NC}"
         if timeout 30 gemini "Say 'Hello'" &>/dev/null; then
-            check_pass "Gemini API 연결 성공"
+            check_pass "Gemini API connection successful"
         else
-            check_fail "Gemini API 연결 실패"
+            check_fail "Gemini API connection failed"
         fi
     fi
 
-    # Codex 테스트
+    # Codex test
     if command -v codex &> /dev/null; then
-        echo -e "  ${BLUE}Codex 테스트 중...${NC}"
+        echo -e "  ${BLUE}Testing Codex...${NC}"
         if timeout 30 codex --help &>/dev/null; then
-            check_pass "Codex CLI 정상"
+            check_pass "Codex CLI working"
         else
-            check_fail "Codex CLI 오류"
+            check_fail "Codex CLI error"
         fi
     fi
 }
 
 # =============================================================================
-# 결과 요약
+# Summary
 # =============================================================================
 print_summary() {
     echo ""
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo -e "${CYAN}  📊 점검 결과 요약${NC}"
+    echo -e "${CYAN}  📊 Check Results Summary${NC}"
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
-    echo -e "  ${GREEN}통과: $PASS_COUNT${NC}"
-    echo -e "  ${YELLOW}경고: $WARN_COUNT${NC}"
-    echo -e "  ${RED}실패: $FAIL_COUNT${NC}"
+    echo -e "  ${GREEN}Passed: $PASS_COUNT${NC}"
+    echo -e "  ${YELLOW}Warnings: $WARN_COUNT${NC}"
+    echo -e "  ${RED}Failed: $FAIL_COUNT${NC}"
     echo ""
 
     if [[ $FAIL_COUNT -eq 0 ]]; then
         echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-        echo -e "${GREEN}  ✅ 모든 필수 점검 통과! 파이프라인 실행 준비 완료${NC}"
+        echo -e "${GREEN}  ✅ All required checks passed! Pipeline ready to run${NC}"
         echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     else
         echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-        echo -e "${RED}  ❌ $FAIL_COUNT개 항목 실패. 위의 문제를 해결하세요.${NC}"
+        echo -e "${RED}  ❌ $FAIL_COUNT items failed. Please resolve the issues above.${NC}"
         echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     fi
 
-    # 실패 항목 상세
+    # Failed items detail
     if [[ $FAIL_COUNT -gt 0 ]]; then
         echo ""
-        echo -e "${RED}실패 항목 상세:${NC}"
+        echo -e "${RED}Failed Items Detail:${NC}"
         for result in "${RESULTS[@]}"; do
             if [[ $result == FAIL:* ]]; then
                 echo -e "  ${RED}•${NC} ${result#FAIL: }"
@@ -292,33 +292,33 @@ print_summary() {
 }
 
 # =============================================================================
-# 권장 조치 출력
+# Recommendations
 # =============================================================================
 print_recommendations() {
     if [[ $FAIL_COUNT -gt 0 || $WARN_COUNT -gt 0 ]]; then
         echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-        echo -e "${BLUE}  💡 권장 조치${NC}"
+        echo -e "${BLUE}  💡 Recommended Actions${NC}"
         echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
         echo ""
 
-        # Gemini 미설치 시
+        # If Gemini not installed
         if ! command -v gemini &> /dev/null; then
-            echo -e "  ${YELLOW}Gemini CLI 설치:${NC}"
+            echo -e "  ${YELLOW}Install Gemini CLI:${NC}"
             echo "    pip install google-generativeai"
-            echo "    # 또는 공식 문서 참조"
+            echo "    # Or refer to official documentation"
             echo ""
         fi
 
-        # Codex 미설치 시
+        # If Codex not installed
         if ! command -v codex &> /dev/null; then
-            echo -e "  ${YELLOW}Codex CLI 설치:${NC}"
+            echo -e "  ${YELLOW}Install Codex CLI:${NC}"
             echo "    npm install -g @openai/codex-cli"
             echo ""
         fi
 
-        # tmux 미설치 시
+        # If tmux not installed
         if ! command -v tmux &> /dev/null; then
-            echo -e "  ${YELLOW}tmux 설치:${NC}"
+            echo -e "  ${YELLOW}Install tmux:${NC}"
             echo "    brew install tmux  # macOS"
             echo "    apt install tmux   # Ubuntu"
             echo ""
@@ -329,7 +329,7 @@ print_recommendations() {
 }
 
 # =============================================================================
-# 메인 실행
+# Main execution
 # =============================================================================
 main() {
     print_header
@@ -341,7 +341,7 @@ main() {
     check_state_files
     check_stage_files
 
-    # 선택적 테스트
+    # Optional test
     if [[ "$1" == "--test" ]]; then
         test_ai_cli
     fi
@@ -349,7 +349,7 @@ main() {
     print_summary
     print_recommendations
 
-    # 종료 코드
+    # Exit code
     if [[ $FAIL_COUNT -gt 0 ]]; then
         exit 1
     else
@@ -357,5 +357,5 @@ main() {
     fi
 }
 
-# 실행
+# Run
 main "$@"

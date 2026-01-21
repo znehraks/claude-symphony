@@ -1,6 +1,6 @@
 #!/bin/bash
 # claude-symphony AI Selector Hook
-# 동적 AI 모델 선택
+# Dynamic AI model selection
 
 set -e
 
@@ -10,18 +10,18 @@ CONFIG_FILE="$PROJECT_ROOT/config/models.yaml"
 BENCHMARKS_DIR="$PROJECT_ROOT/state/ai_benchmarks"
 PROGRESS_FILE="$PROJECT_ROOT/state/progress.json"
 
-# 색상 정의
+# Color definitions
 BLUE='\033[0;34m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-# 로그 함수
+# Log functions
 log_info() { echo -e "${BLUE}[AI-SELECT]${NC} $1"; }
 log_success() { echo -e "${GREEN}[AI-SELECT]${NC} $1"; }
 log_suggest() { echo -e "${YELLOW}[AI-SELECT]${NC} $1"; }
 
-# 현재 스테이지 확인
+# Get current stage
 get_current_stage() {
     if [ -f "$PROGRESS_FILE" ]; then
         cat "$PROGRESS_FILE" 2>/dev/null | grep -o '"current_stage"[[:space:]]*:[[:space:]]*"[^"]*"' | cut -d'"' -f4
@@ -30,7 +30,7 @@ get_current_stage() {
     fi
 }
 
-# 스테이지 기반 모델 선택
+# Stage-based model selection
 get_stage_model() {
     local stage="$1"
 
@@ -56,7 +56,7 @@ get_stage_model() {
     esac
 }
 
-# 태스크 유형 기반 모델 선택
+# Task type-based model selection
 get_task_model() {
     local task_type="$1"
 
@@ -79,13 +79,13 @@ get_task_model() {
     esac
 }
 
-# 이전 성능 기반 모델 선택
+# Performance-based model selection
 get_performance_model() {
     local task_type="$1"
     local benchmark_file="$BENCHMARKS_DIR/latest.json"
 
     if [ -f "$benchmark_file" ]; then
-        # 최근 벤치마크 결과에서 최고 성능 모델 추출
+        # Extract best performing model from recent benchmark results
         local best_model=$(cat "$benchmark_file" 2>/dev/null | grep -o '"best_model"[[:space:]]*:[[:space:]]*"[^"]*"' | cut -d'"' -f4)
 
         if [ -n "$best_model" ]; then
@@ -94,23 +94,23 @@ get_performance_model() {
         fi
     fi
 
-    # 벤치마크 없으면 기본값
+    # Default if no benchmark available
     echo "claudecode"
 }
 
-# 복잡도 기반 모델 선택
+# Complexity-based model selection
 get_complexity_model() {
     local complexity="$1"
 
     case "$complexity" in
         "simple"|"low")
-            echo "claudecode"  # 빠른 응답
+            echo "claudecode"  # Fast response
             ;;
         "moderate"|"medium")
             echo "claudecode"
             ;;
         "complex"|"high")
-            echo "claudecode"  # 복잡한 로직 처리
+            echo "claudecode"  # Complex logic handling
             ;;
         *)
             echo "claudecode"
@@ -118,59 +118,59 @@ get_complexity_model() {
     esac
 }
 
-# 최적 모델 선택 (종합)
+# Select best model (comprehensive)
 select_best_model() {
     local stage="$1"
     local task_type="$2"
     local complexity="$3"
 
-    # 가중치
+    # Weights
     local stage_weight=0.4
     local task_weight=0.3
     local perf_weight=0.2
     local complexity_weight=0.1
 
-    # 각 기준별 모델
+    # Models per criterion
     local stage_model=$(get_stage_model "$stage")
     local task_model=$(get_task_model "$task_type")
     local perf_model=$(get_performance_model "$task_type")
     local comp_model=$(get_complexity_model "$complexity")
 
-    log_info "모델 선택 분석:"
-    log_info "  스테이지 기반: $stage_model (가중치: $stage_weight)"
-    log_info "  태스크 기반: $task_model (가중치: $task_weight)"
-    log_info "  성능 기반: $perf_model (가중치: $perf_weight)"
-    log_info "  복잡도 기반: $comp_model (가중치: $complexity_weight)"
+    log_info "Model selection analysis:"
+    log_info "  Stage-based: $stage_model (weight: $stage_weight)"
+    log_info "  Task-based: $task_model (weight: $task_weight)"
+    log_info "  Performance-based: $perf_model (weight: $perf_weight)"
+    log_info "  Complexity-based: $comp_model (weight: $complexity_weight)"
 
-    # 스테이지 기반이 가장 높은 가중치이므로 우선 선택
-    # 실제 구현에서는 점수 계산 필요
+    # Stage-based has highest weight, so prioritize it
+    # In actual implementation, score calculation needed
     local selected_model="$stage_model"
 
-    log_success "선택된 모델: $selected_model"
+    log_success "Selected model: $selected_model"
     echo "$selected_model"
 }
 
-# 모델 정보 출력
+# Print model info
 print_model_info() {
     local model="$1"
 
     case "$model" in
         "claudecode")
-            echo "Claude Code - 정확한 코드 생성, 복잡한 로직 분석"
+            echo "Claude Code - Accurate code generation, complex logic analysis"
             ;;
         "claude")
-            echo "Claude - 심층 리서치, 문서 분석 및 요약"
+            echo "Claude - Deep research, document analysis and summarization"
             ;;
         "gemini")
-            echo "Gemini - 창의적 아이디어, 다양한 관점 탐색"
+            echo "Gemini - Creative ideas, diverse perspective exploration"
             ;;
         "codex")
-            echo "Codex - 코드 분석, 리팩토링, 테스트 생성"
+            echo "Codex - Code analysis, refactoring, test generation"
             ;;
     esac
 }
 
-# 메인 실행
+# Main execution
 main() {
     local action="$1"
     shift
@@ -199,25 +199,25 @@ main() {
         "current")
             local stage=$(get_current_stage)
             local model=$(get_stage_model "$stage")
-            log_info "현재 스테이지: $stage"
-            log_info "권장 모델: $model"
+            log_info "Current stage: $stage"
+            log_info "Recommended model: $model"
             print_model_info "$model"
             ;;
         *)
-            echo "사용법: $0 {stage|task|select|info|current} [args]"
+            echo "Usage: $0 {stage|task|select|info|current} [args]"
             echo ""
-            echo "명령어:"
-            echo "  stage [stage_id]     - 스테이지 기반 모델 선택"
-            echo "  task [task_type]     - 태스크 유형 기반 모델 선택"
-            echo "  select [stage] [task] [complexity] - 종합 모델 선택"
-            echo "  info [model]         - 모델 정보 출력"
-            echo "  current              - 현재 스테이지 권장 모델"
+            echo "Commands:"
+            echo "  stage [stage_id]     - Stage-based model selection"
+            echo "  task [task_type]     - Task type-based model selection"
+            echo "  select [stage] [task] [complexity] - Comprehensive model selection"
+            echo "  info [model]         - Print model info"
+            echo "  current              - Recommended model for current stage"
             exit 1
             ;;
     esac
 }
 
-# 직접 실행 시에만 main 호출
+# Call main only when executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     main "$@"
 fi

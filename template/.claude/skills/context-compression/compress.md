@@ -1,175 +1,175 @@
 # Context Compression Logic
 
-분석 결과를 바탕으로 컨텍스트를 압축합니다.
+Compress context based on analysis results.
 
-## 압축 프로세스
+## Compression Process
 
-### 1. 유지할 내용 추출
-
-```markdown
-# 유지 항목
-
-## 결정사항
-- [결정 1]: [내용] - [이유]
-- [결정 2]: [내용] - [이유]
-
-## 요구사항
-- [요구사항 목록]
-
-## 아키텍처
-- [주요 아키텍처 선택]
-
-## 현재 작업 상태
-- 스테이지: [현재 스테이지]
-- 진행: [완료/진행중/대기]
-- 다음: [다음 작업]
-```
-
-### 2. 요약할 내용 처리
-
-#### 토론 요약 전략
-
-```
-원본:
-사용자: React와 Vue 중 어떤 게 좋을까?
-AI: React의 장점은... Vue의 장점은... 비교하면...
-사용자: 팀이 React 경험이 많아
-AI: 그렇다면 React가 좋겠습니다. 이유는...
-사용자: React로 하자
-
-압축:
-기술 스택 토론 → React 선택 (팀 경험 기반)
-```
-
-#### 코드 리뷰 요약
-
-```
-원본:
-[긴 코드 diff]
-AI: 이 부분은 최적화가 필요합니다... [상세 설명]
-[수정된 코드]
-
-압축:
-코드 리뷰 완료: [파일명] 최적화 적용
-- 변경: [핵심 변경사항]
-```
-
-### 3. 제거할 내용
-
-완전히 제거되는 항목:
-
-- 오류 메시지 전문 (해결책만 유지)
-- 실패한 시도 과정
-- 임시 디버깅 출력
-- 중복된 코드 표시
-
-### 4. state.md 생성
+### 1. Extract Content to Keep
 
 ```markdown
-# 작업 상태 저장 - {{TIMESTAMP}}
+# Keep Items
 
-## 현재 스테이지
+## Decisions
+- [Decision 1]: [Content] - [Reason]
+- [Decision 2]: [Content] - [Reason]
+
+## Requirements
+- [Requirements list]
+
+## Architecture
+- [Major architecture choices]
+
+## Current Work State
+- Stage: [Current stage]
+- Progress: [Completed/In progress/Pending]
+- Next: [Next task]
+```
+
+### 2. Process Content to Summarize
+
+#### Discussion Summary Strategy
+
+```
+Original:
+User: Should we go with React or Vue?
+AI: React's advantages are... Vue's advantages are... Comparing them...
+User: The team has more React experience
+AI: Then React would be better. The reason is...
+User: Let's go with React
+
+Compressed:
+Tech stack discussion → React selected (based on team experience)
+```
+
+#### Code Review Summary
+
+```
+Original:
+[Long code diff]
+AI: This part needs optimization... [Detailed explanation]
+[Modified code]
+
+Compressed:
+Code review complete: [filename] optimization applied
+- Change: [Core changes]
+```
+
+### 3. Content to Remove
+
+Items completely removed:
+
+- Full error messages (keep only solutions)
+- Failed attempt processes
+- Temporary debugging output
+- Duplicate code displays
+
+### 4. Generate state.md
+
+```markdown
+# Work State Save - {{TIMESTAMP}}
+
+## Current Stage
 {{STAGE_ID}}: {{STAGE_NAME}}
 
-## 진행 상황
-- 완료: {{COMPLETED_ITEMS}}
-- 진행 중: {{CURRENT_ITEM}}
-- 대기: {{PENDING_ITEMS}}
+## Progress
+- Completed: {{COMPLETED_ITEMS}}
+- In progress: {{CURRENT_ITEM}}
+- Pending: {{PENDING_ITEMS}}
 
-## 핵심 결정사항
+## Key Decisions
 
-### 기술 스택
-- 프론트엔드: React + TypeScript
-- 스타일링: Tailwind CSS
-- 상태관리: Zustand
+### Tech Stack
+- Frontend: React + TypeScript
+- Styling: Tailwind CSS
+- State management: Zustand
 
-### 아키텍처
-- 컴포넌트 기반 구조
-- 기능별 폴더 구성
+### Architecture
+- Component-based structure
+- Feature-based folder organization
 
-## 주요 컨텍스트
+## Main Context
 
-### 요구사항 요약
-[핵심 요구사항 3-5개]
+### Requirements Summary
+[3-5 core requirements]
 
-### 토론 결과 요약
-[주요 토론 결과]
+### Discussion Results Summary
+[Key discussion results]
 
-## 복구 지침
-1. 이 파일 읽기
-2. stages/{{STAGE_ID}}/CLAUDE.md 참조
-3. {{CURRENT_TASK}}부터 재개
+## Recovery Instructions
+1. Read this file
+2. Reference stages/{{STAGE_ID}}/CLAUDE.md
+3. Resume from {{CURRENT_TASK}}
 
-## 참조 파일
+## Reference Files
 - progress.json
 - stages/{{STAGE_ID}}/outputs/
-- 최근 HANDOFF.md
+- Latest HANDOFF.md
 ```
 
-## 압축 실행
+## Compression Execution
 
-### 자동 압축 (80k 도달 시)
+### Auto Compression (at 80k)
 
 ```
-⚠️ 토큰 한도 도달 (80,000)
+⚠️ Token limit reached (80,000)
 
-자동 압축 실행 중...
+Executing auto compression...
 
-[저장 중]
-✓ 결정사항 추출
-✓ 현재 상태 저장
-✓ state.md 생성
+[Saving]
+✓ Decisions extracted
+✓ Current state saved
+✓ state.md generated
 
-저장 완료: state/context/state.md
+Save complete: state/context/state.md
 
-/clear 후 복구하려면:
-1. state/context/state.md 읽기
-2. 작업 재개
+To recover after /clear:
+1. Read state/context/state.md
+2. Resume work
 ```
 
-### 수동 압축
+### Manual Compression
 
 ```
 /context --compress
 
-[분석]
+[Analysis]
 ...
 
-[압축 실행]
-✓ 유지 항목 추출: 10,000 토큰
-✓ 요약 생성: 5,000 토큰
-✓ 불필요 항목 제거: 50,000 토큰
+[Compression Execution]
+✓ Keep items extracted: 10,000 tokens
+✓ Summaries generated: 5,000 tokens
+✓ Unnecessary items removed: 50,000 tokens
 
-[결과]
-- 압축 전: 65,000 토큰
-- 압축 후: 15,000 토큰
+[Result]
+- Before compression: 65,000 tokens
+- After compression: 15,000 tokens
 
-state/context/state.md에 저장됨
+Saved to state/context/state.md
 ```
 
-## 복구 프로세스
+## Recovery Process
 
-### /clear 후 복구
-
-```
-새 세션입니다.
-
-이전 컨텍스트를 복구하시겠습니까?
-저장된 상태: state/context/state.md
-
-[Y] 복구 / [N] 새로 시작
-```
-
-### 복구 시 로드
+### Recovery After /clear
 
 ```
-컨텍스트 복구 중...
+New session.
 
-[로드된 정보]
-- 스테이지: 06-implementation
-- 진행: 스프린트 1 (3/5 태스크 완료)
-- 결정사항: 5개
-- 다음 작업: T004 사용자 인증 구현
+Would you like to recover previous context?
+Saved state: state/context/state.md
 
-복구 완료. 작업을 계속하시겠습니까?
+[Y] Recover / [N] Start fresh
+```
+
+### Load on Recovery
+
+```
+Recovering context...
+
+[Loaded Information]
+- Stage: 06-implementation
+- Progress: Sprint 1 (3/5 tasks completed)
+- Decisions: 5
+- Next task: T004 User authentication implementation
+
+Recovery complete. Continue working?
 ```

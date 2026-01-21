@@ -1,93 +1,93 @@
 # /test
 
-09-testing 스테이지를 바로 시작합니다.
+Start the 09-testing stage directly.
 
-## 사용법
+## Usage
 ```
 /test [test-type]
 ```
 
-## 스테이지 정보
+## Stage Information
 
-| 항목 | 값 |
-|------|-----|
-| 스테이지 | 09-testing |
-| AI 모델 | Codex |
-| 실행 모드 | Sandbox + Playwright MCP |
-| 체크포인트 | 선택 |
+| Item | Value |
+|------|-------|
+| Stage | 09-testing |
+| AI Model | Codex |
+| Execution Mode | Sandbox + Playwright MCP |
+| Checkpoint | Optional |
 
-## 동작
+## Actions
 
-1. **전제 조건 확인**
-   - 08-qa 완료 여부
-   - qa-report.md 존재
+1. **Prerequisite Check**
+   - 08-qa completion status
+   - qa-report.md exists
 
-2. **테스팅 실행**
-   - 통합 테스트
-   - E2E 테스트 (Playwright)
-   - 회귀 테스트
+2. **Execute Testing**
+   - Integration tests
+   - E2E tests (Playwright)
+   - Regression tests
 
-3. **산출물 생성**
-   - test-results.md - 테스트 결과
-   - coverage-report.html - 커버리지
+3. **Output Generation**
+   - test-results.md - Test results
+   - coverage-report.html - Coverage
 
-## 실행
+## Execution
 
 ```bash
 scripts/run-stage.sh 09-testing "$ARGUMENTS"
 ```
 
-## 입력 파일
+## Input Files
 
 - `stages/06-implementation/outputs/src/`
 - `stages/06-implementation/outputs/tests/`
 - `stages/08-qa/outputs/qa-report.md`
 
-## 출력 파일
+## Output Files
 
 - `stages/09-testing/outputs/test-results.md`
 - `stages/09-testing/outputs/e2e-results/`
 - `stages/09-testing/outputs/coverage/`
 
-## 테스트 유형
+## Test Types
 
-| 유형 | 도구 | 설명 |
-|------|------|------|
-| Unit | Jest/Vitest | 단위 테스트 |
-| Integration | Testing Library | 통합 테스트 |
-| E2E | Playwright | 엔드투엔드 |
-| Visual | Playwright | 스크린샷 비교 |
+| Type | Tool | Description |
+|------|------|-------------|
+| Unit | Jest/Vitest | Unit tests |
+| Integration | Testing Library | Integration tests |
+| E2E | Playwright | End-to-end |
+| Visual | Playwright | Screenshot comparison |
 
-## Playwright MCP 활용
+## Playwright MCP Usage
 
 ```bash
-# 브라우저 스냅샷
+# Browser snapshot
 mcp__playwright__browser_snapshot
 
-# 스크린샷
+# Screenshot
 mcp__playwright__browser_take_screenshot
 
-# 폼 테스트
+# Form testing
 mcp__playwright__browser_fill_form
 ```
 
-## 관련 명령어
+## Related Commands
 
-- `/run-stage 09` - 전제조건 확인 후 시작
-- `/next` - 다음 스테이지 (10-deployment)
-- `/qa` - 이전 스테이지
-- `/deploy` - 배포 바로 시작
+- `/run-stage 09` - Start after prerequisite check
+- `/next` - Next stage (10-deployment)
+- `/qa` - Previous stage
+- `/deploy` - Start deployment directly
 
-## 커버리지 목표
+## Coverage Targets
 
-| 메트릭 | 목표 |
-|--------|------|
+| Metric | Target |
+|--------|--------|
 | Line | ≥ 80% |
 | Branch | ≥ 70% |
 | Function | ≥ 80% |
 
 ## Tips
 
-- E2E는 핵심 플로우 중심
-- 실패 시 스크린샷 자동 저장
-- CI에서 headless 모드 실행
+- E2E focuses on critical flows
+- Auto-save screenshots on failure
+- Run headless mode in CI

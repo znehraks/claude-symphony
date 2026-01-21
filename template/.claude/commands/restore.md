@@ -1,39 +1,39 @@
 # /restore
 
-체크포인트에서 프로젝트 상태를 복구합니다.
+Restore project state from a checkpoint.
 
-## 사용법
+## Usage
 ```
-/restore --list          # 체크포인트 목록 보기
-/restore --latest        # 최신 체크포인트로 복구
-/restore [CP-ID]         # 특정 체크포인트로 복구
+/restore --list          # View checkpoint list
+/restore --latest        # Restore to latest checkpoint
+/restore [CP-ID]         # Restore to specific checkpoint
 ```
 
-## 동작
+## Actions
 
-### 목록 보기 (`--list`)
-1. `state/checkpoints/` 디렉토리 스캔
-2. 각 체크포인트 메타데이터 읽기
-3. 표 형식으로 출력
+### View List (`--list`)
+1. Scan `state/checkpoints/` directory
+2. Read each checkpoint's metadata
+3. Output in table format
 
-### 복구 (`[CP-ID]` 또는 `--latest`)
-1. **확인 프롬프트** (자동화 모드 아닌 경우)
-2. **현재 상태 백업** (선택적)
-3. **체크포인트 파일 복원**
-   - progress.json 복원
-   - outputs 파일 복원
-   - HANDOFF.md 복원 (있는 경우)
-4. **상태 업데이트**
+### Restore (`[CP-ID]` or `--latest`)
+1. **Confirmation prompt** (if not in automation mode)
+2. **Backup current state** (optional)
+3. **Restore checkpoint files**
+   - Restore progress.json
+   - Restore outputs files
+   - Restore HANDOFF.md (if exists)
+4. **Update state**
 
-## 실행 스크립트
+## Execution Script
 
 ```bash
 scripts/restore-checkpoint.sh "$ARGUMENTS"
 ```
 
-## 출력 예시
+## Output Examples
 
-### 목록 보기
+### View List
 ```
 /restore --list
 
@@ -46,68 +46,68 @@ scripts/restore-checkpoint.sh "$ARGUMENTS"
  CP-06-20240120-1430   06-implementation 2024-01-20 14:30
  CP-07-20240121-0900   07-refactoring    2024-01-21 09:00
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-총 3개 체크포인트 | /restore [ID]로 복구
+Total 3 checkpoints | Restore with /restore [ID]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-### 복구 실행
+### Execute Restore
 ```
 /restore CP-06-20240120-1430
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⚠️  체크포인트 복구
+⚠️  Checkpoint Restore
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-체크포인트: CP-06-20240120-1430
-스테이지:   06-implementation
-설명:       스프린트 1 완료
-생성일:     2024-01-20 14:30
+Checkpoint: CP-06-20240120-1430
+Stage:      06-implementation
+Description: Sprint 1 completed
+Created:    2024-01-20 14:30
 
-⚠️  경고: 현재 상태가 해당 시점으로 복구됩니다.
-   현재 변경사항이 손실될 수 있습니다.
+⚠️  Warning: Current state will be restored to that point.
+   Current changes may be lost.
 
-복구를 진행하시겠습니까? [y/N] y
+Proceed with restore? [y/N] y
 
-복구 중...
-✓ progress.json 복원됨
-✓ outputs 파일 복원됨 (42개)
-✓ HANDOFF.md 복원됨
+Restoring...
+✓ progress.json restored
+✓ outputs files restored (42 files)
+✓ HANDOFF.md restored
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ 체크포인트 복구 완료!
-현재 스테이지: 06-implementation
+✅ Checkpoint restore complete!
+Current stage: 06-implementation
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-## 옵션
+## Options
 
-| 옵션 | 설명 |
-|------|------|
-| `--list` | 체크포인트 목록 표시 |
-| `--latest` | 최신 체크포인트로 복구 |
-| `--force` | 확인 없이 강제 복구 |
-| `--backup` | 복구 전 현재 상태 백업 |
-| `--dry-run` | 실제 복구 없이 미리보기 |
+| Option | Description |
+|--------|-------------|
+| `--list` | Display checkpoint list |
+| `--latest` | Restore to latest checkpoint |
+| `--force` | Force restore without confirmation |
+| `--backup` | Backup current state before restore |
+| `--dry-run` | Preview only without actual restore |
 
-## 주의사항
+## Cautions
 
-- 복구 시 현재 작업 내용이 **덮어쓰기** 됩니다
-- 중요한 변경사항이 있다면 먼저 `/checkpoint` 실행
-- `--backup` 옵션으로 현재 상태 자동 백업 가능
+- Current work will be **overwritten** during restore
+- Run `/checkpoint` first if you have important changes
+- Use `--backup` option for automatic current state backup
 
-## 사용 사례
+## Use Cases
 
-1. **구현 실패 후 롤백**
+1. **Rollback after failed implementation**
    ```
    /restore --latest
    ```
 
-2. **특정 시점으로 복원**
+2. **Restore to specific point**
    ```
    /restore --list
    /restore CP-06-20240120-1030
    ```
 
-3. **안전한 복구 (백업 포함)**
+3. **Safe restore (with backup)**
    ```
    /restore CP-06-20240120-1030 --backup
    ```

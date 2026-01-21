@@ -1,62 +1,62 @@
 # Architecture Design Prompt
 
-## 사용 모델
+## Model
 Gemini
 
-## 프롬프트
+## Prompt
 
 ```
-당신은 시니어 소프트웨어 아키텍트입니다.
+You are a senior software architect.
 
-다음 요구사항과 기술 리서치를 바탕으로 시스템 아키텍처를 설계해주세요:
+Please design a system architecture based on the following requirements and technical research:
 
 ---
-## 요구사항
+## Requirements
 {{REQUIREMENTS}}
 
-## 기술 리서치 결과
+## Technical Research Results
 {{TECH_RESEARCH}}
 
-## 실현 가능성 평가
+## Feasibility Assessment
 {{FEASIBILITY}}
 ---
 
-## 설계 항목
+## Design Items
 
-### 1. 시스템 개요
-- 시스템 목적
-- 주요 기능
-- 비기능적 요구사항 대응
+### 1. System Overview
+- System purpose
+- Key features
+- Non-functional requirements response
 
-### 2. 아키텍처 스타일
-- 선택: Monolithic / Microservices / Serverless / Hybrid
-- 선택 근거
+### 2. Architecture Style
+- Selection: Monolithic / Microservices / Serverless / Hybrid
+- Selection rationale
 
-### 3. 컴포넌트 설계
-각 컴포넌트에 대해:
-- 이름
-- 책임
-- 인터페이스
-- 의존성
+### 3. Component Design
+For each component:
+- Name
+- Responsibility
+- Interface
+- Dependencies
 
-### 4. 데이터 아키텍처
-- 데이터 모델 개요
-- 데이터 흐름
-- 저장소 전략
+### 4. Data Architecture
+- Data model overview
+- Data flow
+- Storage strategy
 
-### 5. 통합 포인트
-- 외부 API
-- 서드파티 서비스
-- 인증/인가
+### 5. Integration Points
+- External APIs
+- Third-party services
+- Authentication/Authorization
 
-### 6. 다이어그램 (Mermaid)
-- 시스템 컨텍스트
-- 컨테이너 다이어그램
-- 컴포넌트 다이어그램
+### 6. Diagrams (Mermaid)
+- System context
+- Container diagram
+- Component diagram
 
-## 출력 형식
-Mermaid 다이어그램을 포함한 마크다운 문서
+## Output Format
+Markdown document including Mermaid diagrams
 ```
 
-## 기대 출력
+## Expected Output
 `outputs/architecture.md`

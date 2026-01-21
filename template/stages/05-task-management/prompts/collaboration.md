@@ -1,53 +1,53 @@
-# AI 협업 프롬프트 - Task Management
+# AI Collaboration Prompt - Task Management
 
-## 협업 모드: Sequential Review
+## Collaboration Mode: Sequential Review
 
-이 스테이지에서는 **순차적 리뷰** 모드를 사용하여 태스크 분해의 완전성을 보장합니다.
+This stage uses **sequential review** mode to ensure completeness of task breakdown.
 
-### 참여 모델
-- **ClaudeCode**: 태스크 분해, 의존성 분석
+### Participating Models
+- **ClaudeCode**: Task breakdown, dependency analysis
 
-### 협업 프롬프트
+### Collaboration Prompt
 
 ```
-# 단일 모델이지만 반복 검토
+# Single model with iterative review
 /collaborate --mode sequential --chain "claudecode:decompose -> claudecode:review"
 ```
 
-### 작업 흐름
+### Workflow
 
-1. **초기 분해**: 기능 → 에픽 → 스토리 → 태스크
-2. **의존성 분석**: 태스크 간 관계 파악
-3. **검토 및 조정**: 누락/중복 태스크 식별
+1. **Initial Breakdown**: Feature → Epic → Story → Task
+2. **Dependency Analysis**: Identify task relationships
+3. **Review and Adjustment**: Identify missing/duplicate tasks
 
-### 태스크 품질 기준
+### Task Quality Criteria
 
-| 기준 | 설명 |
-|------|------|
-| 원자성 | 더 이상 분해 불가 |
-| 명확성 | 완료 조건 명확 |
-| 독립성 | 최소한의 의존성 |
-| 추정 가능 | 시간 추정 가능 |
+| Criteria | Description |
+|----------|-------------|
+| Atomicity | Cannot be broken down further |
+| Clarity | Clear completion criteria |
+| Independence | Minimal dependencies |
+| Estimable | Time estimation possible |
 
-### Notion 통합
+### Notion Integration
 
-태스크 생성 시 반드시 준수:
-- 하나씩 순차적으로 생성
-- Status 필드 필수 (기본값: To Do)
-- Order 필드로 순서 지정
+Must follow when creating tasks:
+- Create one at a time sequentially
+- Status field required (default: To Do)
+- Specify order with Order field
 
-### 출력 형식
+### Output Format
 
 ```markdown
-## 태스크 분해 결과
+## Task Breakdown Results
 
-### 에픽 1: [에픽명]
-#### 스토리 1.1: [스토리명]
-- TASK-001: [태스크] (2h)
-- TASK-002: [태스크] (4h)
+### Epic 1: [Epic Name]
+#### Story 1.1: [Story Name]
+- TASK-001: [Task] (2h)
+- TASK-002: [Task] (4h)
 ...
 
-### 의존성 그래프
+### Dependency Graph
 TASK-001 → TASK-003
 TASK-002 → TASK-004
 ...

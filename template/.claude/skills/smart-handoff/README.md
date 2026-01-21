@@ -1,59 +1,59 @@
 # Smart HANDOFF Skill
 
-스마트 컨텍스트 추출 및 지능형 HANDOFF 생성 스킬
+Smart context extraction and intelligent HANDOFF generation skill
 
-## 개요
+## Overview
 
-이 스킬은 HANDOFF.md 생성 과정을 자동화하고 최적화합니다:
-- 자동 컨텍스트 추출
-- 의미 기반 압축
-- 스테이지별 맞춤 요약
-- 메모리 시스템 통합
+This skill automates and optimizes the HANDOFF.md generation process:
+- Automatic context extraction
+- Semantic-based compression
+- Stage-specific summarization
+- Memory system integration
 
-## 트리거
+## Trigger
 
-- 스테이지 완료 시 자동 활성화
-- `/handoff --smart` 명령어
-- 컨텍스트 임계값 도달 시
+- Auto-activates on stage completion
+- `/handoff --smart` command
+- When context threshold reached
 
-## 기능
+## Features
 
-### 1. 자동 컨텍스트 추출 (extract.md)
-- 완료된 태스크 수집
-- 핵심 결정사항 추출
-- 수정된 파일 목록화
-- 대기 중인 이슈 식별
-- AI 호출 기록 정리
+### 1. Auto Context Extraction (extract.md)
+- Collect completed tasks
+- Extract key decisions
+- List modified files
+- Identify pending issues
+- Organize AI call history
 
-### 2. 컨텍스트 요약 (summarize.md)
-- 완료 작업 → 핵심 성과 압축
-- 파일 변경 → 영향도 분석
-- 결정 사항 → 이유와 대안 포함
-- 다음 단계 → 즉시 실행 가능 형태
+### 2. Context Summarization (summarize.md)
+- Completed work → Compress to key achievements
+- File changes → Impact analysis
+- Decisions → Include rationale and alternatives
+- Next steps → Immediately actionable format
 
-### 3. 메모리 통합
-- claude-mem에 핵심 정보 저장
-- 이전 세션 컨텍스트 로드
-- 크로스 스테이지 학습 지원
+### 3. Memory Integration
+- Save key info to claude-mem
+- Load previous session context
+- Support cross-stage learning
 
-## 설정
+## Configuration
 
-`config/handoff_intelligence.yaml` 참조
+See `config/handoff_intelligence.yaml`
 
-## 사용 예시
+## Usage Examples
 
 ```bash
-# 스마트 HANDOFF 생성
+# Smart HANDOFF generation
 /handoff --smart
 
-# 압축된 HANDOFF 생성
+# Compact HANDOFF generation
 /handoff --smart --compact
 
-# 복구용 상세 HANDOFF 생성
+# Detailed recovery HANDOFF generation
 /handoff --smart --recovery
 ```
 
-## 출력
+## Output
 
 - `stages/{current_stage}/HANDOFF.md`
-- 메모리 저장 (claude-mem 연동 시)
+- Memory save (when claude-mem connected)

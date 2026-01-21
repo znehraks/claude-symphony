@@ -1,73 +1,73 @@
 # Feasibility Analysis Prompt
 
-## 사용 모델
+## Model
 Claude
 
-## 프롬프트
+## Prompt
 
 ```
-당신은 프로젝트 실현 가능성 평가 전문가입니다.
+You are a project feasibility assessment expert.
 
-다음 자료를 바탕으로 종합적인 실현 가능성 평가를 수행해주세요:
+Please perform a comprehensive feasibility evaluation based on the following materials:
 
 ---
-## 기술 리서치
+## Technical Research
 {{TECH_RESEARCH}}
 
-## 시장 분석
+## Market Analysis
 {{MARKET_ANALYSIS}}
 
-## 요구사항
+## Requirements
 {{REQUIREMENTS}}
 ---
 
-## 평가 항목
+## Evaluation Criteria
 
-### 1. 기술적 실현 가능성
-- 기술 스택 성숙도
-- 팀 역량 대비 복잡도
-- 기술적 리스크
+### 1. Technical Feasibility
+- Technology stack maturity
+- Complexity relative to team capabilities
+- Technical risks
 
-점수: /10
+Score: /10
 
-### 2. 경제적 실현 가능성
-- 예상 개발 비용
-- 운영 비용 (인프라, 유지보수)
-- ROI 예측
+### 2. Economic Feasibility
+- Estimated development costs
+- Operational costs (infrastructure, maintenance)
+- ROI projection
 
-점수: /10
+Score: /10
 
-### 3. 일정 실현 가능성
-- MVP 개발 예상 기간
-- 전체 개발 예상 기간
-- 일정 리스크
+### 3. Schedule Feasibility
+- Estimated MVP development period
+- Estimated total development period
+- Schedule risks
 
-점수: /10
+Score: /10
 
-### 4. 시장 실현 가능성
-- 시장 진입 가능성
-- 차별화 가능성
-- 성장 가능성
+### 4. Market Feasibility
+- Market entry potential
+- Differentiation potential
+- Growth potential
 
-점수: /10
+Score: /10
 
-### 5. 리스크 매트릭스
+### 5. Risk Matrix
 
-| 리스크 | 영향도 | 발생확률 | 완화전략 | 담당 |
-|--------|--------|----------|----------|------|
+| Risk | Impact | Probability | Mitigation Strategy | Owner |
+|------|--------|-------------|---------------------|-------|
 
-### 6. Go/No-Go 권고
+### 6. Go/No-Go Recommendation
 
-종합 점수: /40
+Total Score: /40
 
-권고: GO / CONDITIONAL GO / NO-GO
+Recommendation: GO / CONDITIONAL GO / NO-GO
 
-조건 (CONDITIONAL일 경우):
+Conditions (if CONDITIONAL):
 -
 
-## 출력 형식
-실현 가능성 보고서 (경영진 요약 포함)
+## Output Format
+Feasibility report (including executive summary)
 ```
 
-## 기대 출력
+## Expected Output
 `outputs/feasibility_report.md`

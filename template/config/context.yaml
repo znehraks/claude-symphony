@@ -1,20 +1,20 @@
 # Context Management Configuration
-# claude-symphony 컨텍스트 관리 설정
+# claude-symphony context management settings
 
 context_management:
-  # 퍼센트 기반 임계값 (남은 컨텍스트 기준)
+  # Percentage-based thresholds (based on remaining context)
   thresholds:
-    warning: 60       # 60% 남으면 경고 표시
-    action: 50        # 50% 남으면 자동 저장 + 압축 권장
-    critical: 40      # 40% 남으면 /clear 강제 권고
+    warning: 60       # Display warning at 60% remaining
+    action: 50        # Auto-save + recommend compression at 50% remaining
+    critical: 40      # Force recommend /clear at 40% remaining
 
-  # 태스크 기반 저장 주기
-  task_save_frequency: 5  # 5개 태스크마다 자동 상태 저장
+  # Task-based save frequency
+  task_save_frequency: 5  # Auto-save state every 5 tasks
 
-  # 예상 최대 토큰 (Claude 기준)
+  # Estimated max tokens (Claude basis)
   max_tokens: 200000
 
-# 자동 동작 설정
+# Auto action settings
 auto_actions:
   on_warning:
     - display_warning_banner
@@ -28,21 +28,21 @@ auto_actions:
   on_critical:
     - force_state_save
     - generate_recovery_handoff
-    - prompt_clear_confirmation  # 사용자 확인 후 /clear 실행
+    - prompt_clear_confirmation  # Execute /clear after user confirmation
 
-# 상태 저장 설정
+# State saving settings
 state_saving:
   directory: "state/context"
   filename_format: "state_{timestamp}_{stage}.md"
 
-  # 저장 트리거
+  # Save triggers
   triggers:
     - threshold_crossed
     - task_batch_complete
     - manual_checkpoint
     - stage_transition
 
-  # 저장할 항목
+  # Items to save
   include:
     - current_stage
     - progress_summary
@@ -51,28 +51,28 @@ state_saving:
     - recovery_instructions
     - file_modifications
 
-# 컨텍스트 압축 설정
+# Context compression settings
 compression:
-  auto_activate_at: 50  # action 임계값에서 자동 활성화
+  auto_activate_at: 50  # Auto-activate at action threshold
 
   strategies:
     - name: "summarize_completed"
-      description: "완료된 작업을 요약으로 대체"
+      description: "Replace completed work with summaries"
       priority: 1
 
     - name: "externalize_code"
-      description: "코드 블록을 파일 참조로 대체"
+      description: "Replace code blocks with file references"
       priority: 2
 
     - name: "handoff_generation"
-      description: "현재 상태를 HANDOFF.md로 외부화"
+      description: "Externalize current state to HANDOFF.md"
       priority: 3
 
-# 모니터링 설정
+# Monitoring settings
 monitoring:
   display_in_prompt: true
   update_interval: "per_response"
 
-  # 상태 표시 형식
+  # Status display format
   display_format: |
     [Context: {remaining_percent}% | {remaining_tokens}k tokens]

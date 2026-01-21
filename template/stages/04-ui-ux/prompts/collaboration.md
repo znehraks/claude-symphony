@@ -1,56 +1,56 @@
-# AI 협업 프롬프트 - UI/UX Planning
+# AI Collaboration Prompt - UI/UX Planning
 
-## 협업 모드: Debate + Parallel
+## Collaboration Mode: Debate + Parallel
 
-이 스테이지에서는 **토론 모드**로 UX 방향성을 결정하고, **병렬 모드**로 세부 설계를 진행합니다.
+This stage uses **debate mode** to determine UX direction, then **parallel mode** for detailed design.
 
-### 참여 모델
-- **Gemini**: 창의적 UI 설계, 와이어프레임 생성
-- **Claude**: 사용성 검토, 접근성 평가
+### Participating Models
+- **Gemini**: Creative UI design, wireframe generation
+- **Claude**: Usability review, accessibility assessment
 
-### 협업 프롬프트
+### Collaboration Prompt
 
 ```
-# UX 방향 토론
-/collaborate --mode debate --topic "사용자 경험 방향성" --rounds 2
+# UX Direction Debate
+/collaborate --mode debate --topic "user experience direction" --rounds 2
 
-# 병렬 설계
-/collaborate --mode parallel --models gemini,claude --task "UI 컴포넌트 설계"
+# Parallel Design
+/collaborate --mode parallel --models gemini,claude --task "UI component design"
 ```
 
-### 토론 주제
+### Debate Topics
 
-1. **인터랙션 패턴**: 전통적 vs 혁신적
-2. **정보 아키텍처**: 평면 vs 계층
-3. **디자인 시스템**: 기존 사용 vs 커스텀
+1. **Interaction Patterns**: Traditional vs Innovative
+2. **Information Architecture**: Flat vs Hierarchical
+3. **Design System**: Existing vs Custom
 
-### 작업 분담
+### Task Distribution
 
-| AI | 담당 영역 | 출력 |
-|----|----------|------|
-| Gemini | 와이어프레임, 시각 설계 | wireframes.md |
-| Claude | 사용자 플로우, 접근성 검토 | user_flows.md |
+| AI | Responsibility | Output |
+|----|----------------|--------|
+| Gemini | Wireframes, visual design | wireframes.md |
+| Claude | User flows, accessibility review | user_flows.md |
 
-### 디자인 검토 체크리스트
+### Design Review Checklist
 
-- [ ] 사용자 시나리오 기반 설계
-- [ ] 반응형 고려
-- [ ] 접근성 (WCAG 2.1)
-- [ ] 일관된 디자인 언어
+- [ ] User scenario-based design
+- [ ] Responsive considerations
+- [ ] Accessibility (WCAG 2.1)
+- [ ] Consistent design language
 
-### 출력 형식
+### Output Format
 
 ```markdown
-## AI 협업 결과
+## AI Collaboration Results
 
-### Gemini 설계
-- 와이어프레임 (ASCII/Mermaid)
-- 색상/타이포그래피 제안
+### Gemini Design
+- Wireframes (ASCII/Mermaid)
+- Color/typography suggestions
 
-### Claude 검토
-- 사용성 평가
-- 접근성 개선점
+### Claude Review
+- Usability assessment
+- Accessibility improvements
 
-### 통합 디자인 시스템
-- [최종 컴포넌트 목록]
+### Integrated Design System
+- [Final component list]
 ```

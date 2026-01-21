@@ -1,46 +1,46 @@
-# AI 협업 프롬프트 - Brainstorming
+# AI Collaboration Prompt - Brainstorming
 
-## 협업 모드: Parallel Execution
+## Collaboration Mode: Parallel Execution
 
-이 스테이지에서는 **병렬 실행** 모드를 사용하여 여러 AI 모델이 동시에 아이디어를 생성합니다.
+This stage uses **parallel execution** mode where multiple AI models generate ideas simultaneously.
 
-### 참여 모델
-- **Gemini**: 창의적 아이디어 발산, 웹 리서치
-- **Claude**: 구조화, 실현 가능성 검토
+### Participating Models
+- **Gemini**: Creative idea divergence, web research
+- **Claude**: Structuring, feasibility review
 
-### 협업 프롬프트
+### Collaboration Prompt
 
 ```
-/collaborate --mode parallel --models gemini,claude --task "아이디어 브레인스토밍"
+/collaborate --mode parallel --models gemini,claude --task "idea brainstorming"
 ```
 
-### 병합 전략
+### Merge Strategy
 
-1. **Gemini 결과**: 창의적 아이디어, 다양한 관점
-2. **Claude 결과**: 구조화된 분석, 실현 가능성 평가
-3. **병합**: Best-of-N 선택 후 통합
+1. **Gemini Results**: Creative ideas, diverse perspectives
+2. **Claude Results**: Structured analysis, feasibility assessment
+3. **Merge**: Best-of-N selection then integration
 
-### 토론 모드 (선택적)
+### Debate Mode (Optional)
 
-복잡한 아이디어 평가 시 토론 모드 활용:
+Use debate mode for complex idea evaluation:
 ```
-/collaborate --mode debate --topic "최적의 MVP 범위 결정" --rounds 2
+/collaborate --mode debate --topic "Determine optimal MVP scope" --rounds 2
 ```
 
-### 출력 형식
+### Output Format
 
 ```markdown
-## AI 협업 결과
+## AI Collaboration Results
 
-### Gemini 아이디어
-- [아이디어 1]
-- [아이디어 2]
+### Gemini Ideas
+- [Idea 1]
+- [Idea 2]
 ...
 
-### Claude 분석
-- [구조화된 평가]
+### Claude Analysis
+- [Structured evaluation]
 ...
 
-### 통합 결과
-- [최종 아이디어 목록]
+### Integrated Results
+- [Final idea list]
 ```

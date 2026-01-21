@@ -1,103 +1,103 @@
 # Q&A Logging Configuration
-# claude-symphony 문답 자동 기록 규칙 (Q7 해결)
+# claude-symphony Q&A auto-recording rules (Q7 resolution)
 
 qa_logging:
-  # 활성화 여부
+  # Enable/disable
   enabled: true
 
-  # 기록 대상 파일
+  # Target file for recording
   target_file: "feedback.md"
 
-  # 백업 위치
+  # Backup location
   backup_dir: "state/qa_backups/"
 
-# 기록 트리거
+# Recording triggers
 triggers:
-  # 자동 트리거
+  # Automatic triggers
   automatic:
     - event: "stage_complete"
-      description: "스테이지 완료 시"
+      description: "On stage completion"
       priority: "high"
 
     - event: "issue_discovered"
-      description: "새로운 이슈 발견 시"
+      description: "On new issue discovery"
       priority: "high"
 
     - event: "process_change_request"
-      description: "프로세스 변경 요청 시"
+      description: "On process change request"
       priority: "medium"
 
     - event: "tool_failure"
-      description: "도구 실패 시"
+      description: "On tool failure"
       priority: "high"
 
     - event: "workaround_found"
-      description: "우회 방법 발견 시"
+      description: "On workaround discovery"
       priority: "medium"
 
-  # 수동 트리거 커맨드
+  # Manual trigger command
   manual:
     command: "/log-qa"
-    description: "수동으로 문답 기록"
+    description: "Manually record Q&A"
 
-# 기록 형식
+# Recording format
 format:
-  # 섹션 헤더
+  # Section header
   section_header: "### Q{{number}}: {{title}}"
 
-  # 기록 템플릿
+  # Recording template
   template: |
     ### Q{{number}}: {{title}}
 
-    **질문**: {{question}}
+    **Question**: {{question}}
 
-    **답변**: {{answer}}
+    **Answer**: {{answer}}
 
-    **해결 방법**: {{solution}}
+    **Solution**: {{solution}}
 
-    **향후 개선 제안**: {{suggestion}}
+    **Future Improvement Suggestions**: {{suggestion}}
 
-    **관련 스테이지**: {{stage_id}}
+    **Related Stage**: {{stage_id}}
 
-    **기록 일시**: {{timestamp}}
+    **Recorded At**: {{timestamp}}
 
     ---
 
-  # 포함 항목
+  # Include items
   include:
-    - question          # 원본 질문
-    - answer            # 요약된 답변
-    - solution          # 해결 방법
-    - suggestion        # 향후 개선 제안
-    - stage_id          # 관련 스테이지
-    - timestamp         # 기록 시간
-    - category          # 카테고리
+    - question          # Original question
+    - answer            # Summarized answer
+    - solution          # Solution
+    - suggestion        # Future improvement suggestions
+    - stage_id          # Related stage
+    - timestamp         # Recording time
+    - category          # Category
 
-# 카테고리 분류
+# Category classification
 categories:
   - name: "workflow_improvements"
-    description: "워크플로우 개선"
-    keywords: ["프로세스", "단계", "순서", "자동화"]
+    description: "Workflow improvements"
+    keywords: ["process", "stage", "order", "automation"]
 
   - name: "tool_usage"
-    description: "도구 사용법"
+    description: "Tool usage"
     keywords: ["MCP", "CLI", "Notion", "Git"]
 
   - name: "process_changes"
-    description: "프로세스 변경"
-    keywords: ["변경", "수정", "추가", "삭제"]
+    description: "Process changes"
+    keywords: ["change", "modify", "add", "delete"]
 
   - name: "bug_fixes"
-    description: "버그 수정"
-    keywords: ["버그", "에러", "오류", "실패"]
+    description: "Bug fixes"
+    keywords: ["bug", "error", "failure"]
 
   - name: "best_practices"
-    description: "모범 사례"
-    keywords: ["권장", "추천", "패턴", "규칙"]
+    description: "Best practices"
+    keywords: ["recommended", "suggestion", "pattern", "rule"]
 
-# 필터링 규칙
+# Filtering rules
 filtering:
-  # 포함할 항목
+  # Items to include
   include:
     - "workflow_improvements"
     - "tool_usage"
@@ -105,61 +105,61 @@ filtering:
     - "bug_fixes"
     - "best_practices"
 
-  # 제외할 항목
+  # Items to exclude
   exclude:
-    - "trivial_questions"      # 사소한 질문
-    - "repeated_questions"     # 반복되는 질문
-    - "off_topic"              # 주제 외 질문
+    - "trivial_questions"      # Trivial questions
+    - "repeated_questions"     # Repeated questions
+    - "off_topic"              # Off-topic questions
 
-  # 제외 키워드
+  # Exclude keywords
   exclude_keywords:
-    - "테스트"
-    - "임시"
-    - "무시"
+    - "test"
+    - "temporary"
+    - "ignore"
 
-# 자동 번호 매기기
+# Auto numbering
 numbering:
-  # 자동 번호 부여
+  # Auto increment
   auto_increment: true
 
-  # 시작 번호 (기존 Q&A 이후)
-  start_from: "auto"  # feedback.md에서 마지막 번호 자동 감지
+  # Start number (after existing Q&A)
+  start_from: "auto"  # Auto-detect last number from feedback.md
 
-  # 형식
+  # Format
   format: "Q{{number}}"
 
-# 중복 감지
+# Duplicate detection
 deduplication:
-  # 활성화 여부
+  # Enable/disable
   enabled: true
 
-  # 유사도 임계값 (0-1)
+  # Similarity threshold (0-1)
   similarity_threshold: 0.8
 
-  # 중복 처리
+  # Duplicate handling
   on_duplicate: "merge"  # merge | skip | ask
 
-# 알림 설정
+# Notification settings
 notifications:
-  # 새 Q&A 기록 시 알림
+  # Notify on new Q&A record
   on_new_entry:
     enabled: true
-    message: "📝 새로운 Q&A가 feedback.md에 기록되었습니다: Q{{number}}"
+    message: "New Q&A recorded in feedback.md: Q{{number}}"
 
-  # 일일 요약
+  # Daily summary
   daily_summary:
     enabled: false
     time: "18:00"
 
-# 내보내기 설정
+# Export settings
 export:
-  # 지원 형식
+  # Supported formats
   formats:
     - "markdown"
     - "json"
     - "csv"
 
-  # 자동 내보내기
+  # Auto export
   auto_export:
     enabled: false
     format: "json"

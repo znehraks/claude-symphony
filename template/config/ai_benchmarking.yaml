@@ -3,18 +3,18 @@
 
 benchmarking:
   enabled: true
-  description: "AI 모델 성능 비교 및 최적 모델 동적 선택"
+  description: "AI model performance comparison and optimal model dynamic selection"
 
-  # 벤치마킹이 활성화되는 스테이지
+  # Stages where benchmarking is enabled
   enabled_stages:
     - "06-implementation"
     - "07-refactoring"
     - "09-testing"
 
-  # 벤치마크 태스크 정의
+  # Benchmark task definitions
   benchmark_tasks:
     code_generation:
-      description: "코드 생성 품질 비교"
+      description: "Code generation quality comparison"
       models: ["claude", "codex"]
       metrics:
         - name: "correctness"
@@ -31,7 +31,7 @@ benchmarking:
           measure: "complexity_score"
 
     refactoring:
-      description: "리팩토링 품질 비교"
+      description: "Refactoring quality comparison"
       models: ["codex", "claude"]
       metrics:
         - name: "complexity_reduction"
@@ -48,7 +48,7 @@ benchmarking:
           measure: "maintainability_index"
 
     test_generation:
-      description: "테스트 코드 생성 비교"
+      description: "Test code generation comparison"
       models: ["codex", "claude"]
       metrics:
         - name: "coverage"
@@ -61,21 +61,21 @@ benchmarking:
           weight: 0.3
           measure: "mutation_score"
 
-  # 자동 선택 전략
+  # Auto-selection strategy
   selection_strategy:
     auto: true
     method: "weighted_score"
 
     thresholds:
-      auto_select_minimum: 0.75  # 최소 점수
-      confidence_gap: 0.15       # 1위와 2위 점수 차이
+      auto_select_minimum: 0.75  # Minimum score
+      confidence_gap: 0.15       # Score gap between 1st and 2nd place
 
     fallback:
       enabled: true
       fallback_to: "claude"
       on_tie: "prefer_faster"
 
-  # 히스토리 추적
+  # History tracking
   history_tracking:
     enabled: true
     storage_path: "state/ai_benchmarks/"
@@ -93,10 +93,10 @@ benchmarking:
       period: "weekly"
       metrics: ["avg_score", "success_rate", "avg_latency"]
 
-# 동적 모델 선택 설정
+# Dynamic model selection settings
 dynamic_selection:
   enabled: true
-  description: "태스크 특성에 따른 최적 AI 모델 자동 선택"
+  description: "Automatic selection of optimal AI model based on task characteristics"
 
   criteria:
     task_type:
@@ -112,13 +112,13 @@ dynamic_selection:
       weight: 0.3
       levels:
         low:
-          prefer: "haiku"  # 빠른 응답
+          prefer: "haiku"  # Fast response
           threshold: 100   # lines of code
         medium:
           prefer: "claude"
           threshold: 500
         high:
-          prefer: "claude"  # 복잡한 로직
+          prefer: "claude"  # Complex logic
           threshold: null
 
     previous_performance:
@@ -128,9 +128,9 @@ dynamic_selection:
 
   override:
     user_preference: true
-    stage_assignment: true  # models.yaml의 stage_assignments 우선
+    stage_assignment: true  # Prioritize stage_assignments in models.yaml
 
-# 벤치마킹 실행 설정
+# Benchmarking execution settings
 execution:
   parallel_benchmark: true
   max_concurrent_benchmarks: 2
@@ -148,7 +148,7 @@ execution:
     max_tokens_per_benchmark: 10000
     max_retries: 2
 
-# 결과 리포팅
+# Result reporting
 reporting:
   format: "markdown"
   output_path: "state/ai_benchmarks/reports/"
@@ -168,17 +168,17 @@ reporting:
 
   notifications:
     on_significant_change:
-      threshold: 0.2  # 20% 변화
+      threshold: 0.2  # 20% change
       channels: ["console", "handoff"]
 
-# 통합 설정
+# Integration settings
 integration:
-  # HANDOFF에 벤치마크 결과 포함
+  # Include benchmark results in HANDOFF
   handoff:
     include_summary: true
     include_recommendation: true
 
-  # 컨텍스트 압축 시 벤치마크 데이터 처리
+  # Benchmark data handling during context compression
   context_compression:
-    preserve_recent: 3  # 최근 3개 벤치마크 결과 유지
+    preserve_recent: 3  # Preserve last 3 benchmark results
     summarize_older: true

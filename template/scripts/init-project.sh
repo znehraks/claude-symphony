@@ -1,5 +1,5 @@
 #!/bin/bash
-# init-project.sh - 새 프로젝트 초기화
+# init-project.sh - New project initialization
 # claude-symphony workflow pipeline
 
 set -e
@@ -8,42 +8,42 @@ PROJECT_NAME="$1"
 PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-# 색상 정의
+# Color definitions
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# 사용법
+# Usage
 if [ -z "$PROJECT_NAME" ]; then
-    echo "사용법: $0 <project-name>"
-    echo "예시: $0 my-saas-app"
+    echo "Usage: $0 <project-name>"
+    echo "Example: $0 my-saas-app"
     exit 1
 fi
 
-# 프로젝트 이름 검증
+# Validate project name
 if ! [[ "$PROJECT_NAME" =~ ^[a-z0-9-]+$ ]]; then
-    echo -e "${RED}오류:${NC} 프로젝트 이름은 영문 소문자, 숫자, 하이픈만 허용됩니다."
+    echo -e "${RED}Error:${NC} Project name can only contain lowercase letters, numbers, and hyphens."
     exit 1
 fi
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "🚀 프로젝트 초기화: $PROJECT_NAME"
+echo "🚀 Project initialization: $PROJECT_NAME"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-# 1. 프로젝트 디렉토리 생성
+# 1. Create project directory
 PROJECT_DIR="$PROJECT_ROOT/projects/$PROJECT_NAME"
 
 if [ -d "$PROJECT_DIR" ]; then
-    echo -e "${RED}오류:${NC} 프로젝트 '$PROJECT_NAME'이(가) 이미 존재합니다."
+    echo -e "${RED}Error:${NC} Project '$PROJECT_NAME' already exists."
     exit 1
 fi
 
 mkdir -p "$PROJECT_DIR"
-echo -e "${GREEN}✓${NC} 프로젝트 디렉토리 생성: $PROJECT_DIR"
+echo -e "${GREEN}✓${NC} Project directory created: $PROJECT_DIR"
 
-# 2. 상태 파일 초기화
+# 2. Initialize state file
 PROGRESS_FILE="$PROJECT_ROOT/state/progress.json"
 
 if command -v jq &> /dev/null; then
@@ -52,58 +52,58 @@ if command -v jq &> /dev/null; then
         .pipeline.updated_at = \"$TIMESTAMP\" | \
         .current_stage = \"01-brainstorm\"" \
         "$PROGRESS_FILE" > "${PROGRESS_FILE}.tmp" && mv "${PROGRESS_FILE}.tmp" "$PROGRESS_FILE"
-    echo -e "${GREEN}✓${NC} 상태 파일 업데이트됨"
+    echo -e "${GREEN}✓${NC} State file updated"
 else
-    echo -e "${YELLOW}⚠${NC} jq 미설치 - 상태 파일 수동 업데이트 필요"
+    echo -e "${YELLOW}⚠${NC} jq not installed - manual state file update required"
 fi
 
-# 3. 입력 파일 템플릿 생성
+# 3. Create input file template
 BRAINSTORM_DIR="$PROJECT_ROOT/stages/01-brainstorm"
 mkdir -p "$BRAINSTORM_DIR/inputs"
 
 cat > "$BRAINSTORM_DIR/inputs/project_brief.md" << 'EOF'
 # Project Brief
 
-## 프로젝트 이름
+## Project Name
 {{PROJECT_NAME}}
 
-## 한 줄 설명
-[프로젝트를 한 줄로 설명해주세요]
+## One-Line Description
+[Describe the project in one line]
 
-## 문제 정의
-[해결하려는 문제는 무엇인가요?]
+## Problem Definition
+[What problem are you solving?]
 
-## 타겟 사용자
-[주요 사용자는 누구인가요?]
+## Target Users
+[Who are the main users?]
 
-## 핵심 기능 (초안)
-1. [기능 1]
-2. [기능 2]
-3. [기능 3]
+## Core Features (Draft)
+1. [Feature 1]
+2. [Feature 2]
+3. [Feature 3]
 
-## 성공 기준
-[프로젝트가 성공했다고 판단하는 기준은?]
+## Success Criteria
+[What are the criteria for project success?]
 
-## 제약조건
-- 일정:
-- 예산:
-- 기술:
+## Constraints
+- Timeline:
+- Budget:
+- Technology:
 
-## 참고 자료
-- [URL 또는 문서]
+## References
+- [URL or document]
 EOF
 
 sed -i '' "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" "$BRAINSTORM_DIR/inputs/project_brief.md" 2>/dev/null || \
 sed -i "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" "$BRAINSTORM_DIR/inputs/project_brief.md"
 
-echo -e "${GREEN}✓${NC} 프로젝트 브리프 템플릿 생성: stages/01-brainstorm/inputs/project_brief.md"
+echo -e "${GREEN}✓${NC} Project brief template created: stages/01-brainstorm/inputs/project_brief.md"
 
-# 4. 완료 메시지
+# 4. Completion message
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo -e "${GREEN}✓${NC} 프로젝트 '$PROJECT_NAME' 초기화 완료!"
+echo -e "${GREEN}✓${NC} Project '$PROJECT_NAME' initialization complete!"
 echo ""
-echo -e "${BLUE}다음 단계:${NC}"
-echo "1. stages/01-brainstorm/inputs/project_brief.md 작성"
-echo "2. /run-stage 01-brainstorm 실행"
+echo -e "${BLUE}Next steps:${NC}"
+echo "1. Fill out stages/01-brainstorm/inputs/project_brief.md"
+echo "2. Run /run-stage 01-brainstorm"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

@@ -3,7 +3,7 @@
 stage:
   id: "10-deployment"
   name: "CI/CD & Deployment"
-  description: "배포 파이프라인 설정 및 배포"
+  description: "Deployment pipeline setup and deployment"
 
 models:
   primary: "claudecode"
@@ -26,11 +26,11 @@ inputs:
 outputs:
   required:
     - name: ".github/workflows/"
-      description: "GitHub Actions 워크플로우"
+      description: "GitHub Actions workflows"
     - name: "deployment_config/"
-      description: "배포 설정 파일"
+      description: "Deployment configuration files"
     - name: "deployment_log.md"
-      description: "배포 로그"
+      description: "Deployment log"
     - name: "HANDOFF.md"
 
 prompts:
@@ -46,15 +46,15 @@ prompts:
 
 completion:
   checklist:
-    - "CI 파이프라인 설정"
-    - "CD 파이프라인 설정"
-    - "스테이징 배포 성공"
-    - "프로덕션 배포 성공"
-    - "모니터링 설정"
-    - "배포 문서 작성"
+    - "CI pipeline configured"
+    - "CD pipeline configured"
+    - "Staging deployment successful"
+    - "Production deployment successful"
+    - "Monitoring configured"
+    - "Deployment documentation written"
 
 transition:
-  next_stage: null  # 마지막 스테이지
+  next_stage: null  # Final stage
   prerequisites:
     - "09-testing"
   handoff_required: true

@@ -1,57 +1,57 @@
 # /fork - Pipeline Forking Command
 
-파이프라인을 분기하여 여러 접근법을 동시에 탐색합니다.
+Fork the pipeline to explore multiple approaches simultaneously.
 
-## 사용법
+## Usage
 
 ```bash
 /fork [options]
 ```
 
-## 옵션
+## Options
 
-| 옵션 | 설명 | 기본값 |
-|------|------|--------|
-| `--reason` | 분기 이유 (필수) | - |
-| `--name` | 분기 이름 | auto |
-| `--direction` | 탐색 방향 설명 | - |
-| `--compare` | 기존 분기와 비교 | false |
-| `--merge` | 분기 병합 | false |
-| `--list` | 활성 분기 목록 | false |
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--reason` | Fork reason (required) | - |
+| `--name` | Fork name | auto |
+| `--direction` | Exploration direction description | - |
+| `--compare` | Compare with existing forks | false |
+| `--merge` | Merge fork | false |
+| `--list` | List active forks | false |
 
-## 기본 사용
+## Basic Usage
 
-### 새 분기 생성
+### Create New Fork
 ```bash
-/fork --reason "아키텍처 대안 탐색"
+/fork --reason "architecture alternative exploration"
 ```
 
-### 분기 목록 확인
+### Check Fork List
 ```bash
 /fork --list
 ```
 
-### 분기 비교
+### Compare Forks
 ```bash
 /fork --compare
 ```
 
-### 분기 병합
+### Merge Fork
 ```bash
 /fork --merge --select "fork_03_alternative_a"
 ```
 
-## 분기 프로세스
+## Fork Process
 
 ```
-1. 현재 상태 체크포인트 생성
-2. 분기 디렉토리 생성 (state/forks/)
-3. 상태 복사
-4. 분기용 HANDOFF 생성
-5. 분기 작업 시작
+1. Create checkpoint of current state
+2. Create fork directory (state/forks/)
+3. Copy state
+4. Generate fork HANDOFF
+5. Start fork work
 ```
 
-## 분기 비교 출력
+## Fork Comparison Output
 
 ```markdown
 # Fork Comparison
@@ -71,46 +71,46 @@
 | Maintainability | 0.88 | 0.85 | 0.80 |
 
 ## Recommendation
-**Alt A** 권장: 더 높은 코드 품질
+**Alt A** recommended: Higher code quality
 ```
 
-## 병합 전략
+## Merge Strategies
 
 ### best_performer
 ```bash
 /fork --merge --strategy best_performer
 ```
-- 메트릭 기반 최고 성능 분기 선택
+- Select best performing fork based on metrics
 
 ### manual
 ```bash
 /fork --merge --strategy manual --select "fork_01"
 ```
-- 수동 선택
+- Manual selection
 
 ### cherry_pick
 ```bash
 /fork --merge --strategy cherry_pick
 ```
-- 여러 분기에서 최적 부분 선택
+- Select optimal parts from multiple forks
 
-## 예시
+## Examples
 
 ```bash
-# 아키텍처 대안 탐색을 위한 분기
-/fork --reason "REST vs GraphQL 비교" --direction "GraphQL 방식 구현"
+# Fork for architecture alternative exploration
+/fork --reason "REST vs GraphQL comparison" --direction "GraphQL implementation"
 
-# 현재 분기 상태 확인
+# Check current fork status
 /fork --list
 
-# 분기 비교 및 메트릭 확인
+# Compare forks and check metrics
 /fork --compare
 
-# 최고 성능 분기로 병합
+# Merge best performing fork
 /fork --merge --strategy best_performer
 ```
 
-## 분기 저장 위치
+## Fork Storage Location
 
 ```
 state/forks/
@@ -125,18 +125,18 @@ state/forks/
 └── comparison.json
 ```
 
-## 설정
+## Configuration
 
-`config/pipeline_forking.yaml` 참조
+See `config/pipeline_forking.yaml`
 
-## 제한사항
+## Limitations
 
-- 최대 활성 분기: 3개
-- 분기 최대 실행 시간: 2시간
-- 병합 전 체크포인트 자동 생성
+- Max active forks: 3
+- Max fork execution time: 2 hours
+- Checkpoint auto-created before merge
 
-## 관련 커맨드
+## Related Commands
 
-- `/checkpoint` - 체크포인트 생성
-- `/restore` - 체크포인트 복구
-- `/status` - 파이프라인 상태
+- `/checkpoint` - Create checkpoint
+- `/restore` - Restore checkpoint
+- `/status` - Pipeline status

@@ -3,22 +3,22 @@
 
 memory_integration:
   enabled: true
-  description: "AI 메모리 시스템 통합 및 컨텍스트 동기화"
+  description: "AI memory system integration and context synchronization"
 
-  # 지원 메모리 프로바이더
+  # Supported memory providers
   providers:
     claude_mem:
       enabled: true
-      description: "Claude Memory MCP 서버 통합"
+      description: "Claude Memory MCP server integration"
 
-      # 동기화 트리거
+      # Sync triggers
       sync_on:
         - "stage_complete"
         - "session_end"
         - "checkpoint_create"
         - "critical_decision"
 
-      # 저장 설정
+      # Storage settings
       storage:
         project_prefix: "claude-symphony"
         observation_types:
@@ -27,17 +27,17 @@ memory_integration:
           - "feature"
           - "bugfix"
 
-      # 검색 설정
+      # Search settings
       search:
         default_limit: 10
         include_timeline: true
 
-    # 향후 확장용 다른 프로바이더
+    # Other providers for future extension
     external_memory:
       enabled: false
       provider: null
 
-  # HANDOFF-메모리 동기화
+  # HANDOFF-memory synchronization
   handoff_memory_sync:
     on_stage_complete:
       - action: "save_to_memory"
@@ -88,10 +88,10 @@ memory_integration:
         days: 7
         inject_to: "session_context"
 
-  # 컨텍스트 주입 설정
+  # Context injection settings
   context_injection:
     enabled: true
-    description: "메모리에서 관련 컨텍스트 자동 주입"
+    description: "Auto-inject relevant context from memory"
 
     triggers:
       on_task_start:
@@ -115,7 +115,7 @@ memory_integration:
         - **Date**: {{date}}
         > {{content}}
 
-  # 메모리 정리 정책
+  # Memory cleanup policy
   cleanup_policy:
     auto_cleanup: true
 
@@ -129,14 +129,14 @@ memory_integration:
       enabled: true
       similarity_threshold: 0.85
 
-# 세션 컨텍스트 복구
+# Session context recovery
 session_recovery:
   enabled: true
-  description: "이전 세션 컨텍스트 자동 복구"
+  description: "Automatic previous session context recovery"
 
   on_session_start:
     auto_load: true
-    prompt_user: false  # true면 사용자에게 확인
+    prompt_user: false  # true to ask user for confirmation
 
     load_order:
       - last_handoff
@@ -146,22 +146,22 @@ session_recovery:
   recovery_prompt:
     enabled: true
     template: |
-      ## 이전 세션 컨텍스트 복구됨
+      ## Previous Session Context Recovered
 
-      **마지막 스테이지**: {{last_stage}}
-      **마지막 작업**: {{last_task}}
-      **상태**: {{status}}
+      **Last Stage**: {{last_stage}}
+      **Last Task**: {{last_task}}
+      **Status**: {{status}}
 
-      ### 핵심 컨텍스트
+      ### Key Context
       {{key_context}}
 
-      ### 다음 단계
+      ### Next Steps
       {{next_steps}}
 
-# 크로스 스테이지 학습
+# Cross-stage learning
 cross_stage_learning:
   enabled: true
-  description: "스테이지 간 학습 및 패턴 인식"
+  description: "Inter-stage learning and pattern recognition"
 
   patterns:
     track:
@@ -182,7 +182,7 @@ cross_stage_learning:
       - time_taken
       - iterations_needed
 
-# 통합 검증
+# Integration verification
 integration_checks:
   on_startup:
     - check_memory_connection

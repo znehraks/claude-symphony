@@ -1,73 +1,73 @@
 # Requirements Analysis Prompt Template
 
-요구사항 분석 및 구조화를 위한 프롬프트
+Prompt for requirements analysis and structuring
 
-## 사용 모델
-ClaudeCode (구조화 및 분석에 적합)
+## Model
+ClaudeCode (suited for structuring and analysis)
 
-## 프롬프트
+## Prompt
 
 ```
-당신은 시니어 시스템 분석가입니다.
+You are a senior systems analyst.
 
-다음 브레인스토밍 결과와 프로젝트 브리프를 바탕으로
-체계적인 요구사항 분석을 수행해주세요:
+Based on the following brainstorming results and project brief,
+perform systematic requirements analysis:
 
 ---
-## 프로젝트 브리프
+## Project Brief
 {{PROJECT_BRIEF}}
 
-## 브레인스토밍 결과
+## Brainstorming Results
 {{BRAINSTORM_IDEAS}}
 
-## 사용자 페르소나
+## User Personas
 {{PERSONAS}}
 ---
 
-## 분석 요청
+## Analysis Request
 
-### 1. 기능적 요구사항 (Functional Requirements)
-카테고리별로 분류:
-- 사용자 관리
-- 핵심 기능
-- 데이터 관리
-- 통합/연동
-- 보고/분석
+### 1. Functional Requirements
+Categorize by:
+- User Management
+- Core Features
+- Data Management
+- Integration
+- Reporting/Analytics
 
-각 요구사항에 대해:
-| ID | 요구사항 | 우선순위 | 복잡도 | 의존성 |
-|----|----------|----------|--------|--------|
+For each requirement:
+| ID | Requirement | Priority | Complexity | Dependencies |
+|----|-------------|----------|------------|--------------|
 
-### 2. 비기능적 요구사항 (Non-Functional Requirements)
-- **성능**: 응답 시간, 처리량
-- **확장성**: 사용자 수, 데이터 볼륨
-- **보안**: 인증, 권한, 데이터 보호
-- **가용성**: 업타임 목표
-- **사용성**: 접근성, UX 기준
+### 2. Non-Functional Requirements
+- **Performance**: Response time, throughput
+- **Scalability**: User count, data volume
+- **Security**: Authentication, authorization, data protection
+- **Availability**: Uptime target
+- **Usability**: Accessibility, UX standards
 
-### 3. 제약조건 (Constraints)
-- 기술적 제약
-- 비즈니스 제약
-- 시간/예산 제약
-- 규제/법적 제약
+### 3. Constraints
+- Technical constraints
+- Business constraints
+- Time/budget constraints
+- Regulatory/legal constraints
 
-### 4. 가정사항 (Assumptions)
-검증이 필요한 가정들
+### 4. Assumptions
+Assumptions that need verification
 
-### 5. MVP 범위 제안
-- **필수 기능** (Must Have)
-- **있으면 좋은 기능** (Nice to Have)
-- **향후 버전** (Future)
+### 5. MVP Scope Proposal
+- **Must Have**
+- **Nice to Have**
+- **Future Version**
 
-### 6. 리스크 식별
-| 리스크 | 영향도 | 발생 확률 | 완화 전략 |
-|--------|--------|-----------|-----------|
+### 6. Risk Identification
+| Risk | Impact | Probability | Mitigation Strategy |
+|------|--------|-------------|---------------------|
 
-## 출력 형식
-구조화된 마크다운 문서로 출력해주세요.
+## Output Format
+Please output as a structured markdown document.
 ```
 
-## 기대 출력
-- `outputs/requirements_analysis.md`로 저장
-- MoSCoW 우선순위가 적용된 요구사항 목록
-- MVP 범위 명확히 정의
+## Expected Output
+- Save to `outputs/requirements_analysis.md`
+- Requirements list with MoSCoW prioritization
+- Clearly defined MVP scope

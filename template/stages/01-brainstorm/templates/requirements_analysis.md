@@ -1,129 +1,129 @@
 # Requirements Analysis
 
-**프로젝트**: {{PROJECT_NAME}}
-**생성일**: {{DATE}}
-**버전**: 1.0
+**Project**: {{PROJECT_NAME}}
+**Created**: {{DATE}}
+**Version**: 1.0
 
 ---
 
-## 1. 기능적 요구사항 (Functional Requirements)
+## 1. Functional Requirements
 
-### 1.1 사용자 관리
+### 1.1 User Management
 
-| ID | 요구사항 | 우선순위 | 복잡도 | 의존성 |
-|----|----------|----------|--------|--------|
+| ID | Requirement | Priority | Complexity | Dependencies |
+|----|-------------|----------|------------|--------------|
 | FR-UM-001 | | Must | | |
 | FR-UM-002 | | Should | | |
 
-### 1.2 핵심 기능
+### 1.2 Core Features
 
-| ID | 요구사항 | 우선순위 | 복잡도 | 의존성 |
-|----|----------|----------|--------|--------|
+| ID | Requirement | Priority | Complexity | Dependencies |
+|----|-------------|----------|------------|--------------|
 | FR-CF-001 | | Must | | |
 | FR-CF-002 | | Must | | |
 
-### 1.3 데이터 관리
+### 1.3 Data Management
 
-| ID | 요구사항 | 우선순위 | 복잡도 | 의존성 |
-|----|----------|----------|--------|--------|
+| ID | Requirement | Priority | Complexity | Dependencies |
+|----|-------------|----------|------------|--------------|
 | FR-DM-001 | | Should | | |
 
-### 1.4 통합/연동
+### 1.4 Integration
 
-| ID | 요구사항 | 우선순위 | 복잡도 | 의존성 |
-|----|----------|----------|--------|--------|
+| ID | Requirement | Priority | Complexity | Dependencies |
+|----|-------------|----------|------------|--------------|
 | FR-INT-001 | | Could | | |
 
 ---
 
-## 2. 비기능적 요구사항 (Non-Functional Requirements)
+## 2. Non-Functional Requirements
 
-### 2.1 성능 (Performance)
-- **응답 시간**: 페이지 로드 < 3초, API 응답 < 500ms
-- **처리량**: 동시 사용자 X명 지원
-- **데이터 볼륨**: 초기 X GB, 연간 성장률 Y%
+### 2.1 Performance
+- **Response Time**: Page load < 3 seconds, API response < 500ms
+- **Throughput**: Support X concurrent users
+- **Data Volume**: Initial X GB, annual growth rate Y%
 
-### 2.2 확장성 (Scalability)
-- **수평 확장**:
-- **수직 확장**:
-- **목표 용량**:
+### 2.2 Scalability
+- **Horizontal Scaling**:
+- **Vertical Scaling**:
+- **Target Capacity**:
 
-### 2.3 보안 (Security)
-- **인증**:
-- **권한 관리**:
-- **데이터 암호화**:
-- **감사 로그**:
+### 2.3 Security
+- **Authentication**:
+- **Authorization**:
+- **Data Encryption**:
+- **Audit Logging**:
 
-### 2.4 가용성 (Availability)
-- **업타임 목표**: 99.9%
-- **RTO (복구 시간 목표)**:
-- **RPO (복구 시점 목표)**:
+### 2.4 Availability
+- **Uptime Target**: 99.9%
+- **RTO (Recovery Time Objective)**:
+- **RPO (Recovery Point Objective)**:
 
-### 2.5 사용성 (Usability)
-- **접근성**: WCAG 2.1 Level AA
-- **반응형**: 모바일, 태블릿, 데스크탑
-- **브라우저 지원**:
-
----
-
-## 3. 제약조건 (Constraints)
-
-### 3.1 기술적 제약
--
-
-### 3.2 비즈니스 제약
--
-
-### 3.3 시간/예산 제약
-- **일정**:
-- **예산**:
-- **팀 규모**:
-
-### 3.4 규제/법적 제약
--
+### 2.5 Usability
+- **Accessibility**: WCAG 2.1 Level AA
+- **Responsive**: Mobile, Tablet, Desktop
+- **Browser Support**:
 
 ---
 
-## 4. 가정사항 (Assumptions)
+## 3. Constraints
 
-| ID | 가정 | 검증 필요 | 검증 방법 |
-|----|------|-----------|-----------|
+### 3.1 Technical Constraints
+-
+
+### 3.2 Business Constraints
+-
+
+### 3.3 Time/Budget Constraints
+- **Timeline**:
+- **Budget**:
+- **Team Size**:
+
+### 3.4 Regulatory/Legal Constraints
+-
+
+---
+
+## 4. Assumptions
+
+| ID | Assumption | Needs Verification | Verification Method |
+|----|------------|-------------------|---------------------|
 | A-001 | | Yes | |
 | A-002 | | No | |
 
 ---
 
-## 5. MVP 범위
+## 5. MVP Scope
 
-### 5.1 필수 기능 (Must Have)
+### 5.1 Must Have
 1.
 2.
 3.
 
-### 5.2 있으면 좋은 기능 (Should Have)
+### 5.2 Should Have
 1.
 2.
 
-### 5.3 가능하면 (Could Have)
+### 5.3 Could Have
 1.
 
-### 5.4 향후 버전 (Won't Have - This Time)
+### 5.4 Won't Have - This Time
 1.
 2.
 
 ---
 
-## 6. 리스크 식별
+## 6. Risk Identification
 
-| ID | 리스크 | 영향도 | 확률 | 완화 전략 |
-|----|--------|--------|------|-----------|
+| ID | Risk | Impact | Probability | Mitigation Strategy |
+|----|------|--------|-------------|---------------------|
 | R-001 | | High | Medium | |
 | R-002 | | Medium | Low | |
 
 ---
 
-## 7. 다음 단계
+## 7. Next Steps
 
-1. [ ] Research 스테이지에서 기술적 실현 가능성 검토
-2. [ ] Planning 스테이지에서 아키텍처 설계
-3. [ ] 이해관계자 리뷰 및 승인
+1. [ ] Validate technical feasibility in Research stage
+2. [ ] Design architecture in Planning stage
+3. [ ] Stakeholder review and approval

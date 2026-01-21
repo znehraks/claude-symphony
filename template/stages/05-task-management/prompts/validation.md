@@ -1,66 +1,66 @@
-# 산출물 검증 프롬프트 - Task Management
+# Output Validation Prompt - Task Management
 
-## 검증 대상
+## Validation Targets
 
-| 산출물 | 필수 조건 | 검증 방법 |
-|--------|----------|----------|
-| `tasks.md` | 전체 태스크 목록 | 구조 확인 |
-| `sprint_plan.md` | 스프린트 3개+ | 수량 확인 |
-| `milestones.md` | 산출물 정의 | 구조 확인 |
-| `HANDOFF.md` | 첫 스프린트 태스크 | 항목 확인 |
+| Output | Required Conditions | Validation Method |
+|--------|---------------------|-------------------|
+| `tasks.md` | Complete task list | Structure verification |
+| `sprint_plan.md` | 3+ sprints | Count verification |
+| `milestones.md` | Deliverables defined | Structure verification |
+| `HANDOFF.md` | First sprint tasks | Item verification |
 
-## 검증 명령
+## Validation Command
 
 ```bash
 /validate --stage 05-task-management
 ```
 
-## 품질 기준
+## Quality Criteria
 
 ### tasks.md
-- [ ] MoSCoW 분류 적용
-- [ ] 각 태스크에 예상 시간
-- [ ] 의존성 명시
-- [ ] 담당 스테이지 지정
+- [ ] MoSCoW classification applied
+- [ ] Estimated time for each task
+- [ ] Dependencies specified
+- [ ] Assigned stage designated
 
 ### sprint_plan.md
-- [ ] 스프린트 3개 이상
-- [ ] 각 스프린트 용량 계산
-- [ ] 버퍼 시간 포함
-- [ ] 우선순위 기반 할당
+- [ ] 3+ sprints
+- [ ] Capacity calculation per sprint
+- [ ] Buffer time included
+- [ ] Priority-based allocation
 
 ### milestones.md
-- [ ] 마일스톤별 산출물 정의
-- [ ] 성공 기준 명시
-- [ ] 검증 방법 포함
+- [ ] Deliverables defined per milestone
+- [ ] Success criteria specified
+- [ ] Validation methods included
 
 ### HANDOFF.md
-- [ ] 스프린트 1 태스크 목록
-- [ ] 의존성 그래프
-- [ ] 우선 구현 항목
+- [ ] Sprint 1 task list
+- [ ] Dependency graph
+- [ ] Priority implementation items
 
-## 자동 검증 스크립트
+## Automated Validation Script
 
 ```bash
-# 태스크 수 확인
+# Check task count
 grep -c "^- TASK-" outputs/tasks.md
 
-# 스프린트 수 확인
+# Check sprint count
 grep -c "^## Sprint" outputs/sprint_plan.md
 
-# 마일스톤 수 확인
+# Check milestone count
 grep -c "^## Milestone" outputs/milestones.md
 
-# 의존성 그래프 존재 확인
+# Check dependency graph existence
 grep -c "→" outputs/tasks.md
 ```
 
-## 태스크 품질 체크
+## Task Quality Check
 
 ```bash
-# 예상 시간 누락 확인
+# Check for missing estimated time
 grep -E "^- TASK-" outputs/tasks.md | grep -v -E "\([0-9]+h\)"
 
-# 의존성 누락 확인
-grep -E "^- TASK-" outputs/tasks.md | grep -v "의존성"
+# Check for missing dependencies
+grep -E "^- TASK-" outputs/tasks.md | grep -v "dependency"
 ```

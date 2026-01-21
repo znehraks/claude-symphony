@@ -1,53 +1,53 @@
-# Notion 연동 가이드
+# Notion Integration Guide
 
-> claude-symphony 태스크 관리 - Notion 데이터베이스 연동
+> claude-symphony Task Management - Notion Database Integration
 
-## 주의사항 (Issue #5, #6, #8, #16 해결)
+## Important Notes (Issue #5, #6, #8, #16 Resolution)
 
-### ⚠️ 순차 생성 필수
+### Sequential Creation Required
 
-Notion API로 태스크를 생성할 때 **반드시 하나씩 순차적으로** 생성해야 합니다.
+When creating tasks via Notion API, **tasks must be created one at a time sequentially**.
 
 ```
-❌ 잘못된 방식 (병렬 생성)
+❌ Incorrect (parallel creation)
 Promise.all([
-  createTask("태스크 1"),
-  createTask("태스크 2"),
-  createTask("태스크 3")
+  createTask("Task 1"),
+  createTask("Task 2"),
+  createTask("Task 3")
 ])
 
-✅ 올바른 방식 (순차 생성)
-await createTask("태스크 1", { order: 1 })
-await createTask("태스크 2", { order: 2 })
-await createTask("태스크 3", { order: 3 })
+✅ Correct (sequential creation)
+await createTask("Task 1", { order: 1 })
+await createTask("Task 2", { order: 2 })
+await createTask("Task 3", { order: 3 })
 ```
 
-### ⚠️ Status 필드 필수
+### Status Field Required
 
-모든 태스크는 반드시 `Status` 필드를 포함해야 합니다.
-- 기본값: `To Do`
-- 생성 시 명시적으로 지정
+All tasks must include the `Status` field.
+- Default: `To Do`
+- Explicitly specify when creating
 
-### ⚠️ Order 필드로 정렬
+### Sorting with Order Field
 
-Notion 데이터베이스 View 정렬은 수동으로 설정해야 합니다:
+Notion database View sorting must be configured manually:
 
-1. 데이터베이스 View 열기
-2. `Sort` 클릭
-3. `Order` 필드 선택
-4. `Ascending` 정렬
+1. Open database View
+2. Click `Sort`
+3. Select `Order` field
+4. Set to `Ascending` order
 
 ---
 
-## 데이터베이스 생성 절차
+## Database Creation Procedure
 
-### 1. 데이터베이스 생성
+### 1. Create Database
 
 ```javascript
-// MCP Notion 도구 사용 예시
+// MCP Notion tool usage example
 await notion.createDatabase({
-  parent: { page_id: "프로젝트_페이지_ID" },
-  title: [{ text: { content: "프로젝트명 Tasks" } }],
+  parent: { page_id: "PROJECT_PAGE_ID" },
+  title: [{ text: { content: "Project Tasks" } }],
   properties: {
     "Task Name": { title: {} },
     "Status": {
@@ -98,79 +98,79 @@ await notion.createDatabase({
 })
 ```
 
-### 2. 태스크 생성 (순차적)
+### 2. Create Tasks (Sequential)
 
 ```javascript
-// 태스크 목록
+// Task list
 const tasks = [
-  { name: "프로젝트 초기 설정", priority: "High" },
-  { name: "기본 UI 컴포넌트 구현", priority: "High" },
-  { name: "API 연동", priority: "Medium" },
+  { name: "Project initial setup", priority: "High" },
+  { name: "Basic UI component implementation", priority: "High" },
+  { name: "API integration", priority: "Medium" },
   // ...
 ];
 
-// 순차 생성 (중요!)
+// Sequential creation (important!)
 for (let i = 0; i < tasks.length; i++) {
   await notion.createPage({
-    parent: { database_id: "데이터베이스_ID" },
+    parent: { database_id: "DATABASE_ID" },
     properties: {
       "Task Name": { title: [{ text: { content: tasks[i].name } }] },
-      "Status": { select: { name: "To Do" } },  // 필수!
+      "Status": { select: { name: "To Do" } },  // Required!
       "Priority": { select: { name: tasks[i].priority } },
-      "Order": { number: i + 1 }  // 순서 보장!
+      "Order": { number: i + 1 }  // Order guaranteed!
     }
   });
 
-  // 순서 보장을 위한 짧은 대기
+  // Short delay to ensure order
   await new Promise(resolve => setTimeout(resolve, 100));
 }
 ```
 
 ---
 
-## View 설정 (수동)
+## View Settings (Manual)
 
-Notion UI에서 직접 설정해야 합니다:
+Must be configured directly in Notion UI:
 
-### Board View 설정
-1. `+ Add a view` 클릭
-2. `Board` 선택
-3. `Group by` → `Status` 선택
+### Board View Setup
+1. Click `+ Add a view`
+2. Select `Board`
+3. Set `Group by` → `Status`
 
-### List View 정렬 설정
-1. View에서 `...` 클릭
-2. `Sort` 선택
-3. `+ Add a sort`
-4. `Order` → `Ascending` 선택
+### List View Sort Setup
+1. Click `...` in View
+2. Select `Sort`
+3. Click `+ Add a sort`
+4. Set `Order` → `Ascending`
 
-### 필터 설정 (선택)
-1. `Filter` 클릭
-2. `Status` `is not` `Done` 추가
-
----
-
-## 체크리스트
-
-- [ ] 데이터베이스 생성 완료
-- [ ] Status 필드 포함 확인
-- [ ] Order 필드 포함 확인
-- [ ] 태스크 순차 생성 완료
-- [ ] Board View 설정 (Status 그룹화)
-- [ ] List View 정렬 설정 (Order 오름차순)
+### Filter Setup (Optional)
+1. Click `Filter`
+2. Add `Status` `is not` `Done`
 
 ---
 
-## 문제 해결
+## Checklist
 
-### 태스크 순서가 뒤죽박죽인 경우
-1. List View에서 `Order` 정렬 확인
-2. Order 값이 누락된 태스크 수정
-3. 필요시 Order 값 재할당
+- [ ] Database creation complete
+- [ ] Status field included
+- [ ] Order field included
+- [ ] Sequential task creation complete
+- [ ] Board View setup (Status grouping)
+- [ ] List View sort setup (Order ascending)
 
-### Status 필드가 없는 경우
-1. 데이터베이스 속성에서 `Status` 추가
-2. 기존 태스크에 Status 값 할당
+---
 
-### View 정렬이 저장되지 않는 경우
-1. 해당 View가 저장된 View인지 확인
-2. `...` → `Lock database` 해제 확인
+## Troubleshooting
+
+### Tasks are out of order
+1. Check `Order` sort in List View
+2. Fix tasks with missing Order values
+3. Reassign Order values if needed
+
+### Status field missing
+1. Add `Status` in database properties
+2. Assign Status values to existing tasks
+
+### View sort not saving
+1. Check if it's a saved View
+2. Verify `...` → `Lock database` is disabled

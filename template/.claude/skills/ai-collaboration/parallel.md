@@ -1,47 +1,47 @@
 # AI Collaboration - Parallel Execution
 
-## 병렬 실행 모드
+## Parallel Execution Mode
 
-동일한 작업을 여러 AI 모델이 동시에 수행하여 다양한 결과물 중 최적을 선택합니다.
+Multiple AI models perform the same task simultaneously to select optimal from various results.
 
-## 사용 시나리오
+## Use Scenarios
 
-1. **아이디어 생성**: 다양한 관점의 아이디어 수집
-2. **코드 구현**: 여러 접근법 비교
-3. **문서 작성**: 스타일 비교
+1. **Idea Generation**: Collect ideas from various perspectives
+2. **Code Implementation**: Compare multiple approaches
+3. **Documentation**: Compare styles
 
-## 실행 프로세스
+## Execution Process
 
-### 1. 작업 정의
+### 1. Task Definition
 ```yaml
 task:
-  description: "사용자 인증 시스템 설계"
+  description: "User authentication system design"
   type: "design"
   constraints:
-    - "JWT 기반"
-    - "OAuth 지원"
+    - "JWT based"
+    - "OAuth support"
 ```
 
-### 2. 모델 선택
+### 2. Model Selection
 ```yaml
 models:
   - gemini:
-      focus: "창의적 접근"
+      focus: "Creative approach"
   - claude:
-      focus: "실용적 구현"
+      focus: "Practical implementation"
 ```
 
-### 3. 병렬 실행
+### 3. Parallel Execution
 ```bash
-# tmux 세션을 통한 동시 실행
+# Simultaneous execution via tmux sessions
 scripts/gemini-wrapper.sh "prompts/task.md" &
-# Claude는 현재 세션에서 실행
+# Claude runs in current session
 ```
 
-### 4. 결과 수집
-각 AI의 출력을 `state/collaborations/{task_id}/` 에 저장
+### 4. Collect Results
+Save each AI's output to `state/collaborations/{task_id}/`
 
-### 5. 평가 및 선택
+### 5. Evaluate and Select
 ```yaml
 evaluation:
   metrics:
@@ -50,32 +50,32 @@ evaluation:
     - feasibility: 0.4
 ```
 
-## 병합 전략
+## Merge Strategies
 
 ### Best-of-N
-- 점수가 가장 높은 결과 선택
-- 임계값 이상(0.85)이면 자동 선택
+- Select result with highest score
+- Auto-select if above threshold (0.85)
 
 ### Synthesis
-- 각 결과의 장점만 추출
-- 새로운 통합 결과물 생성
+- Extract only advantages from each result
+- Generate new integrated result
 
-## 출력 형식
+## Output Format
 
 ```markdown
 # Parallel Execution Results
 
 ## Task
-[작업 설명]
+[Task description]
 
 ## Results
 
 ### Gemini Result
-[결과 내용]
+[Result content]
 **Score**: 0.82
 
 ### Claude Result
-[결과 내용]
+[Result content]
 **Score**: 0.88
 
 ## Analysis
@@ -86,11 +86,11 @@ evaluation:
 | Feasibility | 0.75 | 0.90 |
 
 ## Selected: Claude Result
-**Reason**: 높은 실현 가능성과 완성도
+**Reason**: High feasibility and completeness
 ```
 
-## 리소스 관리
+## Resource Management
 
-- 최대 동시 실행: 2개 모델
-- 토큰 예산: 협업당 50,000
-- 타임아웃: 모델당 5분
+- Max concurrent execution: 2 models
+- Token budget: 50,000 per collaboration
+- Timeout: 5 minutes per model

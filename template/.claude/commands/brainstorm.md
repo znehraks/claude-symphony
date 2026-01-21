@@ -1,67 +1,67 @@
 # /brainstorm
 
-01-brainstorm 스테이지를 바로 시작합니다.
+Start the 01-brainstorm stage directly.
 
-## 사용법
+## Usage
 ```
 /brainstorm [topic]
 ```
 
-## 스테이지 정보
+## Stage Information
 
-| 항목 | 값 |
-|------|-----|
-| 스테이지 | 01-brainstorm |
-| AI 모델 | Gemini + ClaudeCode |
-| 실행 모드 | YOLO (Container) |
-| 체크포인트 | 선택 |
+| Item | Value |
+|------|-------|
+| Stage | 01-brainstorm |
+| AI Model | Gemini + ClaudeCode |
+| Execution Mode | YOLO (Container) |
+| Checkpoint | Optional |
 
-## 동작
+## Actions
 
-1. **전제 조건 확인**
-   - 프로젝트 초기화 여부 (progress.json)
+1. **Prerequisite Check**
+   - Project initialization status (progress.json)
 
-2. **스테이지 시작**
-   - Gemini CLI 호출 (창의적 아이디어)
-   - ClaudeCode 병렬 실행 (기술 검토)
+2. **Stage Start**
+   - Gemini CLI call (creative ideas)
+   - ClaudeCode parallel execution (technical review)
 
-3. **산출물 생성**
-   - ideas.md - 브레인스토밍 아이디어
-   - decisions.md - 핵심 결정사항
+3. **Output Generation**
+   - ideas.md - Brainstorming ideas
+   - decisions.md - Key decisions
 
-## 실행
+## Execution
 
 ```bash
-# /run-stage 01과 동일
+# Same as /run-stage 01
 scripts/run-stage.sh 01-brainstorm "$ARGUMENTS"
 ```
 
-## 출력 예시
+## Output Example
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🧠 Stage 01: Brainstorm
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-AI: Gemini + ClaudeCode (병렬)
+AI: Gemini + ClaudeCode (parallel)
 Mode: YOLO (Container)
 
-주제: $ARGUMENTS
+Topic: $ARGUMENTS
 
-[Gemini] 창의적 아이디어 생성 중...
-[ClaudeCode] 기술 검토 중...
+[Gemini] Generating creative ideas...
+[ClaudeCode] Technical review in progress...
 
-완료 후: /next 또는 /research
+After completion: /next or /research
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-## 관련 명령어
+## Related Commands
 
-- `/run-stage 01` - 전제조건 확인 후 시작
-- `/next` - 다음 스테이지 (02-research)
-- `/gemini` - Gemini CLI 직접 호출
+- `/run-stage 01` - Start after prerequisite check
+- `/next` - Next stage (02-research)
+- `/gemini` - Direct Gemini CLI call
 
 ## Tips
 
-- YOLO 모드: 실패해도 괜찮음, 창의성 우선
-- 여러 아이디어를 자유롭게 탐색
-- decisions.md에 최종 선택 기록
+- YOLO mode: Failure is okay, creativity first
+- Freely explore multiple ideas
+- Record final selections in decisions.md

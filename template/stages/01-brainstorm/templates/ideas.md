@@ -1,91 +1,91 @@
 # Brainstorming Ideas
 
-**프로젝트**: {{PROJECT_NAME}}
-**생성일**: {{DATE}}
-**생성자**: {{MODEL}} (Gemini + ClaudeCode)
+**Project**: {{PROJECT_NAME}}
+**Created**: {{DATE}}
+**Created By**: {{MODEL}} (Gemini + ClaudeCode)
 
 ---
 
-## 핵심 기능 아이디어
+## Core Feature Ideas
 
-### 아이디어 요약 테이블
+### Idea Summary Table
 
-| # | 기능명 | 설명 | 사용자 가치 | 복잡도 | 혁신성 |
-|---|--------|------|-------------|--------|--------|
+| # | Feature Name | Description | User Value | Complexity | Innovation |
+|---|--------------|-------------|------------|------------|------------|
 | 1 | | | | | |
 | 2 | | | | | |
 | 3 | | | | | |
 | ... | | | | | |
 
-### 상세 아이디어
+### Detailed Ideas
 
-#### 아이디어 1: [기능명]
-- **설명**:
-- **사용자 가치**:
-- **구현 복잡도**: Low / Medium / High
-- **혁신성 점수**: ⭐⭐⭐⭐⭐ (5/5)
-- **비고**:
-
----
-
-## 발산적 아이디어 ("미친" 아이디어)
-
-### 🚀 아이디어 A: [이름]
-- **설명**:
-- **성공 시 임팩트**:
-- **실현 장벽**:
-
-### 🚀 아이디어 B: [이름]
-- **설명**:
-- **성공 시 임팩트**:
-- **실현 장벽**:
-
-### 🚀 아이디어 C: [이름]
-- **설명**:
-- **성공 시 임팩트**:
-- **실현 장벽**:
+#### Idea 1: [Feature Name]
+- **Description**:
+- **User Value**:
+- **Implementation Complexity**: Low / Medium / High
+- **Innovation Score**: ⭐⭐⭐⭐⭐ (5/5)
+- **Notes**:
 
 ---
 
-## 경쟁사/유사 서비스 분석
+## Divergent Ideas ("Crazy" Ideas)
 
-### 식별된 서비스
+### 🚀 Idea A: [Name]
+- **Description**:
+- **Impact if Successful**:
+- **Realization Barriers**:
 
-| 서비스 | 유형 | 강점 | 약점 | 차별화 기회 |
-|--------|------|------|------|-------------|
+### 🚀 Idea B: [Name]
+- **Description**:
+- **Impact if Successful**:
+- **Realization Barriers**:
+
+### 🚀 Idea C: [Name]
+- **Description**:
+- **Impact if Successful**:
+- **Realization Barriers**:
+
+---
+
+## Competitor/Similar Service Analysis
+
+### Identified Services
+
+| Service | Type | Strengths | Weaknesses | Differentiation Opportunity |
+|---------|------|-----------|------------|----------------------------|
 | | | | | |
 
-### 상세 분석
+### Detailed Analysis
 
-#### [서비스 1]
+#### [Service 1]
 - **URL**:
-- **핵심 기능**:
-- **가격 모델**:
-- **타겟 사용자**:
-- **우리의 차별화 포인트**:
+- **Core Features**:
+- **Pricing Model**:
+- **Target Users**:
+- **Our Differentiation Points**:
 
 ---
 
-## 아이디어 우선순위 매트릭스
+## Idea Priority Matrix
 
 ```
-높은 임팩트
+High Impact
     │
     │   ⭐ Quick Wins    │   🎯 Big Bets
-    │   (아이디어 #)      │   (아이디어 #)
+    │   (Idea #)         │   (Idea #)
     │                    │
 ────┼────────────────────┼────────────────
     │                    │
     │   ❌ Not Worth It   │   🔬 Experiments
-    │   (아이디어 #)      │   (아이디어 #)
+    │   (Idea #)         │   (Idea #)
     │
-낮은 임팩트
-         낮은 노력          높은 노력
+Low Impact
+         Low Effort          High Effort
 ```
 
 ---
 
-## 다음 단계
-1. Research 스테이지에서 기술적 실현 가능성 검토
-2. Quick Wins 아이디어 우선 검증
-3. Big Bets 아이디어 심층 분석
+## Next Steps
+1. Validate technical feasibility in Research stage
+2. Prioritize Quick Wins ideas for validation
+3. Deep dive analysis on Big Bets ideas
