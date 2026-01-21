@@ -3,6 +3,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { input } from '@inquirer/prompts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -41,12 +42,82 @@ function copyRecursiveSync(src, dest) {
   }
 }
 
-function main() {
-  const args = process.argv.slice(2);
-  const projectName = args[0] || '.';
+async function collectBriefInfo() {
+  console.log('');
+  log('📝 프로젝트 브리프를 작성합니다. (Enter만 누르면 건너뜁니다)', 'yellow');
+  console.log('');
 
-  // 도움말
-  if (projectName === '--help' || projectName === '-h') {
+  const info = {};
+
+  // 순차적으로 질문 (각 input()이 완료되어야 다음으로 진행)
+  info.description = await input({ message: '한 줄 설명:' });
+  info.problem = await input({ message: '문제 정의 (해결하려는 문제):' });
+  info.targetUser = await input({ message: '타겟 사용자:' });
+  info.successCriteria = await input({ message: '성공 기준:' });
+  info.constraintSchedule = await input({ message: '제약조건 - 일정:' });
+  info.constraintBudget = await input({ message: '제약조건 - 예산:' });
+  info.constraintTech = await input({ message: '제약조건 - 기술:' });
+  info.references = await input({ message: '참고 자료 (URL 또는 문서):' });
+
+  // 핵심 기능 - 여러 개 입력 (별도 루프)
+  console.log('');
+  log('핵심 기능 (빈 입력 시 종료):', 'reset');
+  info.features = [];
+  let featureNum = 1;
+  while (true) {
+    const feature = await input({ message: `  ${featureNum}.` });
+    if (!feature) break;
+    info.features.push(feature);
+    featureNum++;
+  }
+
+  return info;
+}
+
+function generateBriefContent(projectName, info) {
+  // 핵심 기능 포맷팅
+  let featuresContent;
+  if (info.features && info.features.length > 0) {
+    featuresContent = info.features.map((f, i) => `${i + 1}. ${f}`).join('\n');
+  } else {
+    featuresContent = '1. [기능 1]\n2. [기능 2]\n3. [기능 3]';
+  }
+
+  return `# Project Brief
+
+## 프로젝트 이름
+${projectName}
+
+## 한 줄 설명
+${info.description || '[프로젝트를 한 줄로 설명해주세요]'}
+
+## 문제 정의
+${info.problem || '[해결하려는 문제는 무엇인가요?]'}
+
+## 타겟 사용자
+${info.targetUser || '[주요 사용자는 누구인가요?]'}
+
+## 핵심 기능 (초안)
+${featuresContent}
+
+## 성공 기준
+${info.successCriteria || '[프로젝트가 성공했다고 판단하는 기준은?]'}
+
+## 제약조건
+- 일정: ${info.constraintSchedule || ''}
+- 예산: ${info.constraintBudget || ''}
+- 기술: ${info.constraintTech || ''}
+
+## 참고 자료
+- ${info.references || '[URL 또는 문서]'}
+`;
+}
+
+async function main() {
+  const args = process.argv.slice(2);
+
+  // 도움말 체크 (가장 먼저 처리)
+  if (args.includes('--help') || args.includes('-h')) {
     console.log(`
 ${colors.cyan}create-ax-project${colors.reset} - Multi-AI Workflow Pipeline 프로젝트 생성
 
@@ -54,9 +125,13 @@ ${colors.yellow}사용법:${colors.reset}
   npx create-ax-project <project-name>
   npx create-ax-project .  (현재 디렉토리에 생성)
 
+${colors.yellow}옵션:${colors.reset}
+  --yes, -y    프롬프트 없이 기본값으로 생성
+
 ${colors.yellow}예시:${colors.reset}
   npx create-ax-project my-saas-app
   npx create-ax-project my-game
+  npx create-ax-project my-project --yes
 
 ${colors.yellow}생성 후:${colors.reset}
   1. cd <project-name>
@@ -65,6 +140,9 @@ ${colors.yellow}생성 후:${colors.reset}
 `);
     process.exit(0);
   }
+
+  const skipPrompts = args.includes('--yes') || args.includes('-y');
+  const projectName = args.find(arg => !arg.startsWith('-')) || '.';
 
   // 프로젝트 이름 검증
   if (projectName !== '.' && !/^[a-z0-9-]+$/.test(projectName)) {
@@ -103,12 +181,18 @@ ${colors.yellow}생성 후:${colors.reset}
   }
   log(`✓ 프로젝트 디렉토리: ${targetDir}`, 'green');
 
-  // 2. 템플릿 복사
+  // 2. 프로젝트 브리프 정보 수집 (--yes 플래그가 없을 때만)
+  let briefInfo = {};
+  if (!skipPrompts) {
+    briefInfo = await collectBriefInfo();
+  }
+
+  // 3. 템플릿 복사
   log('  템플릿 복사 중...', 'blue');
   copyRecursiveSync(templateDir, targetDir);
   log('✓ 템플릿 복사 완료', 'green');
 
-  // 3. progress.json 초기화
+  // 4. progress.json 초기화
   const progressTemplatePath = path.join(targetDir, 'state', 'progress.json.template');
   const progressPath = path.join(targetDir, 'state', 'progress.json');
 
@@ -125,7 +209,7 @@ ${colors.yellow}생성 후:${colors.reset}
     log('✓ progress.json 초기화 완료', 'green');
   }
 
-  // 4. project_brief.md 생성
+  // 5. project_brief.md 생성
   const briefPath = path.join(targetDir, 'stages', '01-brainstorm', 'inputs', 'project_brief.md');
   const briefDir = path.dirname(briefPath);
 
@@ -133,41 +217,11 @@ ${colors.yellow}생성 후:${colors.reset}
     fs.mkdirSync(briefDir, { recursive: true });
   }
 
-  const briefContent = `# Project Brief
-
-## 프로젝트 이름
-${actualProjectName}
-
-## 한 줄 설명
-[프로젝트를 한 줄로 설명해주세요]
-
-## 문제 정의
-[해결하려는 문제는 무엇인가요?]
-
-## 타겟 사용자
-[주요 사용자는 누구인가요?]
-
-## 핵심 기능 (초안)
-1. [기능 1]
-2. [기능 2]
-3. [기능 3]
-
-## 성공 기준
-[프로젝트가 성공했다고 판단하는 기준은?]
-
-## 제약조건
-- 일정:
-- 예산:
-- 기술:
-
-## 참고 자료
-- [URL 또는 문서]
-`;
-
+  const briefContent = generateBriefContent(actualProjectName, briefInfo);
   fs.writeFileSync(briefPath, briefContent);
   log('✓ project_brief.md 생성 완료', 'green');
 
-  // 5. 완료 메시지
+  // 6. 완료 메시지
   console.log('');
   log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'green');
   log(`✓ 프로젝트 '${actualProjectName}' 생성 완료!`, 'green');
@@ -190,4 +244,7 @@ ${actualProjectName}
   console.log('');
 }
 
-main();
+main().catch(err => {
+  log(`오류: ${err.message}`, 'red');
+  process.exit(1);
+});

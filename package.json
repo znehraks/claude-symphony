@@ -34,5 +34,8 @@
   "bugs": {
     "url": "https://github.com/znehraks/ax-templates/issues"
   },
-  "homepage": "https://github.com/znehraks/ax-templates#readme"
+  "homepage": "https://github.com/znehraks/ax-templates#readme",
+  "dependencies": {
+    "@inquirer/prompts": "^8.2.0"
+  }
 }
