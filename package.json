@@ -1,6 +1,6 @@
 {
   "name": "create-ax-project",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Multi-AI Workflow Pipeline - Create new projects with 10-stage development workflow",
   "type": "module",
   "bin": {
