@@ -1,6 +1,6 @@
 #!/bin/bash
 # restore-checkpoint.sh - 체크포인트 복구
-# ax-templates workflow pipeline
+# claude-symphony workflow pipeline
 
 set -e
 

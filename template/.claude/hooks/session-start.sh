@@ -1,6 +1,6 @@
 #!/bin/bash
 # session-start.sh - 세션 시작 시 자동 복구
-# ax-templates workflow pipeline
+# claude-symphony workflow pipeline
 #
 # SessionStart hook: Claude Code 세션 시작/재개 시 실행
 # /compact 후 저장된 스냅샷이 있으면 자동으로 컨텍스트 복구 안내

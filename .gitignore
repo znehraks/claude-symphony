@@ -62,7 +62,7 @@ state/checkpoints/*
 !state/context/.gitkeep
 
 # Local configuration overrides
-.ax-config.local.yaml
+.symphony-config.local.yaml
 
 # Outputs (generated during pipeline runs)
 stages/*/outputs/*

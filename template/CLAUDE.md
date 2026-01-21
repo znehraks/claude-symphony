@@ -1,6 +1,6 @@
-# ax-templates - Multi-AI Workflow Pipeline
+# claude-symphony - Multi-AI Orchestration Framework
 
-10단계 소프트웨어 개발 워크플로우 템플릿 시스템
+10단계 소프트웨어 개발 워크플로우 오케스트레이션 시스템
 
 ## 파이프라인 개요
 
@@ -185,7 +185,7 @@
 |------|----------|--------|
 | 1 | CLI 설치 확인 | `which gemini` |
 | 2 | 래퍼 사용 | `scripts/gemini-wrapper.sh` |
-| 3 | tmux 세션 확인 | `tmux attach -t ax-gemini` |
+| 3 | tmux 세션 확인 | `tmux attach -t symphony-gemini` |
 | 4 | 출력 파일 저장 | `outputs/` 디렉토리 |
 
 ### AI 호출 로그 형식 (HANDOFF.md)

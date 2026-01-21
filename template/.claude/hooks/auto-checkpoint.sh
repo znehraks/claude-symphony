@@ -1,5 +1,5 @@
 #!/bin/bash
-# ax-templates Auto-Checkpoint Hook
+# claude-symphony Auto-Checkpoint Hook
 # 자동 체크포인트 트리거 감지 및 생성
 
 set -e

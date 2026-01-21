@@ -1,5 +1,5 @@
 #!/bin/bash
-# ax-templates Output Validation Script
+# claude-symphony Output Validation Script
 # 산출물 검증 실행
 
 set -e

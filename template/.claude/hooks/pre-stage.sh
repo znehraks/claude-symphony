@@ -1,6 +1,6 @@
 #!/bin/bash
 # pre-stage.sh - 스테이지 실행 전 훅
-# ax-templates workflow pipeline
+# claude-symphony workflow pipeline
 
 set -e
 

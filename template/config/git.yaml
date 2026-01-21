@@ -1,5 +1,5 @@
 # Git Configuration
-# ax-templates-3 Git 자동 커밋 규칙 (Issue #15 해결)
+# claude-symphony Git 자동 커밋 규칙 (Issue #15 해결)
 
 git:
   # 자동 커밋 설정

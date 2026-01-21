@@ -1,5 +1,5 @@
 # AI Model Enforcement Configuration
-# ax-templates-3 AI 모델 역할 분담 및 강제 실행 설정
+# claude-symphony AI 모델 역할 분담 및 강제 실행 설정
 
 model_enforcement:
   enabled: true

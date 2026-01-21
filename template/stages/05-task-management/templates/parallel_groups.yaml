@@ -1,5 +1,5 @@
 # Parallel Task Groups Configuration
-# ax-templates-3 병렬 태스크 관리 (Issue #9 해결)
+# claude-symphony 병렬 태스크 관리 (Issue #9 해결)
 
 parallel_execution:
   # 병렬 실행 활성화 여부

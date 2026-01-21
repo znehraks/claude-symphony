@@ -1,6 +1,6 @@
 #!/bin/bash
 # create-checkpoint.sh - 체크포인트 생성
-# ax-templates workflow pipeline
+# claude-symphony workflow pipeline
 
 set -e
 

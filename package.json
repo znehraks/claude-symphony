@@ -1,10 +1,10 @@
 {
-  "name": "create-ax-project",
+  "name": "claude-symphony",
   "version": "1.0.3",
-  "description": "Multi-AI Workflow Pipeline - Create new projects with 10-stage development workflow",
+  "description": "Multi-AI Orchestration Framework - Create new projects with 10-stage development workflow",
   "type": "module",
   "bin": {
-    "create-ax-project": "./bin/create.js"
+    "claude-symphony": "./bin/create.js"
   },
   "files": [
     "bin/",
@@ -20,7 +20,9 @@
     "claude",
     "gemini",
     "codex",
-    "multi-ai"
+    "multi-ai",
+    "orchestration",
+    "symphony"
   ],
   "author": "znehraks@gmail.com",
   "license": "MIT",
@@ -29,12 +31,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/znehraks/ax-templates-v3"
+    "url": "https://github.com/znehraks/claude-symphony"
   },
   "bugs": {
-    "url": "https://github.com/znehraks/ax-templates-v3/issues"
+    "url": "https://github.com/znehraks/claude-symphony/issues"
   },
-  "homepage": "https://github.com/znehraks/ax-templates-v3#readme",
+  "homepage": "https://github.com/znehraks/claude-symphony#readme",
   "dependencies": {
     "@inquirer/prompts": "^7.10.1"
   }

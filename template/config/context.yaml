@@ -1,5 +1,5 @@
 # Context Management Configuration
-# ax-templates-3 컨텍스트 관리 설정
+# claude-symphony 컨텍스트 관리 설정
 
 context_management:
   # 퍼센트 기반 임계값 (남은 컨텍스트 기준)

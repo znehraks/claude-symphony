@@ -1,6 +1,6 @@
 #!/bin/bash
 # post-stage.sh - 스테이지 완료 후 훅
-# ax-templates workflow pipeline
+# claude-symphony workflow pipeline
 
 set -e
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-# ax-templates AI Selector Hook
+# claude-symphony AI Selector Hook
 # 동적 AI 모델 선택
 
 set -e

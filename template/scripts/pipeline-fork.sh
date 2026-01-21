@@ -1,5 +1,5 @@
 #!/bin/bash
-# ax-templates Pipeline Fork Script
+# claude-symphony Pipeline Fork Script
 # 파이프라인 분기 관리
 
 set -e

@@ -1,5 +1,5 @@
 # MCP Fallback Configuration
-# ax-templates-3 MCP 도구 폴백 설정 (Issue #3 해결)
+# claude-symphony MCP 도구 폴백 설정 (Issue #3 해결)
 
 mcp_fallbacks:
   # 활성화 여부

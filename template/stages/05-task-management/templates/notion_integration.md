@@ -1,6 +1,6 @@
 # Notion 연동 가이드
 
-> ax-templates-3 태스크 관리 - Notion 데이터베이스 연동
+> claude-symphony 태스크 관리 - Notion 데이터베이스 연동
 
 ## 주의사항 (Issue #5, #6, #8, #16 해결)
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 # list-stages.sh - 스테이지 목록 및 상세 정보 표시
-# ax-templates workflow pipeline
+# claude-symphony workflow pipeline
 
 set -e
 

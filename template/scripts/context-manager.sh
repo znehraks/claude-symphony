@@ -1,6 +1,6 @@
 #!/bin/bash
 # context-manager.sh - 컨텍스트 상태 관리
-# ax-templates workflow pipeline
+# claude-symphony workflow pipeline
 
 set -e
 

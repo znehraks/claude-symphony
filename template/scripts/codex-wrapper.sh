@@ -1,6 +1,6 @@
 #!/bin/bash
 # codex-wrapper.sh - tmux 기반 Codex CLI 래퍼
-# ax-templates workflow pipeline
+# claude-symphony workflow pipeline
 # tmux wait-for 채널 기반 동기화 방식 (폴링 없음, 즉시 반응)
 
 SESSION_NAME="ax-codex"

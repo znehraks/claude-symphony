@@ -1,7 +1,7 @@
 {
-  "name": "ax-templates",
+  "name": "claude-symphony",
   "version": "1.2.0",
-  "description": "Multi-AI Workflow Pipeline Template System",
+  "description": "Multi-AI Orchestration Framework",
 
   "statusline": {
     "script": ".claude/hooks/statusline.sh",

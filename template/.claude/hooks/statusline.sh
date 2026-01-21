@@ -1,6 +1,6 @@
 #!/bin/bash
 # statusline.sh - Claude Code Statusline API를 통한 실시간 컨텍스트 모니터링
-# ax-templates workflow pipeline
+# claude-symphony workflow pipeline
 #
 # Claude Code가 ~300ms마다 JSON을 stdin으로 전달합니다.
 # 이 스크립트는 remaining_percentage를 분석하여 임계값 도달 시 자동 조치를 수행합니다.

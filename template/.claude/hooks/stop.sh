@@ -1,6 +1,6 @@
 #!/bin/bash
 # stop.sh - Claude 응답 완료 후 컨텍스트 자동 관리
-# ax-templates workflow pipeline
+# claude-symphony workflow pipeline
 #
 # Stop hook: Claude 응답이 완료된 후 실행됨
 # 컨텍스트가 50% 이하이면 자동으로 /compact 실행

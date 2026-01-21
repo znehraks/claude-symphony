@@ -1,6 +1,6 @@
 #!/bin/bash
 # next-stage.sh - 다음 스테이지로 전환
-# ax-templates workflow pipeline
+# claude-symphony workflow pipeline
 
 set -e
 

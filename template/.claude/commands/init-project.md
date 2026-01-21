@@ -1,6 +1,6 @@
 # /init-project
 
-새 프로젝트를 ax-templates 워크플로우로 초기화합니다.
+새 프로젝트를 claude-symphony 워크플로우로 초기화합니다.
 
 ## 사용법
 ```

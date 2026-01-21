@@ -1,5 +1,5 @@
 #!/bin/bash
-# ax-templates Smart HANDOFF Script
+# claude-symphony Smart HANDOFF Script
 # 스마트 컨텍스트 추출 및 HANDOFF 생성
 
 set -e

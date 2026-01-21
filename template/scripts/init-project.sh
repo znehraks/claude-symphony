@@ -1,6 +1,6 @@
 #!/bin/bash
 # init-project.sh - 새 프로젝트 초기화
-# ax-templates workflow pipeline
+# claude-symphony workflow pipeline
 
 set -e
 

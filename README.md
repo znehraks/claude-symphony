@@ -1,14 +1,14 @@
-# ax-templates
+# claude-symphony
 
-Multi-AI Workflow Pipeline for Software Development
+Multi-AI Orchestration Framework for Software Development
 
-[![CI](https://github.com/your-org/ax-templates/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/ax-templates/actions/workflows/ci.yml)
-[![npm version](https://badge.fury.io/js/ax-templates.svg)](https://www.npmjs.com/package/ax-templates)
+[![CI](https://github.com/znehraks/claude-symphony/actions/workflows/ci.yml/badge.svg)](https://github.com/znehraks/claude-symphony/actions/workflows/ci.yml)
+[![npm version](https://badge.fury.io/js/claude-symphony.svg)](https://www.npmjs.com/package/claude-symphony)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Overview
 
-ax-templates is a 10-stage software development workflow pipeline that orchestrates multiple AI models (Claude, Gemini, Codex) for end-to-end project development.
+claude-symphony is a 10-stage software development workflow pipeline that orchestrates multiple AI models (Claude, Gemini, Codex) like an orchestra, creating harmonious software through a complete development cycle.
 
 ### Key Features
 
@@ -25,7 +25,7 @@ ax-templates is a 10-stage software development workflow pipeline that orchestra
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                     ax-templates Pipeline                           │
+│                   claude-symphony Pipeline                          │
 ├─────────────────────────────────────────────────────────────────────┤
 │  01 Brainstorm  →  02 Research  →  03 Planning  →  04 UI/UX        │
 │     Gemini          Claude          Gemini          Gemini          │
@@ -57,7 +57,7 @@ ax-templates is a 10-stage software development workflow pipeline that orchestra
 
 ```bash
 # Create a new project
-npx create-ax-project my-project
+npx claude-symphony my-project
 cd my-project
 
 # Edit project brief
@@ -84,7 +84,7 @@ In Claude Code, all slash commands are available:
 
 ```bash
 # 1. Create project
-npx create-ax-project my-saas-app
+npx claude-symphony my-saas-app
 cd my-saas-app
 
 # 2. Edit your project brief
@@ -131,9 +131,9 @@ This monorepo contains three packages:
 
 | Package | Description | Install |
 |---------|-------------|---------|
-| [`ax-templates`](./packages/cli) | NPM CLI | `npm install -g ax-templates` |
-| [`@ax-templates/core`](./packages/core) | Core library | `npm install @ax-templates/core` |
-| [`@ax-templates/plugin`](./packages/plugin) | Claude Code plugin | `claude plugin install @ax-templates/plugin` |
+| [`claude-symphony`](./packages/cli) | NPM CLI | `npm install -g claude-symphony` |
+| [`@claude-symphony/core`](./packages/core) | Core library | `npm install @claude-symphony/core` |
+| [`@claude-symphony/plugin`](./packages/plugin) | Claude Code plugin | `claude plugin install @claude-symphony/plugin` |
 
 ## Commands
 
@@ -141,53 +141,53 @@ This monorepo contains three packages:
 
 | Command | CLI | Plugin |
 |---------|-----|--------|
-| Initialize project | `ax init` | `/init-project` |
-| Show status | `ax status` | `/status` |
-| List stages | `ax stages` | `/stages` |
-| Run stage | `ax run-stage <id>` | `/run-stage <id>` |
-| Next stage | `ax next` | `/next` |
-| Create handoff | `ax handoff` | `/handoff` |
-| Create checkpoint | `ax checkpoint` | `/checkpoint` |
-| Restore checkpoint | `ax restore` | `/restore` |
-| Check context | `ax context` | `/context` |
+| Initialize project | `symphony init` | `/init-project` |
+| Show status | `symphony status` | `/status` |
+| List stages | `symphony stages` | `/stages` |
+| Run stage | `symphony run-stage <id>` | `/run-stage <id>` |
+| Next stage | `symphony next` | `/next` |
+| Create handoff | `symphony handoff` | `/handoff` |
+| Create checkpoint | `symphony checkpoint` | `/checkpoint` |
+| Restore checkpoint | `symphony restore` | `/restore` |
+| Check context | `symphony context` | `/context` |
 
 ### AI Commands
 
 | Command | CLI | Plugin |
 |---------|-----|--------|
-| Gemini prompt | `ax gemini <prompt>` | `/gemini <prompt>` |
-| Codex prompt | `ax codex <prompt>` | `/codex <prompt>` |
+| Gemini prompt | `symphony gemini <prompt>` | `/gemini <prompt>` |
+| Codex prompt | `symphony codex <prompt>` | `/codex <prompt>` |
 
 ### Multi-AI Commands
 
 | Command | CLI | Plugin | Description |
 |---------|-----|--------|-------------|
-| AI Collaboration | `ax collaborate` | `/collaborate` | Run multi-AI collaboration (parallel, sequential, debate modes) |
-| AI Benchmarking | `ax benchmark` | `/benchmark` | Compare AI model performance on tasks |
-| Pipeline Fork | `ax fork` | `/fork` | Create/manage pipeline branches for exploration |
-| Output Validation | `ax validate` | `/validate` | Validate stage outputs against quality criteria |
+| AI Collaboration | `symphony collaborate` | `/collaborate` | Run multi-AI collaboration (parallel, sequential, debate modes) |
+| AI Benchmarking | `symphony benchmark` | `/benchmark` | Compare AI model performance on tasks |
+| Pipeline Fork | `symphony fork` | `/fork` | Create/manage pipeline branches for exploration |
+| Output Validation | `symphony validate` | `/validate` | Validate stage outputs against quality criteria |
 
 ### Stage Shortcuts
 
 | Stage | CLI | Plugin |
 |-------|-----|--------|
-| 01-brainstorm | `ax brainstorm` | `/brainstorm` |
-| 02-research | `ax research` | `/research` |
-| 03-planning | `ax planning` | `/planning` |
-| 04-ui-ux | `ax ui-ux` | `/ui-ux` |
-| 05-task-management | `ax tasks` | `/tasks` |
-| 06-implementation | `ax implement` | `/implement` |
-| 07-refactoring | `ax refactor` | `/refactor` |
-| 08-qa | `ax qa` | `/qa` |
-| 09-testing | `ax test` | `/test` |
-| 10-deployment | `ax deploy` | `/deploy` |
+| 01-brainstorm | `symphony brainstorm` | `/brainstorm` |
+| 02-research | `symphony research` | `/research` |
+| 03-planning | `symphony planning` | `/planning` |
+| 04-ui-ux | `symphony ui-ux` | `/ui-ux` |
+| 05-task-management | `symphony tasks` | `/tasks` |
+| 06-implementation | `symphony implement` | `/implement` |
+| 07-refactoring | `symphony refactor` | `/refactor` |
+| 08-qa | `symphony qa` | `/qa` |
+| 09-testing | `symphony test` | `/test` |
+| 10-deployment | `symphony deploy` | `/deploy` |
 
 ## Configuration
 
-Project configuration is stored in `.ax-config.yaml`:
+Project configuration is stored in `.symphony-config.yaml`:
 
 ```yaml
-ax_templates:
+claude_symphony:
   version: "2.0.0"
 
 paths:
@@ -201,8 +201,8 @@ ai:
   codex: true
 
 tmux:
-  gemini_session: "ax-gemini"
-  codex_session: "ax-codex"
+  gemini_session: "symphony-gemini"
+  codex_session: "symphony-codex"
   output_timeout: 300
 
 context:
@@ -282,8 +282,8 @@ my-project/                        # PROJECT_ROOT
 
 ```bash
 # Clone repository
-git clone https://github.com/your-org/ax-templates.git
-cd ax-templates
+git clone https://github.com/znehraks/claude-symphony.git
+cd claude-symphony
 
 # Install dependencies
 pnpm install
@@ -303,7 +303,7 @@ cd packages/cli
 pnpm link --global
 
 # Test CLI
-ax --help
+symphony --help
 
 # Link plugin to Claude Code
 claude plugin link ./packages/plugin
@@ -312,7 +312,7 @@ claude plugin link ./packages/plugin
 ### Monorepo Structure
 
 ```
-ax-templates/
+claude-symphony/
 ├── packages/
 │   ├── core/              # Shared business logic
 │   │   ├── src/

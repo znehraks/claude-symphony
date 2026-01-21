@@ -1,5 +1,5 @@
 # AI Logging Configuration
-# ax-templates-3 AI 호출 검증 및 로깅 규칙 (개선 제안 #2, #3 해결)
+# claude-symphony AI 호출 검증 및 로깅 규칙 (개선 제안 #2, #3 해결)
 
 ai_logging:
   # 활성화 여부

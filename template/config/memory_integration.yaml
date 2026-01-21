@@ -1,4 +1,4 @@
-# ax-templates Memory Integration Configuration
+# claude-symphony Memory Integration Configuration
 # AI memory provider integration and sync settings
 
 memory_integration:
@@ -20,7 +20,7 @@ memory_integration:
 
       # 저장 설정
       storage:
-        project_prefix: "ax-templates"
+        project_prefix: "claude-symphony"
         observation_types:
           - "decision"
           - "discovery"

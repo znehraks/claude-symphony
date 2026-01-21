@@ -1,5 +1,5 @@
 # Q&A Logging Configuration
-# ax-templates-3 문답 자동 기록 규칙 (Q7 해결)
+# claude-symphony 문답 자동 기록 규칙 (Q7 해결)
 
 qa_logging:
   # 활성화 여부

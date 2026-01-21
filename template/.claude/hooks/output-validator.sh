@@ -1,5 +1,5 @@
 #!/bin/bash
-# ax-templates Output Validator Hook
+# claude-symphony Output Validator Hook
 # 스테이지 산출물 검증
 
 set -e

@@ -1,6 +1,6 @@
 #!/bin/bash
 # run-stage.sh - 스테이지 실행
-# ax-templates workflow pipeline
+# claude-symphony workflow pipeline
 
 set -e
 

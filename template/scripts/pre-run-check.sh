@@ -1,6 +1,6 @@
 #!/bin/bash
 # pre-run-check.sh - 파이프라인 실행 전 사전 점검 스크립트
-# ax-templates workflow pipeline
+# claude-symphony workflow pipeline
 #
 # 이 스크립트는 파이프라인 실행 전에 모든 필수 도구와 설정이 올바른지 확인합니다.
 
@@ -24,7 +24,7 @@ RESULTS=()
 print_header() {
     echo ""
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo -e "${CYAN}  🔍 ax-templates Pre-Run Checklist${NC}"
+    echo -e "${CYAN}  🔍 claude-symphony Pre-Run Checklist${NC}"
     echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
 }

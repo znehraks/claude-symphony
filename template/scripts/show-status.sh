@@ -1,6 +1,6 @@
 #!/bin/bash
 # show-status.sh - 파이프라인 상태 표시
-# ax-templates workflow pipeline
+# claude-symphony workflow pipeline
 
 set -e
 

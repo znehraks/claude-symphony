@@ -1,4 +1,4 @@
-# ax-templates Pipeline Forking Configuration
+# claude-symphony Pipeline Forking Configuration
 # Branch exploration and parallel pipeline execution
 
 pipeline_forking:

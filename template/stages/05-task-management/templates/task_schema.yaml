@@ -1,5 +1,5 @@
 # Task Schema Definition
-# ax-templates-3 태스크 관리 스키마 (Issue #4, #6, #8, #16 해결)
+# claude-symphony 태스크 관리 스키마 (Issue #4, #6, #8, #16 해결)
 
 schema:
   name: "Project Tasks"

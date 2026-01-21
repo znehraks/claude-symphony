@@ -119,19 +119,19 @@ async function main() {
   // 도움말 체크 (가장 먼저 처리)
   if (args.includes('--help') || args.includes('-h')) {
     console.log(`
-${colors.cyan}create-ax-project${colors.reset} - Multi-AI Workflow Pipeline 프로젝트 생성
+${colors.cyan}claude-symphony${colors.reset} - Multi-AI Orchestration Framework 프로젝트 생성
 
 ${colors.yellow}사용법:${colors.reset}
-  npx create-ax-project <project-name>
-  npx create-ax-project .  (현재 디렉토리에 생성)
+  npx claude-symphony <project-name>
+  npx claude-symphony .  (현재 디렉토리에 생성)
 
 ${colors.yellow}옵션:${colors.reset}
   --yes, -y    프롬프트 없이 기본값으로 생성
 
 ${colors.yellow}예시:${colors.reset}
-  npx create-ax-project my-saas-app
-  npx create-ax-project my-game
-  npx create-ax-project my-project --yes
+  npx claude-symphony my-saas-app
+  npx claude-symphony my-game
+  npx claude-symphony my-project --yes
 
 ${colors.yellow}생성 후:${colors.reset}
   1. cd <project-name>
@@ -171,7 +171,7 @@ ${colors.yellow}생성 후:${colors.reset}
 
   console.log('');
   log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'cyan');
-  log(`🚀 ax-templates 프로젝트 생성: ${actualProjectName}`, 'cyan');
+  log(`🎼 claude-symphony 프로젝트 생성: ${actualProjectName}`, 'cyan');
   log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'cyan');
   console.log('');
 
