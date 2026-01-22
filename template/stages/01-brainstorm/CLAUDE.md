@@ -38,6 +38,28 @@ Divergent idea generation and requirements exploration stage
 - **Secondary**: ClaudeCode (structuring, feasibility review)
 - **Mode**: YOLO (Container) - autonomous execution mode
 
+## Parallel Execution Protocol
+
+### Models
+- **Primary**: Gemini (creative ideation)
+- **Secondary**: ClaudeCode (structural organization)
+
+### Execution
+1. Gemini: Generate `output_gemini.md`
+2. ClaudeCode: Generate `output_claudecode.md`
+3. ClaudeCode (Synthesizer): Synthesize → `ideas.md`
+
+### Output Files
+- `output_gemini.md` - Gemini results
+- `output_claudecode.md` - ClaudeCode results
+- `ideas.md` - Final synthesized result
+
+### Synthesis Criteria
+1. Extract commonalities first
+2. Analyze differences and select best
+3. Integrate unique insights
+4. Filter low-quality content
+
 ## Goals
 1. Divergent ideation based on project brief
 2. In-depth analysis of user requirements

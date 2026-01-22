@@ -2,27 +2,42 @@
 # Multi-AI orchestration modes and collaboration strategies
 
 collaboration_modes:
-  # Parallel Execution: Execute same task with multiple AIs simultaneously
+  # Parallel Execution: Execute same task with multiple AIs simultaneously and synthesize
   parallel_execution:
-    description: "Execute same task with multiple AIs simultaneously and select best result"
+    description: "Execute same task with multiple AIs simultaneously and synthesize"
     enabled: true
 
     stages:
-      - "01-brainstorm"
-      - "02-research"
+      01-brainstorm:
+        parallel_models: [gemini, claudecode]
+        synthesizer: claudecode
+        output: ideas.md
+      03-planning:
+        parallel_models: [gemini, claudecode]
+        synthesizer: claudecode
+        output: architecture.md
+      04-ui-ux:
+        parallel_models: [gemini, claudecode]
+        synthesizer: claudecode
+        output: wireframes.md
+      07-refactoring:
+        parallel_models: [codex, claudecode]
+        synthesizer: claudecode
+        output: refactoring_report.md
+      09-testing:
+        parallel_models: [codex, claudecode]
+        synthesizer: claudecode
+        output: tests/
 
-    models:
-      - "gemini"
-      - "claude"
+    synthesis_criteria:
+      - extract_commonalities
+      - analyze_differences
+      - complementary_integration
+      - quality_filtering
 
     merge_strategy:
-      type: "best_of_n"
-      selection_criteria:
-        - quality_score
-        - completeness
-        - creativity
-      require_human_review: true
-      auto_select_threshold: 0.85  # Auto-select when score is 85% or higher
+      type: "synthesis"
+      synthesizer: claudecode
 
   # Sequential Handoff: Sequential transfer between AIs (review chain)
   sequential_handoff:

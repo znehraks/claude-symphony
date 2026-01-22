@@ -411,6 +411,36 @@ state/
 
 ---
 
+## Parallel AI Execution Policy
+
+### Overview
+All defined AI models execute the same task in parallel, and each output is synthesized to produce the final result.
+
+### Execution Flow
+1. **Parallel Execution**: Designated models perform the task simultaneously
+2. **Individual Output**: Each model generates `output_modelName.md`
+3. **Synthesis**: ClaudeCode analyzes all outputs and generates `final_output.md`
+
+### Stage Model Assignment
+
+| Stage | Parallel Models | Synthesizer | Output |
+|-------|-----------------|-------------|--------|
+| 01-brainstorm | Gemini + ClaudeCode | ClaudeCode | ideas.md |
+| 03-planning | Gemini + ClaudeCode | ClaudeCode | architecture.md |
+| 04-ui-ux | Gemini + ClaudeCode | ClaudeCode | wireframes.md |
+| 07-refactoring | Codex + ClaudeCode | ClaudeCode | refactoring_report.md |
+| 09-testing | Codex + ClaudeCode | ClaudeCode | tests/ |
+
+> Single-model stages (02, 05, 06, 08, 10) maintain existing behavior
+
+### Synthesis Criteria
+1. **Extract Commonalities**: Prioritize content all models agree on
+2. **Analyze Differences**: Compare pros/cons, select best approach
+3. **Complementary Integration**: Merge unique insights from each model
+4. **Quality Filtering**: Remove low-quality content
+
+---
+
 ## Smart HANDOFF System
 
 > Configuration files: `config/handoff_intelligence.yaml`, `config/memory_integration.yaml`

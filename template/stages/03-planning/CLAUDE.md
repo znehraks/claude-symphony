@@ -33,6 +33,28 @@ System architecture and technology stack decision stage
 - **Primary**: Gemini (architecture design, diagrams)
 - **Mode**: Plan Mode - structured design
 
+## Parallel Execution Protocol
+
+### Models
+- **Primary**: Gemini (architecture design)
+- **Secondary**: ClaudeCode (technical validation)
+
+### Execution
+1. Gemini: Generate `output_gemini.md`
+2. ClaudeCode: Generate `output_claudecode.md`
+3. ClaudeCode (Synthesizer): Synthesize → `architecture.md`
+
+### Output Files
+- `output_gemini.md` - Gemini results
+- `output_claudecode.md` - ClaudeCode results
+- `architecture.md` - Final synthesized result
+
+### Synthesis Criteria
+1. Extract commonalities first
+2. Analyze differences and select best
+3. Integrate unique insights
+4. Filter low-quality content
+
 ## Goals
 1. System architecture design
 2. Final technology stack decision

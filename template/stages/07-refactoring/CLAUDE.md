@@ -38,6 +38,28 @@ Code quality improvement and optimization stage
 - **Secondary**: ClaudeCode (complex refactoring)
 - **Mode**: Deep Dive - in-depth code analysis
 
+## Parallel Execution Protocol
+
+### Models
+- **Primary**: Codex (code optimization)
+- **Secondary**: ClaudeCode (code review)
+
+### Execution
+1. Codex: Generate `output_codex.md`
+2. ClaudeCode: Generate `output_claudecode.md`
+3. ClaudeCode (Synthesizer): Synthesize → `refactoring_report.md`
+
+### Output Files
+- `output_codex.md` - Codex results
+- `output_claudecode.md` - ClaudeCode results
+- `refactoring_report.md` - Final synthesized result
+
+### Synthesis Criteria
+1. Extract commonalities first
+2. Analyze differences and select best
+3. Integrate unique insights
+4. Filter low-quality content
+
 ## Goals
 1. Code quality improvement
 2. Duplication removal

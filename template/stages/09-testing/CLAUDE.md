@@ -35,6 +35,28 @@ Test code writing and E2E testing stage
 - **Mode**: Sandbox + Playwright
 - **MCP**: playwright server integration
 
+## Parallel Execution Protocol
+
+### Models
+- **Primary**: Codex (test generation)
+- **Secondary**: ClaudeCode (test validation)
+
+### Execution
+1. Codex: Generate `output_codex.md`
+2. ClaudeCode: Generate `output_claudecode.md`
+3. ClaudeCode (Synthesizer): Synthesize → `tests/`
+
+### Output Files
+- `output_codex.md` - Codex results
+- `output_claudecode.md` - ClaudeCode results
+- `tests/` - Final synthesized test files
+
+### Synthesis Criteria
+1. Extract commonalities first
+2. Analyze differences and select best
+3. Integrate unique insights
+4. Filter low-quality content
+
 ## Goals
 1. Unit test writing
 2. Integration test writing

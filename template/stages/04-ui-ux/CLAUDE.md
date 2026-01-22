@@ -33,6 +33,28 @@ User interface and experience design stage
 - **Primary**: Gemini (creative UI design)
 - **Mode**: Plan Mode
 
+## Parallel Execution Protocol
+
+### Models
+- **Primary**: Gemini (creative UI design)
+- **Secondary**: ClaudeCode (UX validation)
+
+### Execution
+1. Gemini: Generate `output_gemini.md`
+2. ClaudeCode: Generate `output_claudecode.md`
+3. ClaudeCode (Synthesizer): Synthesize → `wireframes.md`
+
+### Output Files
+- `output_gemini.md` - Gemini results
+- `output_claudecode.md` - ClaudeCode results
+- `wireframes.md` - Final synthesized result
+
+### Synthesis Criteria
+1. Extract commonalities first
+2. Analyze differences and select best
+3. Integrate unique insights
+4. Filter low-quality content
+
 ## Goals
 1. Wireframe design
 2. User flow definition
