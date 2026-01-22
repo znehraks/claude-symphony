@@ -1,86 +1,86 @@
 # Stage Handoff: 03-planning → 04-ui-ux
 
-**생성일**: {{TIMESTAMP}}
-**생성자**: Gemini
-**소요 시간**: {{DURATION}}
+**Created**: {{TIMESTAMP}}
+**Creator**: Gemini
+**Duration**: {{DURATION}}
 
 ---
 
-## 완료된 작업
+## Completed Tasks
 
-- [ ] 시스템 아키텍처 설계
-- [ ] 기술 스택 최종 결정
-- [ ] 프로젝트 계획 수립
-- [ ] 마일스톤 정의
-- [ ] HANDOFF.md 생성
+- [ ] System architecture design
+- [ ] Tech stack finalization
+- [ ] Project plan establishment
+- [ ] Milestone definition
+- [ ] HANDOFF.md generation
 
 ---
 
-## 다음 에이전트를 위한 컨텍스트
+## Context for Next Agent
 
-### 아키텍처 요약
-- **스타일**: {{ARCH_STYLE}}
-- **주요 컴포넌트**: {{COMPONENTS}}
+### Architecture Summary
+- **Style**: {{ARCH_STYLE}}
+- **Key Components**: {{COMPONENTS}}
 
-### 확정 기술 스택
+### Finalized Tech Stack
 
-| 영역 | 기술 | 버전 |
-|------|------|------|
+| Area | Technology | Version |
+|------|------------|---------|
 | Frontend | {{FRONTEND}} | |
 | Backend | {{BACKEND}} | |
 | Database | {{DATABASE}} | |
 | Auth | {{AUTH}} | |
 | Hosting | {{HOSTING}} | |
 
-### 마일스톤
+### Milestones
 
-| # | 이름 | 목표 | 산출물 |
-|---|------|------|--------|
+| # | Name | Goal | Deliverables |
+|---|------|------|--------------|
 | M1 | {{M1_NAME}} | {{M1_GOAL}} | |
 | M2 | {{M2_NAME}} | {{M2_GOAL}} | |
 | M3 | {{M3_NAME}} | {{M3_GOAL}} | |
 
-### UI/UX 고려사항
+### UI/UX Considerations
 - {{UI_CONSIDERATION_1}}
 - {{UI_CONSIDERATION_2}}
 
 ---
 
-## 생성된 산출물
+## Generated Outputs
 
-| 파일 | 설명 |
-|------|------|
-| architecture.md | 시스템 아키텍처 |
-| tech_stack.md | 기술 스택 결정 |
-| project_plan.md | 프로젝트 계획 |
-
----
-
-## 04-ui-ux 스테이지 가이드
-
-### 즉시 실행할 작업
-1. 아키텍처 기반 화면 구조 설계
-2. 사용자 플로우 정의
-3. 디자인 시스템 기초 수립
-
-### 참조 문서
-- `architecture.md` - 컴포넌트 구조
-- `../01-brainstorm/outputs/personas.md` - 사용자 페르소나
+| File | Description |
+|------|-------------|
+| architecture.md | System architecture |
+| tech_stack.md | Tech stack decision |
+| project_plan.md | Project plan |
 
 ---
 
-## AI 호출 기록
+## 04-ui-ux Stage Guide
 
-| AI | 호출 시간 | 프롬프트 | 결과 | 상태 |
-|----|----------|---------|------|------|
+### Immediate Tasks
+1. Design screen structure based on architecture
+2. Define user flows
+3. Establish design system foundation
+
+### Reference Documents
+- `architecture.md` - Component structure
+- `../01-brainstorm/outputs/personas.md` - User personas
+
+---
+
+## AI Call Log
+
+| AI | Call Time | Prompt | Result | Status |
+|----|-----------|--------|--------|--------|
 | {{AI_1}} | {{TIME_1}} | {{PROMPT_1}} | {{OUTPUT_1}} | {{STATUS_1}} |
 | {{AI_2}} | {{TIME_2}} | {{PROMPT_2}} | {{OUTPUT_2}} | {{STATUS_2}} |
 
-> 설정: `config/ai_logging.yaml`
+> Configuration: `config/ai_logging.yaml`
 
 ---
 
-## 메타데이터
+## Metadata
 
 ```yaml
 stage: "03-planning"

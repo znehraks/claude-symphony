@@ -1,82 +1,82 @@
 # Stage Handoff: 06-implementation → 07-refactoring
 
-**생성일**: {{TIMESTAMP}}
-**생성자**: ClaudeCode
-**소요 시간**: {{DURATION}}
+**Created**: {{TIMESTAMP}}
+**Creator**: ClaudeCode
+**Duration**: {{DURATION}}
 
 ---
 
-## AI 사용 기록
+## AI Usage Log
 
-> 이 섹션은 의도된 AI 설정과 실제 사용을 비교하여 협업 효율성을 추적합니다.
+> This section compares intended AI settings with actual usage to track collaboration efficiency.
 
-### 의도 vs 실제 비교
+### Intended vs Actual Comparison
 
-| 항목 | 의도 | 실제 | 일치 |
-|------|------|------|------|
+| Item | Intended | Actual | Match |
+|------|----------|--------|-------|
 | Primary AI | ClaudeCode | {{ACTUAL_PRIMARY_AI}} | {{PRIMARY_MATCH}} |
 | Secondary AI | - | {{ACTUAL_SECONDARY_AI}} | - |
-| 협업 모드 | none (단일 AI) | {{ACTUAL_COLLABORATION_MODE}} | {{MODE_MATCH}} |
-| 외부 AI 호출 | 아니오 | {{ACTUAL_EXTERNAL_CALL}} | {{EXTERNAL_MATCH}} |
+| Collaboration Mode | none (single AI) | {{ACTUAL_COLLABORATION_MODE}} | {{MODE_MATCH}} |
+| External AI Call | No | {{ACTUAL_EXTERNAL_CALL}} | {{EXTERNAL_MATCH}} |
 
-### AI 호출 로그
+### AI Call Log
 
-| AI | 호출 시간 | 역할 | 프롬프트 | 결과 | 상태 |
-|----|----------|------|---------|------|------|
+| AI | Call Time | Role | Prompt | Result | Status |
+|----|-----------|------|--------|--------|--------|
 | {{AI_1}} | {{TIME_1}} | {{ROLE_1}} | {{PROMPT_1}} | {{OUTPUT_1}} | {{STATUS_1}} |
 | {{AI_2}} | {{TIME_2}} | {{ROLE_2}} | {{PROMPT_2}} | {{OUTPUT_2}} | {{STATUS_2}} |
 
-### 폴백 기록
+### Fallback Log
 
-| 시도한 AI | 실패 시간 | 오류 | 폴백 AI | 결과 |
-|----------|----------|------|---------|------|
+| Attempted AI | Failure Time | Error | Fallback AI | Result |
+|--------------|--------------|-------|-------------|--------|
 | {{FALLBACK_ATTEMPTED}} | {{FALLBACK_TIME}} | {{FALLBACK_ERROR}} | {{FALLBACK_TO}} | {{FALLBACK_RESULT}} |
 
-> 설정: `config/ai_collaboration.yaml`, `config/mcp_fallbacks.yaml`
+> Configuration: `config/ai_collaboration.yaml`, `config/mcp_fallbacks.yaml`
 
 ---
 
-## 완료된 작업
+## Completed Tasks
 
-- [ ] 프로젝트 스캐폴딩
-- [ ] 공통 컴포넌트 ({{COMPONENT_COUNT}}개)
-- [ ] 핵심 기능 구현
-- [ ] API 엔드포인트 ({{API_COUNT}}개)
-- [ ] **스모크 테스트 실행** (Test-First)
-- [ ] 체크포인트 생성
-- [ ] HANDOFF.md 생성
+- [ ] Project scaffolding
+- [ ] Common components ({{COMPONENT_COUNT}} components)
+- [ ] Core feature implementation
+- [ ] API endpoints ({{API_COUNT}} endpoints)
+- [ ] **Smoke test execution** (Test-First)
+- [ ] Checkpoint creation
+- [ ] HANDOFF.md generation
 
 ---
 
-## 테스트 상태 (Test-First 플로우)
+## Test Status (Test-First Flow)
 
-> ⚠️ **필수**: 구현 완료 후 스모크 테스트를 실행하여 기본 동작을 확인하세요.
+> ⚠️ **Required**: Run smoke tests after implementation completion for early bug detection.
 
-### 실행된 테스트
+### Tests Run
 
-| 테스트 유형 | 실행 시간 | 결과 | 비고 |
-|-----------|----------|------|------|
-| `npm run dev` | {{DEV_TIME}} | {{DEV_RESULT}} | 개발 서버 실행 |
-| ESLint | {{LINT_TIME}} | {{LINT_RESULT}} | 정적 분석 |
-| TypeScript | {{TS_TIME}} | {{TS_RESULT}} | 타입 체크 |
-| Playwright 스모크 | {{PLAYWRIGHT_TIME}} | {{PLAYWRIGHT_RESULT}} | UI 기본 동작 |
+| Test Type | Run Time | Result | Notes |
+|-----------|----------|--------|-------|
+| `npm run dev` | {{DEV_TIME}} | {{DEV_RESULT}} | Dev server execution |
+| ESLint | {{LINT_TIME}} | {{LINT_RESULT}} | Static analysis |
+| TypeScript | {{TS_TIME}} | {{TS_RESULT}} | Type check |
+| Playwright smoke | {{PLAYWRIGHT_TIME}} | {{PLAYWRIGHT_RESULT}} | UI basic functionality |
 
-### 발견된 버그
+### Bugs Found
 
-| ID | 설명 | 발견 시점 | 상태 | 수정 파일 |
-|----|------|----------|------|----------|
+| ID | Description | Found At | Status | Fix File |
+|----|-------------|----------|--------|----------|
 | {{BUG_ID}} | {{BUG_DESC}} | {{BUG_FOUND}} | {{BUG_STATUS}} | {{BUG_FILE}} |
 
-### 테스트 미실행 사유
+### Reason for Test Skip
 
-- **미실행 시**: {{TEST_SKIP_REASON}}
-- **권장 조치**: 07-refactoring 전에 기본 테스트 실행 권장
+- **If skipped**: {{TEST_SKIP_REASON}}
+- **Recommended action**: Run basic tests before 07-refactoring
 
 ---
 
-## 다음 에이전트를 위한 컨텍스트
+## Context for Next Agent
 
-### 프로젝트 구조
+### Project Structure
 ```
 source_code/
 ├── src/
@@ -89,77 +89,77 @@ source_code/
 └── ...
 ```
 
-### 기술 스택 확정
+### Finalized Tech Stack
 
-| 영역 | 기술 | 버전 |
-|------|------|------|
+| Area | Technology | Version |
+|------|------------|---------|
 | Framework | {{FRAMEWORK}} | {{VERSION}} |
 | UI Library | {{UI_LIB}} | |
 | State | {{STATE_MGMT}} | |
 | API | {{API_STYLE}} | |
 
-### 구현 완료 기능
+### Completed Features
 
-| 기능 | 상태 | 파일 | 테스트 상태 |
-|------|------|------|-----------|
-| {{FEATURE_1}} | 완료 | {{FILE_1}} | {{TEST_1}} |
-| {{FEATURE_2}} | 완료 | {{FILE_2}} | {{TEST_2}} |
-| {{FEATURE_3}} | 완료 | {{FILE_3}} | {{TEST_3}} |
+| Feature | Status | File | Test Status |
+|---------|--------|------|-------------|
+| {{FEATURE_1}} | Complete | {{FILE_1}} | {{TEST_1}} |
+| {{FEATURE_2}} | Complete | {{FILE_2}} | {{TEST_2}} |
+| {{FEATURE_3}} | Complete | {{FILE_3}} | {{TEST_3}} |
 
-### 알려진 이슈 / 기술 부채
+### Known Issues / Technical Debt
 1. {{TECH_DEBT_1}}
 2. {{TECH_DEBT_2}}
 
-### 리팩토링 필요 영역
+### Areas Needing Refactoring
 - {{REFACTOR_AREA_1}}: {{REASON_1}}
 - {{REFACTOR_AREA_2}}: {{REASON_2}}
 
 ---
 
-## 체크포인트 정보
+## Checkpoint Information
 
-| ID | 생성일 | 설명 | 자동/수동 |
-|----|--------|------|----------|
-| {{CP_ID}} | {{CP_DATE}} | 스프린트 1 완료 | {{CP_TYPE}} |
+| ID | Created | Description | Auto/Manual |
+|----|---------|-------------|-------------|
+| {{CP_ID}} | {{CP_DATE}} | Sprint 1 complete | {{CP_TYPE}} |
 
-복구 명령:
+Recovery command:
 ```bash
 scripts/restore-checkpoint.sh {{CP_ID}}
 ```
 
 ---
 
-## 생성된 산출물
+## Generated Outputs
 
-| 파일 | 설명 | 검증 상태 |
-|------|------|----------|
-| source_code/ | 구현된 소스 코드 | {{CODE_VALIDATED}} |
-| implementation_log.md | 구현 로그 | - |
+| File | Description | Validation Status |
+|------|-------------|-------------------|
+| source_code/ | Implemented source code | {{CODE_VALIDATED}} |
+| implementation_log.md | Implementation log | - |
 
 ---
 
-## 07-refactoring 스테이지 가이드
+## 07-refactoring Stage Guide
 
-### 즉시 실행할 작업
-1. **회귀 테스트 실행** (Test-First)
-2. 코드 품질 분석 (ESLint, TypeScript)
-3. 중복 코드 식별
-4. 성능 병목 지점 분석
+### Immediate Tasks
+1. **Run regression tests** (Test-First)
+2. Code quality analysis (ESLint, TypeScript)
+3. Identify duplicate code
+4. Analyze performance bottlenecks
 
-### 리팩토링 우선순위
+### Refactoring Priorities
 1. {{REFACTOR_PRIORITY_1}}
 2. {{REFACTOR_PRIORITY_2}}
 3. {{REFACTOR_PRIORITY_3}}
 
-### 주의사항
-- ⚠️ **Codex CLI 사용 필수** - 깊이 있는 분석을 위해 `/codex` 명령어 활용
-- 기존 기능 깨뜨리지 않도록 주의
-- 리팩토링 전/후 동작 동일 확인
-- 체크포인트 활용
+### Warnings
+- ⚠️ **Codex CLI required** - Use `/codex` command for deep analysis
+- Be careful not to break existing functionality
+- Verify same behavior before/after refactoring
+- Use checkpoints
 
 ---
 
-## 메타데이터
+## Metadata
 
 ```yaml
 stage: "06-implementation"

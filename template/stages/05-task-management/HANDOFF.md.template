@@ -1,90 +1,90 @@
 # Stage Handoff: 05-task-management → 06-implementation
 
-**생성일**: {{TIMESTAMP}}
-**생성자**: ClaudeCode
-**소요 시간**: {{DURATION}}
+**Created**: {{TIMESTAMP}}
+**Creator**: ClaudeCode
+**Duration**: {{DURATION}}
 
 ---
 
-## 완료된 작업
+## Completed Tasks
 
-- [ ] 태스크 분해 (총 {{TASK_COUNT}}개)
-- [ ] 의존성 맵핑
-- [ ] 스프린트 계획 ({{SPRINT_COUNT}}개)
-- [ ] 마일스톤 정의
-- [ ] HANDOFF.md 생성
+- [ ] Task breakdown ({{TASK_COUNT}} total tasks)
+- [ ] Dependency mapping
+- [ ] Sprint planning ({{SPRINT_COUNT}} sprints)
+- [ ] Milestone definition
+- [ ] HANDOFF.md generation
 
 ---
 
-## 다음 에이전트를 위한 컨텍스트
+## Context for Next Agent
 
-### 스프린트 1 태스크 (즉시 시작)
+### Sprint 1 Tasks (Start Immediately)
 
-| ID | 태스크 | 우선순위 | 의존성 |
-|----|--------|----------|--------|
+| ID | Task | Priority | Dependencies |
+|----|------|----------|--------------|
 | {{TASK_1_ID}} | {{TASK_1}} | Must | - |
 | {{TASK_2_ID}} | {{TASK_2}} | Must | {{DEP_2}} |
 | {{TASK_3_ID}} | {{TASK_3}} | Should | {{DEP_3}} |
 
-### 의존성 요약
+### Dependency Summary
 ```mermaid
 graph TD
     {{DEPENDENCY_GRAPH}}
 ```
 
-### 마일스톤
+### Milestones
 
-| 마일스톤 | 목표 | 완료 기준 |
-|----------|------|-----------|
+| Milestone | Goal | Completion Criteria |
+|-----------|------|---------------------|
 | M1 | {{M1_GOAL}} | {{M1_CRITERIA}} |
 | M2 | {{M2_GOAL}} | {{M2_CRITERIA}} |
 
-### 기술적 주의사항
+### Technical Notes
 - {{TECH_NOTE_1}}
 - {{TECH_NOTE_2}}
 
 ---
 
-## 생성된 산출물
+## Generated Outputs
 
-| 파일 | 설명 |
-|------|------|
-| tasks.md | 전체 태스크 목록 |
-| sprint_plan.md | 스프린트 계획 |
-| milestones.md | 마일스톤 정의 |
+| File | Description |
+|------|-------------|
+| tasks.md | Complete task list |
+| sprint_plan.md | Sprint plan |
+| milestones.md | Milestone definitions |
 
 ---
 
-## 06-implementation 스테이지 가이드
+## 06-implementation Stage Guide
 
-### 즉시 실행할 작업
-1. 프로젝트 초기화 (scaffolding)
-2. 공통 컴포넌트 구현
-3. {{FIRST_FEATURE}} 구현 시작
+### Immediate Tasks
+1. Project initialization (scaffolding)
+2. Common component implementation
+3. Start implementing {{FIRST_FEATURE}}
 
-### 구현 순서 권장
+### Recommended Implementation Order
 1. {{IMPL_ORDER_1}}
 2. {{IMPL_ORDER_2}}
 3. {{IMPL_ORDER_3}}
 
-### 체크포인트 트리거
-- 스프린트 1 완료 시
-- 핵심 기능 구현 완료 시
+### Checkpoint Triggers
+- On Sprint 1 completion
+- On core feature implementation completion
 
 ---
 
-## AI 호출 기록
+## AI Call Log
 
-| AI | 호출 시간 | 프롬프트 | 결과 | 상태 |
-|----|----------|---------|------|------|
+| AI | Call Time | Prompt | Result | Status |
+|----|-----------|--------|--------|--------|
 | {{AI_1}} | {{TIME_1}} | {{PROMPT_1}} | {{OUTPUT_1}} | {{STATUS_1}} |
 | {{AI_2}} | {{TIME_2}} | {{PROMPT_2}} | {{OUTPUT_2}} | {{STATUS_2}} |
 
-> 설정: `config/ai_logging.yaml`
+> Configuration: `config/ai_logging.yaml`
 
 ---
 
-## 메타데이터
+## Metadata
 
 ```yaml
 stage: "05-task-management"

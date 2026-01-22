@@ -1,74 +1,74 @@
 # Stage Handoff: 09-testing → 10-deployment
 
-**생성일**: {{TIMESTAMP}}
-**생성자**: Codex
-**소요 시간**: {{DURATION}}
+**Created**: {{TIMESTAMP}}
+**Creator**: Codex
+**Duration**: {{DURATION}}
 
 ---
 
-## 완료된 작업
+## Completed Tasks
 
-- [ ] 단위 테스트 작성 ({{UNIT_COUNT}}개)
-- [ ] 통합 테스트 작성 ({{INT_COUNT}}개)
-- [ ] E2E 테스트 작성 ({{E2E_COUNT}}개)
-- [ ] 모든 테스트 통과
-- [ ] 커버리지 보고서 생성
-- [ ] HANDOFF.md 생성
+- [ ] Unit test writing ({{UNIT_COUNT}} tests)
+- [ ] Integration test writing ({{INT_COUNT}} tests)
+- [ ] E2E test writing ({{E2E_COUNT}} tests)
+- [ ] All tests passing
+- [ ] Coverage report generation
+- [ ] HANDOFF.md generation
 
 ---
 
-## 다음 에이전트를 위한 컨텍스트
+## Context for Next Agent
 
-### 테스트 결과 요약
+### Test Results Summary
 
-| 유형 | 총 개수 | 통과 | 실패 | 스킵 |
-|------|--------|------|------|------|
+| Type | Total | Passed | Failed | Skipped |
+|------|-------|--------|--------|---------|
 | Unit | {{UNIT_COUNT}} | {{UNIT_PASS}} | {{UNIT_FAIL}} | {{UNIT_SKIP}} |
 | Integration | {{INT_COUNT}} | {{INT_PASS}} | {{INT_FAIL}} | {{INT_SKIP}} |
 | E2E | {{E2E_COUNT}} | {{E2E_PASS}} | {{E2E_FAIL}} | {{E2E_SKIP}} |
 
-### 커버리지 보고서
+### Coverage Report
 
-| 메트릭 | 결과 | 목표 | 상태 |
-|--------|------|------|------|
+| Metric | Result | Target | Status |
+|--------|--------|--------|--------|
 | Statements | {{STMT_COV}}% | 80% | {{STMT_STATUS}} |
 | Branches | {{BRANCH_COV}}% | 75% | {{BRANCH_STATUS}} |
 | Functions | {{FUNC_COV}}% | 80% | {{FUNC_STATUS}} |
 | Lines | {{LINE_COV}}% | 80% | {{LINE_STATUS}} |
 
-### E2E 테스트 시나리오
+### E2E Test Scenarios
 
-| 시나리오 | 상태 | 실행 시간 |
-|----------|------|-----------|
+| Scenario | Status | Execution Time |
+|----------|--------|----------------|
 | {{E2E_1}} | Pass | {{TIME_1}} |
 | {{E2E_2}} | Pass | {{TIME_2}} |
 | {{E2E_3}} | Pass | {{TIME_3}} |
 
-### CI 통합 준비 사항
-- 테스트 명령어: `npm test`
-- 커버리지 명령어: `npm run coverage`
-- E2E 명령어: `npm run test:e2e`
+### CI Integration Requirements
+- Test command: `npm test`
+- Coverage command: `npm run coverage`
+- E2E command: `npm run test:e2e`
 
 ---
 
-## 생성된 산출물
+## Generated Outputs
 
-| 파일 | 설명 |
-|------|------|
-| tests/ | 테스트 코드 |
-| test_report.md | 테스트 결과 |
-| coverage_report.md | 커버리지 보고서 |
+| File | Description |
+|------|-------------|
+| tests/ | Test code |
+| test_report.md | Test results |
+| coverage_report.md | Coverage report |
 
 ---
 
-## 10-deployment 스테이지 가이드
+## 10-deployment Stage Guide
 
-### 즉시 실행할 작업
-1. GitHub Actions 워크플로우 설정
-2. 배포 환경 설정
-3. 환경 변수 구성
+### Immediate Tasks
+1. GitHub Actions workflow setup
+2. Deployment environment configuration
+3. Environment variable configuration
 
-### CI/CD 파이프라인 제안
+### Proposed CI/CD Pipeline
 ```yaml
 workflow:
   - lint
@@ -80,26 +80,26 @@ workflow:
   - deploy
 ```
 
-### 배포 전 체크리스트
-- [ ] 환경 변수 설정
-- [ ] 도메인 설정
-- [ ] SSL 인증서
-- [ ] 데이터베이스 마이그레이션
+### Pre-Deployment Checklist
+- [ ] Environment variables configured
+- [ ] Domain configured
+- [ ] SSL certificate
+- [ ] Database migration
 
 ---
 
-## AI 호출 기록
+## AI Call Log
 
-| AI | 호출 시간 | 프롬프트 | 결과 | 상태 |
-|----|----------|---------|------|------|
+| AI | Call Time | Prompt | Result | Status |
+|----|-----------|--------|--------|--------|
 | {{AI_1}} | {{TIME_1}} | {{PROMPT_1}} | {{OUTPUT_1}} | {{STATUS_1}} |
 | {{AI_2}} | {{TIME_2}} | {{PROMPT_2}} | {{OUTPUT_2}} | {{STATUS_2}} |
 
-> 설정: `config/ai_logging.yaml`
+> Configuration: `config/ai_logging.yaml`
 
 ---
 
-## 메타데이터
+## Metadata
 
 ```yaml
 stage: "09-testing"

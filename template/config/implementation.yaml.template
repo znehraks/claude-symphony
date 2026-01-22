@@ -1,180 +1,180 @@
 # Implementation Rules Template
-# claude-symphony 프로젝트별 구현 규칙 정의 (Issue #10 해결)
+# claude-symphony project-specific implementation rules definition (Issue #10 resolution)
 #
-# 이 파일은 Planning 스테이지(03)에서 프로젝트에 맞게 작성하고
-# Implementation 스테이지(06)에서 참조합니다.
+# This file is created during the Planning stage (03) to match project requirements
+# and referenced during the Implementation stage (06).
 #
-# 사용법:
-# 1. 이 템플릿을 프로젝트 루트에 implementation.yaml로 복사
-# 2. 프로젝트 요구사항에 맞게 수정
-# 3. 구현 시 이 규칙을 따름
+# Usage:
+# 1. Copy this template to the project root as implementation.yaml
+# 2. Modify according to project requirements
+# 3. Follow these rules during implementation
 
 project:
   name: "{{PROJECT_NAME}}"
   created_at: "{{TIMESTAMP}}"
 
-# 컴포넌트 규칙
+# Component Rules
 components:
-  # 컴포넌트 타입
+  # Component type
   type: "functional"  # functional | class | both
 
-  # export 방식
+  # Export method
   export: "named"     # named | default | both
 
-  # 파일당 컴포넌트 수
+  # Components per file
   single_component_per_file: true
 
-  # Props 정의 방식
+  # Props definition method
   props_definition: "interface"  # interface | type | inline
 
-  # 기본 구조
+  # Default structure
   structure: |
     // imports
     // types/interfaces
     // component
     // exports
 
-# 스타일링 규칙
+# Styling Rules
 styling:
-  # 접근 방식
+  # Approach
   approach: "css-modules"  # css-modules | styled-components | tailwind | emotion | vanilla
 
-  # 파일 위치
+  # File location
   location: "colocated"    # colocated | separate | global
 
-  # 네이밍
+  # Naming convention
   naming: "BEM"            # BEM | camelCase | kebab-case
 
-  # CSS 변수 사용
+  # CSS variables usage
   css_variables: true
 
-# 상태 관리 규칙
+# State Management Rules
 state_management:
-  # 전역 상태
+  # Global state
   global: "context"        # context | redux | zustand | recoil | jotai
 
-  # 서버 상태
+  # Server state
   server: "tanstack-query" # tanstack-query | swr | rtk-query
 
-  # 로컬 상태
+  # Local state
   local: "useState"        # useState | useReducer
 
-# 파일/폴더 네이밍
+# File/Folder Naming
 file_naming:
-  # 컴포넌트 파일
+  # Component files
   components: "PascalCase"     # PascalCase | kebab-case | camelCase
 
-  # 훅 파일
-  hooks: "camelCase"           # useXxx 패턴
+  # Hook files
+  hooks: "camelCase"           # useXxx pattern
 
-  # 유틸리티 파일
+  # Utility files
   utilities: "camelCase"
 
-  # 상수 파일
+  # Constant files
   constants: "SCREAMING_SNAKE_CASE"
 
-  # 테스트 파일
+  # Test files
   tests: "{name}.test.{ext}"   # {name}.test.{ext} | {name}.spec.{ext}
 
-# 폴더 구조
+# Folder Structure
 folder_structure:
-  # 구조 타입
+  # Structure type
   type: "feature-based"  # feature-based | type-based | atomic
 
-  # 기본 구조
+  # Default structure
   structure: |
     src/
-    ├── components/     # 공용 컴포넌트
-    ├── features/       # 기능별 모듈
+    ├── components/     # Shared components
+    ├── features/       # Feature modules
     │   └── [feature]/
     │       ├── components/
     │       ├── hooks/
     │       ├── utils/
     │       └── index.ts
-    ├── hooks/          # 공용 훅
-    ├── utils/          # 공용 유틸리티
-    ├── types/          # 타입 정의
-    ├── constants/      # 상수
-    └── styles/         # 전역 스타일
+    ├── hooks/          # Shared hooks
+    ├── utils/          # Shared utilities
+    ├── types/          # Type definitions
+    ├── constants/      # Constants
+    └── styles/         # Global styles
 
-# API 연동 규칙
+# API Integration Rules
 api:
-  # HTTP 클라이언트
+  # HTTP client
   client: "axios"       # axios | fetch | ky
 
-  # API 호출 위치
+  # API call location
   location: "services"  # services | features | hooks
 
-  # 에러 핸들링
+  # Error handling
   error_handling: "centralized"  # centralized | per-request
 
-  # 인터셉터 사용
+  # Interceptors usage
   interceptors: true
 
-# 에러 처리 규칙
+# Error Handling Rules
 error_handling:
-  # Error Boundary 사용
+  # Error Boundary usage
   error_boundary: true
 
-  # 로깅
+  # Logging
   logging: "console"    # console | service | both
 
-  # 사용자 알림
+  # User notification
   user_notification: "toast"  # toast | modal | inline
 
-# 테스트 규칙
+# Testing Rules
 testing:
-  # 테스트 프레임워크
+  # Test framework
   framework: "vitest"   # vitest | jest
 
-  # E2E 프레임워크
+  # E2E framework
   e2e: "playwright"     # playwright | cypress
 
-  # 커버리지 목표
+  # Coverage target
   coverage_target: 80
 
-  # 필수 테스트
+  # Required tests
   required:
     - "unit"
     - "integration"
 
-# 코드 품질 규칙
+# Code Quality Rules
 code_quality:
-  # 린터
+  # Linter
   linter: "eslint"
 
-  # 포매터
+  # Formatter
   formatter: "prettier"
 
-  # 타입 체크
+  # Type check
   type_check: "strict"  # strict | loose
 
-  # 커밋 훅
+  # Commit hooks
   commit_hooks: true
 
-# 문서화 규칙
+# Documentation Rules
 documentation:
-  # JSDoc 사용
+  # JSDoc usage
   jsdoc: true
 
-  # README 필수
+  # README per feature
   readme_per_feature: false
 
-  # 컴포넌트 문서
+  # Component documentation
   component_docs: "storybook"  # storybook | docz | none
 
-# 금지 사항
+# Prohibited Practices
 prohibited:
-  - "any 타입 사용 (명시적 escape 제외)"
-  - "console.log (개발 중 제외)"
-  - "인라인 스타일 (동적 스타일 제외)"
-  - "매직 넘버/스트링"
-  - "중첩 삼항 연산자"
-  - "var 키워드"
+  - "Using 'any' type (except explicit escape)"
+  - "console.log (except during development)"
+  - "Inline styles (except dynamic styles)"
+  - "Magic numbers/strings"
+  - "Nested ternary operators"
+  - "var keyword"
 
-# 권장 사항
+# Recommended Practices
 recommended:
-  - "Early return 패턴"
+  - "Early return pattern"
   - "Descriptive naming"
   - "Small functions (< 30 lines)"
   - "Composition over inheritance"

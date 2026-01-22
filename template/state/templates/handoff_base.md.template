@@ -1,51 +1,51 @@
 # Stage Handoff: {{CURRENT_STAGE}} → {{NEXT_STAGE}}
 
-**생성일**: {{TIMESTAMP}}
-**생성자**: {{PRIMARY_AI}}
-**소요 시간**: {{DURATION}}
+**Created**: {{TIMESTAMP}}
+**Creator**: {{PRIMARY_AI}}
+**Duration**: {{DURATION}}
 
 ---
 
-## AI 사용 기록
+## AI Usage Log
 
-> 이 섹션은 의도된 AI 설정과 실제 사용을 비교하여 협업 효율성을 추적합니다.
+> This section compares intended AI settings with actual usage to track collaboration efficiency.
 
-### 의도 vs 실제 비교
+### Intended vs Actual Comparison
 
-| 항목 | 의도 | 실제 | 일치 |
-|------|------|------|------|
+| Item | Intended | Actual | Match |
+|------|----------|--------|-------|
 | Primary AI | {{INTENDED_PRIMARY_AI}} | {{ACTUAL_PRIMARY_AI}} | {{PRIMARY_MATCH}} |
 | Secondary AI | {{INTENDED_SECONDARY_AI}} | {{ACTUAL_SECONDARY_AI}} | {{SECONDARY_MATCH}} |
-| 협업 모드 | {{INTENDED_COLLABORATION_MODE}} | {{ACTUAL_COLLABORATION_MODE}} | {{MODE_MATCH}} |
-| 외부 AI 호출 | {{INTENDED_EXTERNAL_CALL}} | {{ACTUAL_EXTERNAL_CALL}} | {{EXTERNAL_MATCH}} |
+| Collaboration Mode | {{INTENDED_COLLABORATION_MODE}} | {{ACTUAL_COLLABORATION_MODE}} | {{MODE_MATCH}} |
+| External AI Call | {{INTENDED_EXTERNAL_CALL}} | {{ACTUAL_EXTERNAL_CALL}} | {{EXTERNAL_MATCH}} |
 
-### 협업 모드 상세
+### Collaboration Mode Details
 
-- **설정된 모드**: {{COLLABORATION_MODE}} (parallel/debate/sequential/none)
-- **실제 실행**: {{MODE_EXECUTED}} (예/아니오)
-- **미실행 사유**: {{NON_EXECUTION_REASON}}
+- **Configured Mode**: {{COLLABORATION_MODE}} (parallel/debate/sequential/none)
+- **Actual Execution**: {{MODE_EXECUTED}} (Yes/No)
+- **Reason for Non-Execution**: {{NON_EXECUTION_REASON}}
 
-### AI 호출 로그
+### AI Call Log
 
-| AI | 호출 시간 | 역할 | 프롬프트 | 결과 | 상태 |
-|----|----------|------|---------|------|------|
+| AI | Call Time | Role | Prompt | Result | Status |
+|----|-----------|------|--------|--------|--------|
 {{#each AI_CALLS}}
 | {{this.model}} | {{this.timestamp}} | {{this.role}} | {{this.prompt_file}} | {{this.output_file}} | {{this.status}} |
 {{/each}}
 
-### 폴백 기록
+### Fallback Log
 
-| 시도한 AI | 실패 시간 | 오류 | 폴백 AI | 결과 |
-|----------|----------|------|---------|------|
+| Attempted AI | Failure Time | Error | Fallback AI | Result |
+|--------------|--------------|-------|-------------|--------|
 {{#each FALLBACK_EVENTS}}
 | {{this.attempted_model}} | {{this.failure_time}} | {{this.error}} | {{this.fallback_model}} | {{this.result}} |
 {{/each}}
 
-> 설정: `config/ai_collaboration.yaml`, `config/mcp_fallbacks.yaml`
+> Configuration: `config/ai_collaboration.yaml`, `config/mcp_fallbacks.yaml`
 
 ---
 
-## 완료된 작업
+## Completed Tasks
 
 {{#each COMPLETED_TASKS}}
 - [x] {{this.name}} {{#if this.ai}}({{this.ai}}){{/if}}
@@ -53,103 +53,103 @@
 
 ---
 
-## 다음 에이전트를 위한 컨텍스트
+## Context for Next Agent
 
-### 핵심 결정사항
+### Key Decisions
 
 {{#each KEY_DECISIONS}}
 - **{{this.topic}}**: {{this.decision}}
-  - 이유: {{this.rationale}}
-  - 대안: {{this.alternatives}}
+  - Rationale: {{this.rationale}}
+  - Alternatives: {{this.alternatives}}
 {{/each}}
 
-### 수정된 파일
+### Modified Files
 
-| 파일 | 변경 유형 | 변경 줄 수 | 담당 AI |
-|------|----------|----------|---------|
+| File | Change Type | Lines Changed | Responsible AI |
+|------|-------------|---------------|----------------|
 {{#each MODIFIED_FILES}}
 | `{{this.path}}` | {{this.change_type}} | {{this.lines_changed}} | {{this.ai_model}} |
 {{/each}}
 
-### 알려진 이슈 / 기술 부채
+### Known Issues / Technical Debt
 
 {{#each KNOWN_ISSUES}}
 - **{{this.id}}**: {{this.description}}
-  - 심각도: {{this.severity}}
-  - 상태: {{this.status}}
+  - Severity: {{this.severity}}
+  - Status: {{this.status}}
 {{/each}}
 
 ---
 
-## 테스트 상태 (Test-First 플로우)
+## Test Status (Test-First Flow)
 
-> ⚠️ 이 스테이지에서 테스트가 실행되었는지 확인하세요.
+> ⚠️ Verify that tests were run in this stage.
 
-### 실행된 테스트
+### Tests Run
 
-| 테스트 유형 | 실행 시간 | 결과 | 커버리지 |
-|-----------|----------|------|---------|
+| Test Type | Run Time | Result | Coverage |
+|-----------|----------|--------|----------|
 {{#each TESTS_RUN}}
 | {{this.type}} | {{this.timestamp}} | {{this.result}} | {{this.coverage}} |
 {{/each}}
 
-### 스모크 테스트 결과
+### Smoke Test Results
 
-- **`npm run dev` 실행**: {{DEV_SERVER_STATUS}}
-- **기본 동작 확인**: {{BASIC_FUNCTIONALITY}}
-- **Playwright 스모크 테스트**: {{PLAYWRIGHT_SMOKE}}
+- **`npm run dev` execution**: {{DEV_SERVER_STATUS}}
+- **Basic functionality check**: {{BASIC_FUNCTIONALITY}}
+- **Playwright smoke test**: {{PLAYWRIGHT_SMOKE}}
 
-### 발견된 버그
+### Bugs Found
 
 {{#each BUGS_FOUND}}
 - **{{this.id}}**: {{this.description}}
-  - 발견 시점: {{this.found_at}}
-  - 상태: {{this.status}}
-  - 수정 파일: {{this.fix_file}}
+  - Found at: {{this.found_at}}
+  - Status: {{this.status}}
+  - Fix file: {{this.fix_file}}
 {{/each}}
 
 ---
 
-## 체크포인트 정보
+## Checkpoint Information
 
-| ID | 생성일 | 설명 | 자동/수동 |
-|----|--------|------|----------|
+| ID | Created | Description | Auto/Manual |
+|----|---------|-------------|-------------|
 {{#each CHECKPOINTS}}
 | {{this.id}} | {{this.date}} | {{this.description}} | {{this.type}} |
 {{/each}}
 
-복구 명령:
+Recovery command:
 ```bash
 scripts/restore-checkpoint.sh {{LATEST_CP_ID}}
 ```
 
 ---
 
-## 생성된 산출물
+## Generated Outputs
 
-| 파일 | 설명 | 검증 상태 |
-|------|------|----------|
+| File | Description | Validation Status |
+|------|-------------|-------------------|
 {{#each OUTPUTS}}
 | {{this.path}} | {{this.description}} | {{this.validation_status}} |
 {{/each}}
 
 ---
 
-## {{NEXT_STAGE}} 스테이지 가이드
+## {{NEXT_STAGE}} Stage Guide
 
-### 즉시 실행할 작업
+### Immediate Tasks
 
 {{#each IMMEDIATE_TASKS}}
 {{this.order}}. {{this.task}}
 {{/each}}
 
-### 주의사항
+### Warnings
 
 {{#each WARNINGS}}
 - ⚠️ {{this}}
 {{/each}}
 
-### 참조 파일
+### Reference Files
 
 {{#each REFERENCE_FILES}}
 - `{{this}}`
@@ -157,7 +157,7 @@ scripts/restore-checkpoint.sh {{LATEST_CP_ID}}
 
 ---
 
-## 메타데이터
+## Metadata
 
 ```yaml
 stage: "{{CURRENT_STAGE}}"

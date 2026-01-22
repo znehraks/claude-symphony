@@ -1,102 +1,102 @@
 # Stage Handoff: 01-brainstorm → 02-research
 
-**생성일**: {{TIMESTAMP}}
-**생성자**: {{MODEL}}
-**소요 시간**: {{DURATION}}
+**Created**: {{TIMESTAMP}}
+**Creator**: {{MODEL}}
+**Duration**: {{DURATION}}
 
 ---
 
-## 완료된 작업
+## Completed Tasks
 
-- [ ] 프로젝트 브리프 분석
-- [ ] 브레인스토밍 ({{IDEA_COUNT}}개 아이디어)
-- [ ] 사용자 페르소나 생성 ({{PERSONA_COUNT}}개)
-- [ ] 요구사항 분석
-- [ ] MVP 범위 정의
-- [ ] HANDOFF.md 생성
+- [ ] Project brief analysis
+- [ ] Brainstorming ({{IDEA_COUNT}} ideas)
+- [ ] User persona creation ({{PERSONA_COUNT}} personas)
+- [ ] Requirements analysis
+- [ ] MVP scope definition
+- [ ] HANDOFF.md generation
 
 ---
 
-## 다음 에이전트를 위한 컨텍스트
+## Context for Next Agent
 
-### 핵심 결정사항
+### Key Decisions
 
-| 결정 | 이유 | 되돌릴 수 있음 |
-|------|------|----------------|
+| Decision | Rationale | Reversible |
+|----------|-----------|------------|
 | {{DECISION_1}} | {{REASON_1}} | Yes/No |
 | {{DECISION_2}} | {{REASON_2}} | Yes/No |
 
-### 성공한 접근법
+### Successful Approaches
 - {{SUCCESSFUL_APPROACH_1}}
 - {{SUCCESSFUL_APPROACH_2}}
 
-### 실패한 접근법
+### Failed Approaches
 - {{FAILED_APPROACH_1}}: {{FAILURE_REASON_1}}
 
-### 우선순위 아이디어 (Top 5)
+### Priority Ideas (Top 5)
 1. **{{IDEA_1}}** - {{IDEA_1_VALUE}}
 2. **{{IDEA_2}}** - {{IDEA_2_VALUE}}
 3. **{{IDEA_3}}** - {{IDEA_3_VALUE}}
 4. **{{IDEA_4}}** - {{IDEA_4_VALUE}}
 5. **{{IDEA_5}}** - {{IDEA_5_VALUE}}
 
-### MVP 핵심 기능
+### MVP Core Features
 1. {{MVP_FEATURE_1}}
 2. {{MVP_FEATURE_2}}
 3. {{MVP_FEATURE_3}}
 
 ---
 
-## 생성된 산출물
+## Generated Outputs
 
-| 파일 | 설명 | 위치 |
-|------|------|------|
-| ideas.md | 브레인스토밍 아이디어 | `outputs/ideas.md` |
-| requirements_analysis.md | 요구사항 분석 | `outputs/requirements_analysis.md` |
-| personas.md | 사용자 페르소나 | `outputs/personas.md` (선택) |
+| File | Description | Location |
+|------|-------------|----------|
+| ideas.md | Brainstorming ideas | `outputs/ideas.md` |
+| requirements_analysis.md | Requirements analysis | `outputs/requirements_analysis.md` |
+| personas.md | User personas | `outputs/personas.md` (optional) |
 
 ---
 
-## 02-research 스테이지 가이드
+## 02-research Stage Guide
 
-### 즉시 실행할 작업
-1. `outputs/requirements_analysis.md` 읽고 MVP 범위 확인
-2. 우선순위 아이디어 기술 스택 리서치
-3. 경쟁사 심층 분석
+### Immediate Tasks
+1. Read `outputs/requirements_analysis.md` and verify MVP scope
+2. Research tech stack for priority ideas
+3. In-depth competitor analysis
 
-### 리서치 우선순위
+### Research Priorities
 1. {{RESEARCH_PRIORITY_1}}
 2. {{RESEARCH_PRIORITY_2}}
 3. {{RESEARCH_PRIORITY_3}}
 
-### 검증 필요 가정
+### Assumptions to Validate
 - {{ASSUMPTION_1}}
 - {{ASSUMPTION_2}}
 
-### 권장 MCP 서버
-- `firecrawl`: 웹 크롤링
-- `exa`: AI 검색
-- `context7`: 문서 검색
+### Recommended MCP Servers
+- `firecrawl`: Web crawling
+- `exa`: AI search
+- `context7`: Documentation search
 
 ---
 
-## 체크포인트 참조
-> 이 스테이지는 체크포인트가 필요하지 않습니다.
+## Checkpoint Reference
+> Checkpoints are not required for this stage.
 
 ---
 
-## AI 호출 기록
+## AI Call Log
 
-| AI | 호출 시간 | 프롬프트 | 결과 | 상태 |
-|----|----------|---------|------|------|
+| AI | Call Time | Prompt | Result | Status |
+|----|-----------|--------|--------|--------|
 | {{AI_1}} | {{TIME_1}} | {{PROMPT_1}} | {{OUTPUT_1}} | {{STATUS_1}} |
 | {{AI_2}} | {{TIME_2}} | {{PROMPT_2}} | {{OUTPUT_2}} | {{STATUS_2}} |
 
-> 설정: `config/ai_logging.yaml`
+> Configuration: `config/ai_logging.yaml`
 
 ---
 
-## 메타데이터
+## Metadata
 
 ```yaml
 stage: "01-brainstorm"

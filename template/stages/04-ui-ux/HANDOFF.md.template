@@ -1,87 +1,87 @@
 # Stage Handoff: 04-ui-ux → 05-task-management
 
-**생성일**: {{TIMESTAMP}}
-**생성자**: Gemini
-**소요 시간**: {{DURATION}}
+**Created**: {{TIMESTAMP}}
+**Creator**: Gemini
+**Duration**: {{DURATION}}
 
 ---
 
-## 완료된 작업
+## Completed Tasks
 
-- [ ] 정보 아키텍처 정의
-- [ ] 와이어프레임 작성 ({{SCREEN_COUNT}}개 화면)
-- [ ] 사용자 플로우 정의 ({{FLOW_COUNT}}개)
-- [ ] 디자인 시스템 기초 수립
-- [ ] HANDOFF.md 생성
+- [ ] Information architecture definition
+- [ ] Wireframe creation ({{SCREEN_COUNT}} screens)
+- [ ] User flow definition ({{FLOW_COUNT}} flows)
+- [ ] Design system foundation establishment
+- [ ] HANDOFF.md generation
 
 ---
 
-## 다음 에이전트를 위한 컨텍스트
+## Context for Next Agent
 
-### 화면 목록
+### Screen List
 
-| # | 화면 | 우선순위 | 복잡도 |
-|---|------|----------|--------|
+| # | Screen | Priority | Complexity |
+|---|--------|----------|------------|
 | 1 | {{SCREEN_1}} | Must | |
 | 2 | {{SCREEN_2}} | Must | |
 | 3 | {{SCREEN_3}} | Should | |
 
-### 컴포넌트 목록
+### Component List
 
-| 컴포넌트 | 변형 | 재사용성 |
-|----------|------|----------|
+| Component | Variants | Reusability |
+|-----------|----------|-------------|
 | Button | Primary, Secondary, Ghost | High |
 | Input | Text, Password, Search | High |
 | Card | Default, Compact | Medium |
 
-### 디자인 토큰 요약
+### Design Token Summary
 - **Primary Color**: {{PRIMARY_COLOR}}
 - **Font Family**: {{FONT_FAMILY}}
 - **Base Spacing**: {{SPACING}}
 
-### 핵심 사용자 플로우
+### Core User Flows
 1. {{FLOW_1}}
 2. {{FLOW_2}}
 3. {{FLOW_3}}
 
 ---
 
-## 생성된 산출물
+## Generated Outputs
 
-| 파일 | 설명 |
-|------|------|
-| wireframes.md | 화면 와이어프레임 |
-| user_flows.md | 사용자 플로우 |
-| design_system.md | 디자인 시스템 |
-
----
-
-## 05-task-management 스테이지 가이드
-
-### 즉시 실행할 작업
-1. 화면/컴포넌트 기반 태스크 분해
-2. 의존성 파악
-3. 스프린트 할당
-
-### 구현 우선순위 제안
-1. 공통 컴포넌트 (Button, Input, Card)
-2. 레이아웃 컴포넌트
-3. 핵심 화면 구현
+| File | Description |
+|------|-------------|
+| wireframes.md | Screen wireframes |
+| user_flows.md | User flows |
+| design_system.md | Design system |
 
 ---
 
-## AI 호출 기록
+## 05-task-management Stage Guide
 
-| AI | 호출 시간 | 프롬프트 | 결과 | 상태 |
-|----|----------|---------|------|------|
+### Immediate Tasks
+1. Task breakdown based on screens/components
+2. Identify dependencies
+3. Sprint allocation
+
+### Implementation Priority Proposal
+1. Common components (Button, Input, Card)
+2. Layout components
+3. Core screen implementation
+
+---
+
+## AI Call Log
+
+| AI | Call Time | Prompt | Result | Status |
+|----|-----------|--------|--------|--------|
 | {{AI_1}} | {{TIME_1}} | {{PROMPT_1}} | {{OUTPUT_1}} | {{STATUS_1}} |
 | {{AI_2}} | {{TIME_2}} | {{PROMPT_2}} | {{OUTPUT_2}} | {{STATUS_2}} |
 
-> 설정: `config/ai_logging.yaml`
+> Configuration: `config/ai_logging.yaml`
 
 ---
 
-## 메타데이터
+## Metadata
 
 ```yaml
 stage: "04-ui-ux"
