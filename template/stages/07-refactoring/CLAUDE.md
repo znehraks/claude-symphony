@@ -101,6 +101,48 @@ Goals: Improve readability, optimize performance"
 
 ---
 
+## ⚠️ Mandatory Git Commit Rule
+
+> **CRITICAL**: Git commit is REQUIRED after every task completion in this stage.
+
+### Per-Task Commit Protocol
+After completing each task:
+
+1. **Stage changes**
+   ```bash
+   git add <relevant-files>
+   ```
+
+2. **Commit with conventional format**
+   ```bash
+   git commit -m "refactor(refactor): <task description>"
+   ```
+
+3. **Verify clean state**
+   ```bash
+   git status  # Should show "nothing to commit"
+   ```
+
+### Commit Message Format
+| Task Type | Format | Example |
+|-----------|--------|---------|
+| Code cleanup | `refactor(refactor): ...` | `refactor(refactor): extract auth logic to service` |
+| Performance | `perf(refactor): ...` | `perf(refactor): optimize database queries` |
+| Duplication removal | `refactor(refactor): ...` | `refactor(refactor): consolidate API handlers` |
+| Architecture | `refactor(refactor): ...` | `refactor(refactor): apply repository pattern` |
+
+### ❌ Prohibited
+- Proceeding to next task without committing
+- Batching multiple tasks into single commit
+- WIP or meaningless commit messages
+
+### ✅ Required
+- One commit per task (minimum)
+- Meaningful, descriptive commit messages
+- Clean working directory before next task
+
+---
+
 ## ⚠️ AI Usage Recording (Required)
 
 > **Important**: This stage requires Codex CLI.

@@ -78,6 +78,50 @@ Quality assurance and code review stage
 - Fix and verify
 - Regression testing
 
+---
+
+## ⚠️ Mandatory Git Commit Rule
+
+> **CRITICAL**: Git commit is REQUIRED after every task completion in this stage.
+
+### Per-Task Commit Protocol
+After completing each task:
+
+1. **Stage changes**
+   ```bash
+   git add <relevant-files>
+   ```
+
+2. **Commit with conventional format**
+   ```bash
+   git commit -m "fix(qa): <task description>"
+   ```
+
+3. **Verify clean state**
+   ```bash
+   git status  # Should show "nothing to commit"
+   ```
+
+### Commit Message Format
+| Task Type | Format | Example |
+|-----------|--------|---------|
+| Bug fix | `fix(qa): ...` | `fix(qa): fix login validation bug` |
+| Security fix | `fix(qa): ...` | `fix(qa): sanitize user input` |
+| Code review fix | `fix(qa): ...` | `fix(qa): address code review comments` |
+| Test fix | `fix(qa): ...` | `fix(qa): fix flaky test in auth module` |
+
+### ❌ Prohibited
+- Proceeding to next task without committing
+- Batching multiple tasks into single commit
+- WIP or meaningless commit messages
+
+### ✅ Required
+- One commit per task (minimum)
+- Meaningful, descriptive commit messages
+- Clean working directory before next task
+
+---
+
 ## Completion Criteria
 - [ ] Code review complete
 - [ ] Security inspection passed

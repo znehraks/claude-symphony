@@ -108,6 +108,50 @@ npx playwright install
 - **Functions**: 80%
 - **Lines**: 80%
 
+---
+
+## ⚠️ Mandatory Git Commit Rule
+
+> **CRITICAL**: Git commit is REQUIRED after every task completion in this stage.
+
+### Per-Task Commit Protocol
+After completing each task:
+
+1. **Stage changes**
+   ```bash
+   git add <relevant-files>
+   ```
+
+2. **Commit with conventional format**
+   ```bash
+   git commit -m "test(test): <task description>"
+   ```
+
+3. **Verify clean state**
+   ```bash
+   git status  # Should show "nothing to commit"
+   ```
+
+### Commit Message Format
+| Task Type | Format | Example |
+|-----------|--------|---------|
+| Unit test | `test(test): ...` | `test(test): add user service unit tests` |
+| Integration test | `test(test): ...` | `test(test): add API integration tests` |
+| E2E test | `test(test): ...` | `test(test): add auth E2E tests` |
+| Test fix | `test(test): ...` | `test(test): fix flaky async test` |
+
+### ❌ Prohibited
+- Proceeding to next task without committing
+- Batching multiple tasks into single commit
+- WIP or meaningless commit messages
+
+### ✅ Required
+- One commit per task (minimum)
+- Meaningful, descriptive commit messages
+- Clean working directory before next task
+
+---
+
 ## Completion Criteria
 - [ ] Unit tests written (coverage 80%+)
 - [ ] Integration tests written

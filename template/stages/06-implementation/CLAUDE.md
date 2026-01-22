@@ -111,6 +111,50 @@ cd project-name
 | `/next` | Sprint remaining → Next Sprint / Complete → Stage 07 |
 | `/next --stage` | Force Stage transition (skip Sprints, not recommended) |
 
+---
+
+## ⚠️ Mandatory Git Commit Rule
+
+> **CRITICAL**: Starting from Stage 06, git commit is REQUIRED after every task completion.
+
+### Per-Task Commit Protocol
+After completing each task:
+
+1. **Stage changes**
+   ```bash
+   git add <relevant-files>
+   ```
+
+2. **Commit with conventional format**
+   ```bash
+   git commit -m "feat(impl): <task description>"
+   ```
+
+3. **Verify clean state**
+   ```bash
+   git status  # Should show "nothing to commit"
+   ```
+
+### Commit Message Format
+| Task Type | Format | Example |
+|-----------|--------|---------|
+| New feature | `feat(impl): ...` | `feat(impl): add user login form` |
+| Component | `feat(impl): ...` | `feat(impl): create Button component` |
+| API | `feat(impl): ...` | `feat(impl): implement auth API endpoint` |
+| Style | `style(impl): ...` | `style(impl): add responsive styles` |
+
+### ❌ Prohibited
+- Proceeding to next task without committing
+- Batching multiple tasks into single commit
+- WIP or meaningless commit messages
+
+### ✅ Required
+- One commit per task (minimum)
+- Meaningful, descriptive commit messages
+- Clean working directory before next task
+
+---
+
 ### Sprint Completion Criteria
 
 Each Sprint completion requires:

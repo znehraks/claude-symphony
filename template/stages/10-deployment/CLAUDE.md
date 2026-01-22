@@ -97,6 +97,50 @@ jobs:
 - **AWS**: Enterprise
 - **Cloudflare**: Edge
 
+---
+
+## ⚠️ Mandatory Git Commit Rule
+
+> **CRITICAL**: Git commit is REQUIRED after every task completion in this stage.
+
+### Per-Task Commit Protocol
+After completing each task:
+
+1. **Stage changes**
+   ```bash
+   git add <relevant-files>
+   ```
+
+2. **Commit with conventional format**
+   ```bash
+   git commit -m "ci(deploy): <task description>"
+   ```
+
+3. **Verify clean state**
+   ```bash
+   git status  # Should show "nothing to commit"
+   ```
+
+### Commit Message Format
+| Task Type | Format | Example |
+|-----------|--------|---------|
+| CI pipeline | `ci(deploy): ...` | `ci(deploy): configure GitHub Actions CI` |
+| CD pipeline | `ci(deploy): ...` | `ci(deploy): add Vercel deployment workflow` |
+| Config | `chore(deploy): ...` | `chore(deploy): add environment variables` |
+| Monitoring | `ci(deploy): ...` | `ci(deploy): configure Sentry error tracking` |
+
+### ❌ Prohibited
+- Proceeding to next task without committing
+- Batching multiple tasks into single commit
+- WIP or meaningless commit messages
+
+### ✅ Required
+- One commit per task (minimum)
+- Meaningful, descriptive commit messages
+- Clean working directory before next task
+
+---
+
 ## Completion Criteria
 - [ ] CI pipeline configured
 - [ ] CD pipeline configured

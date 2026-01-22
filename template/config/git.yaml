@@ -13,6 +13,30 @@ git:
       on_checkpoint: true         # On checkpoint creation
       on_milestone: true          # On milestone completion
 
+  # Enforcement rules (mandatory commits)
+  enforcement:
+    enabled: true
+
+    # Stages where commit is MANDATORY after each task
+    mandatory_stages:
+      - "06-implementation"
+      - "07-refactoring"
+      - "08-qa"
+      - "09-testing"
+      - "10-deployment"
+
+    # Task completion requirements
+    task_completion_requires:
+      - git_commit          # Must commit changes
+      - no_uncommitted_changes  # No pending changes allowed
+
+    # Verification message
+    verification_prompt: |
+      ⚠️ MANDATORY: Before marking this task as complete:
+      1. Stage all related changes: git add <files>
+      2. Commit with conventional format: git commit -m "type(scope): description"
+      3. Verify: git status (should show "nothing to commit")
+
   # Commit message rules (Conventional Commits)
   commit_convention:
     format: "<type>(<scope>): <description>"
