@@ -1,6 +1,6 @@
 {
   "name": "claude-symphony",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Multi-AI Orchestration Framework - Create new projects with 10-stage development workflow",
   "type": "module",
   "bin": {
