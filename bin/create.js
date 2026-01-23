@@ -3,7 +3,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { input, confirm } from '@inquirer/prompts';
+import { input, confirm, select } from '@inquirer/prompts';
 import yaml from 'js-yaml';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -111,6 +111,66 @@ async function collectBriefInfo() {
     default: true
   });
 
+  // === Epic & Workflow Configuration ===
+  console.log('');
+  log('🔄 Epic & Workflow Configuration', 'yellow');
+  log('   (All settings can be modified later via commands)', 'reset');
+
+  // 1. Epic Cycles (High priority)
+  info.epicEnabled = await confirm({
+    message: '🔄 Enable Epic Cycles? (repeat stages for iterative refinement)',
+    default: false
+  });
+
+  if (info.epicEnabled) {
+    // 2. Epic Scope (High priority)
+    info.epicScope = await select({
+      message: '📍 Epic cycle scope: (which stages to repeat)',
+      choices: [
+        { name: 'Ideation (01-03) - concept exploration', value: 'ideation' },
+        { name: 'Design (01-05) - full design iteration', value: 'design' },
+        { name: 'Implementation (06-09) - code sprints', value: 'implementation' },
+        { name: 'Full Pipeline (01-10) - end-to-end', value: 'full' }
+      ],
+      default: 'design'
+    });
+
+    // 3. Total Cycles (High priority)
+    info.epicTotalCycles = await input({
+      message: '🔢 Total Epic cycles (1-5): (iterations for refinement)',
+      default: '2',
+      validate: (v) => {
+        const num = parseInt(v);
+        if (isNaN(num) || num < 1 || num > 5) return 'Enter 1-5';
+        return true;
+      }
+    });
+  }
+
+  // 4. Implementation Order (Medium priority)
+  info.implementationOrder = await select({
+    message: '🏗️ Implementation order: (frontend-first vs backend-first)',
+    choices: [
+      { name: 'Frontend First - UI then APIs', value: 'frontend_first' },
+      { name: 'Backend First - APIs then UI', value: 'backend_first' },
+      { name: 'Parallel - both simultaneously', value: 'parallel' },
+      { name: 'Decide Later', value: null }
+    ],
+    default: null
+  });
+
+  // 5. Requirements Refinement (Medium priority)
+  info.requirementsRefinement = await confirm({
+    message: '📋 Enable Requirements Refinement? (Epic→Feature→Task breakdown)',
+    default: true
+  });
+
+  // 6. Moodboard (Low priority)
+  info.moodboardEnabled = await confirm({
+    message: '🎨 Enable Moodboard collection? (visual references for UI/UX)',
+    default: true
+  });
+
   return info;
 }
 
@@ -181,6 +241,98 @@ function applyConfigSettings(targetDir, info) {
     } catch (e) {
       // Silently continue if JSON parsing fails
     }
+  }
+
+  // Scope preset mapping
+  const scopes = {
+    ideation: { start: '01-brainstorm', end: '03-planning' },
+    design: { start: '01-brainstorm', end: '05-task-management' },
+    implementation: { start: '06-implementation', end: '09-testing' },
+    full: { start: '01-brainstorm', end: '10-deployment' }
+  };
+
+  // Epic Cycles YAML
+  const epicPath = path.join(targetDir, 'config', 'epic_cycles.yaml');
+  if (fs.existsSync(epicPath)) {
+    try {
+      const config = yaml.load(fs.readFileSync(epicPath, 'utf8'));
+      config.epic_cycles.enabled = info.epicEnabled ?? false;
+      if (info.epicEnabled) {
+        config.epic_cycles.cycle_config.default_cycles = parseInt(info.epicTotalCycles) || 2;
+        const scope = scopes[info.epicScope] || scopes.design;
+        config.epic_cycles.cycle_scope.start_stage = scope.start;
+        config.epic_cycles.cycle_scope.end_stage = scope.end;
+      }
+      fs.writeFileSync(epicPath, yaml.dump(config, { lineWidth: -1 }));
+    } catch (e) { /* silent */ }
+  }
+
+  // Implementation Order YAML
+  const implPath = path.join(targetDir, 'config', 'implementation_order.yaml');
+  if (fs.existsSync(implPath)) {
+    try {
+      const config = yaml.load(fs.readFileSync(implPath, 'utf8'));
+      config.implementation_order.current_order = info.implementationOrder ?? null;
+      fs.writeFileSync(implPath, yaml.dump(config, { lineWidth: -1 }));
+    } catch (e) { /* silent */ }
+  }
+
+  // Requirements Refinement YAML
+  const reqPath = path.join(targetDir, 'config', 'requirements_refinement.yaml');
+  if (fs.existsSync(reqPath)) {
+    try {
+      const config = yaml.load(fs.readFileSync(reqPath, 'utf8'));
+      config.requirements_refinement.enabled = info.requirementsRefinement ?? true;
+      fs.writeFileSync(reqPath, yaml.dump(config, { lineWidth: -1 }));
+    } catch (e) { /* silent */ }
+  }
+
+  // UI-UX YAML (Moodboard)
+  const uiPath = path.join(targetDir, 'config', 'ui-ux.yaml');
+  if (fs.existsSync(uiPath)) {
+    try {
+      const config = yaml.load(fs.readFileSync(uiPath, 'utf8'));
+      if (config.moodboard?.collection_flow) {
+        config.moodboard.collection_flow.enabled = info.moodboardEnabled ?? true;
+      }
+      fs.writeFileSync(uiPath, yaml.dump(config, { lineWidth: -1 }));
+    } catch (e) { /* silent */ }
+  }
+
+  // Update progress.json with epic fields
+  if (fs.existsSync(progressPath)) {
+    try {
+      const progress = JSON.parse(fs.readFileSync(progressPath, 'utf8'));
+
+      // Epic cycle settings
+      if (progress.epic_cycle) {
+        progress.epic_cycle.enabled = info.epicEnabled ?? false;
+        if (info.epicEnabled) {
+          progress.epic_cycle.total_cycles = parseInt(info.epicTotalCycles) || 2;
+          const scope = scopes[info.epicScope] || scopes.design;
+          progress.epic_cycle.scope.start_stage = scope.start;
+          progress.epic_cycle.scope.end_stage = scope.end;
+        }
+      }
+
+      // Epic context in current_iteration
+      if (progress.current_iteration?.epic_context) {
+        progress.current_iteration.epic_context.enabled = info.epicEnabled ?? false;
+        progress.current_iteration.epic_context.total_cycles = parseInt(info.epicTotalCycles) || 1;
+      }
+
+      // Implementation order
+      if (progress.implementation_order) {
+        progress.implementation_order.selected = info.implementationOrder ?? null;
+      }
+
+      // Requirements refinement
+      if (progress.requirements_refinement) {
+        progress.requirements_refinement.active = info.requirementsRefinement ?? true;
+      }
+
+      fs.writeFileSync(progressPath, JSON.stringify(progress, null, 2));
+    } catch (e) { /* silent */ }
   }
 }
 
@@ -304,6 +456,32 @@ ${colors.yellow}After creation:${colors.reset}
   log('  Copying template...', 'blue');
   copyRecursiveSync(templateDir, targetDir);
   log('✓ Template copy complete', 'green');
+
+  // 3.1 Remove any nested .git directories from the copied template
+  // This prevents nested git repositories which cause tracking issues
+  function removeNestedGitDirs(dir, isRoot = true) {
+    if (!fs.existsSync(dir)) return;
+
+    const items = fs.readdirSync(dir);
+    for (const item of items) {
+      const itemPath = path.join(dir, item);
+      const stat = fs.statSync(itemPath);
+
+      if (stat.isDirectory()) {
+        if (item === '.git' && !isRoot) {
+          // Remove nested .git directories (not the root one if it exists)
+          fs.rmSync(itemPath, { recursive: true, force: true });
+          log(`  Removed nested .git from ${path.relative(targetDir, dir)}`, 'yellow');
+        } else if (item !== '.git') {
+          // Recurse into non-.git directories
+          removeNestedGitDirs(itemPath, false);
+        }
+      }
+    }
+  }
+
+  removeNestedGitDirs(targetDir);
+  log('✓ Cleaned up nested .git directories', 'green');
 
   // 4. Initialize progress.json
   const progressTemplatePath = path.join(targetDir, 'state', 'progress.json.template');

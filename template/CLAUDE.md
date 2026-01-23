@@ -197,6 +197,15 @@ Visualizes context usage, tool activity, and todo progress in the statusline.
 | `/test` | 09-testing |
 | `/deploy` | 10-deployment |
 
+### Requirements & Design Commands
+| Command | Description |
+|---------|-------------|
+| `/refine` | Interactive requirements refinement (Epic → Feature → Task) |
+| `/refine --validate` | Validate requirements against INVEST criteria |
+| `/moodboard` | Collect design references and analyze design tokens |
+| `/moodboard analyze` | Extract colors, fonts, styles from collected images |
+| `/moodboard skip` | Skip moodboard collection (use AI-generated design) |
+
 ## Skills (Auto-Activated)
 
 | Skill | Trigger | Description |
@@ -366,6 +375,19 @@ state/
   templates/           # State templates
 ```
 
+## Key File Locations
+
+Quick reference for frequently accessed files:
+
+| File | Location | Description |
+|------|----------|-------------|
+| **Project Brief** | `stages/01-brainstorm/inputs/project_brief.md` | Initial project requirements and scope |
+| **Progress State** | `state/progress.json` | Pipeline progress and current state |
+| **Configuration** | `config/*.yaml` | All configuration files |
+| **HANDOFF** | `stages/XX-stage/HANDOFF.md` | Stage transition documents |
+| **Checkpoints** | `state/checkpoints/` | Saved checkpoint files |
+| **Stage Outputs** | `stages/XX-stage/outputs/` | Generated deliverables per stage |
+
 ## Design Patterns Applied
 
 1. **Sequential Workflow Architecture** - Sequential stage definition and auto-progression
@@ -374,6 +396,36 @@ state/
 4. **Proactive State Externalization** - External state file management
 5. **State Machine Workflow** - State transition management (progress.json)
 6. **Layered Configuration** - Hierarchical configuration structure (global → stage)
+
+---
+
+## MCP Server Selection Guide
+
+> Configuration file: `config/mcp_fallbacks.yaml`
+
+### Use Case by MCP Server
+
+| MCP Server | Best For | Example Use Cases |
+|------------|----------|-------------------|
+| **Exa Search** | Web research, market analysis | Competitor research, trend analysis, API docs |
+| **Context7** | Code documentation, library references | Framework docs, package APIs, code examples |
+| **Firecrawl** | Deep website scraping | Extracting structured data, full page content |
+| **Notion** | Task management, collaboration | Creating/updating tasks, project tracking |
+| **Figma** | Design token extraction | Colors, typography, component specs |
+
+### Stage-Specific Recommendations
+
+| Stage | Primary MCP | Fallback | Notes |
+|-------|-------------|----------|-------|
+| 02-research | Exa Search | Context7 | Use Exa for market data, Context7 for tech docs |
+| 03-planning | Context7 | Exa Search | Architecture patterns, framework best practices |
+| 04-ui-ux | Figma | - | Extract design tokens if Figma file available |
+| 05-task-management | Notion | Markdown files | Falls back to local files if Notion not configured |
+
+### Fallback Conditions
+- **API quota exceeded**: Automatic switch to fallback provider
+- **Response quality insufficient**: Manual switch recommended
+- **Timeout**: Retry with fallback after 30 seconds
 
 ---
 
