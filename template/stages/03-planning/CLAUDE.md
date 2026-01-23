@@ -105,11 +105,66 @@ Based on `config/implementation.yaml.template`, define project implementation ru
 - Component diagram
 - Sequence diagram (core flows)
 
+---
+
+## Requirements Refinement (Required)
+
+> Configuration: `config/requirements_refinement.yaml`
+> Command: `/refine`
+
+Before completing this stage, all requirements must be refined to at least Feature level.
+
+### Refinement Workflow
+
+```bash
+/refine                    # Start refinement wizard
+/refine --validate         # Validate all requirements
+/refine --list             # Check refinement status
+```
+
+### 4-Level Hierarchy
+
+| Level | Description | Max Hours |
+|-------|-------------|-----------|
+| Epic | Large theme/capability | - |
+| Feature | User-facing functionality | 40h |
+| Task | Technical implementation | 8h |
+| Subtask | Atomic step | 2h |
+
+### Validation Before Completion
+
+Run `/refine --validate` to check:
+- [ ] All requirements have acceptance criteria
+- [ ] Estimates within thresholds (Feature ≤40h, Task ≤8h)
+- [ ] Dependencies mapped
+- [ ] INVEST criteria met for tasks
+
+### INVEST Criteria
+
+Tasks should be:
+- **I**ndependent - Can be developed alone
+- **N**egotiable - Details flexible
+- **V**aluable - Delivers user value
+- **E**stimable - Has hour estimate
+- **S**mall - ≤ 8 hours
+- **T**estable - Has acceptance criteria
+
+### Output File
+
+Generate `outputs/refined_requirements.md` with the complete hierarchy:
+- Epic → Features → Tasks breakdown
+- Estimates at each level
+- Dependencies mapped
+- Acceptance criteria defined
+
+---
+
 ## Completion Criteria
 - [ ] Write system architecture document
 - [ ] Final technology stack decision
 - [ ] Establish project plan
 - [ ] Define 3+ milestones
+- [ ] **Requirements refined** (`/refine --validate` passes)
 - [ ] Generate HANDOFF.md
 
 ## Next Stage

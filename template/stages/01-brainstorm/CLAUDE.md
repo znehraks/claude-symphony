@@ -115,6 +115,44 @@ For requirements analysis
 ## Next Stage
 → **02-research**: Technical research and market analysis
 
+---
+
+## Requirements Refinement (Optional)
+
+> Configuration: `config/requirements_refinement.yaml`
+> Command: `/refine`
+
+After capturing initial requirements, consider using the refinement tool to break them down:
+
+```bash
+/refine                    # Start refinement wizard
+```
+
+### When to Refine at This Stage
+- Requirements are vague ("user should be able to...")
+- Scope seems large (multiple weeks of work)
+- Acceptance criteria unclear
+
+### Refinement Hierarchy
+```
+Epic (2-8 weeks)
+  └── Feature (3-5 days)
+       └── Task (4-8 hours)
+            └── Subtask (30min-2h)
+```
+
+### Quick Check
+Before completing this stage, scan requirements for:
+- [ ] Vague language: "might need", "etc.", "various"
+- [ ] Missing acceptance criteria
+- [ ] Overly broad scope
+
+Use `/refine --list` to see which requirements need attention.
+
+**Note:** Full refinement can wait until Stage 03 (Planning), but flagging issues early helps.
+
+---
+
 ## Notes
 - Allow unrestricted divergent thinking at this stage
 - Detailed feasibility review in the next stage

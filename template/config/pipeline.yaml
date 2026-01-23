@@ -405,3 +405,37 @@ sprint_mode:
       - record_reason
       - update_handoff
       - notify_user
+
+# ============================================
+# Epic Cycles Configuration
+# ============================================
+# See config/epic_cycles.yaml for full settings
+epic_cycles:
+  enabled: false  # Enable via /epic enable
+  config_file: "config/epic_cycles.yaml"
+
+  # Quick reference - preset scopes
+  preset_scopes:
+    ideation: "01-brainstorm -> 03-planning"
+    design: "01-brainstorm -> 05-task-management"
+    full: "01-brainstorm -> 10-deployment"
+    implementation: "06-implementation -> 09-testing"
+
+  # Integration points
+  integration:
+    # Epic operates above sprint level
+    hierarchy: ["epic", "sprint", "task"]
+
+    # Loop-back is scoped to current epic
+    loop_back_scope: "current_epic"
+
+    # Sprint mode behavior within epic
+    sprint_reset_on_new_epic: true
+
+  # Commands
+  commands:
+    status: "/epic"
+    new: "/epic new [scope]"
+    set_count: "/epic set-count <n>"
+    set_scope: "/epic set-scope <start> <end>"
+    history: "/epic history"

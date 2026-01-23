@@ -56,6 +56,57 @@ Read the `implementation.yaml` file before implementation and verify the followi
 - Folder structure
 - Prohibited/recommended practices
 
+---
+
+## Implementation Order
+
+> Configuration: `config/implementation_order.yaml`
+
+Before starting implementation, check if an implementation order has been set:
+
+```bash
+/config order
+```
+
+### Order Options
+
+| Order | Description | Best For |
+|-------|-------------|----------|
+| `frontend_first` | UI first, then APIs | User-facing apps, design-driven projects |
+| `backend_first` | APIs first, then UI | Data-intensive apps, API-first products |
+| `parallel` | Both simultaneously | Larger teams, well-defined requirements |
+
+### If Order Not Set
+If `implementation_order.selected` is `null`, prompt the user:
+```
+Implementation order not set. Choose an approach:
+- /config order frontend - UI first, then APIs
+- /config order backend - APIs first, then UI
+- /config order parallel - Both simultaneously
+```
+
+### Phase-Based Implementation
+
+Once order is set, follow the phase structure:
+
+**Frontend First:**
+1. Phase 1: UI Foundation (components, design system, mock data)
+2. Phase 2: Backend & Integration (APIs, database, connect UI)
+
+**Backend First:**
+1. Phase 1: API & Data Layer (database, APIs, auth)
+2. Phase 2: Frontend Integration (UI, API client, connect)
+
+**Parallel:**
+1. Phase 1: Contract Definition (API specs, types)
+2. Phase 2: Parallel Implementation (both streams)
+3. Phase 3: Integration (connect and test)
+
+### Reference Links
+Use `/config order links` to display curated documentation links for your chosen approach.
+
+---
+
 ## Output Files
 - `outputs/source_code/` - Source code directory
 - `outputs/implementation_log.md` - Implementation log

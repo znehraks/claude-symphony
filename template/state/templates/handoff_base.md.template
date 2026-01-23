@@ -157,6 +157,103 @@ scripts/restore-checkpoint.sh {{LATEST_CP_ID}}
 
 ---
 
+---
+
+## Epic Cycle Information
+
+{{#if EPIC_CYCLE_ENABLED}}
+| Property | Value |
+|----------|-------|
+| Current Cycle | {{CURRENT_CYCLE}} / {{TOTAL_CYCLES}} |
+| Scope | {{SCOPE_START}} → {{SCOPE_END}} |
+| Completed Cycles | {{COMPLETED_CYCLES}} |
+
+### Previous Cycle Learnings
+{{#if PREVIOUS_CYCLE_LEARNINGS}}
+{{PREVIOUS_CYCLE_LEARNINGS}}
+{{else}}
+_First cycle - no previous learnings_
+{{/if}}
+{{else}}
+_Epic cycles not enabled_
+{{/if}}
+
+---
+
+## Implementation Order
+
+{{#if IMPLEMENTATION_ORDER}}
+| Property | Value |
+|----------|-------|
+| Selected Order | {{IMPLEMENTATION_ORDER}} |
+| Current Phase | {{CURRENT_PHASE}} |
+| Phase Name | {{PHASE_NAME}} |
+
+### Reference Links
+{{#each TECH_REFERENCE_LINKS}}
+- [{{this.name}}]({{this.url}}) - {{this.description}}
+{{/each}}
+{{else}}
+_Implementation order not yet selected_
+{{/if}}
+
+---
+
+## Moodboard Analysis
+
+{{#if MOODBOARD_ACTIVE}}
+| Property | Value |
+|----------|-------|
+| Style | {{DESIGN_STYLE}} |
+| Analysis Status | {{ANALYSIS_STATUS}} |
+| Feedback Iterations | {{FEEDBACK_ITERATIONS}} |
+
+### Collected Categories
+{{#each MOODBOARD_CATEGORIES}}
+- {{this.name}}: {{this.count}} images
+{{/each}}
+
+### Design Token Summary
+{{#if DESIGN_TOKENS_GENERATED}}
+- Colors: {{COLOR_COUNT}} defined
+- Typography: {{TYPOGRAPHY_COUNT}} styles
+- Spacing: {{SPACING_COUNT}} values
+{{else}}
+_Design tokens not yet generated_
+{{/if}}
+{{else}}
+_Moodboard collection not active_
+{{/if}}
+
+---
+
+## Requirements Refinement
+
+{{#if REFINEMENT_ACTIVE}}
+| Property | Value |
+|----------|-------|
+| Iteration | {{REFINEMENT_ITERATION}} |
+| Refined Requirements | {{REFINED_COUNT}} |
+| Validation Status | {{VALIDATION_STATUS}} |
+
+### Refinement Summary
+| Level | Count |
+|-------|-------|
+| Epics | {{EPIC_COUNT}} |
+| Features | {{FEATURE_COUNT}} |
+| Tasks | {{TASK_COUNT}} |
+| Subtasks | {{SUBTASK_COUNT}} |
+
+### Pending Refinement
+{{#each PENDING_REFINEMENT}}
+- {{this.requirement}} ({{this.level}})
+{{/each}}
+{{else}}
+_No active refinement session_
+{{/if}}
+
+---
+
 ## Metadata
 
 ```yaml
@@ -181,6 +278,27 @@ testing:
   smoke_test_run: {{SMOKE_TEST_RUN}}
   bugs_found: {{BUGS_FOUND_COUNT}}
   bugs_fixed: {{BUGS_FIXED_COUNT}}
+
+# Advanced Features
+epic_cycle:
+  enabled: {{EPIC_CYCLE_ENABLED}}
+  current: {{CURRENT_CYCLE}}
+  total: {{TOTAL_CYCLES}}
+  scope: "{{SCOPE_START}} -> {{SCOPE_END}}"
+
+implementation_order:
+  selected: "{{IMPLEMENTATION_ORDER}}"
+  phase: {{CURRENT_PHASE}}
+
+moodboard:
+  active: {{MOODBOARD_ACTIVE}}
+  iterations: {{FEEDBACK_ITERATIONS}}
+  tokens_generated: {{DESIGN_TOKENS_GENERATED}}
+
+refinement:
+  active: {{REFINEMENT_ACTIVE}}
+  iteration: {{REFINEMENT_ITERATION}}
+  validated: {{VALIDATION_STATUS}}
 
 checkpoint_id: "{{LATEST_CP_ID}}"
 files_modified: {{FILE_COUNT}}

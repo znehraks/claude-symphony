@@ -69,15 +69,40 @@ User interface and experience design stage
 ## Moodboard Analysis
 
 > Configuration: `config/ui-ux.yaml`
+> Command: `/moodboard`
 
-When images are present in `inputs/moodboard/`, analyze them using vision capabilities:
+### Interactive Moodboard Collection (Recommended)
+
+Use the interactive moodboard flow for guided collection:
+
+```bash
+/moodboard                    # Start interactive flow
+```
+
+This guides you through:
+1. **Style Discovery** - Choose visual direction (Modern, Bold, Professional, Playful)
+2. **Category Selection** - Pick reference types to collect
+3. **Image Collection** - Add images via file, URL, or Figma link
+4. **Review & Analyze** - Run analysis and iterate
+
+### Quick Add (Alternative)
+
+Add images directly to categories:
+
+```bash
+/moodboard add ui ~/Desktop/app_screenshot.png
+/moodboard add colors https://example.com/palette.png
+/moodboard add sketches ./wireframe.png
+```
 
 ### Directory Structure
 ```
 inputs/moodboard/
 ├── ui-references/    # Reference UI screenshots
 ├── brand-assets/     # Brand colors, logos, typography
-└── sketches/         # Wireframes and hand-drawn sketches
+├── sketches/         # Wireframes and hand-drawn sketches
+├── inspirations/     # General inspiration images
+└── competitors/      # Competitor screenshots
 ```
 
 ### Analysis Workflow
@@ -97,14 +122,47 @@ inputs/moodboard/
    - Map sketch elements to components
    - Identify user flow intentions
 
+### Analysis Providers
+
+| Provider | Capabilities |
+|----------|--------------|
+| `claude_vision` (default) | Color extraction, layout analysis, component ID |
+| `figma_mcp` | Design token export, variable extraction |
+
+### Feedback Loop
+
+After initial analysis, refine with feedback:
+
+```bash
+/moodboard analyze             # Run analysis
+/moodboard feedback "..."      # Provide feedback
+/moodboard analyze             # Re-run with refinements
+```
+
+Up to 3 iterations supported.
+
+### Export Design Tokens
+
+```bash
+/moodboard export
+```
+
+Generates:
+- `outputs/design_tokens.json` - Design tokens
+- `outputs/design_system.md` - Design system doc
+- `outputs/component_spec.md` - Component specifications
+
 ### Vision Analysis Checklist
+- [ ] Collect references using `/moodboard` flow
 - [ ] Extract color palette from brand assets
 - [ ] Identify layout patterns from references
 - [ ] Map sketch elements to component suggestions
 - [ ] Document design constraints from references
 - [ ] Generate initial component list from analysis
+- [ ] Iterate with feedback (2-3 rounds max)
+- [ ] Export final design tokens
 
-**Note:** AI analyzes images manually using vision capabilities. No automated scripts required.
+**Note:** AI analyzes images using vision capabilities. Use `/moodboard analyze` to trigger analysis.
 
 ## Output Files
 - `outputs/wireframes.md` - Wireframes (ASCII/Mermaid)

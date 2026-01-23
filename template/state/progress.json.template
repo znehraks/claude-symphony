@@ -11,7 +11,12 @@
   "current_iteration": {
     "type": "sprint",
     "current_sprint": 1,
-    "total_sprints": 3
+    "total_sprints": 3,
+    "epic_context": {
+      "enabled": false,
+      "current_cycle": 1,
+      "total_cycles": 1
+    }
   },
   "sprints": {
     "Sprint 1": {
@@ -128,6 +133,38 @@
   },
   "checkpoints": [],
   "context_snapshots": [],
+  "epic_cycle": {
+    "enabled": false,
+    "current_cycle": 1,
+    "total_cycles": 1,
+    "scope": {
+      "start_stage": "01-brainstorm",
+      "end_stage": "05-task-management"
+    },
+    "completed_cycles": 0,
+    "cycle_start_time": null,
+    "modification_history": []
+  },
+  "epic_history": [],
+  "implementation_order": {
+    "selected": null,
+    "set_at": null,
+    "current_phase": null
+  },
+  "requirements_refinement": {
+    "active": false,
+    "current_iteration": 0,
+    "max_iterations": 5,
+    "requirements_under_refinement": [],
+    "last_refinement_at": null
+  },
+  "refinement_history": [],
+  "moodboard": {
+    "collection_active": false,
+    "current_step": null,
+    "analysis_iterations": 0,
+    "feedback_history": []
+  },
   "metadata": {
     "total_tokens_used": 0,
     "total_api_calls": 0,

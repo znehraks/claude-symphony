@@ -39,12 +39,62 @@ smart_handoff:
         include_prompts: false  # Save tokens
         include_results_summary: true
 
+      # Epic Cycle information
+      epic_cycle:
+        enabled: true
+        format: "summary"
+        include:
+          - current_cycle
+          - total_cycles
+          - scope_range
+          - previous_learnings
+        conditional: true  # Only include if epic_cycle.enabled
+
+      # Implementation Order settings
+      implementation_order:
+        enabled: true
+        format: "structured"
+        include:
+          - selected_order
+          - current_phase
+          - phase_name
+          - reference_links
+        conditional: true  # Only include if order is selected
+
+      # Moodboard Analysis data
+      moodboard:
+        enabled: true
+        format: "summary"
+        include:
+          - design_style
+          - analysis_status
+          - feedback_iterations
+          - collected_categories
+          - design_tokens_status
+        conditional: true  # Only include if moodboard.active
+
+      # Requirements Refinement state
+      requirements_refinement:
+        enabled: true
+        format: "hierarchy"
+        include:
+          - current_iteration
+          - refined_count
+          - validation_status
+          - hierarchy_summary
+          - pending_refinement
+        conditional: true  # Only include if refinement.active
+
     # Extraction priority (higher = first)
     priority:
       - blocking_issues: 100
       - key_decisions: 90
       - pending_issues: 80
-      - modified_files: 70
+      - epic_cycle: 75
+      - requirements_refinement: 72
+      - implementation_order: 70
+      - modified_files: 65
+      - moodboard: 62
       - completed_tasks: 60
       - ai_call_history: 50
 
@@ -90,6 +140,7 @@ smart_handoff:
           - current_task_state
           - key_file_changes
           - next_steps
+          - epic_cycle_state
 
       secondary:
         title: "Secondary Context"
@@ -97,6 +148,16 @@ smart_handoff:
         content:
           - completed_tasks_summary
           - ai_call_summary
+          - implementation_order
+          - requirements_refinement_status
+
+      tertiary:
+        title: "Extended Context"
+        max_tokens: 800
+        content:
+          - moodboard_analysis
+          - design_tokens_summary
+          - previous_cycle_learnings
 
     # Highlight information immediately needed by next stage
     highlight:
@@ -105,6 +166,8 @@ smart_handoff:
       content:
         - immediate_actions
         - required_inputs
+        - epic_cycle_transition
+        - refinement_blockers
 
 # Contextual summarization settings
 contextual_summarization:
@@ -140,19 +203,77 @@ contextual_summarization:
       format: "numbered_list"
       include_prerequisites: true
 
+    # Epic Cycle summarization
+    epic_cycle:
+      method: "status_table"
+      format: |
+        | Property | Value |
+        |----------|-------|
+        | Current Cycle | {{current}} / {{total}} |
+        | Scope | {{start}} → {{end}} |
+        | Status | {{status}} |
+      include_learnings: true
+      max_learnings: 5
+
+    # Implementation Order summarization
+    implementation_order:
+      method: "phase_summary"
+      format: |
+        **Order**: {{selected_order}}
+        **Phase**: {{phase_number}} - {{phase_name}}
+        **Progress**: {{completed_tasks}} / {{total_tasks}}
+      include_reference_links: true
+
+    # Moodboard summarization
+    moodboard:
+      method: "design_summary"
+      include:
+        - style_direction
+        - categories_collected
+        - analysis_feedback
+        - design_tokens
+      format: "compact"
+
+    # Requirements Refinement summarization
+    requirements_refinement:
+      method: "hierarchy_summary"
+      format: |
+        **Iteration**: {{iteration}}
+        **Hierarchy**: {{epic_count}} Epics → {{feature_count}} Features → {{task_count}} Tasks
+        **Validation**: {{validation_status}}
+      include_pending: true
+      max_pending: 5
+
   # Stage-specific summary focus
   stage_focus:
     "01-brainstorm":
-      emphasize: ["ideas", "requirements"]
+      emphasize: ["ideas", "requirements", "refinement_candidates"]
       de_emphasize: ["technical_details"]
 
+    "03-planning":
+      emphasize: ["architecture", "tech_decisions", "refined_requirements"]
+      de_emphasize: ["raw_ideas"]
+
+    "04-ui-ux":
+      emphasize: ["moodboard_analysis", "design_tokens", "wireframes"]
+      de_emphasize: ["backend_details"]
+
+    "05-task-management":
+      emphasize: ["implementation_order", "task_breakdown", "sprint_planning"]
+      de_emphasize: ["design_exploration"]
+
     "06-implementation":
-      emphasize: ["code_changes", "technical_decisions"]
+      emphasize: ["code_changes", "technical_decisions", "current_phase"]
       de_emphasize: ["ideation"]
 
     "08-qa":
       emphasize: ["bugs", "test_results"]
       de_emphasize: ["planning_details"]
+
+    # Epic cycle stage transitions
+    "epic_boundary":
+      emphasize: ["cycle_learnings", "scope_adjustments", "preserved_context"]
+      de_emphasize: ["implementation_details"]
 
 # HANDOFF template settings
 templates:
@@ -186,6 +307,27 @@ templates:
         required: false
         auto_generate: true
 
+      # New feature sections (conditional)
+      - name: "Epic Cycle Information"
+        required: false
+        auto_generate: true
+        conditional: "epic_cycle.enabled"
+
+      - name: "Implementation Order"
+        required: false
+        auto_generate: true
+        conditional: "implementation_order.selected"
+
+      - name: "Moodboard Analysis"
+        required: false
+        auto_generate: true
+        conditional: "moodboard.active"
+
+      - name: "Requirements Refinement"
+        required: false
+        auto_generate: true
+        conditional: "requirements_refinement.active"
+
   # Compact template for stage transitions
   compact:
     max_tokens: 2000
@@ -194,6 +336,9 @@ templates:
         required: true
       - name: "Next Actions"
         required: true
+      - name: "Epic Status"
+        required: false
+        conditional: "epic_cycle.enabled"
 
   # Detailed template for session recovery
   recovery:
@@ -203,6 +348,33 @@ templates:
         required: true
       - name: "Step-by-Step Recovery"
         required: true
+      - name: "Feature States"
+        required: false
+        include:
+          - epic_cycle
+          - implementation_order
+          - moodboard
+          - requirements_refinement
+
+  # Epic cycle transition template
+  epic_transition:
+    max_tokens: 4000
+    sections:
+      - name: "Cycle Summary"
+        required: true
+        auto_generate: true
+      - name: "Learnings & Insights"
+        required: true
+        auto_generate: true
+      - name: "Scope Adjustments"
+        required: false
+        auto_generate: true
+      - name: "Context to Preserve"
+        required: true
+        auto_generate: true
+      - name: "Next Cycle Recommendations"
+        required: true
+        auto_generate: true
 
 # Quality assurance
 quality_assurance:
