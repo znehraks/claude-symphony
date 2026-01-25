@@ -7,8 +7,25 @@ stage:
 
 models:
   primary: "codex"
-  secondary: null
-  collaboration: null
+  secondary: "claudecode"
+  collaboration: "parallel"  # parallel | sequential | handoff
+
+# AI Auto-Invoke Settings
+auto_invoke:
+  enabled: true
+  model: "codex"
+  trigger: "stage_start"
+  prompt_file: "prompts/unit_tests.md"
+  wrapper: "scripts/codex-wrapper.sh"
+  required: true
+  message: "🤖 Codex auto-invoke: Starting test generation"
+  # Fallback settings (references config/mcp_fallbacks.yaml)
+  fallback:
+    enabled: true
+    model: "claudecode"
+    retry_count: 2
+    retry_delay_ms: 3000
+    timeout_ms: 60000
 
 execution:
   mode: "sandbox_playwright"

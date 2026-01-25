@@ -40,7 +40,7 @@ stages:
   - id: "03-planning"
     name: "Planning"
     description: "System architecture and tech stack decisions"
-    models: ["gemini"]
+    models: ["gemini", "claudecode"]  # Parallel execution
     mode: "plan"
     inputs:
       - "tech_research.md"
@@ -55,7 +55,7 @@ stages:
   - id: "04-ui-ux"
     name: "UI/UX Planning"
     description: "User interface and experience design"
-    models: ["gemini"]
+    models: ["gemini", "claudecode"]  # Parallel execution
     mode: "plan"
     inputs:
       - "requirements_analysis.md"
@@ -102,7 +102,7 @@ stages:
   - id: "07-refactoring"
     name: "Refactoring"
     description: "Code quality improvement and optimization"
-    models: ["codex"]
+    models: ["codex", "claudecode"]  # Parallel execution
     mode: "deep_dive"
     inputs:
       - "source_code/"
@@ -132,7 +132,7 @@ stages:
   - id: "09-testing"
     name: "Testing & E2E"
     description: "Test code writing and E2E testing"
-    models: ["codex"]
+    models: ["codex", "claudecode"]  # Parallel execution
     mode: "sandbox_playwright"
     sandbox: true
     mcp_servers: ["playwright"]
@@ -195,9 +195,13 @@ state_management:
     script: ".claude/hooks/statusline.sh"
     update_interval_ms: 300
 
-  # Legacy absolute thresholds (deprecated, kept for compatibility)
-  context_warning: 50000    # tokens - trigger state save
-  context_limit: 80000      # tokens - trigger /clear
+  # =============================================================================
+  # DEPRECATED: Legacy absolute token thresholds
+  # These values are no longer used. Use percentage-based thresholds above.
+  # Kept for reference only - will be removed in v2.0.0
+  # =============================================================================
+  # context_warning: 50000    # DEPRECATED - use context_thresholds.action (50%)
+  # context_limit: 80000      # DEPRECATED - use context_thresholds.critical (40%)
 
   # Automatic behaviors
   auto_checkpoint: true

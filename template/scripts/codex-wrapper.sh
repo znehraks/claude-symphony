@@ -27,16 +27,25 @@ if ! command -v tmux &> /dev/null; then
     exit 1
 fi
 
-# Check Codex CLI
+# Check Codex CLI - if not available, signal fallback
 if ! command -v codex &> /dev/null; then
     echo -e "${YELLOW}Warning:${NC} codex CLI is not installed."
-    echo "Running in simulation mode without Codex CLI."
     echo ""
-    echo "[Simulation] Codex response:"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo -e "${YELLOW}🔄 FALLBACK REQUIRED${NC}"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "  Primary AI: codex"
+    echo "  Fallback AI: claudecode"
+    echo "  Reason: CLI not installed"
+    echo ""
+    echo "Prompt to execute with ClaudeCode:"
     echo "---"
-    echo "Actual response will be displayed when Codex CLI is installed."
-    echo "Prompt: $PROMPT"
-    exit 0
+    echo "$PROMPT"
+    echo "---"
+    echo ""
+    echo "FALLBACK_SIGNAL: CODEX_CLI_NOT_FOUND"
+    # Exit code 100 = fallback required (non-zero but specific)
+    exit 100
 fi
 
 # Cleanup temporary files
@@ -82,10 +91,48 @@ echo -e "${GREEN}📄 Codex Response:${NC}"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 if [[ -f "$OUTPUT_FILE" ]]; then
-    cat "$OUTPUT_FILE"
+    OUTPUT_CONTENT=$(cat "$OUTPUT_FILE")
+
+    # Check for empty output (possible timeout)
+    if [[ -z "$OUTPUT_CONTENT" ]]; then
+        echo -e "${RED}Error:${NC} Empty response received (possible timeout)."
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo -e "${YELLOW}🔄 FALLBACK REQUIRED${NC}"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "  Primary AI: codex"
+        echo "  Fallback AI: claudecode"
+        echo "  Reason: API timeout or empty response"
+        echo "FALLBACK_SIGNAL: CODEX_TIMEOUT"
+        exit 101
+    fi
+
+    # Check for error patterns in output
+    if echo "$OUTPUT_CONTENT" | grep -qi "error\|failed\|rate.limit\|quota"; then
+        echo "$OUTPUT_CONTENT"
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo -e "${YELLOW}🔄 FALLBACK RECOMMENDED${NC}"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "  Primary AI: codex"
+        echo "  Fallback AI: claudecode"
+        echo "  Reason: API error detected in response"
+        echo "FALLBACK_SIGNAL: CODEX_API_ERROR"
+        exit 102
+    fi
+
+    echo "$OUTPUT_CONTENT"
 else
     echo -e "${RED}Error:${NC} Failed to capture output."
-    exit 1
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo -e "${YELLOW}🔄 FALLBACK REQUIRED${NC}"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "  Primary AI: codex"
+    echo "  Fallback AI: claudecode"
+    echo "  Reason: Output capture failed"
+    echo "FALLBACK_SIGNAL: CODEX_OUTPUT_FAILED"
+    exit 103
 fi
 
 echo ""

@@ -20,6 +20,13 @@ auto_invoke:
   wrapper: "scripts/gemini-wrapper.sh"
   required: true
   message: "🤖 Gemini auto-invoke: Starting divergent idea generation"
+  # Fallback settings (references config/mcp_fallbacks.yaml)
+  fallback:
+    enabled: true
+    model: "claudecode"
+    retry_count: 2
+    retry_delay_ms: 3000
+    timeout_ms: 60000
 
 # Execution Mode
 execution:

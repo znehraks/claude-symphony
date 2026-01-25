@@ -8,7 +8,7 @@ stage:
 models:
   primary: "codex"
   secondary: "claudecode"
-  collaboration: "sequential"
+  collaboration: "parallel"  # parallel | sequential | handoff
 
 # AI auto-invoke settings (Issue #12, #14 resolution)
 auto_invoke:
@@ -20,6 +20,13 @@ auto_invoke:
   flags: "--full-auto"
   required: true
   message: "🤖 Codex auto-invoke: Starting code analysis and refactoring"
+  # Fallback settings (references config/mcp_fallbacks.yaml)
+  fallback:
+    enabled: true
+    model: "claudecode"
+    retry_count: 2
+    retry_delay_ms: 3000
+    timeout_ms: 60000
 
 execution:
   mode: "deep_dive"
