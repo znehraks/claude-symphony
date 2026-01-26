@@ -1,0 +1,81 @@
+// Stage 08: QA Configuration
+{
+  "$schema": "../../../schemas/stage.schema.json",
+  "stage": {
+    "id": "08-qa",
+    "name": "QA",
+    "description": "Quality assurance and code review"
+  },
+  "models": {
+    "primary": "claudecode",
+    "secondary": null,
+    "collaboration": null
+  },
+  "execution": {
+    "mode": "plan_sandbox",
+    "container": false,
+    "sandbox": true,
+    "timeout": 3600
+  },
+  "inputs": {
+    "required": [
+      {
+        "name": "../07-refactoring/outputs/refactored_code/"
+      },
+      {
+        "name": "../07-refactoring/outputs/refactoring_report.md"
+      },
+      {
+        "name": "../07-refactoring/HANDOFF.md"
+      }
+    ]
+  },
+  "outputs": {
+    "required": [
+      {
+        "name": "qa_report.md",
+        "description": "QA report"
+      },
+      {
+        "name": "bug_fixes.md",
+        "description": "Bug fix history"
+      },
+      {
+        "name": "HANDOFF.md"
+      }
+    ]
+  },
+  "prompts": [
+    {
+      "name": "code_review",
+      "file": "prompts/code_review.md",
+      "model": "claudecode"
+    },
+    {
+      "name": "security_audit",
+      "file": "prompts/security_audit.md",
+      "model": "claudecode"
+    },
+    {
+      "name": "bug_fix",
+      "file": "prompts/bug_fix.md",
+      "model": "claudecode"
+    }
+  ],
+  "completion": {
+    "checklist": [
+      "Code review complete",
+      "Security inspection passed",
+      "Identified bugs fixed",
+      "QA report written"
+    ]
+  },
+  "transition": {
+    "next_stage": "09-testing",
+    "prerequisites": [
+      "07-refactoring"
+    ],
+    "handoff_required": true,
+    "checkpoint_required": false
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://claude-symphony.dev/schemas/models.schema.json",
+  "title": "Models Configuration",
+  "description": "AI model definitions and assignments",
+  "$ref": "#/definitions/Models Configuration",
+  "definitions": {
+    "Models Configuration": {
+      "type": "object",
+      "properties": {
+        "models": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Model display name"
+              },
+              "cli_command": {
+                "type": "string",
+                "description": "CLI command to invoke"
+              },
+              "wrapper": {
+                "type": "string",
+                "description": "Wrapper script path"
+              },
+              "modes": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "description": "Mode availability"
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "Mode description"
+                    }
+                  },
+                  "required": [
+                    "enabled"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Available execution modes"
+              },
+              "fallback_to": {
+                "type": "string",
+                "description": "Fallback model on error"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "description": "AI model definitions"
+        }
+      },
+      "required": [
+        "models"
+      ],
+      "additionalProperties": false,
+      "description": "Models configuration"
+    }
+  }
+}

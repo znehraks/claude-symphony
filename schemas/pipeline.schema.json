@@ -1,0 +1,152 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://claude-symphony.dev/schemas/pipeline.schema.json",
+  "title": "Pipeline Configuration",
+  "description": "Main pipeline configuration with 10 stages",
+  "$ref": "#/definitions/Pipeline Configuration",
+  "definitions": {
+    "Pipeline Configuration": {
+      "type": "object",
+      "properties": {
+        "pipeline": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Pipeline name"
+            },
+            "version": {
+              "type": "string",
+              "description": "Pipeline version (semver)"
+            },
+            "description": {
+              "type": "string",
+              "description": "Pipeline description"
+            }
+          },
+          "required": [
+            "name",
+            "version"
+          ],
+          "additionalProperties": false,
+          "description": "Pipeline metadata"
+        },
+        "stages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "enum": [
+                  "01-brainstorm",
+                  "02-research",
+                  "03-planning",
+                  "04-ui-ux",
+                  "05-task-management",
+                  "06-implementation",
+                  "07-refactoring",
+                  "08-qa",
+                  "09-testing",
+                  "10-deployment"
+                ],
+                "description": "Stage identifier"
+              },
+              "name": {
+                "type": "string",
+                "description": "Stage display name"
+              },
+              "description": {
+                "type": "string",
+                "description": "Stage description"
+              }
+            },
+            "required": [
+              "id",
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "description": "10-stage pipeline definition"
+        },
+        "sprint_mode": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Enable sprint-based iteration"
+            },
+            "sprint_config": {
+              "type": "object",
+              "properties": {
+                "default_sprints": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "Default number of sprints"
+                },
+                "max_sprints": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "Maximum sprints allowed"
+                }
+              },
+              "required": [
+                "default_sprints"
+              ],
+              "additionalProperties": false,
+              "description": "Sprint configuration"
+            }
+          },
+          "required": [
+            "enabled",
+            "sprint_config"
+          ],
+          "additionalProperties": false,
+          "description": "Sprint mode settings"
+        },
+        "context_management": {
+          "type": "object",
+          "properties": {
+            "warning_threshold": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Warning threshold (% remaining)"
+            },
+            "action_threshold": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Action threshold (% remaining)"
+            },
+            "critical_threshold": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Critical threshold (% remaining)"
+            },
+            "auto_save_interval": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Tasks between auto-saves"
+            }
+          },
+          "required": [
+            "warning_threshold",
+            "action_threshold",
+            "critical_threshold",
+            "auto_save_interval"
+          ],
+          "additionalProperties": false,
+          "description": "Context management thresholds"
+        }
+      },
+      "required": [
+        "pipeline",
+        "stages"
+      ],
+      "additionalProperties": false,
+      "description": "Pipeline configuration"
+    }
+  }
+}

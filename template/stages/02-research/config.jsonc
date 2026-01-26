@@ -1,0 +1,96 @@
+// Stage 02: Research Configuration
+{
+  "$schema": "../../../schemas/stage.schema.json",
+  "stage": {
+    "id": "02-research",
+    "name": "Research",
+    "description": "Technical research and market analysis"
+  },
+  "models": {
+    "primary": "claude",
+    "secondary": null,
+    "collaboration": null
+  },
+  "execution": {
+    "mode": "plan",
+    "container": false,
+    "sandbox": false,
+    "timeout": 7200
+  },
+  "mcp_servers": [
+    "firecrawl",
+    "exa",
+    "context7"
+  ],
+  "inputs": {
+    "required": [
+      {
+        "name": "../01-brainstorm/outputs/requirements_analysis.md",
+        "description": "Requirements analysis results"
+      },
+      {
+        "name": "../01-brainstorm/HANDOFF.md",
+        "description": "Previous stage handoff"
+      }
+    ],
+    "optional": [
+      {
+        "name": "../01-brainstorm/outputs/ideas.md",
+        "description": "Brainstorming ideas"
+      }
+    ]
+  },
+  "outputs": {
+    "required": [
+      {
+        "name": "tech_research.md",
+        "description": "Technical research results"
+      },
+      {
+        "name": "market_analysis.md",
+        "description": "Market analysis"
+      },
+      {
+        "name": "feasibility_report.md",
+        "description": "Feasibility report"
+      },
+      {
+        "name": "HANDOFF.md",
+        "description": "Handoff document for next stage"
+      }
+    ]
+  },
+  "prompts": [
+    {
+      "name": "tech_stack",
+      "file": "prompts/tech_stack.md",
+      "model": "claude"
+    },
+    {
+      "name": "market_analysis",
+      "file": "prompts/market_analysis.md",
+      "model": "claude"
+    },
+    {
+      "name": "feasibility",
+      "file": "prompts/feasibility.md",
+      "model": "claude"
+    }
+  ],
+  "completion": {
+    "checklist": [
+      "Complete technology stack comparison analysis",
+      "In-depth analysis of 3+ competitors",
+      "Write feasibility report",
+      "Generate HANDOFF.md"
+    ]
+  },
+  "transition": {
+    "next_stage": "03-planning",
+    "prerequisites": [
+      "01-brainstorm"
+    ],
+    "handoff_required": true,
+    "checkpoint_required": false
+  }
+}

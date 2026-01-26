@@ -1,0 +1,188 @@
+// claude-symphony Auto-Checkpoint Configuration
+{
+  "$schema": "../../schemas/auto_checkpoint.schema.json",
+  "auto_checkpoint": {
+    "enabled": true,
+    "description": "Automatic checkpoint creation and management",
+    "triggers": {
+      "task_based": {
+        "enabled": true,
+        "condition": "tasks_completed",
+        "threshold": 5,
+        "action": "create_checkpoint",
+        "naming": "auto_task_{{count}}_{{timestamp}}"
+      },
+      "file_change_based": {
+        "enabled": true,
+        "condition": "major_file_change",
+        "threshold": 100,
+        "action": "create_checkpoint",
+        "naming": "auto_change_{{timestamp}}",
+        "file_weights": {
+          "*.ts": 1,
+          "*.tsx": 1,
+          "*.js": 1,
+          "*.jsx": 1,
+          "*.py": 1,
+          "*.yaml": 0.5,
+          "*.json": 0.5,
+          "*.md": 0.3
+        }
+      },
+      "before_destructive": {
+        "enabled": true,
+        "condition": "destructive_action_detected",
+        "patterns": [
+          "rm -rf",
+          "git reset --hard",
+          "drop table",
+          "DELETE FROM",
+          "truncate"
+        ],
+        "action": "force_checkpoint",
+        "naming": "pre_destructive_{{timestamp}}",
+        "require_confirmation": true
+      },
+      "time_based": {
+        "enabled": true,
+        "condition": "interval",
+        "interval_minutes": 30,
+        "action": "create_checkpoint",
+        "naming": "auto_interval_{{timestamp}}",
+        "only_if_changes": true
+      },
+      "stage_based": {
+        "enabled": true,
+        "conditions": {
+          "on_stage_start": false,
+          "on_stage_complete": true,
+          "on_stage_error": true
+        },
+        "action": "create_checkpoint",
+        "naming": "stage_{{stage_id}}_{{status}}_{{timestamp}}"
+      }
+    },
+    "retention": {
+      "max_checkpoints": 20,
+      "max_age_days": 30,
+      "cleanup_strategy": "keep_milestones",
+      "milestone_criteria": [
+        "stage_complete",
+        "pre_destructive",
+        "user_created",
+        "tagged"
+      ],
+      "auto_cleanup": {
+        "enabled": true,
+        "schedule": "daily",
+        "preserve_minimum": 5
+      }
+    },
+    "checkpoint_content": {
+      "include": [
+        {
+          "source_code": true
+        },
+        {
+          "config_files": true
+        },
+        {
+          "state_files": true
+        },
+        {
+          "handoffs": true
+        },
+        {
+          "outputs": true
+        }
+      ],
+      "exclude": [
+        "node_modules/",
+        ".git/",
+        "*.log",
+        "*.tmp",
+        "__pycache__/",
+        ".cache/"
+      ],
+      "metadata": [
+        "timestamp",
+        "stage_id",
+        "task_count",
+        "trigger_reason",
+        "file_changes_summary",
+        "git_commit_hash"
+      ]
+    },
+    "storage": {
+      "base_path": "state/checkpoints/",
+      "format": "tar.gz",
+      "compression_level": 6,
+      "naming_convention": "{{stage}}_{{trigger}}_{{timestamp}}",
+      "external_backup": {
+        "enabled": false,
+        "provider": null,
+        "path": null
+      }
+    }
+  },
+  "creation_process": {
+    "steps": [
+      {
+        "name": "validate_state",
+        "description": "Validate current state",
+        "required": true
+      },
+      {
+        "name": "collect_files",
+        "description": "Collect files to include",
+        "required": true
+      },
+      {
+        "name": "generate_metadata",
+        "description": "Generate metadata",
+        "required": true
+      },
+      {
+        "name": "create_archive",
+        "description": "Create archive",
+        "required": true
+      },
+      {
+        "name": "verify_integrity",
+        "description": "Verify integrity",
+        "required": true
+      },
+      {
+        "name": "cleanup_old",
+        "description": "Clean up old checkpoints",
+        "required": false
+      }
+    ],
+    "on_failure": {
+      "retry": 2,
+      "fallback": "skip_with_warning",
+      "notify": true
+    }
+  },
+  "notifications": {
+    "on_create": {
+      "enabled": true,
+      "message": "Checkpoint created: {{name}}"
+    },
+    "on_cleanup": {
+      "enabled": true,
+      "message": "Old checkpoints cleaned up: {{count}} items"
+    },
+    "on_threshold": {
+      "enabled": true,
+      "threshold": 15,
+      "message": "You have {{count}} checkpoints. Cleanup may be needed."
+    }
+  },
+  "git_integration": {
+    "tag_checkpoints": true,
+    "tag_prefix": "checkpoint/",
+    "commit_message_template": "chore(checkpoint): Auto-checkpoint {{trigger}}\n\nStage: {{stage_id}}\nTrigger: {{trigger_reason}}\nFiles: {{file_count}}\n",
+    "push_tags": false
+  }
+}

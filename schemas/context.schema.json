@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://claude-symphony.dev/schemas/context.schema.json",
+  "title": "Context Configuration",
+  "description": "Context management thresholds and auto-save settings",
+  "$ref": "#/definitions/Context Configuration",
+  "definitions": {
+    "Context Configuration": {
+      "type": "object",
+      "properties": {
+        "thresholds": {
+          "type": "object",
+          "properties": {
+            "warning": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Warning threshold (60% remaining)"
+            },
+            "action": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Action threshold (50% remaining)"
+            },
+            "critical": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Critical threshold (40% remaining)"
+            }
+          },
+          "required": [
+            "warning",
+            "action",
+            "critical"
+          ],
+          "additionalProperties": false,
+          "description": "Context usage thresholds (percentage remaining)"
+        },
+        "auto_save": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Enable auto-save"
+            },
+            "interval_tasks": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Tasks between saves"
+            },
+            "location": {
+              "type": "string",
+              "description": "Save directory path"
+            }
+          },
+          "required": [
+            "enabled",
+            "interval_tasks",
+            "location"
+          ],
+          "additionalProperties": false,
+          "description": "Auto-save configuration"
+        },
+        "compression": {
+          "type": "object",
+          "properties": {
+            "strategies": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Compression strategies: summarize_completed, externalize_code, handoff_generation"
+            },
+            "target_ratio": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Target compression ratio (0-1)"
+            }
+          },
+          "required": [
+            "strategies",
+            "target_ratio"
+          ],
+          "additionalProperties": false,
+          "description": "Context compression settings"
+        }
+      },
+      "required": [
+        "thresholds",
+        "auto_save",
+        "compression"
+      ],
+      "additionalProperties": false,
+      "description": "Context management configuration"
+    }
+  }
+}

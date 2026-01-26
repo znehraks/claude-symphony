@@ -1,0 +1,112 @@
+// Stage 03: Planning Configuration
+{
+  "$schema": "../../../schemas/stage.schema.json",
+  "stage": {
+    "id": "03-planning",
+    "name": "Planning",
+    "description": "System architecture and technology stack decision"
+  },
+  "models": {
+    "primary": "gemini",
+    "secondary": "claudecode",
+    "collaboration": "parallel"
+  },
+  "auto_invoke": {
+    "enabled": true,
+    "model": "gemini",
+    "trigger": "stage_start",
+    "prompt_file": "prompts/architecture.md",
+    "wrapper": "scripts/gemini-wrapper.sh",
+    "required": true,
+    "message": "🤖 Gemini auto-invoke: Starting architecture design",
+    "fallback": {
+      "enabled": true,
+      "model": "claudecode",
+      "retry_count": 2,
+      "retry_delay_ms": 3000,
+      "timeout_ms": 60000
+    }
+  },
+  "execution": {
+    "mode": "plan",
+    "container": false,
+    "sandbox": false,
+    "timeout": 3600
+  },
+  "inputs": {
+    "required": [
+      {
+        "name": "../02-research/outputs/tech_research.md"
+      },
+      {
+        "name": "../02-research/outputs/feasibility_report.md"
+      },
+      {
+        "name": "../02-research/HANDOFF.md"
+      }
+    ],
+    "optional": [
+      {
+        "name": "../01-brainstorm/outputs/requirements_analysis.md"
+      }
+    ]
+  },
+  "outputs": {
+    "required": [
+      {
+        "name": "architecture.md",
+        "description": "System architecture"
+      },
+      {
+        "name": "tech_stack.md",
+        "description": "Technology stack decision"
+      },
+      {
+        "name": "project_plan.md",
+        "description": "Project plan"
+      },
+      {
+        "name": "implementation.yaml",
+        "description": "Implementation rules configuration (Issue #10)",
+        "template": "../../config/implementation.yaml.template"
+      },
+      {
+        "name": "HANDOFF.md"
+      }
+    ]
+  },
+  "prompts": [
+    {
+      "name": "architecture",
+      "file": "prompts/architecture.md",
+      "model": "gemini"
+    },
+    {
+      "name": "tech_stack_decision",
+      "file": "prompts/tech_stack_decision.md",
+      "model": "gemini"
+    },
+    {
+      "name": "project_plan",
+      "file": "prompts/project_plan.md",
+      "model": "gemini"
+    }
+  ],
+  "completion": {
+    "checklist": [
+      "Write system architecture document",
+      "Final technology stack decision",
+      "Establish project plan",
+      "Define 3+ milestones",
+      "Generate HANDOFF.md"
+    ]
+  },
+  "transition": {
+    "next_stage": "04-ui-ux",
+    "prerequisites": [
+      "02-research"
+    ],
+    "handoff_required": true,
+    "checkpoint_required": false
+  }
+}

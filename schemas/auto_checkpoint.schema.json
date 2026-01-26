@@ -1,0 +1,150 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://claude-symphony.dev/schemas/auto_checkpoint.schema.json",
+  "title": "Auto Checkpoint Configuration",
+  "description": "Automatic checkpoint triggers and retention",
+  "$ref": "#/definitions/Auto Checkpoint Configuration",
+  "definitions": {
+    "Auto Checkpoint Configuration": {
+      "type": "object",
+      "properties": {
+        "auto_checkpoint": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Enable auto-checkpoint"
+            },
+            "triggers": {
+              "type": "object",
+              "properties": {
+                "task_completion": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "description": "Trigger on task completion"
+                    },
+                    "threshold": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "description": "Tasks before checkpoint"
+                    }
+                  },
+                  "required": [
+                    "enabled",
+                    "threshold"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Task-based trigger"
+                },
+                "file_changes": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "description": "Trigger on file changes"
+                    },
+                    "threshold": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "description": "Lines changed threshold"
+                    }
+                  },
+                  "required": [
+                    "enabled",
+                    "threshold"
+                  ],
+                  "additionalProperties": false,
+                  "description": "File change trigger"
+                },
+                "destructive_operation": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "description": "Trigger before destructive ops"
+                    },
+                    "patterns": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Patterns: rm, delete, drop, etc."
+                    }
+                  },
+                  "required": [
+                    "enabled",
+                    "patterns"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Destructive operation trigger"
+                },
+                "time_based": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "description": "Trigger on time interval"
+                    },
+                    "interval_minutes": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "description": "Minutes between checkpoints"
+                    }
+                  },
+                  "required": [
+                    "enabled",
+                    "interval_minutes"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Time-based trigger"
+                }
+              },
+              "required": [
+                "task_completion",
+                "file_changes",
+                "destructive_operation",
+                "time_based"
+              ],
+              "additionalProperties": false,
+              "description": "Checkpoint triggers"
+            },
+            "retention": {
+              "type": "object",
+              "properties": {
+                "max_checkpoints": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "Maximum checkpoints to keep"
+                },
+                "preserve_milestones": {
+                  "type": "boolean",
+                  "description": "Preserve stage completion checkpoints"
+                }
+              },
+              "required": [
+                "max_checkpoints",
+                "preserve_milestones"
+              ],
+              "additionalProperties": false,
+              "description": "Checkpoint retention policy"
+            }
+          },
+          "required": [
+            "enabled",
+            "triggers",
+            "retention"
+          ],
+          "additionalProperties": false,
+          "description": "Auto-checkpoint settings"
+        }
+      },
+      "required": [
+        "auto_checkpoint"
+      ],
+      "additionalProperties": false,
+      "description": "Auto-checkpoint configuration"
+    }
+  }
+}

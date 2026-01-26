@@ -1,0 +1,257 @@
+// claude-symphony AI Models Configuration
+{
+  "$schema": "../../schemas/models.schema.json",
+  "models": {
+    "claudecode": {
+      "provider": "anthropic",
+      "model_id": "claude-sonnet-4-20250514",
+      "description": "Primary coding agent with tool use",
+      "capabilities": [
+        "code_generation",
+        "code_review",
+        "debugging",
+        "tool_use",
+        "mcp_integration"
+      ],
+      "modes": {
+        "plan": "Plan mode with user confirmation",
+        "plan_sandbox": "Plan mode with sandboxed execution",
+        "yolo": "Autonomous execution (container only)",
+        "headless": "CI/CD headless mode"
+      },
+      "context_limit": 200000,
+      "strengths": [
+        "Accurate code generation",
+        "Complex logic analysis",
+        "Error debugging",
+        "MCP integration"
+      ],
+      "best_for": [
+        "06-implementation",
+        "08-qa",
+        "05-task-management"
+      ],
+      "temperature_range": {
+        "min": 0.1,
+        "max": 0.5,
+        "default": 0.3
+      }
+    },
+    "claude": {
+      "provider": "anthropic",
+      "model_id": "claude-sonnet-4-20250514",
+      "description": "Research and analysis specialist",
+      "capabilities": [
+        "research",
+        "analysis",
+        "document_synthesis",
+        "mcp_integration"
+      ],
+      "modes": {
+        "plan": "Plan mode with structured research"
+      },
+      "context_limit": 200000,
+      "strengths": [
+        "In-depth research",
+        "Document analysis and summarization",
+        "Technical feasibility review",
+        "Structured report writing"
+      ],
+      "best_for": [
+        "02-research"
+      ],
+      "temperature_range": {
+        "min": 0.2,
+        "max": 0.6,
+        "default": 0.4
+      }
+    },
+    "gemini": {
+      "provider": "google",
+      "cli_command": "gemini",
+      "description": "Brainstorming and creative planning",
+      "capabilities": [
+        "brainstorming",
+        "creative_ideation",
+        "web_access",
+        "multimodal"
+      ],
+      "modes": {
+        "plan": "Plan mode for structured ideation",
+        "yolo": "Free-form creative exploration"
+      },
+      "invocation": "tmux",
+      "wrapper_script": "scripts/gemini-wrapper.sh",
+      "strengths": [
+        "Creative idea generation",
+        "Diverse perspective exploration",
+        "Rapid idea divergence",
+        "Visual content analysis"
+      ],
+      "best_for": [
+        "01-brainstorm",
+        "03-planning",
+        "04-ui-ux"
+      ],
+      "temperature_range": {
+        "min": 0.7,
+        "max": 1,
+        "default": 0.9
+      }
+    },
+    "codex": {
+      "provider": "openai",
+      "cli_command": "codex",
+      "description": "Code optimization and refactoring",
+      "capabilities": [
+        "code_refactoring",
+        "test_generation",
+        "code_optimization",
+        "deep_analysis"
+      ],
+      "modes": {
+        "deep_dive": "Deep code analysis mode",
+        "sandbox_playwright": "Sandbox with E2E testing"
+      },
+      "invocation": "tmux",
+      "wrapper_script": "scripts/codex-wrapper.sh",
+      "strengths": [
+        "Deep code analysis",
+        "Refactoring and optimization",
+        "Test generation",
+        "Technical debt resolution"
+      ],
+      "best_for": [
+        "07-refactoring",
+        "09-testing"
+      ],
+      "temperature_range": {
+        "min": 0.2,
+        "max": 0.6,
+        "default": 0.5
+      }
+    }
+  },
+  "dynamic_selection": {
+    "enabled": true,
+    "description": "Automatic selection of optimal AI model based on task characteristics",
+    "criteria": {
+      "task_type": {
+        "weight": 0.4,
+        "mapping": {
+          "brainstorming": "gemini",
+          "creative": "gemini",
+          "planning": "gemini",
+          "research": "claude",
+          "analysis": "claude",
+          "implementation": "claudecode",
+          "debugging": "claudecode",
+          "refactoring": "codex",
+          "testing": "codex",
+          "optimization": "codex"
+        }
+      },
+      "complexity": {
+        "weight": 0.3,
+        "thresholds": {
+          "simple": {
+            "max_lines": 100,
+            "prefer": "claudecode"
+          },
+          "moderate": {
+            "max_lines": 500,
+            "prefer": "claudecode"
+          },
+          "complex": {
+            "max_lines": null,
+            "prefer": "claudecode"
+          }
+        }
+      },
+      "previous_performance": {
+        "weight": 0.3,
+        "enabled": true,
+        "lookback_days": 7,
+        "min_samples": 3
+      }
+    },
+    "override_rules": {
+      "stage_assignment_priority": true,
+      "user_preference_priority": true
+    },
+    "fallback": {
+      "default_model": "claudecode",
+      "on_error": "claudecode",
+      "on_timeout": "claudecode"
+    }
+  },
+  "stage_assignments": {
+    "01-brainstorm": {
+      "primary": "gemini",
+      "secondary": "claudecode",
+      "collaboration": "parallel"
+    },
+    "02-research": {
+      "primary": "claude",
+      "secondary": null,
+      "collaboration": null
+    },
+    "03-planning": {
+      "primary": "gemini",
+      "secondary": "claudecode",
+      "collaboration": "parallel"
+    },
+    "04-ui-ux": {
+      "primary": "gemini",
+      "secondary": "claudecode",
+      "collaboration": "parallel"
+    },
+    "05-task-management": {
+      "primary": "claudecode",
+      "secondary": null,
+      "collaboration": null
+    },
+    "06-implementation": {
+      "primary": "claudecode",
+      "secondary": null,
+      "collaboration": null
+    },
+    "07-refactoring": {
+      "primary": "codex",
+      "secondary": "claudecode",
+      "collaboration": "parallel"
+    },
+    "08-qa": {
+      "primary": "claudecode",
+      "secondary": null,
+      "collaboration": null
+    },
+    "09-testing": {
+      "primary": "codex",
+      "secondary": "claudecode",
+      "collaboration": "parallel"
+    },
+    "10-deployment": {
+      "primary": "claudecode",
+      "secondary": null,
+      "collaboration": null
+    }
+  },
+  "tmux": {
+    "gemini_session": "ax-gemini",
+    "codex_session": "ax-codex",
+    "output_timeout": 300,
+    "capture_method": "wait-for"
+  },
+  "credentials": {
+    "anthropic": {
+      "env_var": "ANTHROPIC_API_KEY"
+    },
+    "google": {
+      "env_var": "GOOGLE_API_KEY"
+    },
+    "openai": {
+      "env_var": "OPENAI_API_KEY"
+    }
+  }
+}

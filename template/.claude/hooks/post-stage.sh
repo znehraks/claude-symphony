@@ -1,189 +1,39 @@
 #!/bin/bash
-# post-stage.sh - Post-stage completion hook
+# post-stage.sh - Post-stage execution hook (TypeScript wrapper)
 # claude-symphony workflow pipeline
+#
+# This is a thin shell wrapper that delegates to the TypeScript implementation.
+# Actual logic is in dist/hooks/post-stage.js
 
 set -e
 
-STAGE_ID="$1"
-PROJECT_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-PROGRESS_FILE="$PROJECT_ROOT/state/progress.json"
-TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
-# Color definitions
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+# Find the claude-symphony package root (where dist/ exists)
+if [ -d "$PROJECT_ROOT/dist" ]; then
+  PACKAGE_ROOT="$PROJECT_ROOT"
+elif [ -d "$PROJECT_ROOT/node_modules/claude-symphony/dist" ]; then
+  PACKAGE_ROOT="$PROJECT_ROOT/node_modules/claude-symphony"
+else
+  PACKAGE_ROOT=$(npm root -g 2>/dev/null)/claude-symphony
+fi
 
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "📋 Post-Stage Hook: $STAGE_ID"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+# Check if the compiled TypeScript exists
+if [ -f "$PACKAGE_ROOT/dist/hooks/post-stage.js" ]; then
+  exec node "$PACKAGE_ROOT/dist/hooks/post-stage.js" "$@"
+else
+  echo "Warning: TypeScript hook not found at $PACKAGE_ROOT/dist/hooks/post-stage.js"
+  echo "Falling back to basic completion..."
 
-# 1. Validate completion criteria
-validate_completion() {
-    local stage_dir="$PROJECT_ROOT/stages/$STAGE_ID"
-    local config_file="$stage_dir/config.yaml"
+  STAGE_ID="$1"
 
-    echo "Validating completion criteria..."
+  if [ -z "$STAGE_ID" ]; then
+    echo "Usage: post-stage.sh <stage-id>"
+    exit 1
+  fi
 
-    # Check outputs directory
-    if [ -d "$stage_dir/outputs" ]; then
-        local output_count=$(ls -1 "$stage_dir/outputs" 2>/dev/null | wc -l)
-        echo -e "  ${GREEN}✓${NC} Output files: $output_count"
-    fi
-
-    return 0
-}
-
-# 2. HANDOFF.md generation notification
-check_handoff() {
-    local handoff_file="$PROJECT_ROOT/stages/$STAGE_ID/HANDOFF.md"
-
-    if [ ! -f "$handoff_file" ]; then
-        echo -e "  ${YELLOW}⚠${NC} HANDOFF.md not generated"
-        echo "     Please run /handoff to generate the handoff document."
-        return 1
-    fi
-
-    echo -e "  ${GREEN}✓${NC} HANDOFF.md exists"
-
-    # Archive handoff
-    local archive_name="${STAGE_ID}-$(date +%Y%m%d-%H%M).md"
-    cp "$handoff_file" "$PROJECT_ROOT/state/handoffs/$archive_name"
-    echo -e "  ${GREEN}✓${NC} Handoff archived: state/handoffs/$archive_name"
-
-    return 0
-}
-
-# 3. Update progress.json
-update_progress() {
-    echo "Updating status..."
-
-    # Update status with jq
-    if command -v jq &> /dev/null; then
-        local tmp_file=$(mktemp)
-        jq ".stages.\"$STAGE_ID\".status = \"completed\" | \
-            .stages.\"$STAGE_ID\".completed_at = \"$TIMESTAMP\" | \
-            .stages.\"$STAGE_ID\".handoff_generated = true | \
-            .pipeline.updated_at = \"$TIMESTAMP\"" \
-            "$PROGRESS_FILE" > "$tmp_file" && mv "$tmp_file" "$PROGRESS_FILE"
-
-        echo -e "  ${GREEN}✓${NC} progress.json updated"
-    else
-        echo -e "  ${YELLOW}⚠${NC} jq not installed - Manual update required"
-    fi
-
-    return 0
-}
-
-# 4. Verify next stage prompts exist
-verify_next_stage_prompts() {
-    echo "Checking next stage requirements..."
-
-    # Get next stage
-    local stage_num=$(echo "$STAGE_ID" | cut -d'-' -f1)
-    local next_num=$(printf "%02d" $((10#$stage_num + 1)))
-
-    # Check if next stage exists
-    local next_stage=$(ls "$PROJECT_ROOT/stages/" 2>/dev/null | grep "^${next_num}-" | head -1)
-
-    if [ -z "$next_stage" ]; then
-        echo -e "  ${GREEN}✓${NC} Final stage - No next stage prompts needed"
-        return 0
-    fi
-
-    local next_config="$PROJECT_ROOT/stages/$next_stage/config.yaml"
-
-    if [ ! -f "$next_config" ]; then
-        echo -e "  ${GREEN}✓${NC} Next stage has no config.yaml"
-        return 0
-    fi
-
-    # Check if yq is available
-    if ! command -v yq &> /dev/null; then
-        echo -e "  ${YELLOW}⚠${NC} yq not installed - Skipping next stage prompt verification"
-        return 0
-    fi
-
-    # Check next stage's auto_invoke prompt_file
-    local prompt_file=$(yq '.auto_invoke.prompt_file // ""' "$next_config" 2>/dev/null)
-
-    if [ -n "$prompt_file" ] && [ "$prompt_file" != "null" ]; then
-        local full_path="$PROJECT_ROOT/stages/$next_stage/$prompt_file"
-
-        if [ ! -f "$full_path" ]; then
-            echo ""
-            echo -e "  ${YELLOW}⚠ Next Stage Prompt Missing${NC}"
-            echo ""
-            echo "    Next stage: $next_stage"
-            echo "    Required prompt: $prompt_file"
-            echo ""
-            echo "    This prompt should be generated as part of the current stage's outputs."
-            echo ""
-            echo "    Suggested action:"
-            echo "    1. Create the prompt file before running /next"
-            echo "    2. Or the next stage will need manual prompt creation"
-            echo ""
-
-            # Get prompt directory
-            local prompt_dir=$(dirname "$full_path")
-            if [ ! -d "$prompt_dir" ]; then
-                echo "    Note: Prompts directory does not exist: $prompt_dir"
-                echo "          Run: mkdir -p \"$prompt_dir\""
-            fi
-        else
-            echo -e "  ${GREEN}✓${NC} Next stage prompt exists: $next_stage/$prompt_file"
-        fi
-    else
-        echo -e "  ${GREEN}✓${NC} Next stage has no auto_invoke prompt requirement"
-    fi
-
-    return 0
-}
-
-# 5. Checkpoint creation reminder (required stages)
-remind_checkpoint() {
-    local stage_num=$(echo "$STAGE_ID" | cut -d'-' -f1)
-
-    if [ "$stage_num" == "06" ] || [ "$stage_num" == "07" ]; then
-        echo ""
-        echo -e "${BLUE}📌 Checkpoint Reminder${NC}"
-        echo "  Checkpoint creation is recommended for this stage."
-        echo "  Please run /checkpoint \"Stage completed\""
-    fi
-}
-
-# 5. Show next stage guidance
-show_next_stage() {
-    local config_file="$PROJECT_ROOT/stages/$STAGE_ID/config.yaml"
-    local next_stage=""
-
-    if [ -f "$config_file" ]; then
-        next_stage=$(grep "next_stage:" "$config_file" | cut -d'"' -f2 | head -1)
-    fi
-
-    echo ""
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-    if [ -z "$next_stage" ] || [ "$next_stage" == "null" ]; then
-        echo -e "${GREEN}🎉 Pipeline Complete!${NC}"
-        echo "  All stages have been completed."
-    else
-        echo -e "${GREEN}✓${NC} Stage $STAGE_ID completed"
-        echo ""
-        echo -e "${BLUE}Next stage: $next_stage${NC}"
-        echo "  Run: /run-stage $next_stage"
-    fi
-
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-}
-
-# Execute
-echo ""
-validate_completion
-check_handoff
-update_progress
-verify_next_stage_prompts
-remind_checkpoint
-show_next_stage
+  echo "Post-stage tasks for: $STAGE_ID"
+  echo "Tip: Run 'npm run build' in claude-symphony to enable full hook functionality"
+  exit 0
+fi

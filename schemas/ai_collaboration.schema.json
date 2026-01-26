@@ -1,0 +1,111 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://claude-symphony.dev/schemas/ai_collaboration.schema.json",
+  "title": "AI Collaboration Configuration",
+  "description": "Multi-AI collaboration mode settings",
+  "$ref": "#/definitions/AI Collaboration Configuration",
+  "definitions": {
+    "AI Collaboration Configuration": {
+      "type": "object",
+      "properties": {
+        "execution_policy": {
+          "type": "object",
+          "properties": {
+            "default_mode": {
+              "type": "string",
+              "enum": [
+                "parallel",
+                "sequential",
+                "debate"
+              ],
+              "description": "Default collaboration mode"
+            },
+            "stage_classification": {
+              "type": "object",
+              "properties": {
+                "parallel_capable": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "01-brainstorm",
+                      "02-research",
+                      "03-planning",
+                      "04-ui-ux",
+                      "05-task-management",
+                      "06-implementation",
+                      "07-refactoring",
+                      "08-qa",
+                      "09-testing",
+                      "10-deployment"
+                    ],
+                    "description": "Unique identifier for a pipeline stage (01-brainstorm through 10-deployment)"
+                  },
+                  "description": "Stages supporting parallel execution"
+                },
+                "sequential_only": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "01-brainstorm",
+                      "02-research",
+                      "03-planning",
+                      "04-ui-ux",
+                      "05-task-management",
+                      "06-implementation",
+                      "07-refactoring",
+                      "08-qa",
+                      "09-testing",
+                      "10-deployment"
+                    ],
+                    "description": "Unique identifier for a pipeline stage (01-brainstorm through 10-deployment)"
+                  },
+                  "description": "Stages requiring sequential execution"
+                }
+              },
+              "required": [
+                "parallel_capable",
+                "sequential_only"
+              ],
+              "additionalProperties": false,
+              "description": "Stage capability classification"
+            }
+          },
+          "required": [
+            "default_mode",
+            "stage_classification"
+          ],
+          "additionalProperties": false,
+          "description": "Execution policy settings"
+        },
+        "consolidation": {
+          "type": "object",
+          "properties": {
+            "default_strategy": {
+              "type": "string",
+              "description": "Output consolidation strategy"
+            },
+            "quality_threshold": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Quality threshold (0-1)"
+            }
+          },
+          "required": [
+            "default_strategy",
+            "quality_threshold"
+          ],
+          "additionalProperties": false,
+          "description": "Output consolidation settings"
+        }
+      },
+      "required": [
+        "execution_policy"
+      ],
+      "additionalProperties": false,
+      "description": "AI collaboration configuration"
+    }
+  }
+}

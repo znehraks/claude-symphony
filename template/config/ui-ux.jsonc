@@ -1,0 +1,330 @@
+// UI/UX Configuration
+{
+  "moodboard": {
+    "enabled": true,
+    "supported_formats": [
+      "png",
+      "jpg",
+      "webp",
+      "svg",
+      "gif",
+      "pdf"
+    ],
+    "max_images": 20,
+    "directories": {
+      "ui_references": "stages/04-ui-ux/inputs/moodboard/ui-references",
+      "brand_assets": "stages/04-ui-ux/inputs/moodboard/brand-assets",
+      "sketches": "stages/04-ui-ux/inputs/moodboard/sketches",
+      "inspirations": "stages/04-ui-ux/inputs/moodboard/inspirations",
+      "competitors": "stages/04-ui-ux/inputs/moodboard/competitors"
+    },
+    "analysis": {
+      "extract_colors": true,
+      "identify_layouts": true,
+      "suggest_components": true,
+      "detect_typography": true,
+      "analyze_spacing": true
+    },
+    "analysis_provider": {
+      "primary": "claude_vision",
+      "fallback": "figma_mcp",
+      "providers": {
+        "claude_vision": {
+          "enabled": true,
+          "description": "Claude's native vision capabilities",
+          "capabilities": [
+            "color_extraction",
+            "layout_analysis",
+            "component_identification",
+            "typography_detection",
+            "spacing_analysis",
+            "accessibility_check"
+          ]
+        },
+        "figma_mcp": {
+          "enabled": true,
+          "description": "Figma MCP server integration",
+          "capabilities": [
+            "design_token_export",
+            "component_inspection",
+            "variable_extraction",
+            "code_generation"
+          ]
+        }
+      }
+    },
+    "collection_flow": {
+      "enabled": true,
+      "description": "Guided interactive moodboard collection process",
+      "steps": [
+        {
+          "step": 1,
+          "id": "style_discovery",
+          "name": "Style Discovery",
+          "prompt": "What visual style are you aiming for?",
+          "options": [
+            {
+              "id": "modern_minimal",
+              "label": "Modern/Minimal",
+              "description": "Clean lines, whitespace, subtle colors",
+              "keywords": [
+                "clean",
+                "simple",
+                "elegant",
+                "minimalist"
+              ]
+            },
+            {
+              "id": "bold_colorful",
+              "label": "Bold/Colorful",
+              "description": "Vibrant colors, strong contrasts, dynamic",
+              "keywords": [
+                "vibrant",
+                "energetic",
+                "playful",
+                "dynamic"
+              ]
+            },
+            {
+              "id": "professional",
+              "label": "Professional/Corporate",
+              "description": "Trust, stability, formal, structured",
+              "keywords": [
+                "trustworthy",
+                "formal",
+                "structured",
+                "serious"
+              ]
+            },
+            {
+              "id": "playful",
+              "label": "Playful/Creative",
+              "description": "Fun, creative, unconventional, expressive",
+              "keywords": [
+                "fun",
+                "creative",
+                "whimsical",
+                "expressive"
+              ]
+            },
+            {
+              "id": "custom",
+              "label": "Custom/Describe",
+              "description": "Describe your own style"
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "id": "category_selection",
+          "name": "Category Selection",
+          "prompt": "What types of references do you want to collect?",
+          "multi_select": true,
+          "categories": [
+            {
+              "id": "ui_screenshots",
+              "label": "UI Screenshots",
+              "description": "Screenshots of apps/websites you like",
+              "directory": "ui_references"
+            },
+            {
+              "id": "color_palettes",
+              "label": "Color Palettes",
+              "description": "Color schemes and palettes",
+              "directory": "brand_assets"
+            },
+            {
+              "id": "typography",
+              "label": "Typography",
+              "description": "Font pairings and text styles",
+              "directory": "brand_assets"
+            },
+            {
+              "id": "brand_assets",
+              "label": "Brand Assets",
+              "description": "Logos, icons, brand elements",
+              "directory": "brand_assets"
+            },
+            {
+              "id": "wireframes",
+              "label": "Wireframes/Sketches",
+              "description": "Rough layouts and sketches",
+              "directory": "sketches"
+            },
+            {
+              "id": "competitors",
+              "label": "Competitor Analysis",
+              "description": "Competitor app/website screenshots",
+              "directory": "competitors"
+            },
+            {
+              "id": "inspirations",
+              "label": "General Inspirations",
+              "description": "Any inspiring images",
+              "directory": "inspirations"
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "id": "image_collection",
+          "name": "Image Collection",
+          "prompt": "Add images to your moodboard",
+          "per_category": true,
+          "input_methods": [
+            {
+              "id": "local_file",
+              "label": "Local File",
+              "description": "Upload from your computer"
+            },
+            {
+              "id": "url",
+              "label": "URL",
+              "description": "Paste image URL"
+            },
+            {
+              "id": "figma_link",
+              "label": "Figma Link",
+              "description": "Link to Figma frame",
+              "requires": "figma_mcp"
+            },
+            {
+              "id": "screenshot",
+              "label": "Screenshot",
+              "description": "Take a screenshot"
+            }
+          ],
+          "min_images_per_category": 0,
+          "max_images_per_category": 10,
+          "recommended_per_category": 3
+        },
+        {
+          "step": 4,
+          "id": "review_analyze",
+          "name": "Review & Analyze",
+          "prompt": "Review collected images and run analysis",
+          "actions": [
+            "display_collection_summary",
+            "run_initial_analysis",
+            "generate_preliminary_tokens"
+          ]
+        }
+      ]
+    },
+    "feedback_loop": {
+      "enabled": true,
+      "description": "Iterative analysis refinement based on user feedback",
+      "max_iterations": 3,
+      "stages": [
+        {
+          "id": "initial_analysis",
+          "name": "Initial Analysis",
+          "description": "First pass analysis of collected images",
+          "outputs": [
+            "color_palette_draft",
+            "typography_suggestions",
+            "layout_patterns",
+            "component_recommendations"
+          ]
+        },
+        {
+          "id": "user_feedback",
+          "name": "User Feedback",
+          "description": "Collect user feedback on analysis",
+          "prompts": [
+            "Do these colors match your vision? (Adjust: warmer/cooler/more vibrant/more muted)",
+            "Are these font suggestions appropriate? (Adjust: more playful/more serious/different style)",
+            "Does the layout direction feel right? (Adjust: more spacious/more compact/different grid)"
+          ]
+        },
+        {
+          "id": "refinement",
+          "name": "Refinement",
+          "description": "Adjust analysis based on feedback",
+          "actions": [
+            "adjust_color_palette",
+            "refine_typography",
+            "update_layout_suggestions",
+            "regenerate_recommendations"
+          ]
+        },
+        {
+          "id": "finalization",
+          "name": "Finalization",
+          "description": "Lock in final design tokens",
+          "outputs": [
+            "design_tokens.json",
+            "design_system.md",
+            "component_library_spec.md"
+          ]
+        }
+      ],
+      "feedback_format": {
+        "structured": true,
+        "options": [
+          "love_it",
+          "tweak",
+          "different",
+          "discard"
+        ]
+      }
+    },
+    "outputs": {
+      "design_tokens": {
+        "enabled": true,
+        "format": "json",
+        "file": "outputs/design_tokens.json"
+      },
+      "design_system_doc": {
+        "enabled": true,
+        "format": "markdown",
+        "file": "outputs/design_system.md"
+      },
+      "component_spec": {
+        "enabled": true,
+        "format": "markdown",
+        "file": "outputs/component_spec.md"
+      }
+    },
+    "commands": {
+      "start": "/moodboard",
+      "add": "/moodboard add [category]",
+      "analyze": "/moodboard analyze",
+      "feedback": "/moodboard feedback",
+      "export": "/moodboard export",
+      "status": "/moodboard status"
+    }
+  },
+  "design_system": {
+    "auto_generate": true,
+    "include_spacing": true,
+    "include_typography": true,
+    "include_colors": true,
+    "include_shadows": true,
+    "include_borders": true,
+    "naming_convention": "kebab-case",
+    "breakpoints": {
+      "sm": "640px",
+      "md": "768px",
+      "lg": "1024px",
+      "xl": "1280px",
+      "2xl": "1536px"
+    }
+  },
+  "wireframes": {
+    "format": "ascii",
+    "responsive": true,
+    "breakpoints": [
+      "mobile",
+      "tablet",
+      "desktop"
+    ],
+    "annotations": {
+      "enabled": true,
+      "include_interactions": true,
+      "include_states": true
+    },
+    "output_dir": "outputs/wireframes",
+    "file_format": "md"
+  }
+}

@@ -1,0 +1,261 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://claude-symphony.dev/schemas/stage.schema.json",
+  "title": "Stage Configuration",
+  "description": "Configuration for a pipeline stage",
+  "$ref": "#/definitions/Stage Configuration",
+  "definitions": {
+    "Stage Configuration": {
+      "type": "object",
+      "properties": {
+        "stage": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "enum": [
+                "01-brainstorm",
+                "02-research",
+                "03-planning",
+                "04-ui-ux",
+                "05-task-management",
+                "06-implementation",
+                "07-refactoring",
+                "08-qa",
+                "09-testing",
+                "10-deployment"
+              ],
+              "description": "Stage identifier"
+            },
+            "name": {
+              "type": "string",
+              "description": "Human-readable stage name"
+            },
+            "description": {
+              "type": "string",
+              "description": "Stage description"
+            }
+          },
+          "required": [
+            "id",
+            "name"
+          ],
+          "additionalProperties": false,
+          "description": "Stage metadata"
+        },
+        "models": {
+          "type": "object",
+          "properties": {
+            "primary": {
+              "type": "string",
+              "enum": [
+                "claudecode",
+                "claude",
+                "gemini",
+                "codex"
+              ],
+              "description": "Primary AI model for this stage"
+            },
+            "secondary": {
+              "type": "string",
+              "enum": [
+                "claudecode",
+                "claude",
+                "gemini",
+                "codex"
+              ],
+              "description": "Secondary AI model for parallel execution"
+            },
+            "collaboration": {
+              "type": "string",
+              "enum": [
+                "parallel",
+                "sequential",
+                "debate"
+              ],
+              "description": "How primary and secondary models collaborate"
+            }
+          },
+          "required": [
+            "primary"
+          ],
+          "additionalProperties": false,
+          "description": "AI model configuration"
+        },
+        "execution": {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": [
+                "yolo",
+                "plan",
+                "plan_sandbox",
+                "deep_dive",
+                "headless",
+                "sandbox_playwright"
+              ],
+              "description": "Execution mode for the stage"
+            },
+            "timeout": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Stage timeout in seconds"
+            }
+          },
+          "required": [
+            "mode"
+          ],
+          "additionalProperties": false,
+          "description": "Execution settings"
+        },
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "required": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Required input files from previous stages"
+            },
+            "optional": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional input files"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Input file requirements"
+        },
+        "outputs": {
+          "type": "object",
+          "properties": {
+            "required": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Required output files to generate"
+            },
+            "templates": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Template files to use for outputs"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Output file configuration"
+        },
+        "auto_invoke": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Whether to auto-invoke external AI"
+            },
+            "model": {
+              "type": "string",
+              "enum": [
+                "claudecode",
+                "claude",
+                "gemini",
+                "codex"
+              ],
+              "description": "Model to invoke"
+            },
+            "wrapper": {
+              "type": "string",
+              "description": "Wrapper script path"
+            },
+            "prompt_file": {
+              "type": "string",
+              "description": "Prompt file to use"
+            },
+            "fallback": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "description": "Enable fallback on failure"
+                },
+                "model": {
+                  "type": "string",
+                  "enum": [
+                    "claudecode",
+                    "claude",
+                    "gemini",
+                    "codex"
+                  ],
+                  "description": "Fallback model"
+                }
+              },
+              "required": [
+                "enabled"
+              ],
+              "additionalProperties": false,
+              "description": "Fallback configuration"
+            }
+          },
+          "required": [
+            "enabled"
+          ],
+          "additionalProperties": false,
+          "description": "Auto-invocation settings for external AI"
+        },
+        "transition": {
+          "type": "object",
+          "properties": {
+            "prerequisites": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "01-brainstorm",
+                  "02-research",
+                  "03-planning",
+                  "04-ui-ux",
+                  "05-task-management",
+                  "06-implementation",
+                  "07-refactoring",
+                  "08-qa",
+                  "09-testing",
+                  "10-deployment"
+                ],
+                "description": "Unique identifier for a pipeline stage (01-brainstorm through 10-deployment)"
+              },
+              "description": "Stages that must complete first"
+            },
+            "require_handoff": {
+              "type": "boolean",
+              "description": "Require HANDOFF.md for transition"
+            },
+            "require_checkpoint": {
+              "type": "boolean",
+              "description": "Require checkpoint for transition"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Stage transition requirements"
+        },
+        "mcp_servers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Required MCP servers for this stage"
+        }
+      },
+      "required": [
+        "stage",
+        "models"
+      ],
+      "additionalProperties": false,
+      "description": "Stage configuration"
+    }
+  }
+}

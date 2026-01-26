@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://claude-symphony.dev/schemas/output_validation.schema.json",
+  "title": "Output Validation Configuration",
+  "description": "Stage output validation rules and quality thresholds",
+  "$ref": "#/definitions/Output Validation Configuration",
+  "definitions": {
+    "Output Validation Configuration": {
+      "type": "object",
+      "properties": {
+        "validation": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Enable output validation"
+            },
+            "stages": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "required_outputs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Required output files"
+                  },
+                  "validation_commands": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "command": {
+                          "type": "string",
+                          "description": "Validation command"
+                        },
+                        "description": {
+                          "type": "string",
+                          "description": "Command description"
+                        }
+                      },
+                      "required": [
+                        "command"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Validation commands to run"
+                  }
+                },
+                "required": [
+                  "required_outputs"
+                ],
+                "additionalProperties": false
+              },
+              "description": "Stage-specific validation rules"
+            }
+          },
+          "required": [
+            "enabled",
+            "stages"
+          ],
+          "additionalProperties": false,
+          "description": "Validation settings"
+        },
+        "quality_thresholds": {
+          "type": "object",
+          "properties": {
+            "code_quality": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Code quality threshold (0-1)"
+            },
+            "test_coverage": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Test coverage threshold (%)"
+            }
+          },
+          "required": [
+            "code_quality",
+            "test_coverage"
+          ],
+          "additionalProperties": false,
+          "description": "Quality thresholds"
+        }
+      },
+      "required": [
+        "validation",
+        "quality_thresholds"
+      ],
+      "additionalProperties": false,
+      "description": "Output validation configuration"
+    }
+  }
+}

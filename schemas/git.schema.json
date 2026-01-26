@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://claude-symphony.dev/schemas/git.schema.json",
+  "title": "Git Configuration",
+  "description": "Git auto-commit rules and commit format",
+  "$ref": "#/definitions/Git Configuration",
+  "definitions": {
+    "Git Configuration": {
+      "type": "object",
+      "properties": {
+        "auto_commit": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Enable auto-commit"
+            },
+            "triggers": {
+              "type": "object",
+              "properties": {
+                "on_task_completion": {
+                  "type": "boolean",
+                  "description": "Commit on task completion"
+                },
+                "on_stage_completion": {
+                  "type": "boolean",
+                  "description": "Commit on stage completion"
+                },
+                "on_checkpoint": {
+                  "type": "boolean",
+                  "description": "Commit on checkpoint creation"
+                }
+              },
+              "required": [
+                "on_task_completion",
+                "on_stage_completion",
+                "on_checkpoint"
+              ],
+              "additionalProperties": false,
+              "description": "Auto-commit triggers"
+            }
+          },
+          "required": [
+            "enabled",
+            "triggers"
+          ],
+          "additionalProperties": false,
+          "description": "Auto-commit settings"
+        },
+        "commit_format": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "Conventional commit type"
+            },
+            "scope_by_stage": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "description": "Scope mapping by stage"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false,
+          "description": "Commit message format"
+        },
+        "branch_naming": {
+          "type": "object",
+          "properties": {
+            "pattern": {
+              "type": "string",
+              "description": "Branch naming pattern"
+            },
+            "include_stage": {
+              "type": "boolean",
+              "description": "Include stage in branch name"
+            }
+          },
+          "required": [
+            "pattern",
+            "include_stage"
+          ],
+          "additionalProperties": false,
+          "description": "Branch naming convention"
+        }
+      },
+      "required": [
+        "auto_commit",
+        "commit_format"
+      ],
+      "additionalProperties": false,
+      "description": "Git configuration"
+    }
+  }
+}

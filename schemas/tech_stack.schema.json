@@ -1,0 +1,105 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://claude-symphony.dev/schemas/tech_stack.schema.json",
+  "title": "Tech Stack Configuration",
+  "description": "Tech stack preset and provider configuration",
+  "$ref": "#/definitions/Tech Stack Configuration",
+  "definitions": {
+    "Tech Stack Configuration": {
+      "type": "object",
+      "properties": {
+        "tech_stack": {
+          "type": "object",
+          "properties": {
+            "preset": {
+              "type": "string",
+              "description": "Tech stack preset name"
+            },
+            "database": {
+              "type": "object",
+              "properties": {
+                "provider": {
+                  "type": "string",
+                  "description": "Database provider"
+                },
+                "configured": {
+                  "type": "boolean",
+                  "description": "Configuration status"
+                }
+              },
+              "required": [
+                "provider",
+                "configured"
+              ],
+              "additionalProperties": false,
+              "description": "Database configuration"
+            },
+            "hosting": {
+              "type": "object",
+              "properties": {
+                "provider": {
+                  "type": "string",
+                  "description": "Hosting provider"
+                },
+                "auto_deploy": {
+                  "type": "boolean",
+                  "description": "Enable auto-deployment"
+                },
+                "configured": {
+                  "type": "boolean",
+                  "description": "Configuration status"
+                }
+              },
+              "required": [
+                "provider",
+                "auto_deploy",
+                "configured"
+              ],
+              "additionalProperties": false,
+              "description": "Hosting configuration"
+            },
+            "env_vars": {
+              "type": "object",
+              "properties": {
+                "required": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Required environment variables"
+                },
+                "configured": {
+                  "type": "boolean",
+                  "description": "Configuration status"
+                }
+              },
+              "required": [
+                "required",
+                "configured"
+              ],
+              "additionalProperties": false,
+              "description": "Environment variables"
+            },
+            "selected_at": {
+              "type": "string",
+              "description": "Selection timestamp"
+            }
+          },
+          "required": [
+            "preset",
+            "database",
+            "hosting",
+            "env_vars"
+          ],
+          "additionalProperties": false,
+          "description": "Tech stack selection"
+        }
+      },
+      "required": [
+        "tech_stack"
+      ],
+      "additionalProperties": false,
+      "description": "Tech stack configuration"
+    }
+  }
+}
