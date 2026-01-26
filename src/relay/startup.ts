@@ -100,15 +100,17 @@ export function createTmuxSession(options: SessionOptions): boolean {
 
     // Start orchestrator in pane 1 (right side)
     // Use the TypeScript orchestrator via node
+    // Use single quotes to avoid nested quote issues with paths containing spaces
     const orchestratorCmd = buildOrchestratorCommand();
-    execSync(`tmux send-keys -t "${sessionName}:0.1" "${orchestratorCmd}" Enter`, { stdio: 'pipe' });
+    execSync(`tmux send-keys -t "${sessionName}:0.1" '${orchestratorCmd}' Enter`, { stdio: 'pipe' });
 
     // Wait for orchestrator to initialize
     execSync('sleep 1', { stdio: 'pipe' });
 
     // Start Claude wrapper in pane 0 (left side, main)
+    // Use single quotes to properly pass --bypass flag without quote escaping issues
     const wrapperCmd = buildWrapperCommand(options);
-    execSync(`tmux send-keys -t "${sessionName}:0.0" "${wrapperCmd}" Enter`, { stdio: 'pipe' });
+    execSync(`tmux send-keys -t "${sessionName}:0.0" '${wrapperCmd}' Enter`, { stdio: 'pipe' });
 
     // Select the Claude pane as active
     execSync(`tmux select-pane -t "${sessionName}:0.0"`, { stdio: 'pipe' });
@@ -131,23 +133,19 @@ export function createTmuxSession(options: SessionOptions): boolean {
 /**
  * Build the orchestrator start command
  * Uses the shell script for now (FIFO reading requires bash)
+ * Note: Returns unquoted path - caller wraps in single quotes for tmux send-keys
  */
 function buildOrchestratorCommand(): string {
   const relayDir = getRelayDir();
   const orchestratorScript = path.join(relayDir, 'orchestrator/orchestrator.sh');
 
-  // Check if the shell script exists (for backward compatibility)
-  if (pathExists(orchestratorScript)) {
-    return `"${orchestratorScript}" start`;
-  }
-
-  // Fallback: Could use TypeScript orchestrator via ts-node or compiled version
-  // For now, we still need the shell script for FIFO reading
-  return `"${orchestratorScript}" start`;
+  // Return unquoted path - the tmux send-keys command will wrap it in single quotes
+  return `${orchestratorScript} start`;
 }
 
 /**
  * Build the wrapper command for starting Claude
+ * Note: Returns unquoted path - caller wraps in single quotes for tmux send-keys
  */
 function buildWrapperCommand(options: SessionOptions): string {
   const relayDir = getRelayDir();
@@ -156,8 +154,10 @@ function buildWrapperCommand(options: SessionOptions): string {
   // Check if the shell script exists
   if (pathExists(wrapperScript)) {
     const bypassArg = options.bypass ? ' --bypass' : '';
-    const handoffArg = options.handoffFile ? ` "${options.handoffFile}"` : '';
-    return `"${wrapperScript}"${bypassArg}${handoffArg}`;
+    // Use single quotes for handoff path to avoid nested quote issues
+    const handoffArg = options.handoffFile ? ` '${options.handoffFile}'` : '';
+    // Return unquoted path - the tmux send-keys command will wrap it in single quotes
+    return `${wrapperScript}${bypassArg}${handoffArg}`;
   }
 
   // Direct claude command as fallback
@@ -166,7 +166,7 @@ function buildWrapperCommand(options: SessionOptions): string {
     cmd += ' --dangerously-skip-permissions';
   }
   if (options.handoffFile) {
-    cmd += ` --resume "${options.handoffFile}"`;
+    cmd += ` --resume '${options.handoffFile}'`;
   }
   return cmd;
 }
