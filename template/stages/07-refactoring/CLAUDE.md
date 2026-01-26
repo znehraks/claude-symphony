@@ -67,9 +67,10 @@ Code quality improvement and optimization stage
 4. Architecture improvement
 
 ## Input Files
-- `../06-implementation/outputs/source_code/`
-- `../06-implementation/outputs/implementation_log.md`
-- `../06-implementation/HANDOFF.md`
+<!-- $STAGES_ROOT = stages/ directory in project root -->
+- `$STAGES_ROOT/06-implementation/outputs/source_code/`
+- `$STAGES_ROOT/06-implementation/outputs/implementation_log.md`
+- `$STAGES_ROOT/06-implementation/HANDOFF.md`
 
 ## Output Files
 - `outputs/refactored_code/` - Refactored code

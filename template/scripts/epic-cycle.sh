@@ -21,6 +21,58 @@ check_dependencies() {
     fi
 }
 
+# Load settings from epic_cycles.yaml (CONFIG_FILE)
+load_config_settings() {
+    if [[ ! -f "$CONFIG_FILE" ]]; then
+        log_warning "Config file not found: $CONFIG_FILE"
+        return 0
+    fi
+
+    # Check if yq is available
+    if ! command -v yq &> /dev/null; then
+        log_warning "yq not installed - using default settings from progress.json"
+        return 0
+    fi
+
+    # Read settings from epic_cycles.yaml
+    local max_cycles=$(yq '.epic_cycles.cycle_config.max_cycles // 5' "$CONFIG_FILE" 2>/dev/null)
+    local default_cycles=$(yq '.epic_cycles.cycle_config.default_cycles // 1' "$CONFIG_FILE" 2>/dev/null)
+    local allow_modification=$(yq '.epic_cycles.cycle_config.allow_mid_project_modification // true' "$CONFIG_FILE" 2>/dev/null)
+    local default_start=$(yq '.epic_cycles.cycle_scope.start_stage // "01-brainstorm"' "$CONFIG_FILE" 2>/dev/null)
+    local default_end=$(yq '.epic_cycles.cycle_scope.end_stage // "05-task-management"' "$CONFIG_FILE" 2>/dev/null)
+    local preserve_context=$(yq '.epic_cycles.context_preservation.enabled // true' "$CONFIG_FILE" 2>/dev/null)
+
+    # Export as environment variables for use in other functions
+    export EPIC_MAX_CYCLES="${max_cycles}"
+    export EPIC_DEFAULT_CYCLES="${default_cycles}"
+    export EPIC_ALLOW_MODIFICATION="${allow_modification}"
+    export EPIC_DEFAULT_START="${default_start}"
+    export EPIC_DEFAULT_END="${default_end}"
+    export EPIC_PRESERVE_CONTEXT="${preserve_context}"
+
+    # Read preset scopes from config
+    export EPIC_PRESETS_LOADED="true"
+}
+
+# Get preset scope from config file
+get_preset_from_config() {
+    local preset_name="$1"
+
+    if [[ ! -f "$CONFIG_FILE" ]] || ! command -v yq &> /dev/null; then
+        return 1
+    fi
+
+    local start=$(yq ".epic_cycles.cycle_scope.preset_scopes[] | select(.name == \"$preset_name\") | .start" "$CONFIG_FILE" 2>/dev/null)
+    local end=$(yq ".epic_cycles.cycle_scope.preset_scopes[] | select(.name == \"$preset_name\") | .end" "$CONFIG_FILE" 2>/dev/null)
+
+    if [[ -n "$start" && "$start" != "null" && -n "$end" && "$end" != "null" ]]; then
+        echo "$start $end"
+        return 0
+    fi
+
+    return 1
+}
+
 # Get epic cycle status from progress.json
 get_epic_status() {
     if [[ ! -f "$PROGRESS_FILE" ]]; then
@@ -72,28 +124,37 @@ start_new_epic() {
     local start_stage=""
     local end_stage=""
 
-    case "$scope" in
-        ideation)
-            start_stage="01-brainstorm"
-            end_stage="03-planning"
-            ;;
-        design)
-            start_stage="01-brainstorm"
-            end_stage="05-task-management"
-            ;;
-        full)
-            start_stage="01-brainstorm"
-            end_stage="10-deployment"
-            ;;
-        implementation)
-            start_stage="06-implementation"
-            end_stage="09-testing"
-            ;;
-        *)
-            log_error "Unknown scope: $scope. Use: ideation, design, full, or implementation"
-            exit 1
-            ;;
-    esac
+    # First, try to get preset from config file
+    local config_preset=$(get_preset_from_config "$scope")
+    if [[ $? -eq 0 && -n "$config_preset" ]]; then
+        start_stage=$(echo "$config_preset" | cut -d' ' -f1)
+        end_stage=$(echo "$config_preset" | cut -d' ' -f2)
+        log_info "Using preset from config: $scope ($start_stage → $end_stage)"
+    else
+        # Fallback to hardcoded presets
+        case "$scope" in
+            ideation)
+                start_stage="01-brainstorm"
+                end_stage="03-planning"
+                ;;
+            design)
+                start_stage="01-brainstorm"
+                end_stage="05-task-management"
+                ;;
+            full)
+                start_stage="01-brainstorm"
+                end_stage="10-deployment"
+                ;;
+            implementation)
+                start_stage="06-implementation"
+                end_stage="09-testing"
+                ;;
+            *)
+                log_error "Unknown scope: $scope. Use: ideation, design, full, or implementation"
+                exit 1
+                ;;
+        esac
+    fi
 
     # Archive current cycle if one exists
     local enabled=$(jq -r '.epic_cycle.enabled' "$PROGRESS_FILE")
@@ -347,6 +408,7 @@ show_usage() {
 # Main
 main() {
     check_dependencies
+    load_config_settings
 
     local command="${1:-status}"
 

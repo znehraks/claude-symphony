@@ -41,10 +41,11 @@ Deployment pipeline setup and deployment stage
 4. Documentation completion
 
 ## Input Files
-- `source_code/` - Final source code
-- `../09-testing/outputs/tests/`
-- `../09-testing/outputs/test_report.md`
-- `../09-testing/HANDOFF.md`
+<!-- $STAGES_ROOT = stages/ directory in project root -->
+- `source_code/` - Final source code (in PROJECT_ROOT)
+- `$STAGES_ROOT/09-testing/outputs/tests/`
+- `$STAGES_ROOT/09-testing/outputs/test_report.md`
+- `$STAGES_ROOT/09-testing/HANDOFF.md`
 
 ## Output Files
 - `outputs/.github/workflows/` - GitHub Actions

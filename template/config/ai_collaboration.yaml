@@ -40,7 +40,64 @@ consolidation_workflow:
     input_pattern: "output_{model}.md"
     synthesis_log: "synthesis_log.md"
 
+  # Quality threshold for synthesis output (0.0 - 1.0)
   quality_threshold: 0.8
+
+  # Quality threshold definition
+  # The threshold is calculated based on two metrics:
+  quality_threshold_definition:
+    description: "Defines how synthesis quality is measured"
+
+    # 1. Consensus ratio: Percentage of content both AIs agree on
+    consensus_ratio:
+      weight: 0.6
+      description: "Percentage of key points where both models agree"
+      calculation: "count(common_points) / count(total_unique_points)"
+      min_acceptable: 0.5
+
+    # 2. Required keywords coverage: Stage-specific keywords present
+    keyword_coverage:
+      weight: 0.4
+      description: "Percentage of required keywords present in synthesis"
+      calculation: "count(keywords_found) / count(required_keywords)"
+      min_acceptable: 0.7
+
+    # Stage-specific required keywords
+    stage_keywords:
+      "01-brainstorm":
+        - "user persona"
+        - "problem"
+        - "solution"
+        - "feature"
+        - "MVP"
+      "03-planning":
+        - "architecture"
+        - "component"
+        - "data flow"
+        - "technology stack"
+        - "milestone"
+      "04-ui-ux":
+        - "wireframe"
+        - "user flow"
+        - "design system"
+        - "accessibility"
+        - "responsive"
+      "07-refactoring":
+        - "complexity"
+        - "performance"
+        - "maintainability"
+        - "test coverage"
+        - "code smell"
+      "09-testing":
+        - "test case"
+        - "coverage"
+        - "E2E"
+        - "unit test"
+        - "regression"
+
+    # Quality score formula: (consensus_ratio * 0.6) + (keyword_coverage * 0.4)
+    # If score >= 0.8: Pass (proceed with synthesized output)
+    # If score < 0.8: Flag for manual review
 
 collaboration_modes:
   # Parallel Execution: Execute same task with multiple AIs simultaneously and synthesize

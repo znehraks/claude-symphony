@@ -41,9 +41,10 @@ Quality assurance and code review stage
 4. Quality standards compliance verification
 
 ## Input Files
-- `../07-refactoring/outputs/refactored_code/`
-- `../07-refactoring/outputs/refactoring_report.md`
-- `../07-refactoring/HANDOFF.md`
+<!-- $STAGES_ROOT = stages/ directory in project root -->
+- `$STAGES_ROOT/07-refactoring/outputs/refactored_code/`
+- `$STAGES_ROOT/07-refactoring/outputs/refactoring_report.md`
+- `$STAGES_ROOT/07-refactoring/HANDOFF.md`
 
 ## Output Files
 - `outputs/qa_report.md` - QA report

@@ -40,9 +40,10 @@ Technical research and market analysis stage
 4. Technical risk identification
 
 ## Input Files
-- `../01-brainstorm/outputs/ideas.md`
-- `../01-brainstorm/outputs/requirements_analysis.md`
-- `../01-brainstorm/HANDOFF.md`
+<!-- $STAGES_ROOT = stages/ directory in project root -->
+- `$STAGES_ROOT/01-brainstorm/outputs/ideas.md`
+- `$STAGES_ROOT/01-brainstorm/outputs/requirements_analysis.md`
+- `$STAGES_ROOT/01-brainstorm/HANDOFF.md`
 
 ## Output Files
 - `outputs/tech_research.md` - Technical research results

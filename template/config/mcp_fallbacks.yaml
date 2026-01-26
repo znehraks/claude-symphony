@@ -61,15 +61,66 @@ browser:
   rules:
     on_connection_failed: "use_fallback"
 
-# Notion tool (no fallback)
+# Notion tool (with JSON fallback)
 notion:
   primary: "notion"
-  fallbacks: []
+  fallbacks:
+    - "json_file"
 
-  # Notion has no fallback, notify only on error
+  # JSON file fallback configuration
+  json_fallback:
+    enabled: true
+    description: "Local JSON file fallback when Notion MCP is unavailable"
+    file_path: "state/tasks.json"
+
+    # JSON structure supports nested task dependencies (like Notion)
+    schema:
+      version: "1.0"
+      structure:
+        epics:
+          - id: "string"
+            title: "string"
+            status: "pending|in_progress|completed"
+            features: "array<feature>"
+        features:
+          - id: "string"
+            epic_id: "string"
+            title: "string"
+            status: "pending|in_progress|completed"
+            tasks: "array<task>"
+        tasks:
+          - id: "string"
+            feature_id: "string"
+            title: "string"
+            description: "string"
+            status: "pending|in_progress|completed"
+            priority: "P0|P1|P2|P3"
+            estimate_hours: "number"
+            blocked_by: "array<task_id>"
+            blocks: "array<task_id>"
+            assignee: "string|null"
+            sprint: "string|null"
+
+    # Sync behavior
+    sync:
+      on_notion_available: "merge"  # merge|overwrite|ignore
+      conflict_resolution: "notion_wins"
+      auto_sync_interval: null  # Manual sync only
+
+    # Operations supported in fallback mode
+    operations:
+      create_task: true
+      update_task: true
+      delete_task: true
+      query_tasks: true
+      create_epic: true
+      create_feature: true
+      update_dependencies: true
+
   on_error:
-    action: "notify_user"
-    message: "Notion connection failed. Check MCP settings."
+    action: "use_json_fallback"
+    message: "Notion connection failed. Using local JSON file (state/tasks.json) as fallback."
+    notify_user: true
 
 # Figma tool (no fallback)
 figma:

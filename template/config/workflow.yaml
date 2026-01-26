@@ -28,7 +28,10 @@ hooks:
   post-stage: ".claude/hooks/post-stage.sh"
 
 # Context management (percentage-based, remaining context basis)
+# NOTE: Primary context settings are defined in config/context.yaml
+#       These values should match context.yaml - update context.yaml as the source of truth
 context:
+  # Reference: config/context.yaml
   # Percentage-based thresholds (recommended)
   thresholds:
     warning: 60      # 60% remaining - display warning banner
@@ -36,7 +39,7 @@ context:
     critical: 40     # 40% remaining - recommend /clear
 
   # Task-based auto-save
-  task_save_frequency: 5  # Save every 5 tasks
+  task_save_frequency: 5  # Save every 5 tasks (see: config/context.yaml)
 
   auto_save: true
   state_dir: "state/context"

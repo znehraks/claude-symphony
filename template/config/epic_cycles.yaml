@@ -1,8 +1,13 @@
 # claude-symphony Epic Cycles Configuration
 # Enables repeatable stage cycles (Epics) for iterative development
 
+# claude-symphony Epic Cycles Configuration
+# Enables repeatable stage cycles (Epics) for iterative development
+# NOTE: Enable/disable via /epic enable or /epic disable commands
+#       State is stored in progress.json, not in this file
+
 epic_cycles:
-  enabled: true
+  # enabled state is stored in progress.json (not here)
   description: "User-defined stage range repetition for iterative refinement"
 
   # ============================================

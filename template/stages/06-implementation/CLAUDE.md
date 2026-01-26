@@ -41,11 +41,12 @@ Core feature implementation stage
 4. API implementation
 
 ## Input Files
-- `../05-task-management/outputs/tasks.md`
-- `../03-planning/outputs/architecture.md`
-- `../03-planning/outputs/implementation.yaml` - **Implementation rules (required reference!)**
-- `../04-ui-ux/outputs/design_system.md`
-- `../05-task-management/HANDOFF.md`
+<!-- $STAGES_ROOT = stages/ directory in project root -->
+- `$STAGES_ROOT/05-task-management/outputs/tasks.md`
+- `$STAGES_ROOT/03-planning/outputs/architecture.md`
+- `$STAGES_ROOT/03-planning/outputs/implementation.yaml` - **Implementation rules (required reference!)**
+- `$STAGES_ROOT/04-ui-ux/outputs/design_system.md`
+- `$STAGES_ROOT/05-task-management/HANDOFF.md`
 
 ### ⚠️ Must Follow implementation.yaml
 Read the `implementation.yaml` file before implementation and verify the following rules:

@@ -2,7 +2,9 @@
 # Principle: Claude=MCP tools, Codex=Pure code analysis, Gemini=Creative tasks
 
 fallback_strategy:
-  default_fallback: claude
+  # NOTE: Use 'claudecode' (coding model) for fallback, not 'claude' (research model)
+  # See config/models.yaml for model definitions
+  default_fallback: claudecode
   auto_switch: true
   retry_count: 2
   retry_delay_ms: 3000

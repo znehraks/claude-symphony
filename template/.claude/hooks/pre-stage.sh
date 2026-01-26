@@ -79,23 +79,97 @@ check_handoff() {
 
 # 3. Check required input files
 check_inputs() {
-    local config_file="$PROJECT_ROOT/stages/$STAGE_ID/config.yaml"
+    local stage_num=$(echo "$STAGE_ID" | cut -d'-' -f1)
+    local missing_files=()
+    local warning_files=()
 
-    if [ ! -f "$config_file" ]; then
-        echo -e "${YELLOW}⚠${NC} config.yaml missing - Skipping input file validation"
-        return 0
+    echo "Checking required input files for $STAGE_ID..."
+
+    # Stage-specific input requirements
+    case "$stage_num" in
+        "01")
+            # Stage 01: project_brief.md required
+            local brief="$PROJECT_ROOT/stages/01-brainstorm/inputs/project_brief.md"
+            if [ ! -f "$brief" ]; then
+                missing_files+=("project_brief.md")
+            fi
+            ;;
+        "02")
+            # Stage 02: requirements_analysis.md from Stage 01
+            local req="$PROJECT_ROOT/stages/01-brainstorm/outputs/requirements_analysis.md"
+            if [ ! -f "$req" ]; then
+                warning_files+=("01-brainstorm/outputs/requirements_analysis.md")
+            fi
+            ;;
+        "03")
+            # Stage 03: tech_research.md, feasibility_report.md from Stage 02
+            local tech="$PROJECT_ROOT/stages/02-research/outputs/tech_research.md"
+            local feas="$PROJECT_ROOT/stages/02-research/outputs/feasibility_report.md"
+            [ ! -f "$tech" ] && missing_files+=("02-research/outputs/tech_research.md")
+            [ ! -f "$feas" ] && warning_files+=("02-research/outputs/feasibility_report.md")
+            ;;
+        "04")
+            # Stage 04: architecture.md from Stage 03
+            local arch="$PROJECT_ROOT/stages/03-planning/outputs/architecture.md"
+            [ ! -f "$arch" ] && missing_files+=("03-planning/outputs/architecture.md")
+            ;;
+        "05")
+            # Stage 05: project_plan.md, architecture.md from previous stages
+            local plan="$PROJECT_ROOT/stages/03-planning/outputs/project_plan.md"
+            local arch="$PROJECT_ROOT/stages/03-planning/outputs/architecture.md"
+            [ ! -f "$plan" ] && missing_files+=("03-planning/outputs/project_plan.md")
+            [ ! -f "$arch" ] && warning_files+=("03-planning/outputs/architecture.md")
+            ;;
+        "06")
+            # Stage 06: tasks.md, implementation.yaml required
+            local tasks="$PROJECT_ROOT/stages/05-task-management/outputs/tasks.md"
+            local impl="$PROJECT_ROOT/stages/03-planning/outputs/implementation.yaml"
+            [ ! -f "$tasks" ] && missing_files+=("05-task-management/outputs/tasks.md")
+            [ ! -f "$impl" ] && missing_files+=("03-planning/outputs/implementation.yaml")
+            ;;
+        "07")
+            # Stage 07: source_code from Stage 06
+            local src="$PROJECT_ROOT/stages/06-implementation/outputs/source_code"
+            [ ! -d "$src" ] && missing_files+=("06-implementation/outputs/source_code/")
+            ;;
+        "08")
+            # Stage 08: refactored_code from Stage 07
+            local ref="$PROJECT_ROOT/stages/07-refactoring/outputs/refactored_code"
+            [ ! -d "$ref" ] && warning_files+=("07-refactoring/outputs/refactored_code/")
+            ;;
+        "09")
+            # Stage 09: source_code, qa_report.md
+            local src="$PROJECT_ROOT/stages/06-implementation/outputs/source_code"
+            local qa="$PROJECT_ROOT/stages/08-qa/outputs/qa_report.md"
+            [ ! -d "$src" ] && missing_files+=("source_code/")
+            [ ! -f "$qa" ] && warning_files+=("08-qa/outputs/qa_report.md")
+            ;;
+        "10")
+            # Stage 10: tests/, test_report.md
+            local tests="$PROJECT_ROOT/stages/09-testing/outputs/tests"
+            [ ! -d "$tests" ] && warning_files+=("09-testing/outputs/tests/")
+            ;;
+    esac
+
+    # Report missing files (blocking)
+    if [ ${#missing_files[@]} -gt 0 ]; then
+        echo -e "${RED}✗${NC} Missing required input files:"
+        for f in "${missing_files[@]}"; do
+            echo "     - $f"
+        done
+        echo ""
+        echo "  Please complete the previous stage(s) or create these files."
+        return 1
     fi
 
-    # Extract required inputs from YAML (simple parsing)
-    local inputs=$(grep -A100 "^inputs:" "$config_file" | grep -A50 "required:" | grep "name:" | head -5)
-
-    if [ -z "$inputs" ]; then
-        echo -e "${GREEN}✓${NC} No required input files"
-        return 0
+    # Report warning files (non-blocking)
+    if [ ${#warning_files[@]} -gt 0 ]; then
+        echo -e "${YELLOW}⚠${NC} Recommended input files not found (non-blocking):"
+        for f in "${warning_files[@]}"; do
+            echo "     - $f"
+        done
     fi
 
-    echo "Checking required input files..."
-    # In actual implementation, YAML parser recommended
     echo -e "${GREEN}✓${NC} Input file validation complete"
     return 0
 }
@@ -230,6 +304,73 @@ check_context_status() {
     return 0
 }
 
+# 6. Check Moodboard requirement for design stages
+check_moodboard() {
+    local stage_num=$(echo "$STAGE_ID" | cut -d'-' -f1)
+
+    # Moodboard is relevant for stages 01 and 04
+    if [ "$stage_num" != "01" ] && [ "$stage_num" != "04" ]; then
+        return 0
+    fi
+
+    # Check if moodboard is enabled in config
+    local ui_config="$PROJECT_ROOT/config/ui-ux.yaml"
+    local moodboard_enabled="true"
+
+    if [ -f "$ui_config" ] && command -v yq &> /dev/null; then
+        moodboard_enabled=$(yq '.moodboard.collection_flow.enabled // true' "$ui_config" 2>/dev/null)
+    fi
+
+    if [ "$moodboard_enabled" != "true" ]; then
+        echo -e "${YELLOW}⚠${NC} Moodboard collection disabled - Skipping"
+        return 0
+    fi
+
+    # Check if moodboard directory exists and has content
+    local moodboard_dir="$PROJECT_ROOT/stages/$STAGE_ID/moodboard"
+
+    if [ ! -d "$moodboard_dir" ] || [ -z "$(ls -A "$moodboard_dir" 2>/dev/null | grep -v '.gitkeep')" ]; then
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo -e "${CYAN}🎨 Moodboard Collection${NC}"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+
+        if [ "$stage_num" == "01" ]; then
+            echo "  Stage 01 (Brainstorm) can benefit from design references."
+            echo "  Collect inspiration images, UI references, and visual ideas."
+        else
+            echo "  Stage 04 (UI/UX) requires design references for better results."
+            echo "  Collect colors, typography, layouts, and component references."
+        fi
+
+        echo ""
+        echo "  Options:"
+        echo "    1. Run /moodboard        - Collect design references interactively"
+        echo "    2. Run /moodboard skip   - Skip and use AI-generated design tokens"
+        echo "    3. Add files manually to: stages/$STAGE_ID/moodboard/"
+        echo ""
+        echo -e "${YELLOW}Do you want to continue without moodboard? (y/n)${NC}"
+
+        read -r response </dev/tty 2>/dev/null || response="y"
+
+        if [ "$response" != "y" ] && [ "$response" != "Y" ]; then
+            echo ""
+            echo "  → Run /moodboard to collect design references"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            return 1
+        fi
+
+        echo ""
+        echo -e "${YELLOW}⚠${NC} Continuing without moodboard - AI will generate design tokens"
+    else
+        local file_count=$(ls -A "$moodboard_dir" 2>/dev/null | grep -v '.gitkeep' | wc -l | tr -d ' ')
+        echo -e "${GREEN}✓${NC} Moodboard found: $file_count reference(s)"
+    fi
+
+    return 0
+}
+
 # Execute
 echo ""
 check_context_status || exit 1
@@ -238,6 +379,7 @@ check_handoff || exit 1
 check_inputs || exit 1
 check_required_prompts
 check_checkpoint
+check_moodboard || exit 1
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

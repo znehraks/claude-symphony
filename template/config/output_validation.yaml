@@ -83,6 +83,18 @@ validation:
             has_timeline: true
             has_milestones: true
 
+        implementation.yaml:
+          exists: true
+          format: yaml
+          description: "Implementation rules for Stage 06 (generated from config/implementation.yaml.template)"
+          content_checks:
+            required_keys:
+              - "component_style"
+              - "styling_approach"
+              - "state_management"
+              - "naming_conventions"
+              - "folder_structure"
+
       validation_commands: []
 
     "04-ui-ux":

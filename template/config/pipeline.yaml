@@ -169,13 +169,15 @@ state_management:
   handoffs_dir: "state/handoffs"
 
   # Context management thresholds (percentage-based, remaining context)
-  # See config/context.yaml for detailed settings
+  # NOTE: Primary settings in config/context.yaml - these should match
+  # Reference: config/context.yaml (source of truth for context settings)
   context_thresholds:
     warning: 60      # 60% remaining - display warning
     action: 50       # 50% remaining - auto-save state
     critical: 40     # 40% remaining - recommend /clear
 
   # Task-based auto-save
+  # Reference: config/context.yaml
   task_save_frequency: 5  # Save every 5 completed tasks
 
   # Auto-actions when thresholds are reached
@@ -194,14 +196,6 @@ state_management:
     enabled: true
     script: ".claude/hooks/statusline.sh"
     update_interval_ms: 300
-
-  # =============================================================================
-  # DEPRECATED: Legacy absolute token thresholds
-  # These values are no longer used. Use percentage-based thresholds above.
-  # Kept for reference only - will be removed in v2.0.0
-  # =============================================================================
-  # context_warning: 50000    # DEPRECATED - use context_thresholds.action (50%)
-  # context_limit: 80000      # DEPRECATED - use context_thresholds.critical (40%)
 
   # Automatic behaviors
   auto_checkpoint: true
@@ -413,9 +407,9 @@ sprint_mode:
 # ============================================
 # Epic Cycles Configuration
 # ============================================
-# See config/epic_cycles.yaml for full settings
+# Full settings in config/epic_cycles.yaml (source of truth)
+# Enable via /epic enable command
 epic_cycles:
-  enabled: false  # Enable via /epic enable
   config_file: "config/epic_cycles.yaml"
 
   # Quick reference - preset scopes

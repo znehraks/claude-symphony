@@ -74,6 +74,38 @@ Divergent idea generation and requirements exploration stage
 - `outputs/requirements_analysis.md` - Requirements analysis results
 - `HANDOFF.md` - Handoff document for next stage
 
+## Moodboard Collection (Recommended)
+
+> Configuration: `config/ui-ux.yaml`
+> Command: `/moodboard`
+
+Before starting idea generation, consider collecting design references and inspiration:
+
+```bash
+/moodboard              # Start moodboard collection
+/moodboard skip         # Skip and use AI-generated design
+```
+
+### Why Collect a Moodboard at This Stage?
+- Visual inspiration sparks better ideas
+- Establishes early design direction
+- Helps communicate vision to stakeholders
+- Creates reference material for Stage 04 (UI/UX)
+
+### What to Collect
+- Competitor screenshots
+- Design inspiration (Dribbble, Behance)
+- Color schemes that match your vision
+- Typography examples
+- UI patterns you admire
+
+### Moodboard Directory
+Place collected images in: `stages/01-brainstorm/moodboard/`
+
+> **Note**: If skipped, AI will generate design tokens in Stage 04 based on project context.
+
+---
+
 ## Workflow
 
 ### 1. Idea Generation (Gemini)

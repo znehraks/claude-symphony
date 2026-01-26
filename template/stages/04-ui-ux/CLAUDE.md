@@ -62,9 +62,10 @@ User interface and experience design stage
 4. Define component library
 
 ## Input Files
-- `../01-brainstorm/outputs/requirements_analysis.md`
-- `../03-planning/outputs/architecture.md`
-- `../03-planning/HANDOFF.md`
+<!-- $STAGES_ROOT = stages/ directory in project root -->
+- `$STAGES_ROOT/01-brainstorm/outputs/requirements_analysis.md`
+- `$STAGES_ROOT/03-planning/outputs/architecture.md`
+- `$STAGES_ROOT/03-planning/HANDOFF.md`
 
 ## Prerequisites Before UI/UX Design
 

@@ -61,6 +61,10 @@ Validation Rules:
   execution_mode         [HIGH] Stage mode aligns with model capabilities
   ai_wrapper_health      [HIGH] AI wrapper scripts are executable
   mcp_servers            [MEDIUM] MCP server fallback configs exist
+  epic_cycles            [MEDIUM] Epic cycles configuration validation
+  requirements_refinement [MEDIUM] Requirements refinement settings
+  implementation_order   [MEDIUM] Implementation order configuration
+  notion_integration     [MEDIUM] Notion integration and fallback settings
   prerequisites          [MEDIUM] Stage prerequisites are valid
 
 Recovery Guide:
@@ -626,7 +630,209 @@ validate_mcp_servers() {
 }
 
 # =============================================================================
-# Rule 7: Prerequisites (MEDIUM)
+# Rule 8: Epic Cycles Configuration (MEDIUM)
+# Validate epic_cycles.yaml structure and settings
+# =============================================================================
+validate_epic_cycles() {
+    print_section "Rule: epic_cycles [MEDIUM]"
+    verbose_log "Checking epic_cycles.yaml configuration"
+
+    local epic_config="$CONFIG_DIR/epic_cycles.yaml"
+    if [ ! -f "$epic_config" ]; then
+        result_medium "epic_cycles.yaml not found"
+        return
+    fi
+
+    # Check required fields
+    local cycle_config_keys=("max_cycles" "default_preset" "preserve_outputs")
+    for key in "${cycle_config_keys[@]}"; do
+        local value
+        value=$(yq ".epic_cycles.cycle_config.$key // null" "$epic_config" 2>/dev/null)
+        if [ "$value" != "null" ] && [ -n "$value" ]; then
+            result_pass "epic_cycles: cycle_config.$key is defined"
+        else
+            result_medium "epic_cycles: cycle_config.$key is missing"
+        fi
+    done
+
+    # Check presets are defined
+    local preset_count
+    preset_count=$(yq '.epic_cycles.presets | keys | length' "$epic_config" 2>/dev/null || echo "0")
+    if [ "$preset_count" -gt 0 ]; then
+        result_pass "epic_cycles: $preset_count preset(s) defined"
+    else
+        result_medium "epic_cycles: no presets defined"
+    fi
+
+    # Check that enabled field is NOT present (should be in progress.json)
+    local enabled_present
+    enabled_present=$(yq '.epic_cycles.enabled // "not_found"' "$epic_config" 2>/dev/null)
+    if [ "$enabled_present" != "not_found" ]; then
+        result_medium "epic_cycles: 'enabled' field should be in progress.json, not epic_cycles.yaml"
+        if [ "$FIX_MODE" = true ]; then
+            yq -i 'del(.epic_cycles.enabled)' "$epic_config"
+            result_fixed "epic_cycles: removed 'enabled' field"
+        fi
+    else
+        result_pass "epic_cycles: no conflicting 'enabled' field"
+    fi
+}
+
+# =============================================================================
+# Rule 9: Requirements Refinement Configuration (MEDIUM)
+# Validate requirements_refinement.yaml structure
+# =============================================================================
+validate_requirements_refinement() {
+    print_section "Rule: requirements_refinement [MEDIUM]"
+    verbose_log "Checking requirements_refinement.yaml configuration"
+
+    local req_config="$CONFIG_DIR/requirements_refinement.yaml"
+    if [ ! -f "$req_config" ]; then
+        result_medium "requirements_refinement.yaml not found"
+        return
+    fi
+
+    # Check INVEST criteria weights exist
+    local invest_fields=("independent" "negotiable" "valuable" "estimable" "small" "testable")
+    for field in "${invest_fields[@]}"; do
+        local weight
+        weight=$(yq ".invest_criteria.$field.weight // null" "$req_config" 2>/dev/null)
+        if [ "$weight" != "null" ] && [ -n "$weight" ]; then
+            result_pass "requirements_refinement: INVEST.$field weight defined"
+        else
+            result_medium "requirements_refinement: INVEST.$field weight missing"
+        fi
+    done
+
+    # Check breakdown rules exist
+    local breakdown_rules
+    breakdown_rules=$(yq '.breakdown_rules // null' "$req_config" 2>/dev/null)
+    if [ "$breakdown_rules" != "null" ] && [ -n "$breakdown_rules" ]; then
+        result_pass "requirements_refinement: breakdown_rules defined"
+    else
+        result_medium "requirements_refinement: breakdown_rules missing"
+    fi
+
+    # Check refinement workflow stages
+    local workflow_stages
+    workflow_stages=$(yq '.refinement_workflow.stages | length' "$req_config" 2>/dev/null || echo "0")
+    if [ "$workflow_stages" -gt 0 ]; then
+        result_pass "requirements_refinement: $workflow_stages workflow stage(s) defined"
+    else
+        result_medium "requirements_refinement: no workflow stages defined"
+    fi
+}
+
+# =============================================================================
+# Rule 10: Implementation Order Configuration (MEDIUM)
+# Validate implementation_order.yaml structure
+# =============================================================================
+validate_implementation_order() {
+    print_section "Rule: implementation_order [MEDIUM]"
+    verbose_log "Checking implementation_order.yaml configuration"
+
+    local impl_config="$CONFIG_DIR/implementation_order.yaml"
+    if [ ! -f "$impl_config" ]; then
+        result_medium "implementation_order.yaml not found"
+        return
+    fi
+
+    # Check available orders are defined
+    local orders=("frontend_first" "backend_first" "parallel")
+    for order in "${orders[@]}"; do
+        local order_def
+        order_def=$(yq ".implementation_order.orders.$order // null" "$impl_config" 2>/dev/null)
+        if [ "$order_def" != "null" ] && [ -n "$order_def" ]; then
+            result_pass "implementation_order: order '$order' defined"
+        else
+            result_medium "implementation_order: order '$order' missing"
+        fi
+    done
+
+    # Check current_order is valid (can be null for initial state)
+    local current
+    current=$(yq '.implementation_order.current_order // "null"' "$impl_config" 2>/dev/null)
+    if [ "$current" = "null" ]; then
+        verbose_log "implementation_order: current_order is null (will prompt user in Stage 06)"
+    elif echo "frontend_first backend_first parallel" | grep -qw "$current"; then
+        result_pass "implementation_order: current_order '$current' is valid"
+    else
+        result_medium "implementation_order: current_order '$current' is not a valid option"
+    fi
+
+    # Check phases are defined for each order
+    for order in "${orders[@]}"; do
+        local phase_count
+        phase_count=$(yq ".implementation_order.orders.$order.phases | length" "$impl_config" 2>/dev/null || echo "0")
+        if [ "$phase_count" -gt 0 ]; then
+            result_pass "implementation_order: $order has $phase_count phase(s)"
+        else
+            result_medium "implementation_order: $order has no phases defined"
+        fi
+    done
+}
+
+# =============================================================================
+# Rule 11: Notion Integration Configuration (MEDIUM)
+# Validate Notion settings in mcp_fallbacks.yaml
+# =============================================================================
+validate_notion_integration() {
+    print_section "Rule: notion_integration [MEDIUM]"
+    verbose_log "Checking Notion integration configuration"
+
+    local fallback_config="$CONFIG_DIR/mcp_fallbacks.yaml"
+    if [ ! -f "$fallback_config" ]; then
+        result_medium "mcp_fallbacks.yaml not found, cannot validate Notion integration"
+        return
+    fi
+
+    # Check Notion section exists
+    local notion_config
+    notion_config=$(yq '.servers.notion // null' "$fallback_config" 2>/dev/null)
+    if [ "$notion_config" = "null" ] || [ -z "$notion_config" ]; then
+        result_medium "Notion configuration missing in mcp_fallbacks.yaml"
+        return
+    fi
+
+    # Check fallbacks are defined (should have JSON fallback)
+    local fallback_count
+    fallback_count=$(yq '.servers.notion.fallbacks | length' "$fallback_config" 2>/dev/null || echo "0")
+    if [ "$fallback_count" -gt 0 ]; then
+        result_pass "Notion: $fallback_count fallback(s) configured"
+    else
+        result_medium "Notion: no fallbacks configured (may fail if Notion unavailable)"
+    fi
+
+    # Check JSON fallback is enabled
+    local json_enabled
+    json_enabled=$(yq '.servers.notion.json_fallback.enabled // false' "$fallback_config" 2>/dev/null)
+    if [ "$json_enabled" = "true" ]; then
+        result_pass "Notion: JSON file fallback enabled"
+
+        # Check JSON file path is defined
+        local json_path
+        json_path=$(yq '.servers.notion.json_fallback.file_path // ""' "$fallback_config" 2>/dev/null)
+        if [ -n "$json_path" ] && [ "$json_path" != "null" ]; then
+            result_pass "Notion: JSON fallback path defined: $json_path"
+        else
+            result_medium "Notion: JSON fallback enabled but file_path not defined"
+        fi
+    else
+        result_medium "Notion: JSON file fallback not enabled (recommended for offline support)"
+    fi
+
+    # Check on_error action is defined
+    local on_error
+    on_error=$(yq '.servers.notion.on_error.action // ""' "$fallback_config" 2>/dev/null)
+    if [ -n "$on_error" ] && [ "$on_error" != "null" ]; then
+        result_pass "Notion: on_error action defined: $on_error"
+    else
+        result_medium "Notion: on_error action not defined"
+    fi
+}
+
+# =============================================================================
+# Rule 12: Prerequisites (MEDIUM)
 # Stage prerequisites are valid stage IDs
 # =============================================================================
 validate_prerequisites() {
@@ -896,7 +1102,7 @@ main() {
     fi
 
     # Run validations
-    local rules="model_references parallel_alignment collaboration_consistency file_references auto_invoke execution_mode ai_wrapper_health mcp_servers prerequisites"
+    local rules="model_references parallel_alignment collaboration_consistency file_references auto_invoke execution_mode ai_wrapper_health mcp_servers epic_cycles requirements_refinement implementation_order notion_integration prerequisites"
 
     if [ -n "$RULE_FILTER" ]; then
         if ! echo "$rules" | grep -qw "$RULE_FILTER"; then
@@ -917,6 +1123,10 @@ main() {
             execution_mode) validate_execution_mode ;;
             ai_wrapper_health) validate_ai_wrapper_health ;;
             mcp_servers) validate_mcp_servers ;;
+            epic_cycles) validate_epic_cycles ;;
+            requirements_refinement) validate_requirements_refinement ;;
+            implementation_order) validate_implementation_order ;;
+            notion_integration) validate_notion_integration ;;
             prerequisites) validate_prerequisites ;;
         esac
     done

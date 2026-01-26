@@ -159,6 +159,236 @@ function copyRecursiveSync(src, dest) {
   }
 }
 
+// Tech stack presets
+const TECH_STACK_PRESETS = {
+  easy: {
+    name: 'Easy Stack (Recommended)',
+    description: 'Supabase + Vercel - Perfect for MVPs',
+    database: 'supabase',
+    hosting: 'vercel',
+    envVars: ['SUPABASE_URL', 'SUPABASE_ANON_KEY']
+  },
+  fullstack: {
+    name: 'Fullstack Stack',
+    description: 'Supabase + Railway - Full backend support',
+    database: 'supabase',
+    hosting: 'railway',
+    envVars: ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'DATABASE_URL']
+  },
+  serverless: {
+    name: 'Serverless Stack',
+    description: 'Firebase + Netlify - Real-time apps',
+    database: 'firebase',
+    hosting: 'netlify',
+    envVars: ['FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY']
+  },
+  enterprise: {
+    name: 'Enterprise Stack',
+    description: 'Neon + Render - Production-ready',
+    database: 'neon',
+    hosting: 'render',
+    envVars: ['DATABASE_URL', 'DIRECT_URL']
+  },
+  none: {
+    name: 'No Database',
+    description: 'Static site or external API only',
+    database: 'none',
+    hosting: 'vercel',
+    envVars: []
+  }
+};
+
+// Select initialization mode
+async function selectInitMode() {
+  console.log('');
+  log('🎵 How would you like to set up your project?', 'cyan');
+  console.log('');
+
+  const mode = await select({
+    message: 'Select setup mode:',
+    choices: [
+      {
+        name: '🤖 AI-Assisted (Recommended) - Just describe your project',
+        value: 'ai-assisted'
+      },
+      {
+        name: '⚙️  Manual Setup - Configure everything step by step',
+        value: 'manual'
+      },
+      {
+        name: '⚡ Quick Start - Skip all questions, use defaults',
+        value: 'quick'
+      }
+    ],
+    default: 'ai-assisted'
+  });
+
+  return mode;
+}
+
+// AI-Assisted mode: minimal input, AI recommends settings
+async function collectAIAssistedInfo() {
+  console.log('');
+  log('🤖 AI-Assisted Setup', 'cyan');
+  log('   Just describe your project - AI handles the rest', 'reset');
+  console.log('');
+
+  const info = {};
+
+  info.description = await input({
+    message: '📝 Describe your project in one sentence:',
+    validate: (v) => v.length > 0 ? true : 'Please enter a project description'
+  });
+
+  // Detect project type from description
+  const desc = info.description.toLowerCase();
+  let detectedType = 'default';
+  let recommendedPreset = 'easy';
+
+  if (desc.includes('saas') || desc.includes('subscription') || desc.includes('dashboard')) {
+    detectedType = 'SaaS';
+    recommendedPreset = 'fullstack';
+  } else if (desc.includes('mobile') || desc.includes('app') || desc.includes('ios') || desc.includes('android')) {
+    detectedType = 'Mobile App';
+    recommendedPreset = 'serverless';
+  } else if (desc.includes('api') || desc.includes('backend') || desc.includes('microservice')) {
+    detectedType = 'API/Backend';
+    recommendedPreset = 'fullstack';
+  } else if (desc.includes('shop') || desc.includes('ecommerce') || desc.includes('store') || desc.includes('payment')) {
+    detectedType = 'E-commerce';
+    recommendedPreset = 'enterprise';
+  } else if (desc.includes('real-time') || desc.includes('chat') || desc.includes('live')) {
+    detectedType = 'Real-time App';
+    recommendedPreset = 'serverless';
+  } else if (desc.includes('blog') || desc.includes('portfolio') || desc.includes('landing')) {
+    detectedType = 'Static Site';
+    recommendedPreset = 'easy';
+  }
+
+  const preset = TECH_STACK_PRESETS[recommendedPreset];
+
+  console.log('');
+  log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'cyan');
+  log('🤖 AI Recommendations:', 'cyan');
+  log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'cyan');
+  console.log(`   Detected Type: ${detectedType}`);
+  console.log(`   Recommended Stack: ${preset.name}`);
+  console.log(`   Database: ${preset.database}`);
+  console.log(`   Hosting: ${preset.hosting} (Git push auto-deploy)`);
+  console.log('');
+
+  const acceptRecommendation = await confirm({
+    message: 'Accept these recommendations?',
+    default: true
+  });
+
+  if (acceptRecommendation) {
+    info.techStack = recommendedPreset;
+    info.database = preset.database;
+    info.hosting = preset.hosting;
+    info.envVars = preset.envVars;
+  } else {
+    // Let user choose manually
+    const stackInfo = await collectTechStackInfo();
+    Object.assign(info, stackInfo);
+  }
+
+  // Set defaults for other fields
+  info.sprintMode = true;
+  info.defaultSprints = '3';
+  info.notionEnabled = true;
+  info.epicEnabled = false;
+  info.requirementsRefinement = true;
+  info.moodboardEnabled = true;
+  info.implementationOrder = null;
+
+  return info;
+}
+
+// Quick start mode: all defaults
+async function collectQuickStartInfo() {
+  console.log('');
+  log('⚡ Quick Start - Using all defaults', 'cyan');
+  console.log('');
+
+  const preset = TECH_STACK_PRESETS.easy;
+
+  return {
+    description: '',
+    techStack: 'easy',
+    database: preset.database,
+    hosting: preset.hosting,
+    envVars: preset.envVars,
+    sprintMode: true,
+    defaultSprints: '3',
+    notionEnabled: true,
+    epicEnabled: false,
+    requirementsRefinement: true,
+    moodboardEnabled: true,
+    implementationOrder: null
+  };
+}
+
+// Collect tech stack information
+async function collectTechStackInfo() {
+  console.log('');
+  log('🗄️ Technology Stack Selection', 'yellow');
+  console.log('');
+
+  const info = {};
+
+  // Database selection
+  info.database = await select({
+    message: '🗄️ Select database:',
+    choices: [
+      { name: 'Supabase (Recommended) - PostgreSQL + APIs + Auth', value: 'supabase' },
+      { name: 'Firebase - NoSQL + Real-time + Auth (Google)', value: 'firebase' },
+      { name: 'PlanetScale - Serverless MySQL', value: 'planetscale' },
+      { name: 'Neon - Serverless PostgreSQL', value: 'neon' },
+      { name: 'None - Static site or external API', value: 'none' }
+    ],
+    default: 'supabase'
+  });
+
+  // Hosting selection
+  info.hosting = await select({
+    message: '🚀 Select hosting (all support Git auto-deploy):',
+    choices: [
+      { name: 'Vercel (Recommended) - Next.js optimized', value: 'vercel' },
+      { name: 'Netlify - JAMstack optimized', value: 'netlify' },
+      { name: 'Railway - Full-stack (frontend + backend)', value: 'railway' },
+      { name: 'Render - Full-stack + managed PostgreSQL', value: 'render' }
+    ],
+    default: 'vercel'
+  });
+
+  // Set env vars based on selection
+  const envVarsMap = {
+    supabase: ['SUPABASE_URL', 'SUPABASE_ANON_KEY'],
+    firebase: ['FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY'],
+    planetscale: ['DATABASE_URL'],
+    neon: ['DATABASE_URL', 'DIRECT_URL'],
+    none: []
+  };
+
+  info.envVars = envVarsMap[info.database] || [];
+
+  // Determine preset name
+  if (info.database === 'supabase' && info.hosting === 'vercel') {
+    info.techStack = 'easy';
+  } else if (info.database === 'supabase' && info.hosting === 'railway') {
+    info.techStack = 'fullstack';
+  } else if (info.database === 'firebase' && info.hosting === 'netlify') {
+    info.techStack = 'serverless';
+  } else if (info.database === 'neon' && info.hosting === 'render') {
+    info.techStack = 'enterprise';
+  } else {
+    info.techStack = 'custom';
+  }
+
+  return info;
+}
+
 async function collectBriefInfo() {
   console.log('');
   log('📜 Creating project brief. (Press Enter to skip)', 'yellow');
@@ -175,6 +405,10 @@ async function collectBriefInfo() {
   info.constraintBudget = await input({ message: '💰 Constraints - Budget (Enter to skip):' });
   info.constraintTech = await input({ message: '⚙️ Constraints - Technology (Enter to skip):' });
   info.references = await input({ message: '🔗 References (Enter to skip):' });
+
+  // Tech stack selection
+  const techStackInfo = await collectTechStackInfo();
+  Object.assign(info, techStackInfo);
 
   // Core features - multiple inputs (separate loop)
   console.log('');
@@ -444,6 +678,100 @@ function applyConfigSettings(targetDir, info) {
   }
 }
 
+function generateEnvExample(targetDir, info) {
+  const envLines = [
+    `# ${info.projectName || 'Project'} Environment Variables`,
+    `# Generated by claude-symphony`,
+    `# Copy this file to .env.local and fill in the values`,
+    ``,
+    `# ============================================`,
+    `# Application`,
+    `# ============================================`,
+    `NODE_ENV=development`,
+    `NEXT_PUBLIC_APP_URL=http://localhost:3000`,
+    ``
+  ];
+
+  // Add database-specific env vars
+  if (info.database === 'supabase') {
+    envLines.push(
+      `# ============================================`,
+      `# Supabase Configuration`,
+      `# Get from: https://supabase.com/dashboard/project/_/settings/api`,
+      `# ============================================`,
+      `NEXT_PUBLIC_SUPABASE_URL=your-project-url`,
+      `NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key`,
+      `# SUPABASE_SERVICE_ROLE_KEY=your-service-role-key`,
+      ``
+    );
+  } else if (info.database === 'firebase') {
+    envLines.push(
+      `# ============================================`,
+      `# Firebase Configuration`,
+      `# Get from: Firebase Console > Project Settings > Service Accounts`,
+      `# ============================================`,
+      `FIREBASE_PROJECT_ID=your-project-id`,
+      `FIREBASE_CLIENT_EMAIL=your-client-email`,
+      `FIREBASE_PRIVATE_KEY=your-private-key`,
+      ``
+    );
+  } else if (info.database === 'planetscale') {
+    envLines.push(
+      `# ============================================`,
+      `# PlanetScale Configuration`,
+      `# Get from: PlanetScale Dashboard > Connect`,
+      `# ============================================`,
+      `DATABASE_URL=your-connection-string`,
+      ``
+    );
+  } else if (info.database === 'neon') {
+    envLines.push(
+      `# ============================================`,
+      `# Neon Configuration`,
+      `# Get from: Neon Console > Connection Details`,
+      `# ============================================`,
+      `DATABASE_URL=your-pooled-connection-string`,
+      `# DIRECT_URL=your-direct-connection-string`,
+      ``
+    );
+  }
+
+  envLines.push(
+    `# ============================================`,
+    `# Add your custom environment variables below`,
+    `# ============================================`
+  );
+
+  const envPath = path.join(targetDir, '.env.example');
+  fs.writeFileSync(envPath, envLines.join('\n'));
+}
+
+function saveTechStackConfig(targetDir, info) {
+  const configPath = path.join(targetDir, 'config', 'tech_stack.yaml');
+
+  const techStackConfig = {
+    tech_stack: {
+      preset: info.techStack || 'custom',
+      database: {
+        provider: info.database || 'none',
+        configured: false
+      },
+      hosting: {
+        provider: info.hosting || 'vercel',
+        auto_deploy: true,
+        configured: false
+      },
+      env_vars: {
+        required: info.envVars || [],
+        configured: false
+      },
+      selected_at: new Date().toISOString()
+    }
+  };
+
+  fs.writeFileSync(configPath, yaml.dump(techStackConfig, { lineWidth: -1 }));
+}
+
 function generateBriefContent(projectName, info) {
   // Core features formatting
   let featuresContent;
@@ -567,10 +895,26 @@ ${colors.yellow}After creation:${colors.reset}
   }
   log(`✓ Project directory: ${targetDir}`, 'green');
 
-  // 2. Collect project brief info (only when --yes flag is not present)
+  // 2. Collect project info based on selected mode
   let briefInfo = {};
   if (!skipPrompts) {
-    briefInfo = await collectBriefInfo();
+    const initMode = await selectInitMode();
+
+    switch (initMode) {
+      case 'ai-assisted':
+        briefInfo = await collectAIAssistedInfo();
+        break;
+      case 'quick':
+        briefInfo = await collectQuickStartInfo();
+        break;
+      case 'manual':
+      default:
+        briefInfo = await collectBriefInfo();
+        break;
+    }
+  } else {
+    // --yes flag: use quick start defaults
+    briefInfo = await collectQuickStartInfo();
   }
 
   // 3. Copy template
@@ -622,9 +966,20 @@ ${colors.yellow}After creation:${colors.reset}
   }
 
   // 5. Apply configuration settings (sprint mode, notion)
-  if (!skipPrompts) {
-    applyConfigSettings(targetDir, briefInfo);
-    log('✓ Configuration settings applied', 'green');
+  applyConfigSettings(targetDir, briefInfo);
+  log('✓ Configuration settings applied', 'green');
+
+  // 5.1 Save tech stack configuration
+  if (briefInfo.database || briefInfo.hosting) {
+    saveTechStackConfig(targetDir, briefInfo);
+    log('✓ Tech stack configuration saved', 'green');
+  }
+
+  // 5.2 Generate .env.example based on tech stack
+  if (briefInfo.database && briefInfo.database !== 'none') {
+    briefInfo.projectName = actualProjectName;
+    generateEnvExample(targetDir, briefInfo);
+    log('✓ .env.example generated', 'green');
   }
 
   // 6. Create project_brief.md

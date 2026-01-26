@@ -64,9 +64,10 @@ Test code writing and E2E testing stage
 4. Test coverage achievement
 
 ## Input Files
-- `../07-refactoring/outputs/refactored_code/` (or modified code)
-- `../08-qa/outputs/qa_report.md`
-- `../08-qa/HANDOFF.md`
+<!-- $STAGES_ROOT = stages/ directory in project root -->
+- `$STAGES_ROOT/07-refactoring/outputs/refactored_code/` (or modified code)
+- `$STAGES_ROOT/08-qa/outputs/qa_report.md`
+- `$STAGES_ROOT/08-qa/HANDOFF.md`
 
 ## Output Files
 - `outputs/tests/` - Test code
