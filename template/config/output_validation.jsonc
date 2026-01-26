@@ -136,6 +136,23 @@
             }
           }
         },
+        "optional_outputs": {
+          "stitch_generated/": {
+            "exists": false,
+            "is_directory": true,
+            "description": "Stitch-generated UI files (when Stitch MCP is used)"
+          },
+          "design_dna.json": {
+            "exists": false,
+            "format": "json",
+            "description": "Extracted Design DNA from moodboard (when Stitch MCP is used)"
+          },
+          "stitch_exports/": {
+            "exists": false,
+            "is_directory": true,
+            "description": "Figma/HTML exports from Stitch (when Stitch MCP is used)"
+          }
+        },
         "validation_commands": []
       },
       "05-task-management": {

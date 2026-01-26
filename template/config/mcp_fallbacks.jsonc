@@ -132,6 +132,26 @@
       "message": "Figma connection failed. Check Dev Mode MCP settings."
     }
   },
+  "stitch": {
+    "primary": "stitch",
+    "fallbacks": ["figma-dev-mode", "claude_vision"],
+    "rules": {
+      "on_quota_exceeded": "use_fallback",
+      "on_timeout": "retry_then_fallback",
+      "retry_count": 2,
+      "retry_delay_ms": 2000
+    },
+    "quota_management": {
+      "standard_limit": 350,
+      "experimental_limit": 50,
+      "reset_period": "monthly",
+      "warning_threshold_percent": 80
+    },
+    "on_error": {
+      "action": "use_fallback_chain",
+      "message": "Stitch MCP unavailable. Falling back to {{FALLBACK_TOOL}}."
+    }
+  },
   "stage_preferences": {
     "01-brainstorm": {
       "search": [
@@ -156,6 +176,7 @@
       "reason": "Architecture pattern/documentation search"
     },
     "04-ui-ux": {
+      "ui_generation": ["stitch", "figma-dev-mode", "claude_vision"],
       "browser": [
         "figma-dev-mode",
         "playwright"
@@ -164,7 +185,7 @@
         "exa",
         "web_search"
       ],
-      "reason": "UI reference search"
+      "reason": "Stitch for UI generation, Figma for design tokens"
     },
     "06-implementation": {
       "search": [
@@ -295,6 +316,18 @@
         "command": "test -x scripts/codex-wrapper.sh",
         "on_failure": "warn",
         "message": "codex-wrapper.sh not executable"
+      },
+      {
+        "name": "stitch_mcp",
+        "command": "claude mcp list | grep -q stitch",
+        "on_failure": "warn",
+        "message": "Stitch MCP not configured. Run: scripts/setup-stitch-mcp.sh"
+      },
+      {
+        "name": "gcloud_auth",
+        "command": "gcloud auth print-access-token &> /dev/null 2>&1",
+        "on_failure": "warn",
+        "message": "Google Cloud not authenticated. Run: gcloud auth login"
       }
     ]
   }

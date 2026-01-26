@@ -50,6 +50,22 @@
             "variable_extraction",
             "code_generation"
           ]
+        },
+        "stitch": {
+          "enabled": true,
+          "description": "Google Stitch MCP for text-to-UI generation",
+          "capabilities": [
+            "text_to_ui",
+            "image_to_ui",
+            "design_variants",
+            "design_dna_extraction",
+            "figma_export",
+            "html_css_export"
+          ],
+          "modes": {
+            "standard": { "description": "Production-ready UI", "quota_cost": 1 },
+            "experimental": { "description": "Cutting-edge features", "quota_cost": 1 }
+          }
         }
       }
     },
@@ -293,6 +309,32 @@
       "feedback": "/moodboard feedback",
       "export": "/moodboard export",
       "status": "/moodboard status"
+    }
+  },
+  "stitch_integration": {
+    "enabled": true,
+    "auto_invoke_on_moodboard": true,
+    "design_dna": {
+      "extract_on_start": true,
+      "source_directories": [
+        "stages/04-ui-ux/inputs/moodboard/ui-references",
+        "stages/04-ui-ux/inputs/moodboard/brand-assets"
+      ],
+      "output_file": "outputs/design_dna.json"
+    },
+    "generation_options": {
+      "default_variant_count": 3,
+      "export_format": ["figma", "html_css"],
+      "responsive_breakpoints": ["mobile", "tablet", "desktop"]
+    },
+    "commands": {
+      "status": "/stitch",
+      "dna": "/stitch dna",
+      "generate": "/stitch generate \"...\"",
+      "image": "/stitch image path",
+      "variants": "/stitch variants N",
+      "export": "/stitch export [format]",
+      "quota": "/stitch quota"
     }
   },
   "design_system": {

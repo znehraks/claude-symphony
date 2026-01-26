@@ -196,6 +196,59 @@ Generates:
 
 **Note:** AI analyzes images using vision capabilities. Use `/moodboard analyze` to trigger analysis.
 
+## Stitch MCP Integration
+
+> Configuration: `config/ui-ux.jsonc`
+> Command: `/stitch`
+
+### Capabilities
+
+| Feature | Description | Quota Cost |
+|---------|-------------|------------|
+| Text→UI | Generate UI from descriptions | 1 Standard |
+| Image→UI | Convert sketches to clean UI | 1 Standard |
+| Design DNA | Extract styles from moodboard | 1 Standard |
+| Variants | Generate alternatives | 1 per variant |
+| Export | Figma + HTML/CSS | Included |
+
+### Workflow Integration
+
+1. **Moodboard Collection** - `/moodboard` (existing workflow)
+2. **Design DNA Extraction** - `/stitch dna` (extract styles from moodboard)
+3. **UI Generation** - `/stitch generate "description"` (Text→UI)
+4. **Variant Selection** - Select optimal design
+5. **Export** - `/stitch export figma` or `/stitch export html`
+
+### Commands
+
+| Command | Description |
+|---------|-------------|
+| `/stitch` | Show status and quota |
+| `/stitch dna` | Extract Design DNA from moodboard |
+| `/stitch generate "..."` | Generate UI from description |
+| `/stitch image path/to/sketch.png` | Convert sketch to UI |
+| `/stitch variants 5` | Generate 5 variants |
+| `/stitch export figma` | Export to Figma |
+| `/stitch export html` | Export to HTML/CSS |
+| `/stitch quota` | Check quota usage |
+
+### Fallback Chain
+
+```
+Stitch → Figma MCP → Claude Vision → Manual Wireframes
+```
+
+- **Quota exceeded**: Auto-fallback to Figma MCP
+- **API error**: Retry 2x, then fallback
+- **Timeout**: Fallback to Claude Vision
+
+### Best Practices
+
+1. Run `/moodboard` to collect references, then `/stitch dna`
+2. Extract Design DNA before generating UI for consistency
+3. Generate at least 3 variants, then select optimal design
+4. Consider fallback when quota warning (80%) is reached
+
 ## Output Files
 - `outputs/wireframes.md` - Wireframes (ASCII/Mermaid)
 - `outputs/user_flows.md` - User flows
