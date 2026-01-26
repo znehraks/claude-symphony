@@ -2,6 +2,10 @@
 # tmux Startup Script for Memory Relay
 # Creates a tmux session with Claude and the relay orchestrator
 # Part of claude-symphony package
+#
+# DEPRECATION NOTICE: This script is being replaced by TypeScript module
+# See: src/relay/startup.ts
+# This shell script is kept for backward compatibility and FIFO operations
 
 set -euo pipefail
 
@@ -32,6 +36,12 @@ NC='\033[0m'
 
 # Get working directory (default to current)
 WORK_DIR="${1:-$(pwd)}"
+
+# Parse bypass mode argument
+BYPASS_MODE=""
+if [[ "${2:-}" == "--bypass" ]]; then
+    BYPASS_MODE="--bypass"
+fi
 
 echo -e "${CYAN}Claude Symphony - Memory Relay Session${NC}"
 echo "======================================="
@@ -99,11 +109,6 @@ echo ""
 # Create new tmux session with orchestrator in the first pane (background)
 tmux new-session -d -s "${SESSION_NAME}" -c "${WORK_DIR}" -x 200 -y 50
 
-# Pass bypass mode environment variable to tmux session
-if [[ "${CLAUDE_DANGEROUSLY_SKIP_PERMISSIONS:-}" == "1" ]]; then
-    tmux set-environment -t "${SESSION_NAME}" CLAUDE_DANGEROUSLY_SKIP_PERMISSIONS "1"
-fi
-
 # Rename the window
 tmux rename-window -t "${SESSION_NAME}:0" "symphony"
 
@@ -120,8 +125,8 @@ tmux send-keys -t "${SESSION_NAME}:0.1" "${ORCHESTRATOR_SCRIPT} start" Enter
 # Wait for orchestrator to initialize
 sleep 1
 
-# Start Claude wrapper in pane 0 (left side, main)
-tmux send-keys -t "${SESSION_NAME}:0.0" "${WRAPPER_SCRIPT}" Enter
+# Start Claude wrapper in pane 0 (left side, main), pass bypass flag if set
+tmux send-keys -t "${SESSION_NAME}:0.0" "${WRAPPER_SCRIPT} ${BYPASS_MODE}" Enter
 
 # Select the Claude pane as active
 tmux select-pane -t "${SESSION_NAME}:0.0"

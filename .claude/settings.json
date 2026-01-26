@@ -1,0 +1,147 @@
+{
+  "name": "claude-symphony",
+  "version": "1.2.0",
+  "description": "Multi-AI Orchestration Framework",
+
+  "statusline": {
+    "script": ".claude/hooks/statusline.sh",
+    "enabled": true
+  },
+
+  "context_management": {
+    "warning_threshold_percent": 60,
+    "action_threshold_percent": 50,
+    "critical_threshold_percent": 40,
+    "auto_snapshot_on_warning": true,
+    "auto_compact_enabled": true,
+    "auto_recovery_enabled": true,
+    "compact_cooldown_seconds": 300,
+    "snapshot_dir": "state/context"
+  },
+
+  "hooks_info": {
+    "note": "Actual hooks settings are in settings.local.json",
+    "stop": ".claude/hooks/stop.sh - auto /compact",
+    "session_start": ".claude/hooks/session-start.sh - auto recovery"
+  },
+  "commands": {
+    "init-project": {
+      "description": "Initialize new project",
+      "file": "commands/init-project.md"
+    },
+    "run-stage": {
+      "description": "Run stage",
+      "file": "commands/run-stage.md"
+    },
+    "handoff": {
+      "description": "Generate handoff document",
+      "file": "commands/handoff.md"
+    },
+    "checkpoint": {
+      "description": "Create checkpoint",
+      "file": "commands/checkpoint.md"
+    },
+    "gemini": {
+      "description": "Call Gemini CLI (tmux)",
+      "file": "commands/gemini.md"
+    },
+    "codex": {
+      "description": "Call Codex CLI (tmux)",
+      "file": "commands/codex.md"
+    },
+    "status": {
+      "description": "Check pipeline status",
+      "file": "commands/status.md"
+    },
+    "stages": {
+      "description": "Stage list and details",
+      "file": "commands/stages.md"
+    },
+    "restore": {
+      "description": "Restore checkpoint",
+      "file": "commands/restore.md"
+    },
+    "next": {
+      "description": "Transition to next stage",
+      "file": "commands/next.md"
+    },
+    "context": {
+      "description": "Context state management",
+      "file": "commands/context.md"
+    },
+    "brainstorm": {
+      "description": "Start 01-brainstorm stage",
+      "file": "commands/brainstorm.md"
+    },
+    "research": {
+      "description": "Start 02-research stage",
+      "file": "commands/research.md"
+    },
+    "planning": {
+      "description": "Start 03-planning stage",
+      "file": "commands/planning.md"
+    },
+    "ui-ux": {
+      "description": "Start 04-ui-ux stage",
+      "file": "commands/ui-ux.md"
+    },
+    "tasks": {
+      "description": "Start 05-task-management stage",
+      "file": "commands/tasks.md"
+    },
+    "implement": {
+      "description": "Start 06-implementation stage",
+      "file": "commands/implement.md"
+    },
+    "refactor": {
+      "description": "Start 07-refactoring stage",
+      "file": "commands/refactor.md"
+    },
+    "qa": {
+      "description": "Start 08-qa stage",
+      "file": "commands/qa.md"
+    },
+    "test": {
+      "description": "Start 09-testing stage",
+      "file": "commands/test.md"
+    },
+    "deploy": {
+      "description": "Start 10-deployment stage",
+      "file": "commands/deploy.md"
+    },
+    "collaborate": {
+      "description": "Run Multi-AI collaboration",
+      "file": "commands/collaborate.md"
+    },
+    "benchmark": {
+      "description": "AI model benchmarking",
+      "file": "commands/benchmark.md"
+    },
+    "fork": {
+      "description": "Pipeline branch management",
+      "file": "commands/fork.md"
+    },
+    "validate": {
+      "description": "Run output validation",
+      "file": "commands/validate.md"
+    }
+  },
+  "skills": {
+    "smart-handoff": {
+      "description": "Smart context extraction and HANDOFF generation",
+      "directory": "skills/smart-handoff"
+    },
+    "ai-collaboration": {
+      "description": "Multi-AI collaboration orchestration",
+      "directory": "skills/ai-collaboration"
+    },
+    "auto-checkpoint": {
+      "description": "Automatic checkpoint generation",
+      "directory": "skills/auto-checkpoint"
+    },
+    "output-validator": {
+      "description": "Output validation and quality verification",
+      "directory": "skills/output-validator"
+    }
+  }
+}

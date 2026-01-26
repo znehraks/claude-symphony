@@ -2,6 +2,10 @@
 # Claude Wrapper for Memory Relay Orchestration
 # Provides signal_relay_ready function and starts Claude with relay support
 # Part of claude-symphony package
+#
+# DEPRECATION NOTICE: This script is being replaced by TypeScript module
+# See: src/relay/wrapper.ts
+# This shell script is kept for backward compatibility
 
 set -euo pipefail
 
@@ -86,16 +90,19 @@ signal_relay_ready() {
     return 0
 }
 
+# Check if --bypass flag was passed as argument
+BYPASS_FLAG=""
+for arg in "$@"; do
+    if [[ "$arg" == "--bypass" ]]; then
+        BYPASS_FLAG="--dangerously-skip-permissions"
+        break
+    fi
+done
+
 # Build claude command with optional bypass flag
 get_claude_cmd() {
-    # Check both shell env and tmux env for bypass flag
-    local bypass="${CLAUDE_DANGEROUSLY_SKIP_PERMISSIONS:-}"
-    if [[ -z "${bypass}" ]] && command -v tmux &> /dev/null && [[ -n "${TMUX:-}" ]]; then
-        bypass=$(tmux show-environment CLAUDE_DANGEROUSLY_SKIP_PERMISSIONS 2>/dev/null | cut -d= -f2 || echo "")
-    fi
-
-    if [[ "${bypass}" == "1" ]]; then
-        echo "claude --dangerously-skip-permissions"
+    if [[ -n "${BYPASS_FLAG}" ]]; then
+        echo "claude ${BYPASS_FLAG}"
     else
         echo "claude"
     fi
@@ -108,8 +115,14 @@ export FIFO_PATH
 export RELAY_BASE
 export LOG_FILE
 
-# Check if we have a handoff file to resume from
-HANDOFF_FILE="${1:-}"
+# Check if we have a handoff file to resume from (skip --bypass flag)
+HANDOFF_FILE=""
+for arg in "$@"; do
+    if [[ "$arg" != "--bypass" ]] && [[ -f "$arg" ]]; then
+        HANDOFF_FILE="$arg"
+        break
+    fi
+done
 
 # Display relay status banner
 show_relay_banner() {

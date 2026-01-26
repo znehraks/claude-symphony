@@ -1,0 +1,336 @@
+// claude-symphony Tech Stack Presets Configuration
+{
+  "$schema": "../../schemas/tech_stack.schema.json",
+  "tech_stack_presets": {
+    "version": "1.0",
+    "description": "Pre-configured technology stack combinations for quick project setup",
+    "presets": {
+      "easy": {
+        "name": "Easy Stack (Recommended)",
+        "description": "Simplest setup - perfect for MVPs and prototypes",
+        "database": "supabase",
+        "hosting": "vercel",
+        "env_vars": [
+          "SUPABASE_URL",
+          "SUPABASE_ANON_KEY"
+        ],
+        "best_for": [
+          "Solo developers",
+          "MVPs and prototypes",
+          "Quick iterations"
+        ]
+      },
+      "fullstack": {
+        "name": "Fullstack Stack",
+        "description": "Full backend support with database",
+        "database": "supabase",
+        "hosting": "railway",
+        "env_vars": [
+          "SUPABASE_URL",
+          "SUPABASE_ANON_KEY",
+          "DATABASE_URL"
+        ],
+        "best_for": [
+          "Full-stack applications",
+          "APIs with frontend",
+          "Server-side rendering"
+        ]
+      },
+      "serverless": {
+        "name": "Serverless Stack",
+        "description": "Firebase ecosystem for real-time apps",
+        "database": "firebase",
+        "hosting": "netlify",
+        "env_vars": [
+          "FIREBASE_PROJECT_ID",
+          "FIREBASE_CLIENT_EMAIL",
+          "FIREBASE_PRIVATE_KEY"
+        ],
+        "best_for": [
+          "Real-time applications",
+          "Mobile-first projects",
+          "Google ecosystem integration"
+        ]
+      },
+      "enterprise": {
+        "name": "Enterprise Stack",
+        "description": "Production-ready with PostgreSQL",
+        "database": "neon",
+        "hosting": "render",
+        "env_vars": [
+          "DATABASE_URL",
+          "DIRECT_URL"
+        ],
+        "best_for": [
+          "Production applications",
+          "Complex data models",
+          "High reliability needs"
+        ]
+      }
+    },
+    "stacks": {
+      "database": {
+        "supabase": {
+          "name": "Supabase",
+          "label": "Supabase (Recommended)",
+          "description": "PostgreSQL + Auto-generated APIs + Auth + Storage",
+          "env_vars": [
+            {
+              "name": "SUPABASE_URL",
+              "description": "Supabase project URL",
+              "required": true
+            },
+            {
+              "name": "SUPABASE_ANON_KEY",
+              "description": "Supabase anonymous (public) key",
+              "required": true
+            },
+            {
+              "name": "SUPABASE_SERVICE_ROLE_KEY",
+              "description": "Supabase service role key (server-side only)",
+              "required": false
+            }
+          ],
+          "features": [
+            "Real-time subscriptions",
+            "Row Level Security",
+            "Edge Functions",
+            "Built-in Auth",
+            "Storage API"
+          ],
+          "docs_url": "https://supabase.com/docs"
+        },
+        "firebase": {
+          "name": "Firebase",
+          "label": "Firebase",
+          "description": "NoSQL + Auth + Hosting (Google ecosystem)",
+          "env_vars": [
+            {
+              "name": "FIREBASE_PROJECT_ID",
+              "description": "Firebase project ID",
+              "required": true
+            },
+            {
+              "name": "FIREBASE_CLIENT_EMAIL",
+              "description": "Service account email",
+              "required": true
+            },
+            {
+              "name": "FIREBASE_PRIVATE_KEY",
+              "description": "Service account private key",
+              "required": true
+            }
+          ],
+          "features": [
+            "Real-time Database",
+            "Cloud Firestore",
+            "Firebase Auth",
+            "Cloud Functions"
+          ],
+          "docs_url": "https://firebase.google.com/docs"
+        },
+        "planetscale": {
+          "name": "PlanetScale",
+          "label": "PlanetScale",
+          "description": "Serverless MySQL (Vitess-based)",
+          "env_vars": [
+            {
+              "name": "DATABASE_URL",
+              "description": "PlanetScale connection string",
+              "required": true
+            }
+          ],
+          "features": [
+            "Branching workflows",
+            "Non-blocking schema changes",
+            "Vitess-powered scaling"
+          ],
+          "docs_url": "https://planetscale.com/docs"
+        },
+        "neon": {
+          "name": "Neon",
+          "label": "Neon",
+          "description": "Serverless PostgreSQL with branching",
+          "env_vars": [
+            {
+              "name": "DATABASE_URL",
+              "description": "Neon pooled connection string",
+              "required": true
+            },
+            {
+              "name": "DIRECT_URL",
+              "description": "Neon direct connection (for migrations)",
+              "required": false
+            }
+          ],
+          "features": [
+            "Branching for development",
+            "Autoscaling",
+            "Point-in-time recovery"
+          ],
+          "docs_url": "https://neon.tech/docs"
+        },
+        "none": {
+          "name": "None",
+          "label": "No Database",
+          "description": "Static site or external API only",
+          "env_vars": [],
+          "features": []
+        }
+      },
+      "hosting": {
+        "vercel": {
+          "name": "Vercel",
+          "label": "Vercel (Recommended)",
+          "description": "Next.js optimized, Git push auto-deploy",
+          "auto_deploy": true,
+          "supported_frameworks": [
+            "Next.js",
+            "React",
+            "Vue",
+            "Svelte",
+            "Astro"
+          ],
+          "env_vars": [],
+          "features": [
+            "Zero-config deploys",
+            "Preview deployments",
+            "Edge Functions",
+            "Analytics"
+          ],
+          "docs_url": "https://vercel.com/docs"
+        },
+        "netlify": {
+          "name": "Netlify",
+          "label": "Netlify",
+          "description": "JAMstack optimized, Git push auto-deploy",
+          "auto_deploy": true,
+          "supported_frameworks": [
+            "React",
+            "Vue",
+            "Gatsby",
+            "Astro",
+            "Hugo"
+          ],
+          "env_vars": [],
+          "features": [
+            "Forms handling",
+            "Identity (Auth)",
+            "Functions",
+            "Split testing"
+          ],
+          "docs_url": "https://docs.netlify.com"
+        },
+        "railway": {
+          "name": "Railway",
+          "label": "Railway",
+          "description": "Full-stack support (frontend + backend), Git auto-deploy",
+          "auto_deploy": true,
+          "supported_frameworks": [
+            "Node.js",
+            "Python",
+            "Go",
+            "Rust",
+            "Docker"
+          ],
+          "env_vars": [],
+          "features": [
+            "Database hosting",
+            "Background workers",
+            "Cron jobs",
+            "Private networking"
+          ],
+          "docs_url": "https://docs.railway.app"
+        },
+        "render": {
+          "name": "Render",
+          "label": "Render",
+          "description": "Full-stack + managed PostgreSQL, Git auto-deploy",
+          "auto_deploy": true,
+          "supported_frameworks": [
+            "Node.js",
+            "Python",
+            "Go",
+            "Ruby",
+            "Docker"
+          ],
+          "env_vars": [],
+          "features": [
+            "Managed PostgreSQL",
+            "Background workers",
+            "Cron jobs",
+            "Private services"
+          ],
+          "docs_url": "https://render.com/docs"
+        }
+      }
+    },
+    "deployment_workflow": {
+      "description": "All hosting options use Git-based auto-deployment:\n1. Connect your GitHub/GitLab repository\n2. Push to main branch\n3. Automatic build and deploy\n4. Preview URLs for pull requests\n",
+      "steps": [
+        "Connect repository to hosting provider",
+        "Configure environment variables",
+        "Push code to trigger deployment",
+        "Preview URLs generated for PRs"
+      ]
+    },
+    "ai_assisted": {
+      "enabled": true,
+      "description": "AI analyzes project description and recommends tech stack",
+      "project_type_detection": {
+        "keywords": {
+          "saas": [
+            "subscription",
+            "dashboard",
+            "multi-tenant",
+            "billing",
+            "SaaS"
+          ],
+          "mobile_app": [
+            "iOS",
+            "Android",
+            "React Native",
+            "mobile",
+            "app"
+          ],
+          "api": [
+            "API",
+            "backend",
+            "microservice",
+            "REST",
+            "GraphQL"
+          ],
+          "ecommerce": [
+            "shop",
+            "cart",
+            "payment",
+            "store",
+            "product"
+          ],
+          "realtime": [
+            "real-time",
+            "chat",
+            "live",
+            "websocket",
+            "collaboration"
+          ],
+          "static": [
+            "blog",
+            "portfolio",
+            "landing",
+            "documentation"
+          ]
+        }
+      },
+      "stack_recommendations": {
+        "saas": "fullstack",
+        "mobile_app": "serverless",
+        "api": "fullstack",
+        "ecommerce": "enterprise",
+        "realtime": "serverless",
+        "static": "easy",
+        "default": "easy"
+      }
+    }
+  }
+}

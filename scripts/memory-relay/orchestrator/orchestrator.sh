@@ -2,6 +2,10 @@
 # Memory Relay Orchestrator
 # Listens for relay signals via FIFO and manages Claude session handoffs
 # Part of claude-symphony package
+#
+# DEPRECATION NOTICE: This script is being replaced by TypeScript module
+# See: src/relay/orchestrator.ts
+# This shell script is kept for efficient FIFO blocking reads
 
 set -euo pipefail
 

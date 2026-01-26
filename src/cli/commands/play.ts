@@ -1,19 +1,26 @@
 /**
  * Memory Relay play command
  * Auto-installs and starts Claude with Memory Relay orchestration
+ *
+ * Uses TypeScript modules for core logic with shell script fallback for FIFO operations
  */
 import fs from 'fs';
 import path from 'path';
-import os from 'os';
 import { fileURLToPath } from 'url';
 import { logInfo, logSuccess, logError, logWarning } from '../../utils/logger.js';
 import { commandExists, execShell } from '../../utils/shell.js';
 import { copyDirSync, ensureDir, pathExists } from '../../utils/fs.js';
+import {
+  startSession,
+  getStatus,
+  getRelayDir,
+  type SessionOptions as RelaySessionOptions,
+} from '../../relay/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const RELAY_DIR = path.join(os.homedir(), '.claude/memory-relay');
+const RELAY_DIR = getRelayDir();
 
 export interface PlayOptions {
   directory?: string;
@@ -105,49 +112,71 @@ export async function playCommand(options: PlayOptions): Promise<void> {
     logWarning('claude CLI not found in PATH');
   }
 
-  // 3. Install if needed
-  if (!pathExists(RELAY_DIR)) {
-    const installed = await installMemoryRelay();
-    if (!installed) {
-      process.exit(1);
-    }
+  // 3. Install/update Memory Relay scripts (always update to ensure latest version)
+  // This ensures the shell scripts for FIFO operations are available
+  const installed = await installMemoryRelay();
+  if (!installed) {
+    process.exit(1);
   }
 
-  // 4. Start tmux session
+  // 4. Start session using TypeScript module
   const workDir = options.directory || process.cwd();
-  const startupScript = path.join(RELAY_DIR, 'orchestrator/tmux-startup.sh');
 
   logInfo('Starting Encore Mode session...');
-
-  // Set environment variable for bypass mode
-  const env = options.dangerouslySkipPermissions
-    ? { ...process.env, CLAUDE_DANGEROUSLY_SKIP_PERMISSIONS: '1' }
-    : process.env;
 
   if (options.dangerouslySkipPermissions) {
     logWarning('Bypass mode enabled - Claude will skip all permission prompts');
   }
 
-  const result = await execShell(`"${startupScript}" "${workDir}"`, {
-    stdio: 'inherit',
-    env,
-  });
+  // Use TypeScript startup module
+  const sessionOptions: RelaySessionOptions = {
+    workDir,
+    bypass: options.dangerouslySkipPermissions ?? false,
+  };
 
-  process.exit(result.exitCode);
+  try {
+    await startSession(sessionOptions);
+  } catch (error) {
+    logError(`Failed to start session: ${error}`);
+    process.exit(1);
+  }
 }
 
 /**
  * Show Memory Relay status
  */
 export async function playStatus(): Promise<void> {
-  const orchestratorScript = path.join(RELAY_DIR, 'orchestrator/orchestrator.sh');
-
-  if (!pathExists(orchestratorScript)) {
+  // Check if Memory Relay is installed
+  if (!pathExists(RELAY_DIR)) {
     logWarning('Memory Relay not installed. Run: claude-symphony play');
     return;
   }
 
-  await execShell(`"${orchestratorScript}" status`, { stdio: 'inherit' });
+  // Use TypeScript module for status
+  const status = getStatus();
+
+  console.log('');
+  console.log('Memory Relay Orchestrator Status');
+  console.log('==================================');
+  console.log(`Base: ${status.baseDir}`);
+  console.log('');
+
+  if (status.running) {
+    logSuccess(`Status: Running (PID: ${status.pid})`);
+  } else {
+    logWarning('Status: Not running');
+  }
+
+  console.log('');
+  console.log(`FIFO: ${status.fifoExists ? 'Exists' : 'Missing'}`);
+
+  if (status.recentLogs && status.recentLogs.length > 0) {
+    console.log('');
+    console.log('Recent logs:');
+    for (const line of status.recentLogs) {
+      console.log(`  ${line}`);
+    }
+  }
 }
 
 /**
@@ -169,12 +198,12 @@ export async function playLogs(options: PlayLogsOptions): Promise<void> {
  * Stop Memory Relay orchestrator
  */
 export async function playStop(): Promise<void> {
-  const orchestratorScript = path.join(RELAY_DIR, 'orchestrator/orchestrator.sh');
-
-  if (!pathExists(orchestratorScript)) {
+  if (!pathExists(RELAY_DIR)) {
     logWarning('Memory Relay not installed.');
     return;
   }
 
-  await execShell(`"${orchestratorScript}" stop`, { stdio: 'inherit' });
+  // Import and use stopOrchestrator from TypeScript module
+  const { stopOrchestrator } = await import('../../relay/orchestrator.js');
+  stopOrchestrator();
 }

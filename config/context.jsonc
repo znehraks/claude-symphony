@@ -1,0 +1,72 @@
+// Context Management Configuration
+{
+  "$schema": "../../schemas/context.schema.json",
+  "context_management": {
+    "thresholds": {
+      "warning": 60,
+      "action": 50,
+      "critical": 40
+    },
+    "task_save_frequency": 5,
+    "max_tokens": 200000
+  },
+  "auto_actions": {
+    "on_warning": [
+      "display_warning_banner",
+      "calculate_compression_ratio"
+    ],
+    "on_action_threshold": [
+      "save_state_to_file",
+      "generate_context_summary",
+      "suggest_compression"
+    ],
+    "on_critical": [
+      "force_state_save",
+      "generate_recovery_handoff",
+      "prompt_clear_confirmation"
+    ]
+  },
+  "state_saving": {
+    "directory": "state/context",
+    "filename_format": "state_{timestamp}_{stage}.md",
+    "triggers": [
+      "threshold_crossed",
+      "task_batch_complete",
+      "manual_checkpoint",
+      "stage_transition"
+    ],
+    "include": [
+      "current_stage",
+      "progress_summary",
+      "active_tasks",
+      "key_decisions",
+      "recovery_instructions",
+      "file_modifications"
+    ]
+  },
+  "compression": {
+    "auto_activate_at": 50,
+    "strategies": [
+      {
+        "name": "summarize_completed",
+        "description": "Replace completed work with summaries",
+        "priority": 1
+      },
+      {
+        "name": "externalize_code",
+        "description": "Replace code blocks with file references",
+        "priority": 2
+      },
+      {
+        "name": "handoff_generation",
+        "description": "Externalize current state to HANDOFF.md",
+        "priority": 3
+      }
+    ]
+  },
+  "monitoring": {
+    "display_in_prompt": true,
+    "update_interval": "per_response",
+    "display_format": "[Context: {remaining_percent}% | {remaining_tokens}k tokens]\n"
+  }
+}

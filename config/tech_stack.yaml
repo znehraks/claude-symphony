@@ -1,0 +1,15 @@
+tech_stack:
+  preset: easy
+  database:
+    provider: supabase
+    configured: false
+  hosting:
+    provider: vercel
+    auto_deploy: true
+    configured: false
+  env_vars:
+    required:
+      - SUPABASE_URL
+      - SUPABASE_ANON_KEY
+    configured: false
+  selected_at: '2026-01-26T13:29:19.923Z'
