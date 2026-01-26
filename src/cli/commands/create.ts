@@ -1030,27 +1030,40 @@ export async function createProject(
   log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'yellow');
   console.log('');
   if (projectName !== '.') {
-    console.log(`  1. cd ${projectName}`);
-    console.log('  2. claude                      ← Start Claude Code');
-    console.log('  3. Install plugin (in Claude Code):');
+    console.log(chalk.white('  1. ') + chalk.cyan(`cd ${projectName}`));
+    console.log(chalk.white('  2. ') + chalk.cyan('claude') + chalk.gray('                      ← Start Claude Code'));
+    console.log(chalk.white('  3. ') + chalk.gray('Install plugin (in Claude Code):'));
     log('     /plugin marketplace add jarrodwatts/claude-hud', 'cyan');
     log('     /plugin install claude-hud', 'cyan');
-    console.log('  4. Edit stages/01-brainstorm/inputs/project_brief.md');
-    console.log('  5. Run /run-stage 01-brainstorm');
+    console.log(chalk.white('  4. ') + chalk.gray('Edit ') + chalk.cyan('stages/01-brainstorm/inputs/project_brief.md'));
+    console.log(chalk.white('  5. ') + chalk.gray('Run ') + chalk.cyan('/run-stage 01-brainstorm'));
   } else {
-    console.log('  1. claude                      ← Start Claude Code');
-    console.log('  2. Install plugin (in Claude Code):');
+    console.log(chalk.white('  1. ') + chalk.cyan('claude') + chalk.gray('                      ← Start Claude Code'));
+    console.log(chalk.white('  2. ') + chalk.gray('Install plugin (in Claude Code):'));
     log('     /plugin marketplace add jarrodwatts/claude-hud', 'cyan');
     log('     /plugin install claude-hud', 'cyan');
-    console.log('  3. Edit stages/01-brainstorm/inputs/project_brief.md');
-    console.log('  4. Run /run-stage 01-brainstorm');
+    console.log(chalk.white('  3. ') + chalk.gray('Edit ') + chalk.cyan('stages/01-brainstorm/inputs/project_brief.md'));
+    console.log(chalk.white('  4. ') + chalk.gray('Run ') + chalk.cyan('/run-stage 01-brainstorm'));
   }
+  console.log('');
+  log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'magenta');
+  log('🎭 Recommended: Encore Mode', 'magenta');
+  log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'magenta');
+  console.log('');
+  if (projectName !== '.') {
+    log(`  cd ${projectName} && claude-symphony play`, 'cyan');
+  } else {
+    log('  claude-symphony play', 'cyan');
+  }
+  console.log('');
+  log('  Claude never stops - automatic session handoff', 'gray');
+  log('  keeps your workflow going indefinitely.', 'gray');
   console.log('');
   log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'cyan');
   log('📋 Pipeline stages:', 'cyan');
   log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'cyan');
-  console.log('  01-brainstorm → 02-research → 03-planning → 04-ui-ux');
-  console.log('  → 05-task-management → 06-implementation → 07-refactoring');
-  console.log('  → 08-qa → 09-testing → 10-deployment');
+  log('  01-brainstorm → 02-research → 03-planning → 04-ui-ux', 'gray');
+  log('  → 05-task-management → 06-implementation → 07-refactoring', 'gray');
+  log('  → 08-qa → 09-testing → 10-deployment', 'gray');
   console.log('');
 }
