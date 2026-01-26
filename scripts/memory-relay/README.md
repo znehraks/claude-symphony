@@ -44,7 +44,7 @@ claude-symphony-play
 |   Continues work...        |                               |
 +----------------------------+-------------------------------+
 
-Note: When orchestrator pane exits, the entire session terminates.
+Tip: Type `exit` in either pane to close it. Use `tmux kill-session -t symphony-session` to terminate the entire session.
 ```
 
 ### Signal Flow

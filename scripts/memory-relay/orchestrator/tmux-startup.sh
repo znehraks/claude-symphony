@@ -141,9 +141,6 @@ tmux select-pane -t "${SESSION_NAME}:0.1" -T "Claude"
 tmux set-option -t "${SESSION_NAME}" pane-border-status top
 tmux set-option -t "${SESSION_NAME}" pane-border-format " #{pane_title} "
 
-# When orchestrator pane (pane 0) exits, kill the entire session
-tmux set-hook -t "${SESSION_NAME}" pane-exited 'if -F "#{==:#{pane_index},0}" "kill-session"'
-
 echo -e "${GREEN}Session created successfully!${NC}"
 echo ""
 echo "Layout:"

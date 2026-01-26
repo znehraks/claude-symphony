@@ -122,12 +122,6 @@ export function createTmuxSession(options: SessionOptions): boolean {
     execSync(`tmux set-option -t "${sessionName}" pane-border-status top`, { stdio: 'pipe' });
     execSync(`tmux set-option -t "${sessionName}" pane-border-format " #{pane_title} "`, { stdio: 'pipe' });
 
-    // When orchestrator pane (pane 0) exits, kill the entire session
-    execSync(
-      `tmux set-hook -t "${sessionName}" pane-exited 'if -F "#{==:#{pane_index},0}" "kill-session"'`,
-      { stdio: 'pipe' }
-    );
-
     return true;
   } catch (error) {
     console.error(chalk.red('Failed to create tmux session:'), error);

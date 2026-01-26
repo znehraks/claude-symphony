@@ -165,7 +165,6 @@ claude-symphony play:stop
 
 - **Orchestrator** (left): Monitors context and handles session handoffs
 - **Claude** (right): Main workspace for development
-- When orchestrator pane exits, the entire session terminates
 
 ## Commands
 
