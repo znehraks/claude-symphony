@@ -5,6 +5,7 @@
 import { Command } from 'commander';
 import { createProject } from './commands/create.js';
 import { runStage, nextStage, gotoStage, listStages } from './commands/stage.js';
+import { playCommand, playStatus, playLogs, playStop } from './commands/play.js';
 import { showStatus, showDashboard, showContextStatus } from './commands/status.js';
 import { validateConfig } from './commands/validate.js';
 import {
@@ -22,11 +23,12 @@ program
   .description('Multi-AI Orchestration Framework - 10-stage development workflow')
   .version('0.1.0');
 
-// Default action: create project
+// init command: create project
 program
-  .argument('[project-name]', 'Project name (use . for current directory)', '.')
+  .command('init [project-name]')
+  .description('Initialize a new claude-symphony project')
   .option('-y, --yes', 'Skip prompts and use defaults')
-  .action(async (projectName: string, options: { yes?: boolean }) => {
+  .action(async (projectName: string = '.', options: { yes?: boolean }) => {
     await createProject(projectName, { skipPrompts: options.yes ?? false });
   });
 
@@ -191,6 +193,40 @@ program
     const projectRoot = process.cwd();
     const maxRetention = parseInt(options.max, 10);
     await cleanupCheckpointsCommand(projectRoot, maxRetention);
+  });
+
+// play command
+program
+  .command('play')
+  .description('Start Claude with Memory Relay orchestration (auto-installs if needed)')
+  .option('-d, --directory <dir>', 'Working directory', process.cwd())
+  .action(async (options: { directory: string }) => {
+    await playCommand(options);
+  });
+
+// play:status command
+program
+  .command('play:status')
+  .description('Show Memory Relay orchestrator status')
+  .action(async () => {
+    await playStatus();
+  });
+
+// play:logs command
+program
+  .command('play:logs')
+  .description('View Memory Relay logs')
+  .option('-f, --follow', 'Follow logs in real-time')
+  .action(async (options: { follow?: boolean }) => {
+    await playLogs(options);
+  });
+
+// play:stop command
+program
+  .command('play:stop')
+  .description('Stop Memory Relay orchestrator')
+  .action(async () => {
+    await playStop();
   });
 
 program.parse();

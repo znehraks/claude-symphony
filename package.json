@@ -10,7 +10,8 @@
     "dist/",
     "template/",
     "assets/",
-    "schemas/"
+    "schemas/",
+    "scripts/"
   ],
   "scripts": {
     "build": "tsup && npm run build:schema",
