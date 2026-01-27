@@ -174,6 +174,7 @@ Visualizes context usage, tool activity, and todo progress in the statusline.
 | `/goto <stage>` | Jump to previous stage (intentional loop-back) |
 | `/goto --list` | Show available stages for loop-back |
 | `/goto --history` | Show loop-back history |
+| `/goto <stage> --reason <text>` | Loop-back with recorded reason |
 
 ### Configuration Commands
 | Command | Description |
@@ -218,6 +219,7 @@ Visualizes context usage, tool activity, and todo progress in the statusline.
 | Skill | Trigger | Description |
 |-------|---------|-------------|
 | `stage-transition` | "completed", "/next" | Stage completion detection and transition automation |
+| `stage-routing` | Work type keywords detected | Automatic stage recommendation based on prompt analysis |
 | `context-compression` | Token 50k+ | Context compression and state save |
 | `smart-handoff` | Stage completion | Smart context extraction and HANDOFF generation |
 | `ai-collaboration` | `/collaborate` | Multi-AI collaboration orchestration |

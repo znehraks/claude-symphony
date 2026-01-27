@@ -1,0 +1,94 @@
+{
+  "$schema": "../../schemas/stage-routing.schema.json",
+  "description": "Stage routing configuration for automatic prompt analysis and stage recommendation",
+
+  "routing": {
+    "01-brainstorm": {
+      "keywords": ["아이디어", "idea", "concept", "탐색", "explore", "브레인스토밍", "brainstorm", "가능성", "제안", "창의", "발상"],
+      "triggers": ["~하면 어떨까", "what if", "어떤 방법", "새로운 기능 아이디어", "다른 접근", "아이디어 필요"],
+      "intent": "ideation",
+      "description": "Creative exploration and idea generation"
+    },
+    "02-research": {
+      "keywords": ["조사", "research", "분석", "analyze", "기술 스택", "라이브러리", "library", "API", "비교", "compare", "평가"],
+      "triggers": ["알아봐", "investigate", "비교해", "찾아봐", "어떤 기술", "조사해", "검토해"],
+      "intent": "research",
+      "description": "Technical research and analysis"
+    },
+    "03-planning": {
+      "keywords": ["설계", "architecture", "구조", "plan", "아키텍처", "모듈", "시스템", "구성", "design", "청사진"],
+      "triggers": ["설계해", "구조를", "어떻게 구성", "아키텍처 변경", "재설계", "구조 잡아", "시스템 설계"],
+      "intent": "planning",
+      "description": "Architecture and system design"
+    },
+    "04-ui-ux": {
+      "keywords": ["UI", "UX", "디자인", "화면", "wireframe", "인터페이스", "레이아웃", "스타일", "컴포넌트", "사용자 경험"],
+      "triggers": ["화면 만들어", "디자인", "UI 변경", "레이아웃 수정", "인터페이스", "와이어프레임"],
+      "intent": "design",
+      "description": "UI/UX design and wireframing"
+    },
+    "05-task-management": {
+      "keywords": ["태스크", "task", "작업 분해", "우선순위", "스프린트", "sprint", "일정", "계획", "업무", "할 일"],
+      "triggers": ["작업을 나눠", "우선순위 정해", "스프린트 계획", "일정 조정", "태스크 생성", "작업 분해"],
+      "intent": "task_breakdown",
+      "description": "Task breakdown and sprint planning"
+    },
+    "06-implementation": {
+      "keywords": ["구현", "implement", "개발", "코드", "build", "기능", "만들어", "추가해", "작성", "코딩"],
+      "triggers": ["구현해", "개발해", "코드 작성", "기능 추가", "만들어줘", "build", "개발 시작"],
+      "intent": "implementation",
+      "description": "Feature implementation and coding"
+    },
+    "07-refactoring": {
+      "keywords": ["리팩토링", "refactor", "개선", "최적화", "optimize", "클린", "정리", "성능", "performance"],
+      "triggers": ["리팩토링해", "코드 개선", "성능 최적화", "정리해", "클린업", "개선해"],
+      "intent": "refactoring",
+      "description": "Code refactoring and optimization"
+    },
+    "08-qa": {
+      "keywords": ["버그", "bug", "수정", "fix", "오류", "error", "문제", "안됨", "에러", "이슈", "장애"],
+      "triggers": ["버그 수정", "문제 해결", "오류 나", "고쳐", "안 돼", "fix", "에러 발생", "작동 안함"],
+      "intent": "debugging",
+      "description": "Bug fixing and quality assurance"
+    },
+    "09-testing": {
+      "keywords": ["테스트", "test", "검증", "coverage", "E2E", "단위", "unit", "통합", "integration", "TDD"],
+      "triggers": ["테스트 작성", "테스트 추가", "커버리지", "검증해", "E2E 테스트", "테스트 코드"],
+      "intent": "testing",
+      "description": "Testing and test coverage"
+    },
+    "10-deployment": {
+      "keywords": ["배포", "deploy", "CI/CD", "릴리스", "release", "production", "출시", "publish", "운영"],
+      "triggers": ["배포해", "릴리스", "프로덕션", "출시해", "배포 설정", "CI/CD 구성"],
+      "intent": "deployment",
+      "description": "Deployment and CI/CD configuration"
+    }
+  },
+
+  "analysis": {
+    "confidence_threshold": 0.6,
+    "auto_transition": false,
+    "require_user_confirmation": true,
+    "min_keyword_matches": 2
+  },
+
+  "scale_detection": {
+    "small": {
+      "file_count_max": 3,
+      "description": "Minor changes, stay in current stage"
+    },
+    "medium": {
+      "file_count_max": 10,
+      "description": "Module-level changes, consider related stage"
+    },
+    "large": {
+      "file_count_min": 10,
+      "description": "Architecture changes, recommend 03-planning"
+    }
+  },
+
+  "indicators": {
+    "large_scale_keywords": ["전체", "아키텍처", "architecture", "시스템", "대규모", "전면", "마이크로서비스", "모놀리스"],
+    "force_planning_triggers": ["전체 재설계", "아키텍처 변경", "시스템 구조", "마이그레이션"]
+  }
+}

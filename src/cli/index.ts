@@ -92,7 +92,8 @@ program
   .description('Jump to a previous stage (loop-back)')
   .option('--list', 'List available stages')
   .option('--history', 'Show loop-back history')
-  .action(async (stageId: string | undefined, options: { list?: boolean; history?: boolean }) => {
+  .option('-r, --reason <text>', 'Record reason for stage transition')
+  .action(async (stageId: string | undefined, options: { list?: boolean; history?: boolean; reason?: string }) => {
     const projectRoot = process.cwd();
     const success = await gotoStage(projectRoot, stageId as StageId | undefined, options);
     process.exit(success ? 0 : 1);

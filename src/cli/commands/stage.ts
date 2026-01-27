@@ -6,7 +6,7 @@
 import path from 'path';
 import { existsSync } from 'fs';
 import { loadYaml } from '../../utils/yaml.js';
-import { readFile, readJson, writeJson, ensureDirAsync } from '../../utils/fs.js';
+import { readFile, readJson, writeJson, writeFile, ensureDirAsync } from '../../utils/fs.js';
 import { logInfo, logSuccess, logWarning, logError } from '../../utils/logger.js';
 import { getTimestamp } from '../../utils/shell.js';
 // getTimestamp used elsewhere in this module
@@ -37,6 +37,7 @@ export interface NextStageOptions {
 export interface GotoOptions {
   list?: boolean;
   history?: boolean;
+  reason?: string;
 }
 
 /**
@@ -385,16 +386,43 @@ export async function gotoStage(
     from: string;
     to: string;
     timestamp: string;
+    reason?: string;
   }>>(historyPath)) ?? [];
 
+  const timestamp = getTimestamp();
   history.push({
     from: currentStage,
     to: targetStage,
-    timestamp: getTimestamp(),
+    timestamp,
+    reason: options.reason,
   });
 
   await ensureDirAsync(path.join(projectRoot, 'state'));
   await writeJson(historyPath, history);
+
+  // Update HANDOFF.md with loop-back record
+  const handoffPath = path.join(projectRoot, 'stages', currentStage, 'HANDOFF.md');
+  if (existsSync(handoffPath)) {
+    const handoffContent = await readFile(handoffPath);
+    if (handoffContent) {
+      const loopbackRecord = `
+
+## Loop-Back Record
+
+| Field | Value |
+|-------|-------|
+| **From** | ${currentStage} |
+| **To** | ${targetStage} |
+| **Time** | ${timestamp} |
+| **Reason** | ${options.reason ?? '(not specified)'} |
+
+---
+`;
+      await writeFile(handoffPath, handoffContent + loopbackRecord);
+      console.log('\n[HANDOFF Updated]');
+      logSuccess(`Loop-back recorded in stages/${currentStage}/HANDOFF.md`);
+    }
+  }
 
   // Run target stage
   await runStage(projectRoot, targetStage);
