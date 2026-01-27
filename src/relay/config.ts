@@ -5,10 +5,34 @@
 import os from 'os';
 import path from 'path';
 import { existsSync } from 'fs';
+import { execSync } from 'child_process';
 import type { RelayConfig } from './types.js';
 
-/** Session name for tmux */
-export const SESSION_NAME = 'symphony-session';
+/** Session name prefix for tmux */
+export const SESSION_PREFIX = 'symphony-session';
+
+/**
+ * @deprecated Use SESSION_PREFIX instead
+ */
+export const SESSION_NAME = SESSION_PREFIX;
+
+/**
+ * Get list of active symphony sessions
+ * Returns session names that start with SESSION_PREFIX
+ */
+export function listActiveSessions(): string[] {
+  try {
+    const output = execSync('tmux list-sessions -F "#{session_name}" 2>/dev/null', {
+      encoding: 'utf-8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+    return output
+      .split('\n')
+      .filter((name) => name.startsWith(SESSION_PREFIX));
+  } catch {
+    return [];
+  }
+}
 
 /** Default relay directory */
 const DEFAULT_RELAY_DIR = path.join(os.homedir(), '.claude/memory-relay');

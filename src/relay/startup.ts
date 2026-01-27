@@ -7,7 +7,7 @@
 import { execSync, spawnSync } from 'child_process';
 import { select } from '@inquirer/prompts';
 import chalk from 'chalk';
-import { getConfig, SESSION_NAME, getRelayDir } from './config.js';
+import { getConfig, SESSION_PREFIX, getRelayDir } from './config.js';
 import { commandExists } from '../utils/shell.js';
 import { pathExists } from '../utils/fs.js';
 import type { SessionOptions, SessionChoice } from './types.js';
@@ -25,7 +25,7 @@ export async function checkDependencies(): Promise<{ tmux: boolean; claude: bool
 /**
  * Check if a tmux session exists
  */
-export function sessionExists(sessionName: string = SESSION_NAME): boolean {
+export function sessionExists(sessionName: string = SESSION_PREFIX): boolean {
   try {
     execSync(`tmux has-session -t "${sessionName}" 2>/dev/null`, { stdio: 'pipe' });
     return true;
@@ -35,16 +35,36 @@ export function sessionExists(sessionName: string = SESSION_NAME): boolean {
 }
 
 /**
- * Handle existing session with user prompt
+ * Find next available session name
+ * Returns: symphony-session, symphony-session-2, symphony-session-3, ...
  */
-export async function handleExistingSession(sessionName: string = SESSION_NAME): Promise<SessionChoice> {
+export function findNextAvailableSessionName(): string {
+  if (!sessionExists(SESSION_PREFIX)) {
+    return SESSION_PREFIX;
+  }
+
+  let n = 2;
+  while (sessionExists(`${SESSION_PREFIX}-${n}`)) {
+    n++;
+  }
+  return `${SESSION_PREFIX}-${n}`;
+}
+
+/**
+ * Handle existing session with user prompt
+ * Added 'new' option for creating parallel session
+ */
+export async function handleExistingSession(sessionName: string = SESSION_PREFIX): Promise<SessionChoice> {
   console.log(chalk.yellow(`Session '${sessionName}' already exists.`));
   console.log('');
+
+  const nextName = findNextAvailableSessionName();
 
   const choice = await select<SessionChoice>({
     message: 'What would you like to do?',
     choices: [
       { name: 'Attach to existing session', value: 'attach' },
+      { name: `Create new session (${nextName})`, value: 'new' },
       { name: 'Kill and recreate', value: 'recreate' },
       { name: 'Cancel', value: 'cancel' },
     ],
@@ -56,7 +76,7 @@ export async function handleExistingSession(sessionName: string = SESSION_NAME):
 /**
  * Kill an existing tmux session
  */
-export function killSession(sessionName: string = SESSION_NAME): void {
+export function killSession(sessionName: string = SESSION_PREFIX): void {
   try {
     execSync(`tmux kill-session -t "${sessionName}"`, { stdio: 'pipe' });
   } catch {
@@ -67,16 +87,24 @@ export function killSession(sessionName: string = SESSION_NAME): void {
 /**
  * Attach to an existing tmux session
  */
-export function attachSession(sessionName: string = SESSION_NAME): void {
+export function attachSession(sessionName: string = SESSION_PREFIX): void {
   console.log('Attaching to existing session...');
   spawnSync('tmux', ['attach-session', '-t', sessionName], { stdio: 'inherit' });
 }
 
 /**
+ * Extended session options including session name
+ */
+interface CreateSessionOptions extends SessionOptions {
+  /** Session name to use (defaults to SESSION_PREFIX) */
+  sessionName?: string;
+}
+
+/**
  * Create a new tmux session with orchestrator and Claude panes
  */
-export function createTmuxSession(options: SessionOptions): boolean {
-  const sessionName = SESSION_NAME;
+export function createTmuxSession(options: CreateSessionOptions): boolean {
+  const sessionName = options.sessionName ?? SESSION_PREFIX;
 
   try {
     // Create new tmux session (detached, with specific dimensions)
@@ -212,6 +240,9 @@ export async function startSession(options: SessionOptions): Promise<void> {
     process.exit(1);
   }
 
+  // Determine session name to use
+  let sessionName = SESSION_PREFIX;
+
   // Handle existing session
   if (sessionExists()) {
     const choice = await handleExistingSession();
@@ -220,6 +251,11 @@ export async function startSession(options: SessionOptions): Promise<void> {
       case 'attach':
         attachSession();
         return;
+      case 'new':
+        // Get the next available session name
+        sessionName = findNextAvailableSessionName();
+        console.log(`Creating parallel session: ${chalk.green(sessionName)}`);
+        break;
       case 'recreate':
         console.log('Killing existing session...');
         killSession();
@@ -232,12 +268,12 @@ export async function startSession(options: SessionOptions): Promise<void> {
 
   // Create new session
   console.log('');
-  console.log(`Creating new session: ${chalk.green(SESSION_NAME)}`);
+  console.log(`Creating new session: ${chalk.green(sessionName)}`);
   console.log(`Working directory: ${chalk.blue(options.workDir)}`);
   console.log(`Relay base: ${chalk.blue(config.baseDir)}`);
   console.log('');
 
-  const created = createTmuxSession(options);
+  const created = createTmuxSession({ ...options, sessionName });
 
   if (!created) {
     console.error(chalk.red('Failed to create session'));
@@ -247,8 +283,8 @@ export async function startSession(options: SessionOptions): Promise<void> {
   console.log(chalk.green('Session created successfully!'));
   showSessionLayout();
 
-  console.log(`Attaching to session ${chalk.green(SESSION_NAME)}...`);
+  console.log(`Attaching to session ${chalk.green(sessionName)}...`);
 
   // Attach to the session
-  attachSession();
+  attachSession(sessionName);
 }

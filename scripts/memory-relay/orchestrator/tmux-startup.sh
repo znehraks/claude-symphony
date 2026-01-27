@@ -23,8 +23,30 @@ ORCHESTRATOR_DIR="${RELAY_BASE}/orchestrator"
 ORCHESTRATOR_SCRIPT="${ORCHESTRATOR_DIR}/orchestrator.sh"
 WRAPPER_SCRIPT="${ORCHESTRATOR_DIR}/claude-wrapper.sh"
 
-# Session name - symphony branding
-SESSION_NAME="symphony-session"
+# Session name prefix - symphony branding
+SESSION_PREFIX="symphony-session"
+
+# Function to find next available session name
+# Returns: symphony-session, symphony-session-2, symphony-session-3, ...
+find_next_session_name() {
+    local base="${SESSION_PREFIX}"
+
+    # Check if base session exists
+    if ! tmux has-session -t "${base}" 2>/dev/null; then
+        echo "${base}"
+        return
+    fi
+
+    # Find next available numbered session
+    local n=2
+    while tmux has-session -t "${base}-${n}" 2>/dev/null; do
+        ((n++))
+    done
+    echo "${base}-${n}"
+}
+
+# Default session name (will be updated if creating new parallel session)
+SESSION_NAME="${SESSION_PREFIX}"
 
 # Colors
 RED='\033[0;31m'
@@ -74,24 +96,31 @@ for script in "${ORCHESTRATOR_SCRIPT}" "${WRAPPER_SCRIPT}"; do
 done
 
 # Check if session already exists
-if tmux has-session -t "${SESSION_NAME}" 2>/dev/null; then
-    echo -e "${YELLOW}Session '${SESSION_NAME}' already exists.${NC}"
+if tmux has-session -t "${SESSION_PREFIX}" 2>/dev/null; then
+    NEXT_SESSION_NAME=$(find_next_session_name)
+    echo -e "${YELLOW}Session '${SESSION_PREFIX}' already exists.${NC}"
     echo ""
     echo "Options:"
     echo "  1. Attach to existing session"
-    echo "  2. Kill and recreate"
-    echo "  3. Cancel"
+    echo "  2. Create new session (${NEXT_SESSION_NAME})"
+    echo "  3. Kill and recreate"
+    echo "  4. Cancel"
     echo ""
-    read -p "Choice [1/2/3]: " choice
+    read -p "Choice [1/2/3/4]: " choice
 
     case "${choice}" in
         1)
             echo "Attaching to existing session..."
-            exec tmux attach-session -t "${SESSION_NAME}"
+            exec tmux attach-session -t "${SESSION_PREFIX}"
             ;;
         2)
+            echo -e "Creating parallel session: ${GREEN}${NEXT_SESSION_NAME}${NC}"
+            SESSION_NAME="${NEXT_SESSION_NAME}"
+            ;;
+        3)
             echo "Killing existing session..."
-            tmux kill-session -t "${SESSION_NAME}"
+            tmux kill-session -t "${SESSION_PREFIX}"
+            SESSION_NAME="${SESSION_PREFIX}"
             ;;
         *)
             echo "Cancelled."

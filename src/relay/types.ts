@@ -89,7 +89,7 @@ export interface PaneResult {
 /**
  * Session choice for existing session handling
  */
-export type SessionChoice = 'attach' | 'recreate' | 'cancel';
+export type SessionChoice = 'attach' | 'new' | 'recreate' | 'cancel';
 
 /**
  * Log levels for relay logging
