@@ -18,6 +18,8 @@ claude-symphony is a 10-stage software development workflow pipeline that orches
 - **10-Stage Pipeline**: Complete development cycle from brainstorming to deployment
 - **Multi-AI Orchestration**: Intelligent collaboration between Gemini, Claude, and Codex
 - **Smart HANDOFF System**: Automatic context extraction and semantic compression
+- **Context Manager**: Automatic context monitoring with snapshot/HANDOFF generation at thresholds
+- **Memory Relay (Encore Mode)**: Infinite session orchestration - Claude never stops
 - **Auto-Checkpoint & Rollback**: Task-based triggers with partial rollback support
 - **Pipeline Forking**: Branch exploration for architecture alternatives
 - **Stage Personas**: Optimized AI behavior profiles per stage
@@ -52,6 +54,59 @@ cd my-project
 /brainstorm
 ```
 
+## Context Management
+
+claude-symphony includes automatic context management to ensure continuous workflow even when Claude's context window fills up.
+
+### How It Works
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  Context Thresholds (Remaining %)                           │
+├─────────────────────────────────────────────────────────────┤
+│  60%  │ Warning    │ Display warning banner                 │
+│  50%  │ Action     │ Auto-snapshot + recommend /compact     │
+│  40%  │ Critical   │ Generate HANDOFF.md + /clear required  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Encore Mode (Memory Relay)
+
+Start with `claude-symphony-play` to enable automatic session handoff:
+
+```bash
+# Install Memory Relay (one-time)
+./scripts/memory-relay/install.sh
+
+# Start Encore Mode
+claude-symphony-play
+
+# With bypass mode
+claude-symphony-play --bypass
+```
+
+When context drops below 50%, the system automatically:
+1. Creates a snapshot in `state/context/`
+2. Generates `HANDOFF.md` with recovery instructions
+3. Signals Memory Relay to start a new session
+4. New session continues from where you left off
+
+### Manual Context Commands
+
+```bash
+# Check context status
+/context
+
+# Save snapshot manually
+/context --save
+
+# List all snapshots
+/context --list
+
+# Trigger relay manually
+/context --relay
+```
+
 ## Commands
 
 ### CLI Commands
@@ -71,6 +126,7 @@ cd my-project
 | `/next` | Move to next stage |
 | `/handoff` | Create handoff document |
 | `/checkpoint` | Create checkpoint |
+| `/context` | Context management (status, save, list, relay) |
 
 See [template/docs/commands.md](template/docs/commands.md) for the complete command reference.
 
@@ -111,8 +167,10 @@ claude-symphony/
 ├── template/               # Project template (copied to user projects)
 │   ├── .claude/            # Claude Code config
 │   │   ├── commands/       # Slash commands (30+)
-│   │   ├── hooks/          # Lifecycle hooks (8)
+│   │   ├── hooks/          # Lifecycle hooks (statusline, stop, etc.)
 │   │   └── skills/         # AI skills (7)
+│   ├── scripts/            # Runtime scripts
+│   │   └── context-manager.sh  # Context automation
 │   ├── stages/             # 10-stage pipeline
 │   ├── config/             # Configuration files (25+)
 │   ├── state/              # State management
