@@ -130,15 +130,6 @@ Claude Code has built-in context summarization that:
 
 **When to use:** Quick compression when context is getting large
 
-### Custom Pipeline (`context-manager.sh`)
-This project provides additional tooling:
-- Token estimation based on file content
-- Auto-snapshot generation
-- Stage-aware context tracking
-- Recovery file generation
-
-**When to use:** Full state management with recovery capability
-
 ### claude-hud Plugin Integration
 
 For real-time context monitoring, install the claude-hud plugin:
@@ -153,8 +144,8 @@ For real-time context monitoring, install the claude-hud plugin:
 - Proactive warnings before thresholds
 - No manual `/context` checks needed
 
-**Combined workflow:**
+**Recommended workflow:**
 1. claude-hud monitors context visually
-2. When warning appears, run `./scripts/context-manager.sh --auto-compact warning`
-3. Script saves snapshot then triggers `/compact`
+2. When warning appears, run `/compact` to compress context
+3. Use `/context --save` to save snapshots for recovery
 4. Recovery possible from saved snapshots

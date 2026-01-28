@@ -84,7 +84,7 @@
 
 **Protocol Steps:**
 1. After every 5 tasks, run `/context` to check usage
-2. If warning level reached, run `./scripts/context-manager.sh --auto-compact warning`
+2. If warning level reached, run `/compact` to compress context
 3. If critical level reached, generate HANDOFF.md before `/clear`
 
 ## Recommended Plugins

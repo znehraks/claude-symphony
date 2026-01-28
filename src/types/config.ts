@@ -144,27 +144,6 @@ export const TechStackConfigSchema = z.object({
 
 export type TechStackConfig = z.infer<typeof TechStackConfigSchema>;
 
-/**
- * Context management config schema
- */
-export const ContextConfigSchema = z.object({
-  thresholds: z.object({
-    warning: z.number().min(0).max(100).describe('Warning threshold (60% remaining)'),
-    action: z.number().min(0).max(100).describe('Action threshold (50% remaining)'),
-    critical: z.number().min(0).max(100).describe('Critical threshold (40% remaining)'),
-  }).describe('Context usage thresholds (percentage remaining)'),
-  auto_save: z.object({
-    enabled: z.boolean().describe('Enable auto-save'),
-    interval_tasks: z.number().positive().describe('Tasks between saves'),
-    location: z.string().describe('Save directory path'),
-  }).describe('Auto-save configuration'),
-  compression: z.object({
-    strategies: z.array(z.string()).describe('Compression strategies: summarize_completed, externalize_code, handoff_generation'),
-    target_ratio: z.number().min(0).max(1).describe('Target compression ratio (0-1)'),
-  }).describe('Context compression settings'),
-}).describe('Context management configuration');
-
-export type ContextConfig = z.infer<typeof ContextConfigSchema>;
 
 /**
  * Auto checkpoint config schema

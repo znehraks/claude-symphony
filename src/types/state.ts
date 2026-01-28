@@ -123,21 +123,6 @@ export interface HandoffContent {
   }>;
 }
 
-/**
- * Context state
- */
-export interface ContextState {
-  remainingPercent: number;
-  saveTrigger: string;
-  stageId: string;
-  stageName: string;
-  completedTasks: string[];
-  currentTask: string;
-  pendingTasks: string[];
-  majorDecisions: string[];
-  modifiedFiles: string[];
-  activeIssues: string[];
-}
 
 /**
  * Create initial progress object

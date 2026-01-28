@@ -32,12 +32,6 @@ Check and manage context state.
 - Restore from saved snapshot
 - Use after /clear
 
-## Execution Script
-
-```bash
-scripts/context-manager.sh "$ARGUMENTS"
-```
-
 ## Output Examples
 
 ### State Check

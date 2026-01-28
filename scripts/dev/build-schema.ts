@@ -14,7 +14,6 @@ import {
   PipelineConfigSchema,
   ModelsConfigSchema,
   AICollaborationConfigSchema,
-  ContextConfigSchema,
   AutoCheckpointConfigSchema,
   GitConfigSchema,
   OutputValidationConfigSchema,
@@ -46,11 +45,6 @@ const schemas = {
     schema: AICollaborationConfigSchema,
     title: 'AI Collaboration Configuration',
     description: 'Multi-AI collaboration mode settings',
-  },
-  context: {
-    schema: ContextConfigSchema,
-    title: 'Context Configuration',
-    description: 'Context management thresholds and auto-save settings',
   },
   auto_checkpoint: {
     schema: AutoCheckpointConfigSchema,

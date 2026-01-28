@@ -94,11 +94,8 @@ if [ "$NEEDS_ACTION" = "warning" ] || [ "$NEEDS_ACTION" = "critical" ]; then
     "stage": "$CURRENT_STAGE"
 }
 EOF
-
-        # Create auto snapshot (background)
-        if [ -x "$PROJECT_ROOT/scripts/context-manager.sh" ]; then
-            "$PROJECT_ROOT/scripts/context-manager.sh" --auto-compact "$NEEDS_ACTION" 2>/dev/null &
-        fi
+        # Note: Context management is handled by Claude Code's native auto-compact
+        # feature via CLAUDE_AUTOCOMPACT_PCT_OVERRIDE environment variable.
     fi
 fi
 

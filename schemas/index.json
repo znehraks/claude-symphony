@@ -7,7 +7,6 @@
     "pipeline": "./pipeline.schema.json",
     "models": "./models.schema.json",
     "ai_collaboration": "./ai_collaboration.schema.json",
-    "context": "./context.schema.json",
     "auto_checkpoint": "./auto_checkpoint.schema.json",
     "git": "./git.schema.json",
     "output_validation": "./output_validation.schema.json",

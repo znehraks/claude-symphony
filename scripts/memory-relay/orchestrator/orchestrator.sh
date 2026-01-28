@@ -90,49 +90,78 @@ check_running() {
     return 1
 }
 
-# Wait for /clear to complete
-wait_for_clear_complete() {
+# Wait for shell prompt to be ready (after terminating Claude session)
+wait_for_shell_ready() {
     local pane_id="$1"
-    local timeout="${2:-15}"
+    local timeout="${2:-10}"
     local elapsed=0
 
-    log "INFO" "Waiting for /clear to complete in pane ${pane_id} (timeout: ${timeout}s)"
+    log "INFO" "Waiting for shell prompt in pane ${pane_id} (timeout: ${timeout}s)"
 
     while [[ ${elapsed} -lt ${timeout} ]]; do
         # Capture last few lines of pane output
         local output
-        output=$(tmux capture-pane -t "${pane_id}" -p -S -5 2>/dev/null || echo "")
+        output=$(tmux capture-pane -t "${pane_id}" -p -S -3 2>/dev/null || echo "")
 
-        # Check for Claude prompt ready state (ends with > or is empty/minimal)
-        local trimmed
-        trimmed=$(echo "${output}" | tr -d '[:space:]')
+        # Get last line and check for shell prompt
+        local last_line
+        last_line=$(echo "${output}" | tail -1)
 
-        if [[ -z "${trimmed}" ]] || [[ "${output}" =~ \>$ ]]; then
-            sleep 0.5  # Small stabilization delay
-            log "INFO" "/clear completed, Claude is ready for input"
+        # Look for shell prompt indicators ($ % # >)
+        if [[ "${last_line}" =~ [$%#\>][[:space:]]*$ ]] || [[ -z "${last_line}" ]]; then
+            sleep 0.3  # Small stabilization delay
+            log "INFO" "Shell prompt is ready"
             return 0
         fi
 
-        sleep 0.5
+        sleep 0.3
         ((elapsed++))
     done
 
-    log "ERROR" "Timeout waiting for /clear to complete after ${timeout}s"
+    log "ERROR" "Timeout waiting for shell prompt after ${timeout}s"
     return 1
 }
 
-# Send prompt to pane
-send_prompt_to_pane() {
+# Terminate current Claude session in pane
+terminate_claude_session() {
     local pane_id="$1"
-    local prompt="$2"
 
-    log "INFO" "Sending handoff prompt to pane ${pane_id}"
+    log "INFO" "Terminating Claude session in pane ${pane_id}"
 
-    if tmux send-keys -t "${pane_id}" "${prompt}" Enter 2>/dev/null; then
-        log "INFO" "Handoff prompt sent successfully"
+    # Send Ctrl+C to interrupt current Claude process
+    tmux send-keys -t "${pane_id}" C-c 2>/dev/null || true
+    sleep 0.5
+
+    # Send another Ctrl+C in case of confirmation prompt
+    tmux send-keys -t "${pane_id}" C-c 2>/dev/null || true
+    sleep 0.3
+
+    log "INFO" "Claude session terminated"
+}
+
+# Start new Claude session with handoff prompt
+start_new_claude_session() {
+    local pane_id="$1"
+    local handoff_path="$2"
+
+    local prompt
+    prompt=$(build_continuation_prompt "${handoff_path}")
+
+    # Escape single quotes for shell command
+    local escaped_prompt
+    escaped_prompt="${prompt//\'/\'\\\'\'}"
+
+    # Build the claude command with --continue flag for conversation continuity
+    local claude_command="claude -p --continue '${escaped_prompt}'"
+
+    log "INFO" "Starting new Claude session in pane ${pane_id}"
+    log "DEBUG" "Command: ${claude_command}"
+
+    if tmux send-keys -t "${pane_id}" "${claude_command}" Enter 2>/dev/null; then
+        log "INFO" "New Claude session started with handoff prompt"
         return 0
     else
-        log "ERROR" "Failed to send prompt to pane ${pane_id}"
+        log "ERROR" "Failed to start new Claude session in pane ${pane_id}"
         return 1
     fi
 }
@@ -144,6 +173,13 @@ build_continuation_prompt() {
 }
 
 # Handle relay signal
+#
+# NOTE: Due to Claude Code's Ink library limitation, programmatic input via
+# tmux send-keys cannot trigger command submission (Enter is treated as newline).
+# See: https://github.com/anthropics/claude-code/issues/15553
+#
+# Solution: Instead of injecting /clear, we terminate the current Claude session
+# and start a new `claude -p --continue` process with the handoff prompt.
 handle_relay_signal() {
     local signal="$1"
     log "INFO" "Received signal: ${signal}"
@@ -162,28 +198,22 @@ handle_relay_signal() {
             return 1
         fi
 
-        # Step 1: Send /clear command to current pane
-        log "INFO" "Sending /clear to pane ${pane_id}"
-        if ! tmux send-keys -t "${pane_id}" "/clear" Enter 2>/dev/null; then
-            log "ERROR" "Failed to send /clear to pane ${pane_id}"
+        # Step 1: Terminate current Claude session (Ctrl+C)
+        terminate_claude_session "${pane_id}"
+
+        # Step 2: Wait for shell prompt to be ready
+        if ! wait_for_shell_ready "${pane_id}" 10; then
+            log "ERROR" "Shell prompt not ready in time"
             return 1
         fi
 
-        # Step 2: Wait for /clear to complete
-        if ! wait_for_clear_complete "${pane_id}" 15; then
-            log "ERROR" "Clear did not complete in time"
+        # Step 3: Start new Claude session with handoff prompt
+        if ! start_new_claude_session "${pane_id}" "${handoff_path}"; then
+            log "ERROR" "Failed to start new Claude session"
             return 1
         fi
 
-        # Step 3: Send handoff prompt
-        local prompt
-        prompt=$(build_continuation_prompt "${handoff_path}")
-        if ! send_prompt_to_pane "${pane_id}" "${prompt}"; then
-            log "ERROR" "Failed to send handoff prompt"
-            return 1
-        fi
-
-        log "INFO" "Session handoff complete via /clear injection"
+        log "INFO" "Session handoff complete via new claude process"
 
         # Archive the handoff file
         archive_handoff "${handoff_path}"

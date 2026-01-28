@@ -9,7 +9,7 @@ import { Command } from 'commander';
 import { createProject } from './commands/create.js';
 import { runStage, nextStage, gotoStage, listStages } from './commands/stage.js';
 import { playCommand, playStatus, playLogs } from './commands/play.js';
-import { showStatus, showDashboard, showContextStatus } from './commands/status.js';
+import { showStatus, showDashboard } from './commands/status.js';
 import { validateConfig } from './commands/validate.js';
 import {
   createCheckpointCommand,
@@ -124,17 +124,6 @@ program
   .action(async () => {
     const projectRoot = process.cwd();
     await showDashboard(projectRoot);
-  });
-
-// context command
-program
-  .command('context')
-  .description('Check context (token) status')
-  .option('-r, --remaining <percent>', 'Override remaining percentage', '100')
-  .action(async (options: { remaining: string }) => {
-    const projectRoot = process.cwd();
-    const remaining = parseInt(options.remaining, 10);
-    await showContextStatus(projectRoot, remaining);
   });
 
 // validate command

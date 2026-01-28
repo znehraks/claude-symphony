@@ -18,7 +18,7 @@ claude-symphony is a 10-stage software development workflow pipeline that orches
 - **10-Stage Pipeline**: Complete development cycle from brainstorming to deployment
 - **Multi-AI Orchestration**: Intelligent collaboration between Gemini, Claude, and Codex
 - **Smart HANDOFF System**: Automatic context extraction and semantic compression
-- **Context Manager**: Automatic context monitoring with snapshot/HANDOFF generation at thresholds
+- **Context Monitoring**: Real-time context tracking via statusline with auto-compact integration
 - **Memory Relay (Encore Mode)**: Infinite session orchestration - Claude never stops
 - **Auto-Checkpoint & Rollback**: Task-based triggers with partial rollback support
 - **Pipeline Forking**: Branch exploration for architecture alternatives
@@ -113,7 +113,7 @@ When context drops below 50%, the system automatically:
 ┌─────────────────────────────────────────────────────────────┐
 │  statusline.sh (polls every 300ms)                          │
 │    ↓ context ≤ 50%                                          │
-│  scripts/context-manager.sh --auto-compact                  │
+│  Auto-compact triggered via Claude Code                     │
 │    ↓                                                        │
 │  ┌────────────────────────────────────────────────────────┐ │
 │  │ 1. Auto-snapshot → state/context/auto-snapshot-*.md   │ │
@@ -134,7 +134,6 @@ When context drops below 50%, the system automatically:
 |------|---------|
 | `.claude/hooks/statusline.sh` | Real-time context monitoring |
 | `.claude/hooks/stop.sh` | Auto-trigger after response |
-| `scripts/context-manager.sh` | Snapshot/HANDOFF generation |
 | `state/context/` | Auto-saved snapshots |
 | `state/handoffs/` | HANDOFF archive |
 
@@ -201,7 +200,6 @@ claude-symphony/
 │   │   ├── hooks/          # Lifecycle hooks (statusline, stop, etc.)
 │   │   └── skills/         # AI skills (7)
 │   ├── scripts/            # Runtime scripts
-│   │   └── context-manager.sh  # Context automation
 │   ├── stages/             # 10-stage pipeline
 │   ├── config/             # Configuration files (25+)
 │   ├── state/              # State management

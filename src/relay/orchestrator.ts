@@ -109,58 +109,83 @@ function sleep(ms: number): Promise<void> {
 }
 
 /**
- * Wait for /clear to complete by checking pane output
+ * Wait for shell prompt to be ready (after terminating Claude session)
  */
-async function waitForClearComplete(paneId: string, timeout: number): Promise<void> {
+async function waitForShellReady(paneId: string, timeout: number): Promise<void> {
   const startTime = Date.now();
 
-  log('INFO', `Waiting for /clear to complete in pane ${paneId} (timeout: ${timeout}ms)`);
+  log('INFO', `Waiting for shell prompt in pane ${paneId} (timeout: ${timeout}ms)`);
 
   while (Date.now() - startTime < timeout) {
     try {
       // Capture last few lines of pane output
       const output = execSync(
-        `tmux capture-pane -t "${paneId}" -p -S -5`,
+        `tmux capture-pane -t "${paneId}" -p -S -3`,
         { encoding: 'utf8', stdio: 'pipe' }
       );
 
-      // Check for Claude prompt ready state
-      // After /clear, Claude shows a fresh prompt (usually ends with ">" or is waiting for input)
+      // Check for shell prompt ready state ($ or % at end of line)
       const trimmed = output.trim();
+      const lastLine = trimmed.split('\n').pop() || '';
 
-      // Look for signs that Claude is ready for input:
-      // - Empty or minimal output after clear
-      // - Prompt character at end
-      // - No "Thinking..." or processing indicators
-      if (trimmed.endsWith('>') || trimmed === '' || /^[>\s]*$/.test(trimmed)) {
-        await sleep(500); // Small stabilization delay
-        log('INFO', '/clear completed, Claude is ready for input');
+      // Look for shell prompt indicators
+      if (/[$%#>]\s*$/.test(lastLine) || lastLine === '') {
+        await sleep(300); // Small stabilization delay
+        log('INFO', 'Shell prompt is ready');
         return;
       }
     } catch {
       // Ignore capture errors, retry
     }
 
-    await sleep(500);
+    await sleep(300);
   }
 
-  throw new Error(`Timeout waiting for /clear to complete after ${timeout}ms`);
+  throw new Error(`Timeout waiting for shell prompt after ${timeout}ms`);
 }
 
 /**
- * Send prompt to pane via tmux send-keys
+ * Terminate current Claude session in pane
  */
-function sendPromptToPane(paneId: string, prompt: string): void {
-  // Escape special characters for tmux send-keys
-  const escaped = prompt.replace(/"/g, '\\"').replace(/'/g, "'\\''");
-
-  log('INFO', `Sending handoff prompt to pane ${paneId}`);
+async function terminateClaudeSession(paneId: string): Promise<void> {
+  log('INFO', `Terminating Claude session in pane ${paneId}`);
 
   try {
-    execSync(`tmux send-keys -t "${paneId}" "${escaped}" Enter`, { stdio: 'pipe' });
-    log('INFO', 'Handoff prompt sent successfully');
+    // Send Ctrl+C to interrupt current Claude process
+    execSync(`tmux send-keys -t "${paneId}" C-c`, { stdio: 'pipe' });
+    await sleep(500);
+
+    // Send another Ctrl+C in case of confirmation prompt
+    execSync(`tmux send-keys -t "${paneId}" C-c`, { stdio: 'pipe' });
+    await sleep(300);
+
+    log('INFO', 'Claude session terminated');
   } catch (error) {
-    log('ERROR', `Failed to send prompt to pane: ${error}`);
+    log('WARN', `Error during session termination (may be normal): ${error}`);
+  }
+}
+
+/**
+ * Start new Claude session with handoff prompt
+ */
+function startNewClaudeSession(paneId: string, handoffPath: string): void {
+  const prompt = buildContinuationPrompt(handoffPath);
+
+  // Escape special characters for shell command
+  const escapedPrompt = prompt.replace(/'/g, "'\\''");
+
+  // Build the claude command with --continue flag for conversation continuity
+  // Using -p (print mode with --continue) for non-interactive handoff
+  const claudeCommand = `claude -p --continue '${escapedPrompt}'`;
+
+  log('INFO', `Starting new Claude session in pane ${paneId}`);
+  log('DEBUG', `Command: ${claudeCommand}`);
+
+  try {
+    execSync(`tmux send-keys -t "${paneId}" "${claudeCommand}" Enter`, { stdio: 'pipe' });
+    log('INFO', 'New Claude session started with handoff prompt');
+  } catch (error) {
+    log('ERROR', `Failed to start new Claude session: ${error}`);
     throw error;
   }
 }
@@ -192,6 +217,13 @@ function archiveHandoff(handoffPath: string): void {
 
 /**
  * Handle a relay signal
+ *
+ * NOTE: Due to Claude Code's Ink library limitation, programmatic input via
+ * tmux send-keys cannot trigger command submission (Enter is treated as newline).
+ * See: https://github.com/anthropics/claude-code/issues/15553
+ *
+ * Solution: Instead of injecting /clear, we terminate the current Claude session
+ * and start a new `claude -p --continue` process with the handoff prompt.
  */
 async function handleRelaySignal(signal: RelaySignal): Promise<void> {
   log('INFO', `Received signal: ${signal.type}`);
@@ -214,18 +246,16 @@ async function handleRelaySignal(signal: RelaySignal): Promise<void> {
   const { handoffPath, paneId } = signal;
 
   try {
-    // Step 1: Send /clear command to current pane
-    log('INFO', `Sending /clear to pane ${paneId}`);
-    execSync(`tmux send-keys -t "${paneId}" "/clear" Enter`, { stdio: 'pipe' });
+    // Step 1: Terminate current Claude session (Ctrl+C)
+    await terminateClaudeSession(paneId);
 
-    // Step 2: Wait for /clear to complete (prompt ready)
-    await waitForClearComplete(paneId, 15000); // 15 second timeout
+    // Step 2: Wait for shell prompt to be ready
+    await waitForShellReady(paneId, 10000); // 10 second timeout
 
-    // Step 3: Send handoff prompt
-    const prompt = buildContinuationPrompt(handoffPath);
-    sendPromptToPane(paneId, prompt);
+    // Step 3: Start new Claude session with handoff prompt
+    startNewClaudeSession(paneId, handoffPath);
 
-    log('INFO', 'Session handoff complete via /clear injection');
+    log('INFO', 'Session handoff complete via new claude process');
 
     // Archive the handoff file
     archiveHandoff(handoffPath);

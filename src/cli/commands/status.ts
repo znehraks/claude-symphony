@@ -7,10 +7,9 @@ import path from 'path';
 import { existsSync, readdirSync, statSync } from 'fs';
 import { ProgressManager } from '../../core/state/progress.js';
 import { listCheckpoints } from '../../core/state/checkpoint.js';
-import { checkContextStatus } from '../../core/state/context.js';
 import { STAGE_IDS, getStageName } from '../../types/stage.js';
 import type { StageId } from '../../types/stage.js';
-import { logWarning, logError } from '../../utils/logger.js';
+import { logError } from '../../utils/logger.js';
 
 /**
  * Show pipeline status
@@ -185,53 +184,10 @@ export async function showDashboard(projectRoot: string): Promise<void> {
   console.log('  /handoff        → Generate HANDOFF.md');
   console.log('  /checkpoint     → Create checkpoint');
   console.log('  /validate       → Validate configuration');
-  console.log('  /context        → Check context status');
 
   console.log('\n╔══════════════════════════════════════════════════════════════╗');
   console.log('║              Run /help for all available commands             ║');
   console.log('╚══════════════════════════════════════════════════════════════╝');
-}
-
-/**
- * Show context status
- */
-export async function showContextStatus(
-  projectRoot: string,
-  remainingPercent: number = 100
-): Promise<void> {
-  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  console.log('🧠 Context Status');
-  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-
-  const result = await checkContextStatus(projectRoot, remainingPercent);
-
-  console.log(`\n  Remaining: ${remainingPercent}%`);
-  console.log(`  Level:     ${result.level.toUpperCase()}`);
-
-  // Visual bar
-  const filled = Math.round(remainingPercent / 5);
-  const empty = 20 - filled;
-  const color = result.level === 'critical' ? '🔴' :
-                result.level === 'action' ? '🟡' :
-                result.level === 'warning' ? '🟠' : '🟢';
-
-  console.log(`\n  ${color} [${'█'.repeat(filled)}${'░'.repeat(empty)}] ${remainingPercent}%`);
-
-  // Recommendations
-  console.log('\n  Recommended Action:');
-  console.log(`    ${result.recommendedAction}`);
-
-  if (result.shouldAutoSave) {
-    logWarning('Auto-save recommended!');
-  }
-
-  // Thresholds
-  console.log('\n  Thresholds:');
-  console.log('    60% - Warning: Consider running /compact');
-  console.log('    50% - Action:  Run /compact, save state');
-  console.log('    40% - Critical: Generate HANDOFF.md, run /clear');
-
-  console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 }
 
 /**
