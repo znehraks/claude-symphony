@@ -145,7 +145,7 @@ Visualizes context usage, tool activity, and todo progress in the statusline.
 | `/collaborate` | Run Multi-AI collaboration |
 | `/benchmark` | AI model benchmarking |
 | `/fork` | Pipeline branch management |
-| `/validate` | Run output validation |
+| `/validate` | Run output validation (uses validation-agent) |
 
 ### Visibility Commands
 | Command | Description |
@@ -224,7 +224,7 @@ Visualizes context usage, tool activity, and todo progress in the statusline.
 | `smart-handoff` | Stage completion | Smart context extraction and HANDOFF generation |
 | `ai-collaboration` | `/collaborate` | Multi-AI collaboration orchestration |
 | `auto-checkpoint` | Trigger conditions met | Automatic checkpoint generation |
-| `output-validator` | `/validate`, stage completion | Output validation and quality verification |
+| `output-validator` | `/validate`, stage completion | Output validation with sub-agent (auto-fallback to legacy) |
 
 ## Git Auto-Commit Rules
 
@@ -747,6 +747,84 @@ Defines optimized AI behavior characteristics for each stage.
 # Proceed despite failure (not recommended)
 /validate --force
 ```
+
+---
+
+## Sub-Agent System (Advanced)
+
+### What are Sub-Agents?
+
+claude-symphony uses **sub-agents** to perform specialized tasks in isolated contexts, preserving your main session's context window.
+
+**Currently Available Sub-Agents:**
+- **validation-agent**: Validates stage outputs (used by `/validate` command)
+
+### How Sub-Agents Work
+
+When you run `/validate`:
+1. A **Validation Agent** spawns in a separate context
+2. Agent performs checks using restricted tools (Read, Glob, Grep, Bash)
+3. Results are returned and saved to `state/validations/`
+4. Your main session context is **completely preserved**
+
+### Benefits for Users
+
+#### 1. Context Preservation
+```
+Example: You're coding in stage 06 with 45% context remaining
+- Without sub-agents: /validate uses 5-8% → 37-40% left
+- With sub-agents: /validate uses 0% → 45% left (Agent runs separately)
+```
+
+#### 2. Validation History
+All validation results are saved:
+```
+state/validations/
+├── 01-brainstorm_20260128_143000.json
+├── 03-planning_20260128_150000.json
+└── 06-implementation_20260128_163000.json
+```
+
+You can review past validation results anytime.
+
+#### 3. Intelligent Analysis
+Sub-agents use **extended thinking** to reason about issues:
+- Not just "file too small"
+- But "why is it small?" and "what's missing?"
+- Contextual suggestions for fixing issues
+
+#### 4. Automatic Fallback
+If a sub-agent fails, the system automatically falls back to legacy validation.
+You always get validation results.
+
+### When Sub-Agents Are Used
+
+| Command | Sub-Agent Used | Context Impact |
+|---------|----------------|----------------|
+| `/validate` | validation-agent | None (separate context) |
+| `/next` | validation-agent (if outputs need validation) | None |
+| Regular coding/work | No sub-agent | Normal context usage |
+
+### Checking Sub-Agent Results
+
+View saved validation results:
+```bash
+# List all validation results
+ls state/validations/
+
+# View specific result
+cat state/validations/01-brainstorm_20260128_143000.json
+```
+
+### Disabling Sub-Agents (Optional)
+
+Sub-agents are enabled by default. To disable:
+```yaml
+# config/output_validation.yaml
+use_agent: false  # Falls back to legacy validation
+```
+
+**Note**: Most users should keep sub-agents enabled for better context management.
 
 ---
 
