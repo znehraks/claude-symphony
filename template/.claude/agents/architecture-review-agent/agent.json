@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/znehraks/claude-symphony/main/schemas/agent.schema.json",
+  "name": "architecture-review-agent",
+  "description": "Validates architecture.md and implementation.yaml with dependency analysis, circular dependency detection, and consistency checks",
+  "tools": [
+    "Read",
+    "Glob",
+    "Grep"
+  ],
+  "model": "sonnet",
+  "permissionMode": "plan",
+  "extendedThinking": true,
+  "executionMode": "foreground"
+}

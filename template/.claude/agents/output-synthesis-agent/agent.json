@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/znehraks/claude-symphony/main/schemas/agent.schema.json",
+  "name": "output-synthesis-agent",
+  "description": "Synthesizes parallel AI outputs (Gemini+Claude, Codex+Claude) into unified, high-quality deliverables with consensus analysis",
+  "tools": [
+    "Read",
+    "Glob",
+    "Write"
+  ],
+  "model": "sonnet",
+  "permissionMode": "acceptEdits",
+  "extendedThinking": true,
+  "executionMode": "foreground"
+}
