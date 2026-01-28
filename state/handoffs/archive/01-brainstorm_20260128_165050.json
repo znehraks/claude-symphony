@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "stageId": "01-brainstorm",
+    "nextStageId": "02-research",
+    "generatedAt": "2026-01-28T16:50:50Z",
+    "generatorAgent": "handoff-generator-agent",
+    "version": "0.3.2",
+    "template": "default",
+    "targetTokens": 4000,
+    "actualTokens": 3850
+  },
+  "paths": {
+    "handoff": "stages/01-brainstorm/HANDOFF.md",
+    "archive": "state/handoffs/archive/01-brainstorm_20260128_165050.md",
+    "metadata": "state/handoffs/archive/01-brainstorm_20260128_165050.json"
+  },
+  "statistics": {
+    "sectionsIncluded": [
+      "summary",
+      "completedTasks",
+      "keyDecisions",
+      "outputsGenerated",
+      "pendingIssues",
+      "immediateNextSteps",
+      "contextForNextStage",
+      "aiCallLog"
+    ],
+    "itemCounts": {
+      "completedTasks": 6,
+      "keyDecisions": 5,
+      "modifiedFiles": 2,
+      "pendingIssues": 3,
+      "nextStepActions": 4
+    },
+    "metrics": {
+      "stageDuration": "5 minutes",
+      "filesCreated": 2,
+      "tokenBudgetUsed": 1500
+    }
+  },
+  "nextStageContext": {
+    "criticalFiles": [
+      "stages/01-brainstorm/outputs/requirements_analysis.md",
+      "stages/01-brainstorm/outputs/ideas.md"
+    ],
+    "blockingIssues": [],
+    "recommendedFirstAction": "Research Task Tool API to understand TaskCreate, TaskUpdate, TaskGet parameters and task lifecycle",
+    "keyMetricsToTarget": {
+      "contextSavings": "100-120% cumulative",
+      "reliability": "95%+ success rate",
+      "performance": "30-60 seconds execution",
+      "extensibility": "Zero code changes for new agents"
+    },
+    "designConstraints": [
+      "Must use Task tool (not Agent SDK)",
+      "Must maintain backward compatibility",
+      "Must support foreground and background execution",
+      "Must provide JSON output format"
+    ],
+    "researchQuestions": [
+      "What is the optimal token budget for agent prompts?",
+      "Should agents have access to Read tool, or only receive pre-loaded context?",
+      "How to handle multi-file analysis tasks that exceed single-read limits?",
+      "What metadata should be captured in task results for debugging?"
+    ]
+  },
+  "validation": {
+    "allRequiredSectionsPresent": true,
+    "tokenBudgetMet": true,
+    "criticalFilesIdentified": true,
+    "nextStepsActionable": true,
+    "blockingIssuesResolved": true
+  }
+}

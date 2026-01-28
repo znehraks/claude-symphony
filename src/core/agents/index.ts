@@ -5,6 +5,7 @@
 
 export { spawnAgent } from './task-spawner.js';
 export { AgentRegistry } from './registry.js';
+export { buildAgentPrompt, getAgentConfig, parseAgentOutput } from './spawner-helper.js';
 export type {
   AgentDefinition,
   AgentContext,

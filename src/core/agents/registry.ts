@@ -160,6 +160,65 @@ export class AgentRegistry {
   }
 
   /**
+   * Load agent definition synchronously
+   * Used for prompt building in spawner helper
+   */
+  loadAgentSync(agentName: string): AgentDefinition {
+    // Check cache
+    if (this.cache.has(agentName)) {
+      return this.cache.get(agentName)!;
+    }
+
+    const agentDir = path.join(this.agentsDir, agentName);
+
+    if (!existsSync(agentDir)) {
+      throw new Error(`Agent not found: ${agentName}`);
+    }
+
+    // Load agent.json
+    const agentJsonPath = path.join(agentDir, 'agent.json');
+    if (!existsSync(agentJsonPath)) {
+      throw new Error(`Agent definition not found: ${agentJsonPath}`);
+    }
+
+    const fs = require('fs');
+    const agentJson = JSON.parse(fs.readFileSync(agentJsonPath, 'utf-8')) as Partial<AgentDefinition>;
+
+    // Load CLAUDE.md (prompt)
+    const promptPath = path.join(agentDir, 'CLAUDE.md');
+    let prompt = '';
+
+    if (existsSync(promptPath)) {
+      prompt = fs.readFileSync(promptPath, 'utf-8');
+    } else {
+      logWarning(`Agent ${agentName} has no CLAUDE.md file`);
+    }
+
+    // Build full definition
+    const definition: AgentDefinition = {
+      name: agentName,
+      description: agentJson.description || '',
+      prompt: prompt,
+      tools: agentJson.tools,
+      model: agentJson.model,
+      permissionMode: agentJson.permissionMode,
+      extendedThinking: agentJson.extendedThinking,
+      sessionPersistence: agentJson.sessionPersistence,
+      mcpServers: agentJson.mcpServers,
+      executionMode: agentJson.executionMode || 'foreground',
+    };
+
+    // Validate
+    this.validateAgent(definition);
+
+    // Cache
+    this.cache.set(agentName, definition);
+
+    logInfo(`Loaded agent (sync): ${agentName}`);
+    return definition;
+  }
+
+  /**
    * Get agent directory path
    */
   getAgentDir(agentName: string): string {
