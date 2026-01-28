@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/znehraks/claude-symphony/main/schemas/agent.schema.json",
+  "name": "test-execution-agent",
+  "description": "Executes tests, analyzes coverage, and detects flaky tests for Stage 09",
+  "tools": [
+    "Read",
+    "Glob",
+    "Bash"
+  ],
+  "model": "sonnet",
+  "permissionMode": "plan",
+  "extendedThinking": true,
+  "executionMode": "foreground",
+  "mcpServers": ["playwright"]
+}
