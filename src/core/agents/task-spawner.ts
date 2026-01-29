@@ -101,7 +101,7 @@ function mapModelName(model?: string): string | undefined {
  * Parse Task tool result into AgentResult
  */
 function parseAgentResult(taskResult: any, mode: string, duration: number): AgentResult {
-  return {
+  const baseResult = {
     success: taskResult.success || false,
     mode: mode as 'foreground' | 'background',
     result: taskResult.output,
@@ -112,6 +112,16 @@ function parseAgentResult(taskResult: any, mode: string, duration: number): Agen
       total_cost_usd: taskResult.total_cost_usd || 0,
     },
   };
+
+  // Add errors array if task failed
+  if (!taskResult.success && taskResult.error) {
+    return {
+      ...baseResult,
+      errors: [taskResult.error],
+    };
+  }
+
+  return baseResult;
 }
 
 /**
@@ -125,8 +135,10 @@ function parseAgentResult(taskResult: any, mode: string, duration: number): Agen
  *
  * For now, this remains a limitation that requires the Task tool to be invoked
  * from the main Claude Code context, not from within TypeScript code.
+ *
+ * @internal - Exported for testing purposes only
  */
-async function executeTaskTool(params: {
+export async function executeTaskTool(params: {
   subagent_type: string;
   prompt: string;
   description: string;

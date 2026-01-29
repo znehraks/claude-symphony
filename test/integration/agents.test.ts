@@ -1,212 +1,199 @@
 /**
  * Integration Tests for Tier 1 Sub-Agents
  *
- * These tests verify that all 5 Tier 1 agents work correctly
- * when spawned via the Task tool and execute in isolated contexts.
+ * These tests verify agent loading, configuration, and spawning logic.
  *
- * Status: IMPLEMENTED (Manual testing complete)
+ * Note: The Task tool itself cannot be mocked in ES modules due to internal
+ * function call limitations. These tests verify:
+ * - Agent definitions load correctly
+ * - Agent spawning completes without errors
+ * - Foreground/background mode selection works
+ * - Fallback behavior executes properly
  *
- * All agents have been manually tested and documented:
- * - validation-agent: docs/validation-agent-complete.md
- * - handoff-generator-agent: docs/handoff-generator-agent-complete.md
- * - output-synthesis-agent: docs/output-synthesis-agent-complete.md
- * - architecture-review-agent: docs/architecture-review-agent-complete.md
- * - research-analysis-agent: docs/research-analysis-agent-complete.md
- *
- * Results Summary:
- * - Success Rate: 100% (5/5 agents passed)
- * - Average Execution Time: 31 seconds
- * - Context Usage: 0% for all agents (confirmed isolation)
- * - Extended Thinking: Successfully used by all agents
- *
- * Future Work:
- * - Automated test execution (requires Task tool mocking strategy)
- * - Fallback mechanism testing
- * - Performance regression tests
- * - Error handling scenarios
+ * Full end-to-end testing with actual Task tool responses is documented in:
+ * - docs/validation-agent-complete.md
+ * - docs/handoff-generator-agent-complete.md
+ * - docs/output-synthesis-agent-complete.md
+ * - docs/architecture-review-agent-complete.md
+ * - docs/research-analysis-agent-complete.md
  */
 
 import { describe, it, expect } from 'vitest';
+import { spawnAgent } from '../../src/core/agents/task-spawner.js';
+import { AgentRegistry } from '../../src/core/agents/registry.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
-describe('Tier 1 Agents Integration Tests', () => {
-  describe('validation-agent', () => {
-    it('should validate stage outputs correctly', () => {
-      // Manual test passed: 5/5 checks passed, score 1.0
-      // See: docs/validation-agent-complete.md
-      expect(true).toBe(true);
-    });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-    it('should detect missing files', () => {
-      // Manual test passed: Correctly identified missing files
-      expect(true).toBe(true);
-    });
+// Point to the actual template directory where agents are defined
+const PROJECT_ROOT = path.join(__dirname, '../../');
 
-    it('should verify markdown structure', () => {
-      // Manual test passed: Validated section headers
-      expect(true).toBe(true);
-    });
+describe('Agent Loading and Configuration', () => {
+  const registry = new AgentRegistry(PROJECT_ROOT);
+
+  it('should load validation-agent definition', async () => {
+    const agent = await registry.loadAgent('validation-agent');
+    expect(agent.name).toBe('validation-agent');
+    expect(agent.description).toContain('Validates stage outputs');
+    expect(agent.model).toBe('sonnet');
+    expect(agent.tools).toContain('Read');
+    expect(agent.tools).toContain('Glob');
+    expect(agent.extendedThinking).toBe(true);
   });
 
-  describe('handoff-generator-agent', () => {
-    it('should generate HANDOFF.md with all required sections', () => {
-      // Manual test passed: Generated 5.4KB HANDOFF with all sections
-      // See: docs/handoff-generator-agent-complete.md
-      expect(true).toBe(true);
-    });
-
-    it('should extract completed tasks', () => {
-      // Manual test passed: Extracted 6 tasks
-      expect(true).toBe(true);
-    });
-
-    it('should identify key decisions', () => {
-      // Manual test passed: Extracted 5 key decisions
-      expect(true).toBe(true);
-    });
-
-    it('should meet token budget', () => {
-      // Manual test passed: 3850/4000 tokens (within target)
-      expect(true).toBe(true);
-    });
+  it('should load handoff-generator-agent definition', async () => {
+    const agent = await registry.loadAgent('handoff-generator-agent');
+    expect(agent.name).toBe('handoff-generator-agent');
+    expect(agent.description).toContain('Generates');
+    expect(agent.model).toBe('sonnet');
+    expect(agent.extendedThinking).toBe(true);
   });
 
-  describe('output-synthesis-agent', () => {
-    it('should synthesize parallel AI outputs', () => {
-      // Manual test passed: Merged Gemini + Claude outputs
-      // See: docs/output-synthesis-agent-complete.md
-      expect(true).toBe(true);
-    });
-
-    it('should detect consensus items', () => {
-      // Manual test passed: 50% consensus ratio (5/10 items)
-      expect(true).toBe(true);
-    });
-
-    it('should include unique contributions', () => {
-      // Manual test passed: 100% retention (5/5 unique items)
-      expect(true).toBe(true);
-    });
-
-    it('should meet quality threshold', () => {
-      // Manual test passed: Quality score 0.85 (>0.8 threshold)
-      expect(true).toBe(true);
-    });
+  it('should load output-synthesis-agent definition', async () => {
+    const agent = await registry.loadAgent('output-synthesis-agent');
+    expect(agent.name).toBe('output-synthesis-agent');
+    expect(agent.description).toContain('parallel AI outputs');
+    expect(agent.model).toBe('sonnet');
+    expect(agent.extendedThinking).toBe(true);
   });
 
-  describe('architecture-review-agent', () => {
-    it('should detect circular dependencies', () => {
-      // Manual test passed: Detected 2/2 circular dependencies
-      // See: docs/architecture-review-agent-complete.md
-      expect(true).toBe(true);
-    });
-
-    it('should identify missing sections', () => {
-      // Manual test passed: Found missing API Specifications
-      expect(true).toBe(true);
-    });
-
-    it('should find cross-document inconsistencies', () => {
-      // Manual test passed: 2 dependency mismatches found
-      expect(true).toBe(true);
-    });
-
-    it('should block stage transition on critical issues', () => {
-      // Manual test passed: Score 0.428 < 0.7 (blocked correctly)
-      expect(true).toBe(true);
-    });
+  it('should load architecture-review-agent definition', async () => {
+    const agent = await registry.loadAgent('architecture-review-agent');
+    expect(agent.name).toBe('architecture-review-agent');
+    expect(agent.description).toContain('architecture');
+    expect(agent.model).toBe('sonnet');
+    expect(agent.extendedThinking).toBe(true);
   });
 
-  describe('research-analysis-agent', () => {
-    it('should detect contradictions across sources', () => {
-      // Manual test passed: Detected 3 contradictions (1 critical, 2 minor)
-      // See: docs/research-analysis-agent-complete.md
-      expect(true).toBe(true);
-    });
-
-    it('should find supporting evidence', () => {
-      // Manual test passed: 6 high-confidence findings (100% agreement)
-      expect(true).toBe(true);
-    });
-
-    it('should assess risks comprehensively', () => {
-      // Manual test passed: 7 risks (2 high, 3 medium, 2 low)
-      expect(true).toBe(true);
-    });
-
-    it('should provide GO/NO-GO recommendation', () => {
-      // Manual test passed: GO WITH CONDITIONS (82% confidence)
-      expect(true).toBe(true);
-    });
-
-    it('should propose pragmatic resolutions', () => {
-      // Manual test passed: JSON files for MVP → PostgreSQL v2
-      expect(true).toBe(true);
-    });
-  });
-
-  describe('Performance Metrics', () => {
-    it('should meet execution time targets', () => {
-      // validation: ~15s, handoff: ~30s, synthesis: ~35s
-      // architecture: ~40s, research: ~45s
-      // Average: 31s (all < 60s target)
-      expect(true).toBe(true);
-    });
-
-    it('should preserve main context', () => {
-      // All agents: 0% main session usage
-      expect(true).toBe(true);
-    });
-
-    it('should use extended thinking', () => {
-      // All agents: extendedThinking enabled and used
-      expect(true).toBe(true);
-    });
+  it('should load research-analysis-agent definition', async () => {
+    const agent = await registry.loadAgent('research-analysis-agent');
+    expect(agent.name).toBe('research-analysis-agent');
+    expect(agent.description).toContain('research');
+    expect(agent.model).toBe('sonnet');
+    expect(agent.extendedThinking).toBe(true);
   });
 });
 
-describe('Workflow Integration Tests', () => {
-  describe('Stage Transition', () => {
-    it('should run validation before HANDOFF generation', () => {
-      // TODO: Implement automated workflow test
-      // Currently tested manually via /next command
-      expect(true).toBe(true);
+describe('Agent Spawning', () => {
+  it('should spawn validation-agent in foreground mode', async () => {
+    const result = await spawnAgent('validation-agent', {
+      projectRoot: PROJECT_ROOT,
+      stage: '01-brainstorm',
     });
 
-    it('should block transition on validation failure', () => {
-      // TODO: Implement blocking scenario test
-      // Verified in architecture-review-agent (score < 0.7)
-      expect(true).toBe(true);
-    });
+    expect(result).toBeDefined();
+    expect(result.mode).toBe('foreground');
+    expect(result.success).toBeDefined();
+    // Result includes fallback JSON with default structure
+    expect(result.result).toBeDefined();
   });
 
-  describe('Parallel Output Synthesis', () => {
-    it('should synthesize Gemini + Claude outputs', () => {
-      // Manual test passed: Stage 01 brainstorming
-      // See: docs/output-synthesis-agent-complete.md
-      expect(true).toBe(true);
+  it('should spawn validation-agent in background mode', async () => {
+    const result = await spawnAgent(
+      'validation-agent',
+      { projectRoot: PROJECT_ROOT, stage: '01-brainstorm' },
+      'background'
+    );
+
+    expect(result).toBeDefined();
+    expect(result.mode).toBe('background');
+    expect(result.success).toBeDefined();
+  });
+
+  it('should spawn handoff-generator-agent', async () => {
+    const result = await spawnAgent('handoff-generator-agent', {
+      projectRoot: PROJECT_ROOT,
+      stage: '01-brainstorm',
     });
+
+    expect(result).toBeDefined();
+    expect(result.mode).toBe('foreground');
+  });
+
+  it('should spawn output-synthesis-agent', async () => {
+    const result = await spawnAgent('output-synthesis-agent', {
+      projectRoot: PROJECT_ROOT,
+      stage: '01-brainstorm',
+      data: {
+        modelOutputs: ['ideas_gemini.md', 'ideas_claude.md'],
+      },
+    });
+
+    expect(result).toBeDefined();
+    expect(result.mode).toBe('foreground');
+  });
+
+  it('should spawn architecture-review-agent', async () => {
+    const result = await spawnAgent('architecture-review-agent', {
+      projectRoot: PROJECT_ROOT,
+      stage: '03-planning',
+    });
+
+    expect(result).toBeDefined();
+    expect(result.mode).toBe('foreground');
+  });
+
+  it('should spawn research-analysis-agent', async () => {
+    const result = await spawnAgent('research-analysis-agent', {
+      projectRoot: PROJECT_ROOT,
+      stage: '02-research',
+    });
+
+    expect(result).toBeDefined();
+    expect(result.mode).toBe('foreground');
   });
 });
 
 describe('Error Handling', () => {
-  describe('Fallback Mechanisms', () => {
-    it('should fall back to legacy validation on agent failure', () => {
-      // TODO: Implement fallback test
-      // Fallback logic exists in output-validator.ts
-      expect(true).toBe(true);
+  it('should handle non-existent agent gracefully', async () => {
+    const result = await spawnAgent('non-existent-agent', {
+      projectRoot: PROJECT_ROOT,
+      stage: '01-brainstorm',
     });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toBeDefined();
+    expect(result.errors!.length).toBeGreaterThan(0);
+    expect(result.errors![0]).toContain('Agent not found');
   });
 
-  describe('JSON Parsing', () => {
-    it('should handle markdown-wrapped JSON', () => {
-      // Manual test passed: parseAgentOutput() handles ```json blocks
-      expect(true).toBe(true);
+  it('should handle invalid project root', async () => {
+    const result = await spawnAgent('validation-agent', {
+      projectRoot: '/non/existent/path',
+      stage: '01-brainstorm',
     });
 
-    it('should extract JSON from mixed content', () => {
-      // Manual test passed: Regex extraction works
-      expect(true).toBe(true);
+    expect(result.success).toBe(false);
+    expect(result.errors).toBeDefined();
+  });
+});
+
+describe('Fallback Behavior', () => {
+  it('should execute fallback logic when Task tool unavailable', async () => {
+    // Since we can't call Task tool from TypeScript, verify fallback works
+    const result = await spawnAgent('validation-agent', {
+      projectRoot: PROJECT_ROOT,
+      stage: '01-brainstorm',
     });
+
+    // Fallback returns success with default JSON structure
+    expect(result.success).toBe(true);
+    const parsed = JSON.parse(result.result!);
+    expect(parsed).toHaveProperty('note');
+    expect(parsed.note).toContain('Fallback result');
+  });
+
+  it('should include warning in fallback response', async () => {
+    const result = await spawnAgent('validation-agent', {
+      projectRoot: PROJECT_ROOT,
+      stage: '01-brainstorm',
+    });
+
+    const parsed = JSON.parse(result.result!);
+    expect(parsed.note).toContain('Task tool must be invoked from main Claude Code session');
   });
 });
 
@@ -220,14 +207,21 @@ describe('Error Handling', () => {
  *   pnpm test test/integration
  *
  * Current Status:
- * - All Tier 1 agents have been manually tested and documented
- * - 100% success rate (5/5 agents passed)
- * - All performance targets met (<60s execution, 0% context usage)
- * - Automated testing requires Task tool mocking strategy
+ * - Agent loading: ✅ Automated (5 tests)
+ * - Agent spawning: ✅ Automated (6 tests)
+ * - Error handling: ✅ Automated (2 tests)
+ * - Fallback behavior: ✅ Automated (2 tests)
+ * - Total: 15 automated tests
  *
- * Next Steps:
- * 1. Implement Task tool mock for automated testing
- * 2. Add performance regression tests
- * 3. Test fallback scenarios
- * 4. Add E2E pipeline tests
+ * Manual Testing (Documented):
+ * - Full end-to-end with Task tool: See docs/*-agent-complete.md
+ * - All 5 Tier 1 agents tested manually with 100% success rate
+ * - Average execution time: 31 seconds (target <60s) ✅
+ * - Context isolation: 0% main session usage ✅
+ *
+ * Why Task Tool Can't Be Mocked:
+ * - executeTaskTool is an internal function called within task-spawner.ts
+ * - ES modules don't allow mocking internal function calls via vi.spyOn
+ * - Would require vi.mock() with full module replacement, which breaks imports
+ * - Simpler to test agent loading/spawning logic + manual E2E testing
  */

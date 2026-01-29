@@ -1,0 +1,54 @@
+{
+  "stage": "01-brainstorm",
+  "rules": [
+    {
+      "id": "rule_1",
+      "name": "Minimum 3 ideas",
+      "description": "ideas.md must contain at least 3 distinct ideas",
+      "validator": "file_exists_and_has_min_sections",
+      "params": {
+        "file": "ideas.md",
+        "minSections": 3
+      }
+    },
+    {
+      "id": "rule_2",
+      "name": "Ideas are detailed",
+      "description": "Each idea must have description and key features",
+      "validator": "sections_have_required_subsections",
+      "params": {
+        "file": "ideas.md",
+        "requiredSubsections": ["Key Features"]
+      }
+    },
+    {
+      "id": "rule_3",
+      "name": "Model outputs exist",
+      "description": "Both Gemini and Claude model outputs must exist",
+      "validator": "files_exist",
+      "params": {
+        "files": ["ideas_gemini.md", "ideas_claude.md"]
+      }
+    },
+    {
+      "id": "rule_4",
+      "name": "Synthesis complete",
+      "description": "Final ideas.md must be synthesized from model outputs",
+      "validator": "file_is_newer_than",
+      "params": {
+        "file": "ideas.md",
+        "olderThan": ["ideas_gemini.md", "ideas_claude.md"]
+      }
+    },
+    {
+      "id": "rule_5",
+      "name": "Ideas are feasible",
+      "description": "Ideas should not contain obvious technical impossibilities",
+      "validator": "content_quality_check",
+      "params": {
+        "file": "ideas.md",
+        "checkFor": "feasibility"
+      }
+    }
+  ]
+}

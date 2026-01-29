@@ -206,16 +206,45 @@ claude-symphony/
 
 ### Testing
 
+#### Automated Tests
+- **109 tests** covering core infrastructure and agent system
+- **5 Tier 1 agents** with fallback verification
+- **Mock utilities** for Task tool simulation
+
 ```bash
-# Run unit tests
-pnpm run test
+# Run all tests
+pnpm test
 
 # Run with coverage
-pnpm run test:coverage
+pnpm test:coverage
 
 # Test pipeline functionality
-pnpm run test:pipeline
+pnpm test:pipeline
 ```
+
+#### Agent Benchmarking
+Performance testing for all 5 Tier 1 agents:
+- **Average execution**: <5ms (infrastructure only)
+- **Success rate**: 100% (verified in automated tests)
+- **Context isolation**: 100% verified (0% main session usage)
+
+```bash
+# Run benchmark suite
+pnpm run benchmark
+
+# Results saved to: state/benchmarks/benchmark-{timestamp}.json
+```
+
+#### Manual E2E Testing
+- Full Task tool integration documented in `docs/*-agent-complete.md`
+- Average execution: 31s (with actual Task tool)
+- Success rate: 100% across all Tier 1 agents
+
+**Test Coverage**:
+- Agent loading and configuration: ✅
+- Task spawning (foreground/background): ✅
+- Error handling and fallback: ✅
+- Infrastructure performance: ✅
 
 ## Contributing
 

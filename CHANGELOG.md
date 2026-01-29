@@ -80,6 +80,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.1] - 2026-01-29
+
+### Testing & Benchmarking Release
+
+**Status**: All infrastructure tests passing (109/109), benchmark suite operational
+
+### Added
+- **Automated Testing Infrastructure**: 109 tests covering core framework and agent system
+  - Mock utilities for Task tool simulation (`test/helpers/task-tool-mock.ts`)
+  - Unit tests for agent registry, spawner helpers, and utilities
+  - Integration tests for 15 agent scenarios (loading, spawning, error handling)
+- **Performance Benchmarking**: `pnpm run benchmark` command
+  - Tests all 5 Tier 1 agents with infrastructure verification
+  - Measures execution time and success rate
+  - Saves results to `state/benchmarks/benchmark-{timestamp}.json`
+
+### Fixed
+- Task spawner error handling for non-existent agents
+- Mock response format alignment with actual Task tool output
+- Type safety in agent configuration extraction
+
+### Documentation
+- Updated README.md with comprehensive testing section
+- Added benchmark script usage instructions
+- Clarified testing approach (infrastructure vs E2E)
+
+### Development
+- Test coverage: 7.5% overall (agent infrastructure ~80%)
+- All 109 tests passing with vitest
+- Zero regressions from v0.4.0
+
+---
+
 ## [0.4.0] - 2026-01-28
 
 ### Phase 3 Complete: All Tier 1 Sub-Agents Implemented

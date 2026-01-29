@@ -1,6 +1,6 @@
 {
   "name": "claude-symphony",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Multi-AI Orchestration Framework - Create new projects with 10-stage development workflow",
   "type": "module",
   "bin": {
@@ -28,6 +28,7 @@
     "test:pipeline": "tsx scripts/test/test-pipeline.ts",
     "test:mcp-fallback": "tsx scripts/test/test-mcp-fallback.ts",
     "test:quota": "tsx scripts/test/test-quota-management.ts",
+    "benchmark": "tsx scripts/benchmark-agents.ts",
     "validate:env": "tsx scripts/user/validate-env.ts",
     "rollback": "tsx scripts/user/rollback.ts"
   },
@@ -68,10 +69,11 @@
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^22.10.7",
+    "@vitest/coverage-v8": "^4.0.18",
     "tsup": "^8.3.5",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",
-    "vitest": "^3.0.4",
+    "vitest": "^4.0.18",
     "zod-to-json-schema": "^3.24.1"
   }
 }

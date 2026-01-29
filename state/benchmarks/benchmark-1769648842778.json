@@ -1,0 +1,32 @@
+[
+  {
+    "agent": "validation-agent",
+    "executionTimeMs": 2.686667,
+    "success": true,
+    "timestamp": "2026-01-29T01:07:22.775Z"
+  },
+  {
+    "agent": "handoff-generator-agent",
+    "executionTimeMs": 0.7249999999999943,
+    "success": true,
+    "timestamp": "2026-01-29T01:07:22.776Z"
+  },
+  {
+    "agent": "output-synthesis-agent",
+    "executionTimeMs": 0.47433300000000145,
+    "success": true,
+    "timestamp": "2026-01-29T01:07:22.777Z"
+  },
+  {
+    "agent": "architecture-review-agent",
+    "executionTimeMs": 0.2636669999999981,
+    "success": true,
+    "timestamp": "2026-01-29T01:07:22.777Z"
+  },
+  {
+    "agent": "research-analysis-agent",
+    "executionTimeMs": 0.36887500000000273,
+    "success": true,
+    "timestamp": "2026-01-29T01:07:22.777Z"
+  }
+]
