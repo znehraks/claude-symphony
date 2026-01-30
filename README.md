@@ -162,9 +162,10 @@ claude-symphony includes automatic context management to ensure continuous workf
 
 | Category | Commands |
 |----------|---------|
-| **Pipeline** | `/status`, `/next`, `/handoff`, `/checkpoint`, `/context`, `/validate`, `/restore` |
-| **Multi-AI** | `/collaborate`, `/synthesize`, `/benchmark`, `/fork` |
+| **Pipeline** | `/status`, `/next`, `/handoff`, `/checkpoint`, `/context`, `/validate`, `/restore`, `/run-stage`, `/stages` |
+| **Multi-AI** | `/collaborate`, `/synthesize`, `/benchmark`, `/fork`, `/gemini`, `/codex` |
 | **Stage Shortcuts** | `/brainstorm`, `/research`, `/planning`, `/ui-ux`, `/tasks`, `/implement`, `/refactor`, `/qa`, `/test`, `/deploy` |
+| **Requirements & Design** | `/epic`, `/refine`, `/moodboard`, `/stitch` |
 | **Agent** | `/arch-review`, `/qa-analyze` |
 | **Configuration** | `/config`, `/goto`, `/init-project` |
 
