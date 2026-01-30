@@ -152,6 +152,15 @@ agent:
 
 **Note**: All checkpoint errors are non-blocking and logged only.
 
+## Agent Model Selection
+
+When spawning **checkpoint-manager-agent**:
+1. Read `.claude/agents/checkpoint-manager-agent/agent.json`
+2. Pass the `model` field value to the Task tool's `model` parameter (expected: `haiku`)
+3. If `"inherit"` or absent, omit the `model` parameter
+
+> **STRICT**: checkpoint-manager-agent MUST use `haiku` model for cost efficiency. This agent runs frequently in background — using a larger model wastes resources.
+
 ## Related
 
 - `/checkpoint` - Manual checkpoint

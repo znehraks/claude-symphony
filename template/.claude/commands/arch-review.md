@@ -76,6 +76,13 @@ Automatically runs at Stage 03 completion.
 
 Prevents 50-100% of Stage 06 rework by catching issues early.
 
+## Agent Model Selection
+
+When spawning **architecture-review-agent**:
+1. Read `.claude/agents/architecture-review-agent/agent.json`
+2. Pass the `model` field value to the Task tool's `model` parameter
+3. If `"inherit"` or absent, omit the `model` parameter
+
 ## Fallback
 
 If agent fails, performs basic file existence check only.

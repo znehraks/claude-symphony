@@ -88,6 +88,15 @@ Continue? [y/N] y
 - `06-implementation`: At major milestones during implementation
 - `07-refactoring`: Before/after refactoring
 
+## Agent Model Selection
+
+When spawning **checkpoint-manager-agent**:
+1. Read `.claude/agents/checkpoint-manager-agent/agent.json`
+2. Pass the `model` field value to the Task tool's `model` parameter (expected: `haiku`)
+3. If `"inherit"` or absent, omit the `model` parameter
+
+> **Cost note**: checkpoint-manager-agent uses `haiku` for lightweight background execution.
+
 ## Options
 - `--list`: Display checkpoint list
 - `--delete [CP-ID]`: Delete checkpoint

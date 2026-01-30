@@ -364,7 +364,7 @@ config/
   pipeline.yaml        # Pipeline definition
   models.yaml          # AI model assignment
   context.yaml         # Context management settings
-  model_enforcement.yaml  # AI role distribution
+  model_enforcement.yaml  # Sub-agent model enforcement settings
   git.yaml             # Git auto-commit rules
   mcp_fallbacks.yaml   # MCP fallback settings
   ai_logging.yaml      # AI call logging settings
@@ -830,6 +830,67 @@ use_agent: false  # Falls back to legacy validation
 ```
 
 **Note**: Most users should keep sub-agents enabled for better context management.
+
+---
+
+## Sub-Agent Model Enforcement Policy
+
+### Overview
+
+Each sub-agent has a designated AI model defined in its `agent.json` file. When spawning sub-agents via the Task tool, **you MUST pass the correct model parameter** to ensure cost efficiency and performance alignment.
+
+### 3-Step Model Selection Protocol
+
+When spawning any sub-agent, follow this protocol:
+
+1. **Read** the agent definition: `.claude/agents/{agent-name}/agent.json`
+2. **Extract** the `model` field value (e.g., `"sonnet"`, `"haiku"`, `"opus"`)
+3. **Pass** the value to the Task tool's `model` parameter
+
+**If the model field is `"inherit"` or absent**, omit the `model` parameter entirely (the agent inherits the parent session's model).
+
+### Agent Model Quick Reference
+
+| Agent | Model | Rationale |
+|-------|-------|-----------|
+| validation-agent | sonnet | Complex output analysis |
+| output-synthesis-agent | sonnet | Multi-output consolidation |
+| handoff-generator-agent | sonnet | Context compression |
+| benchmark-analyzer-agent | sonnet | Performance analysis |
+| checkpoint-manager-agent | **haiku** | Lightweight background task |
+| architecture-review-agent | sonnet | Architecture validation |
+| qa-analysis-agent | sonnet | Security/quality scanning |
+| requirements-validation-agent | sonnet | Requirements analysis |
+| research-analysis-agent | sonnet | Research synthesis |
+| task-decomposition-agent | sonnet | Task breakdown |
+| refactoring-analysis-agent | sonnet | Code analysis |
+| test-execution-agent | sonnet | Test orchestration |
+| smart-rollback-agent | sonnet | Rollback analysis |
+| cicd-validation-agent | sonnet | CI/CD validation |
+| moodboard-analysis-agent | sonnet | Design analysis |
+
+### Rules
+
+- **ALWAYS** read the agent's `agent.json` before spawning to get the current model value
+- **NEVER** hardcode model values — always read from `agent.json` at spawn time
+- **NEVER** ignore the model field or use a different model than specified
+- **Cost control**: `checkpoint-manager-agent` uses `haiku` for background tasks — this is intentional for cost efficiency
+
+### Example
+
+```
+# Correct: Read agent.json, pass model
+agent.json → { "model": "haiku" }
+Task tool → model: "haiku"
+
+# Correct: model is "inherit"
+agent.json → { "model": "inherit" }
+Task tool → (omit model parameter)
+
+# WRONG: Ignoring agent.json model
+agent.json → { "model": "haiku" }
+Task tool → (no model parameter) ← VIOLATION
+```
 
 ---
 

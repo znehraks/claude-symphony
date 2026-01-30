@@ -167,6 +167,13 @@ See `config/output_validation.yaml`
 Validation runs automatically when executing `/next` command.
 Stage transition is blocked if validation fails.
 
+## Agent Model Selection
+
+When spawning **validation-agent**:
+1. Read `.claude/agents/validation-agent/agent.json`
+2. Pass the `model` field value to the Task tool's `model` parameter
+3. If `"inherit"` or absent, omit the `model` parameter
+
 ## Related Commands
 
 - `/next` - Next stage transition

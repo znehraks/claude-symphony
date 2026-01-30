@@ -158,6 +158,13 @@ If agent fails or is disabled:
 3. Skip command validation
 4. Return basic pass/fail
 
+## Agent Model Selection
+
+When spawning **validation-agent**:
+1. Read `.claude/agents/validation-agent/agent.json`
+2. Pass the `model` field value to the Task tool's `model` parameter
+3. If `"inherit"` or absent, omit the `model` parameter
+
 ## Related
 
 - `/validate` - Manual validation

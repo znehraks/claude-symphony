@@ -57,6 +57,13 @@ Final output: stages/01-brainstorm/outputs/ideas.md
 - Default: 0.8 (80%)
 - If below threshold: Triggers review prompt
 
+## Agent Model Selection
+
+When spawning **output-synthesis-agent**:
+1. Read `.claude/agents/output-synthesis-agent/agent.json`
+2. Pass the `model` field value to the Task tool's `model` parameter
+3. If `"inherit"` or absent, omit the `model` parameter
+
 ## Fallback
 
 If agent fails, falls back to best_of_n scoring method.

@@ -107,9 +107,17 @@ When user requests forced proceed:
 - All tests pass
 - E2E tests succeed
 
+## Agent Model Selection
+
+When this skill spawns the **validation-agent**:
+1. Read `.claude/agents/validation-agent/agent.json`
+2. Pass the `model` field value to the Task tool's `model` parameter
+3. If `"inherit"` or absent, omit the `model` parameter
+
 ## Prohibited Actions
 
 - Allow stage transition without validation
 - Report failure without cause
 - Report failure without fix recommendation
 - Omit quality score calculation
+- Spawn validation-agent without reading its agent.json model field

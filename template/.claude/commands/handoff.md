@@ -33,6 +33,13 @@ By default, this command uses the **handoff-generator-agent** which:
 - Applies conditional sections based on stage context
 - Uses extended thinking for complex analysis
 
+## Agent Model Selection
+
+When spawning **handoff-generator-agent**:
+1. Read `.claude/agents/handoff-generator-agent/agent.json`
+2. Pass the `model` field value to the Task tool's `model` parameter
+3. If `"inherit"` or absent, omit the `model` parameter
+
 ## Fallback
 
 If agent fails, automatically falls back to legacy bash script.

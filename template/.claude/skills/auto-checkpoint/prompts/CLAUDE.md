@@ -94,12 +94,22 @@ Proceed with rollback?
    - Next steps: {recommendations}
 ```
 
+## Agent Model Selection
+
+When this skill spawns the **checkpoint-manager-agent**:
+1. Read `.claude/agents/checkpoint-manager-agent/agent.json`
+2. Pass the `model` field value to the Task tool's `model` parameter (expected: `haiku`)
+3. If `"inherit"` or absent, omit the `model` parameter
+
+> **STRICT**: checkpoint-manager-agent MUST use `haiku` model. This is a cost-critical background agent.
+
 ## Prohibited Actions
 
 - Execute rollback without user confirmation
 - Skip checkpoint before destructive action
 - Create incomplete checkpoints
 - Omit recovery guide after rollback
+- Spawn checkpoint-manager-agent without passing its designated model (haiku)
 
 ## Priorities
 

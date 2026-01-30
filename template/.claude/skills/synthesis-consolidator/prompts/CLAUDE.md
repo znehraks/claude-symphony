@@ -72,6 +72,13 @@ Save to stage's required output file and log to `state/collaborations/synthesis_
 - Word Count: {{WORD_COUNT}}
 ```
 
+## Agent Model Selection
+
+When this skill spawns the **output-synthesis-agent**:
+1. Read `.claude/agents/output-synthesis-agent/agent.json`
+2. Pass the `model` field value to the Task tool's `model` parameter
+3. If `"inherit"` or absent, omit the `model` parameter
+
 ## Conflict Resolution Priority
 
 1. **Factual consistency** - Prefer verifiable facts

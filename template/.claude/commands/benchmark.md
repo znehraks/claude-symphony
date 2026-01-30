@@ -105,6 +105,13 @@ scripts/ai-benchmark.sh --history weekly
 
 See `config/ai_benchmarking.yaml`
 
+## Agent Model Selection
+
+When spawning **benchmark-analyzer-agent**:
+1. Read `.claude/agents/benchmark-analyzer-agent/agent.json`
+2. Pass the `model` field value to the Task tool's `model` parameter
+3. If `"inherit"` or absent, omit the `model` parameter
+
 ## Related Commands
 
 - `/collaborate` - AI collaboration

@@ -122,6 +122,18 @@ agents:
 /config hooks stage-transition disable
 ```
 
+## Agent Model Selection
+
+When spawning agents during stage transition, read each agent's `agent.json` and pass the `model` field:
+
+| Agent | Config Path | Expected Model |
+|-------|-------------|----------------|
+| handoff-generator-agent | `.claude/agents/handoff-generator-agent/agent.json` | sonnet |
+| output-synthesis-agent | `.claude/agents/output-synthesis-agent/agent.json` | sonnet |
+| validation-agent | `.claude/agents/validation-agent/agent.json` | sonnet |
+
+**Protocol**: For each agent spawn, read its `agent.json`, extract the `model` field, and pass it to the Task tool's `model` parameter. If `"inherit"` or absent, omit the `model` parameter.
+
 ## Related
 
 - `/handoff` - Manual HANDOFF generation

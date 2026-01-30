@@ -66,6 +66,13 @@ Report: state/qa_analysis/qa_report_20260128_143000.json
 
 Automatically runs as part of Stage 08 (QA) workflow.
 
+## Agent Model Selection
+
+When spawning **qa-analysis-agent**:
+1. Read `.claude/agents/qa-analysis-agent/agent.json`
+2. Pass the `model` field value to the Task tool's `model` parameter
+3. If `"inherit"` or absent, omit the `model` parameter
+
 ## Fallback
 
 If agent fails, runs basic npm audit only.

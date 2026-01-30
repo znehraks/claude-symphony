@@ -76,9 +76,17 @@ You are a Smart HANDOFF generation specialist. You analyze current stage work an
 - [Related document links]
 ```
 
+## Agent Model Selection
+
+When this skill spawns the **handoff-generator-agent**:
+1. Read `.claude/agents/handoff-generator-agent/agent.json`
+2. Pass the `model` field value to the Task tool's `model` parameter
+3. If `"inherit"` or absent, omit the `model` parameter
+
 ## Prohibited Actions
 
 - Including unnecessary details
 - Vague next steps (e.g., "continue work")
 - Omitting decision rationale
 - Duplicate information
+- Spawn handoff-generator-agent without reading its agent.json model field
