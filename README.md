@@ -44,7 +44,7 @@ claude-symphony is a 10-stage software development workflow pipeline that orches
 
 ```bash
 # Create a new project
-npx claude-symphony my-project
+npx claude-symphony init
 cd my-project
 
 # Edit project brief
@@ -148,11 +148,15 @@ claude-symphony includes automatic context management to ensure continuous workf
 | Command | Description |
 |---------|-------------|
 | `claude-symphony init` | Initialize a new project |
-| `claude-symphony create` | Create project from template |
-| `claude-symphony stage` | Stage management |
 | `claude-symphony status` | Show pipeline status |
-| `claude-symphony validate` | Run output validation |
-| `claude-symphony checkpoint` | Create/manage checkpoints |
+| `claude-symphony stages` | List all stages with status |
+| `claude-symphony run-stage <id>` | Run a specific stage |
+| `claude-symphony next` | Transition to next stage/sprint |
+| `claude-symphony goto [stage-id]` | Jump to a previous stage |
+| `claude-symphony validate` | Validate configuration |
+| `claude-symphony checkpoint` | Create a checkpoint |
+| `claude-symphony restore [id]` | Restore from checkpoint |
+| `claude-symphony dashboard` | Show full dashboard |
 
 ### Core Slash Commands
 
