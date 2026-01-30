@@ -15,7 +15,7 @@ claude-symphony is a 10-stage software development workflow pipeline that orches
 
 ### Key Features
 
-- **Sub-Agent System (NEW in v0.3.x)**: Specialized agents run in isolated contexts (0% main session usage), achieving 100-120% cumulative context savings
+- **Sub-Agent System (NEW in v0.4.x)**: Specialized agents run in isolated contexts (0% main session usage), achieving 100-120% cumulative context savings
 - **10-Stage Pipeline**: Complete development cycle from brainstorming to deployment
 - **Multi-AI Orchestration**: Intelligent collaboration between Gemini, Claude, and Codex
 - **Smart HANDOFF System**: Automatic context extraction and semantic compression
@@ -31,13 +31,13 @@ claude-symphony is a 10-stage software development workflow pipeline that orches
 |-------|------|----------|------|
 | 01 | Brainstorming | Gemini + Claude | YOLO |
 | 02 | Research | Claude | Plan Mode |
-| 03 | Planning | Gemini | Plan Mode |
-| 04 | UI/UX Planning | Gemini | Plan Mode |
+| 03 | Planning | Gemini + Claude | Plan Mode |
+| 04 | UI/UX Planning | Gemini + Claude | Plan Mode |
 | 05 | Task Management | Claude | Plan Mode |
 | 06 | Implementation | Claude | Plan + Sandbox |
-| 07 | Refactoring | Codex | Deep Dive |
+| 07 | Refactoring | Codex + Claude | Deep Dive |
 | 08 | QA | Claude | Plan + Sandbox |
-| 09 | Testing & E2E | Codex | Sandbox + Playwright |
+| 09 | Testing & E2E | Codex + Claude | Sandbox + Playwright |
 | 10 | CI/CD & Deployment | Claude | Headless |
 
 ## Quick Start
@@ -58,7 +58,7 @@ cd my-project
 
 claude-symphony features a sub-agent system where specialized agents execute tasks in isolated contexts, preserving your main session's context window.
 
-### Tier 1 Agents (Available in v0.3.x)
+### Tier 1 Agents (Implemented in v0.4.x)
 
 | Agent | Purpose | Execution Time | Context Usage |
 |-------|---------|----------------|---------------|
@@ -67,6 +67,26 @@ claude-symphony features a sub-agent system where specialized agents execute tas
 | **output-synthesis-agent** | Consolidates parallel AI outputs (Gemini + Claude) | ~35s | 0% |
 | **architecture-review-agent** | Detects circular dependencies and architectural issues | ~40s | 0% |
 | **research-analysis-agent** | Cross-references research outputs, detects contradictions | ~45s | 0% |
+
+### Tier 2 Agents (Structure Only)
+
+| Agent | Purpose | Status |
+|-------|---------|--------|
+| **qa-analysis-agent** | QA analysis and defect detection | Structure defined |
+| **test-execution-agent** | Test execution orchestration | Structure defined |
+| **checkpoint-manager-agent** | Checkpoint lifecycle management | Structure defined |
+| **benchmark-analyzer-agent** | Performance benchmark analysis | Structure defined |
+
+### Tier 3 Agents (Structure Only)
+
+| Agent | Purpose | Status |
+|-------|---------|--------|
+| **requirements-validation-agent** | Requirements completeness validation | Structure defined |
+| **task-decomposition-agent** | Task breakdown and estimation | Structure defined |
+| **moodboard-analysis-agent** | UI/UX moodboard analysis | Structure defined |
+| **cicd-validation-agent** | CI/CD pipeline validation | Structure defined |
+| **smart-rollback-agent** | Intelligent rollback decisions | Structure defined |
+| **refactoring-analysis-agent** | Code refactoring analysis | Structure defined |
 
 ### Benefits
 
@@ -77,9 +97,9 @@ claude-symphony features a sub-agent system where specialized agents execute tas
 
 ### Documentation
 
-- Full architecture: `docs/agent-task-tool-integration.md`
-- Implementation guide: `docs/TASK_TOOL_INTEGRATION_COMPLETE.md`
-- Agent test reports: `docs/*-agent-complete.md`
+- Agent definitions: `template/.claude/agents/` (15 agents)
+- End-user guide: `template/docs/`
+- Changelog: `CHANGELOG.md`
 
 ## Context Management
 
@@ -118,6 +138,8 @@ claude-symphony includes automatic context management to ensure continuous workf
 | `.claude/hooks/stop.sh` | Auto-trigger after response |
 | `state/context/` | Auto-saved snapshots |
 | `state/handoffs/` | HANDOFF archive |
+| `state/checkpoints/` | Checkpoint storage |
+| `state/collaborations/` | AI collaboration results |
 
 ## Commands
 
@@ -126,19 +148,23 @@ claude-symphony includes automatic context management to ensure continuous workf
 | Command | Description |
 |---------|-------------|
 | `claude-symphony init` | Initialize a new project |
+| `claude-symphony create` | Create project from template |
+| `claude-symphony stage` | Stage management |
 | `claude-symphony status` | Show pipeline status |
+| `claude-symphony validate` | Run output validation |
+| `claude-symphony checkpoint` | Create/manage checkpoints |
 
 ### Core Slash Commands
 
-| Command | Description |
-|---------|-------------|
-| `/status` | Check pipeline status |
-| `/next` | Move to next stage |
-| `/handoff` | Create handoff document |
-| `/checkpoint` | Create checkpoint |
-| `/context` | Context management (status, save, list) |
+| Category | Commands |
+|----------|---------|
+| **Pipeline** | `/status`, `/next`, `/handoff`, `/checkpoint`, `/context`, `/validate`, `/restore` |
+| **Multi-AI** | `/collaborate`, `/synthesize`, `/benchmark`, `/fork` |
+| **Stage Shortcuts** | `/brainstorm`, `/research`, `/planning`, `/ui-ux`, `/tasks`, `/implement`, `/refactor`, `/qa`, `/test`, `/deploy` |
+| **Agent** | `/arch-review`, `/qa-analyze` |
+| **Configuration** | `/config`, `/goto`, `/init-project` |
 
-See [template/docs/commands.md](template/docs/commands.md) for the complete command reference.
+See [template/docs/commands.md](template/docs/commands.md) for the complete command reference (34 commands).
 
 ---
 
@@ -172,16 +198,32 @@ node dist/cli/index.js init test-project
 ```
 claude-symphony/
 ├── src/                    # Framework source code
-│   └── cli/                # CLI implementation
+│   ├── cli/                # CLI implementation (commands, utils)
+│   ├── core/               # Core modules
+│   │   ├── agents/         # Agent system (spawner, registry, types)
+│   │   ├── ai/             # AI orchestration
+│   │   ├── config/         # Config loader/validation
+│   │   ├── pipeline/       # Pipeline engine
+│   │   └── state/          # State management
+│   ├── hooks/              # Lifecycle hooks
+│   ├── integrations/       # External AI integrations
+│   ├── types/              # Type definitions
+│   └── utils/              # Utilities
+├── test/                   # Test suite
+│   ├── unit/               # Unit tests
+│   ├── integration/        # Integration tests
+│   ├── helpers/            # Test helpers
+│   └── fixtures/           # Test fixtures
 ├── dist/                   # Compiled output
 ├── template/               # Project template (copied to user projects)
 │   ├── .claude/            # Claude Code config
-│   │   ├── commands/       # Slash commands (30+)
-│   │   ├── hooks/          # Lifecycle hooks (statusline, stop, etc.)
-│   │   └── skills/         # AI skills (7)
+│   │   ├── commands/       # Slash commands (34)
+│   │   ├── hooks/          # Lifecycle hooks (13 files)
+│   │   ├── skills/         # AI skills (8)
+│   │   └── agents/         # Sub-agent definitions (15)
 │   ├── scripts/            # Runtime scripts
 │   ├── stages/             # 10-stage pipeline
-│   ├── config/             # Configuration files (25+)
+│   ├── config/             # Configuration files (27)
 │   ├── state/              # State management
 │   ├── docs/               # End-user documentation
 │   └── CLAUDE.md           # Main AI instructions
@@ -190,7 +232,6 @@ claude-symphony/
 │   ├── dev/                # Framework development
 │   ├── test/               # Test scripts
 │   └── user/               # End-user runtime scripts
-├── docs/                   # Developer documentation
 └── assets/                 # Images and assets
 ```
 
@@ -203,13 +244,19 @@ claude-symphony/
 | `pnpm run typecheck` | Type checking |
 | `pnpm run lint` | Lint source |
 | `pnpm run test` | Run tests |
+| `pnpm run test:watch` | Run tests in watch mode |
+| `pnpm run test:coverage` | Run tests with coverage |
+| `pnpm run test:pipeline` | Run pipeline tests |
+| `pnpm run benchmark` | Run agent benchmarks |
+| `pnpm run clean` | Clean build output |
 
 ### Testing
 
-#### Automated Tests
+#### Automated Tests (Vitest)
 - **109 tests** covering core infrastructure and agent system
 - **5 Tier 1 agents** with fallback verification
 - **Mock utilities** for Task tool simulation
+- **Framework**: Vitest with @vitest/coverage-v8
 
 ```bash
 # Run all tests
@@ -236,7 +283,7 @@ pnpm run benchmark
 ```
 
 #### Manual E2E Testing
-- Full Task tool integration documented in `docs/*-agent-complete.md`
+- Full Task tool integration verified across all Tier 1 agents
 - Average execution: 31s (with actual Task tool)
 - Success rate: 100% across all Tier 1 agents
 
