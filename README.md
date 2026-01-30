@@ -138,7 +138,7 @@ claude-symphony provides context management tools to help track and manage Claud
 | **Pipeline**              | `/status`, `/next`, `/handoff`, `/checkpoint`, `/context`, `/validate`, `/restore`, `/run-stage`, `/stages`       |
 | **Multi-AI**              | `/collaborate`, `/synthesize`, `/benchmark`, `/fork`, `/gemini`, `/codex`                                         |
 | **Stage Shortcuts**       | `/brainstorm`, `/research`, `/planning`, `/ui-ux`, `/tasks`, `/implement`, `/refactor`, `/qa`, `/test`, `/deploy` |
-| **Requirements & Design** | `/epic`, `/refine`, `/moodboard`, `/stitch`                                                                       |
+| **Requirements & Design** | `/epic`, `/refine`, `/moodboard`, `/moodboard generate`, `/pencil`, `/stitch`                                     |
 | **Agent**                 | `/arch-review`, `/qa-analyze`                                                                                     |
 | **Configuration**         | `/config`, `/goto`, `/init-project`                                                                               |
 

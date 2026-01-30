@@ -6,6 +6,7 @@ Collect visual references and analyze them to generate design tokens and design 
 
 ```
 /moodboard                       # Start interactive moodboard flow
+/moodboard generate              # Generate moodboard from text description (Path B)
 /moodboard add [category]        # Add images to a category
 /moodboard analyze               # Run analysis on collected images
 /moodboard feedback "..."        # Provide feedback on analysis
@@ -59,7 +60,57 @@ Review collected images and run initial analysis.
 
 ---
 
+## Dual-Path Workflow
+
+The moodboard supports two paths based on your pre-start intake answers:
+
+### Path A: Analyze Existing References
+If you already have design references, use the standard interactive flow:
+```
+/moodboard          # Collect and analyze existing images
+```
+
+### Path B: AI-Generated Moodboard
+If you have no references, generate a moodboard from text descriptions:
+```
+/moodboard generate # Generate moodboard via AI
+```
+
+---
+
 ## Subcommands
+
+### `/moodboard generate` (Path B: AI-Generated Moodboard)
+
+Generate a moodboard from text descriptions when no existing references are available.
+
+**Flow:**
+1. **Description Collection** - Describe your desired visual style
+2. **AI Generation** - Generate visual references using provider chain
+3. **User Review** - Review and approve/reject generated references
+4. **Token Extraction** - Extract design tokens from approved selections
+
+**Generation Provider Priority:**
+1. **Pencil.dev** (via Playwright/BrowserMCP) - Text-to-UI generation
+2. **Stitch MCP** - Google Stitch text-to-UI fallback
+3. **Claude Vision** - AI-described design concepts
+
+**Example:**
+```
+/moodboard generate
+> Describe your desired visual style:
+> "Modern SaaS dashboard with dark theme, glassmorphism cards, and gradient accents"
+
+Generating via Pencil.dev...
+[Generated 3 style references]
+
+Review:
+1. [Dark glassmorphism variant] - love_it / tweak / different / discard
+2. [Gradient accent variant]    - love_it / tweak / different / discard
+3. [Minimal dark variant]       - love_it / tweak / different / discard
+
+Extracting design tokens from approved selections...
+```
 
 ### `/moodboard add [category]`
 Add images to a specific category without going through full flow.
@@ -89,10 +140,11 @@ Run analysis on all collected images using configured provider.
 - Component recommendations
 - Spacing/rhythm analysis
 
-**Analysis Providers:**
-- `claude_vision` (default) - Claude's native vision capabilities
-- `figma_mcp` - Figma MCP for design token export
-- `both` - Use both providers
+**Analysis Providers (priority order):**
+1. `pencil_dev` - Pencil.dev browser-automated analysis (via Playwright/BrowserMCP)
+2. `stitch` - Google Stitch MCP analysis
+3. `figma_mcp` - Figma MCP for design token export
+4. `claude_vision` - Claude's native vision capabilities
 
 **Action:**
 ```bash
@@ -160,7 +212,21 @@ stages/04-ui-ux/inputs/moodboard/
 
 ## Analysis Flow
 
-### Using Claude Vision (Default)
+### Using Pencil.dev (Primary)
+
+1. **Browser Launch**: Open Pencil.dev via Playwright (or BrowserMCP fallback)
+2. **Image Upload**: Upload moodboard images for analysis
+3. **AI Analysis**: Pencil.dev extracts design patterns
+4. **Token Generation**: Color, typography, spacing, component tokens
+
+### Using Stitch MCP (Fallback 1)
+
+When Pencil.dev is unavailable:
+1. **Design DNA Extraction**: Extract style tokens from images
+2. **Pattern Analysis**: Identify layout and component patterns
+3. **Export**: Generate design tokens
+
+### Using Claude Vision (Fallback 3)
 
 1. **Image Reading**: Claude reads all images in moodboard directories
 2. **Color Extraction**: Identifies dominant and accent colors
@@ -168,7 +234,7 @@ stages/04-ui-ux/inputs/moodboard/
 4. **Layout Patterns**: Identifies grid systems and spacing patterns
 5. **Component Identification**: Suggests UI component patterns
 
-### Using Figma MCP
+### Using Figma MCP (Fallback 2)
 
 When Figma links are provided:
 1. **Variable Extraction**: Get design variables from Figma
@@ -242,7 +308,7 @@ Moodboard state is tracked in `state/progress.json`:
 
 ## Configuration
 
-See `config/ui-ux.yaml` for detailed settings:
+See `config/ui-ux.jsonc` for detailed settings:
 - Collection flow steps
 - Analysis providers
 - Feedback loop settings

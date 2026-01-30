@@ -118,12 +118,16 @@ Display detailed quota usage and history.
 
 ## Workflow Integration
 
+> **Note**: Stitch is the **2nd priority** UI generation tool. Pencil.dev is 1st priority.
+> Stitch auto-activates when Pencil.dev is unavailable or fails.
+
 Recommended workflow for Stage 04 (UI/UX):
 
 ```
-1. /moodboard                     # Collect design references
-2. /moodboard analyze             # Analyze with Claude Vision
-3. /stitch dna                    # Extract Design DNA from moodboard
+1. /moodboard                     # Collect design references (or /moodboard generate)
+2. /pencil analyze ...            # Analyze with Pencil.dev (primary)
+   └─ If Pencil.dev fails:
+3. /stitch dna                    # Extract Design DNA from moodboard (fallback)
 4. /stitch generate "..."         # Generate initial UI
 5. /stitch variants 3             # Generate alternatives
 6. [Select best variant]
@@ -170,18 +174,22 @@ At 80% usage, a warning is displayed. Consider:
 
 ## Fallback Chain
 
-When Stitch is unavailable or quota exceeded:
+Full fallback chain (Stitch is 2nd priority):
 
 ```
-Stitch MCP
+Pencil.dev (via Playwright)        ◀── 1st Priority
     │
-    ├─ Quota exceeded? ──────▶ Figma MCP (design tokens only)
+    ├─ Browser failed? ────────▶ Pencil.dev (via BrowserMCP)
     │
-    ├─ API error? ──────────▶ Retry 2x, then Figma MCP
-    │
-    ├─ Figma unavailable? ──▶ Claude Vision (analysis only)
-    │
-    └─ All failed? ─────────▶ Manual wireframes (ASCII/Mermaid)
+    └─ All browsers failed? ───▶ Stitch MCP              ◀── 2nd Priority (this tool)
+                                     │
+                                     ├─ Quota exceeded? ──────▶ Figma MCP (design tokens only)
+                                     │
+                                     ├─ API error? ──────────▶ Retry 2x, then Figma MCP
+                                     │
+                                     ├─ Figma unavailable? ──▶ Claude Vision (analysis only)
+                                     │
+                                     └─ All failed? ─────────▶ Manual wireframes (ASCII/Mermaid)
 ```
 
 Fallback configuration: `config/mcp_fallbacks.jsonc`

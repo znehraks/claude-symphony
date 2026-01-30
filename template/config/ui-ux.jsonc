@@ -26,30 +26,32 @@
       "analyze_spacing": true
     },
     "analysis_provider": {
-      "primary": "claude_vision",
-      "fallback": "figma_mcp",
+      // Priority: pencil_dev > stitch > figma_mcp > claude_vision
+      "primary": "pencil_dev",
+      "fallback_chain": ["stitch", "figma_mcp", "claude_vision"],
       "providers": {
-        "claude_vision": {
+        "pencil_dev": {
           "enabled": true,
-          "description": "Claude's native vision capabilities",
+          "description": "Pencil.dev browser-automated UI generation and analysis",
+          "type": "browser_automated",
+          "url": "https://pencil.dev",
+          "browser_priority": ["playwright", "browsermcp"],
           "capabilities": [
+            "text_to_ui",
+            "image_to_ui",
+            "ui_analysis",
             "color_extraction",
             "layout_analysis",
             "component_identification",
-            "typography_detection",
-            "spacing_analysis",
-            "accessibility_check"
-          ]
-        },
-        "figma_mcp": {
-          "enabled": true,
-          "description": "Figma MCP server integration",
-          "capabilities": [
-            "design_token_export",
-            "component_inspection",
-            "variable_extraction",
-            "code_generation"
-          ]
+            "moodboard_generation",
+            "style_transfer"
+          ],
+          "browser_config": {
+            "primary": "playwright",
+            "fallback": "browsermcp",
+            "timeout_ms": 30000,
+            "retry_count": 2
+          }
         },
         "stitch": {
           "enabled": true,
@@ -66,6 +68,28 @@
             "standard": { "description": "Production-ready UI", "quota_cost": 1 },
             "experimental": { "description": "Cutting-edge features", "quota_cost": 1 }
           }
+        },
+        "figma_mcp": {
+          "enabled": true,
+          "description": "Figma MCP server integration",
+          "capabilities": [
+            "design_token_export",
+            "component_inspection",
+            "variable_extraction",
+            "code_generation"
+          ]
+        },
+        "claude_vision": {
+          "enabled": true,
+          "description": "Claude's native vision capabilities",
+          "capabilities": [
+            "color_extraction",
+            "layout_analysis",
+            "component_identification",
+            "typography_detection",
+            "spacing_analysis",
+            "accessibility_check"
+          ]
         }
       }
     },
@@ -305,15 +329,118 @@
     "commands": {
       "start": "/moodboard",
       "add": "/moodboard add [category]",
+      "generate": "/moodboard generate",
       "analyze": "/moodboard analyze",
       "feedback": "/moodboard feedback",
       "export": "/moodboard export",
       "status": "/moodboard status"
+    },
+    "moodboard_workflow": {
+      "description": "Dual-path moodboard workflow based on user's existing assets",
+      "path_a": {
+        "id": "analyze_existing",
+        "name": "Analyze Existing Moodboard",
+        "trigger": "User has existing design references/images",
+        "steps": [
+          "collect_images",
+          "analyze_with_provider",
+          "extract_design_dna",
+          "generate_tokens",
+          "user_feedback",
+          "finalize"
+        ]
+      },
+      "path_b": {
+        "id": "generate_new",
+        "name": "AI-Generated Moodboard",
+        "trigger": "User has no existing references",
+        "steps": [
+          "collect_text_description",
+          "generate_via_pencil_dev",
+          "user_review",
+          "extract_design_dna",
+          "generate_tokens",
+          "user_feedback",
+          "finalize"
+        ],
+        "generation_provider_priority": ["pencil_dev", "stitch", "claude_vision"]
+      }
     }
+  },
+  "pre_start_intake": {
+    "enabled": true,
+    "description": "Required pre-start questions before UI/UX work begins",
+    "required": true,
+    "questions": [
+      {
+        "id": "moodboard_available",
+        "question": "Do you have existing design references or moodboard images?",
+        "impact": "Determines workflow path (Path A: analyze existing vs Path B: AI-generate)",
+        "options": ["yes", "no"],
+        "branch": {
+          "yes": "moodboard_workflow.path_a",
+          "no": "moodboard_workflow.path_b"
+        }
+      },
+      {
+        "id": "brand_assets_available",
+        "question": "Do you have brand assets (logo, colors, fonts, brand guidelines)?",
+        "impact": "Determines Design DNA extraction source",
+        "options": ["yes", "no"],
+        "branch": {
+          "yes": "Collect into brand-assets/ directory",
+          "no": "AI will suggest brand elements"
+        }
+      },
+      {
+        "id": "target_platform",
+        "question": "What is your target platform?",
+        "impact": "Sets wireframe breakpoints and component design constraints",
+        "options": ["web", "mobile", "desktop", "responsive"],
+        "default": "responsive",
+        "breakpoint_presets": {
+          "web": ["desktop", "tablet"],
+          "mobile": ["mobile"],
+          "desktop": ["desktop"],
+          "responsive": ["mobile", "tablet", "desktop"]
+        }
+      },
+      {
+        "id": "design_style",
+        "question": "What design style direction do you prefer?",
+        "impact": "Pre-sets style discovery or skips it if already decided",
+        "options": ["modern_minimal", "bold_colorful", "professional", "playful", "custom"],
+        "branch": {
+          "custom": "Proceed to style_discovery step",
+          "_other": "Skip style_discovery, apply preset"
+        }
+      },
+      {
+        "id": "competitors_references",
+        "question": "Are there competitor apps or reference sites you want to analyze?",
+        "impact": "Determines whether competitor UI analysis is performed",
+        "options": ["yes", "no"],
+        "branch": {
+          "yes": "Collect URLs, analyze with Pencil.dev",
+          "no": "Skip competitor analysis"
+        }
+      },
+      {
+        "id": "design_tool_access",
+        "question": "Do you have access to Figma or other design tools?",
+        "impact": "Determines final export format",
+        "options": ["figma", "none"],
+        "branch": {
+          "figma": "Export as .fig + HTML/CSS",
+          "none": "Export as HTML/CSS only"
+        }
+      }
+    ]
   },
   "stitch_integration": {
     "enabled": true,
-    "auto_invoke_on_moodboard": true,
+    "auto_invoke_on_moodboard": false,
+    "auto_invoke_condition": "pencil_dev_failed",
     "design_dna": {
       "extract_on_start": true,
       "source_directories": [

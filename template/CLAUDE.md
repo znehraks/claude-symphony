@@ -204,8 +204,13 @@ Visualizes context usage, tool activity, and todo progress in the statusline.
 | `/refine` | Interactive requirements refinement (Epic → Feature → Task) |
 | `/refine --validate` | Validate requirements against INVEST criteria |
 | `/moodboard` | Collect design references and analyze design tokens |
+| `/moodboard generate` | Generate moodboard from text description (Path B: no existing refs) |
 | `/moodboard analyze` | Extract colors, fonts, styles from collected images |
 | `/moodboard skip` | Skip moodboard collection (use AI-generated design) |
+| `/pencil` | Show Pencil.dev status and connection check |
+| `/pencil generate "..."` | Generate UI from text description via Pencil.dev |
+| `/pencil analyze path` | Analyze image for design tokens via Pencil.dev |
+| `/pencil moodboard "..."` | Generate moodboard from text description via Pencil.dev |
 
 ### Task Management & Sync Commands
 | Command | Description |
@@ -428,7 +433,7 @@ Quick reference for frequently accessed files:
 |-------|-------------|----------|-------|
 | 02-research | Exa Search | Context7 | Use Exa for market data, Context7 for tech docs |
 | 03-planning | Context7 | Exa Search | Architecture patterns, framework best practices |
-| 04-ui-ux | Figma | - | Extract design tokens if Figma file available |
+| 04-ui-ux | Pencil.dev (browser) | Stitch → Figma → Claude Vision | Pencil.dev primary for UI gen/analysis; Stitch fallback |
 | 05-task-management | Notion | Markdown files | Falls back to local files if Notion not configured |
 
 ### Fallback Conditions

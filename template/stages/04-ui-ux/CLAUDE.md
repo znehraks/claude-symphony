@@ -66,6 +66,35 @@ User interface and experience design stage
 - `$STAGES_ROOT/03-planning/outputs/architecture.md`
 - `$STAGES_ROOT/03-planning/HANDOFF.md`
 
+## Pre-Start Intake (Required)
+
+> ⚠️ **MANDATORY**: Before any UI/UX work, ask these 6 questions and record answers.
+> Configuration: `config/ui-ux.jsonc` → `pre_start_intake`
+
+### 6 Required Questions
+
+| # | Question | Impact | Branch |
+|---|----------|--------|--------|
+| 1 | **무드보드 보유 여부** — 기존 디자인 레퍼런스/이미지가 있는가? | 전체 워크플로우 경로 결정 | 있음→Path A (분석), 없음→Path B (AI 생성) |
+| 2 | **브랜드 에셋 보유** — 로고, 컬러, 폰트 등 브랜드 가이드라인이 있는가? | Design DNA 추출 소스 결정 | 있음→brand-assets/ 수집, 없음→AI 제안 |
+| 3 | **타겟 플랫폼** — 웹/모바일/데스크톱/반응형? | 와이어프레임 브레이크포인트, 컴포넌트 설계 | 선택에 따라 breakpoint 프리셋 적용 |
+| 4 | **디자인 스타일 방향** — 모던, 볼드, 프로, 플레이풀, 커스텀? | 무드보드 생성/분석 기준점 | style_discovery 단계 스킵 또는 사전 설정 |
+| 5 | **경쟁사/레퍼런스** — 참고할 앱이나 경쟁사가 있는가? | 경쟁사 UI 분석 여부 | 있음→Pencil.dev로 분석, 없음→스킵 |
+| 6 | **디자인 도구 접근성** — Figma 계정 등 외부 도구 보유? | 최종 export 포맷 결정 | Figma→.fig export, 없음→HTML/CSS 우선 |
+
+### Intake Flow
+```
+1. Ask all 6 questions upfront
+2. Record answers in state/progress.json under "ui_ux_intake"
+3. Determine Path A or Path B based on Q1
+4. Apply platform presets based on Q3
+5. Pre-set style direction based on Q4
+6. Configure export format based on Q6
+7. THEN proceed to moodboard setup
+```
+
+---
+
 ## Prerequisites Before UI/UX Design
 
 > ⚠️ **Important**: Verify previous stage deliverables before starting UI/UX design
@@ -78,28 +107,40 @@ User interface and experience design stage
 | Stage 03 | `stages/03-planning/HANDOFF.md` | Stage 03 handoff reviewed |
 | Stage 01 | `stages/01-brainstorm/outputs/requirements_analysis.md` | User needs identified |
 
-### Moodboard Setup Requirement
-Before proceeding with wireframe design:
+### Moodboard Setup (Dual-Path)
 
-1. **Ask User**: "디자인 참고 자료(무드보드)를 제공하시겠습니까?"
-2. **If Yes**: Collect URLs, images, color preferences via `/moodboard`
-3. **If No**: Explicitly confirm AI-generated design is acceptable
+Based on Pre-Start Intake Q1 answer:
 
+#### Path A: Analyze Existing References (Q1 = "yes")
+User has existing design references/images.
 ```bash
-# Verify prerequisites
-/moodboard          # Start interactive moodboard flow
+/moodboard          # Start interactive collection flow
 /moodboard add      # Add design references directly
-/moodboard skip     # Skip moodboard (AI auto-generate)
+/moodboard analyze  # Run analysis with provider chain
 ```
 
+#### Path B: AI-Generated Moodboard (Q1 = "no")
+User has no existing references — AI generates them.
+```bash
+/moodboard generate           # Generate moodboard from text description
+/pencil moodboard "..."       # Generate via Pencil.dev directly
+```
+
+**Generation Provider Priority:**
+1. Pencil.dev (via Playwright/BrowserMCP)
+2. Stitch MCP
+3. Claude Vision
+
 ### Validation Checkpoint
+- [ ] Pre-Start Intake 6 questions answered
 - [ ] Stage 03 HANDOFF.md reviewed
-- [ ] User confirmed moodboard approach (collect or skip)
-- [ ] Brand guidelines provided (if available)
+- [ ] Moodboard path determined (Path A or Path B)
+- [ ] Brand guidelines collected (if available, Q2)
+- [ ] Platform breakpoints configured (Q3)
 
 ## Moodboard Analysis
 
-> Configuration: `config/ui-ux.yaml`
+> Configuration: `config/ui-ux.jsonc`
 > Command: `/moodboard`
 
 ### Interactive Moodboard Collection (Recommended)
@@ -155,10 +196,12 @@ inputs/moodboard/
 
 ### Analysis Providers
 
-| Provider | Capabilities |
-|----------|--------------|
-| `claude_vision` (default) | Color extraction, layout analysis, component ID |
-| `figma_mcp` | Design token export, variable extraction |
+| Priority | Provider | Capabilities |
+|----------|----------|--------------|
+| 1 | `pencil_dev` | Text-to-UI, image analysis, moodboard generation, style transfer |
+| 2 | `stitch` | Text-to-UI, image-to-UI, Design DNA, Figma/HTML export |
+| 3 | `figma_mcp` | Design token export, variable extraction, component inspection |
+| 4 | `claude_vision` | Color extraction, layout analysis, component ID, accessibility |
 
 ### Feedback Loop
 
@@ -195,10 +238,56 @@ Generates:
 
 **Note:** AI analyzes images using vision capabilities. Use `/moodboard analyze` to trigger analysis.
 
-## Stitch MCP Integration
+## Pencil.dev Integration (Primary)
+
+> Configuration: `config/ui-ux.jsonc`
+> Command: `/pencil`
+
+### Overview
+
+Pencil.dev is the **primary** UI generation and analysis tool, accessed via browser automation (Playwright or BrowserMCP).
+
+### Capabilities
+
+| Feature | Description |
+|---------|-------------|
+| Text→UI | Generate UI from text descriptions |
+| Image Analysis | Analyze images for design tokens |
+| Moodboard Generation | Generate visual references from descriptions |
+| Style Transfer | Apply style patterns to new designs |
+
+### Commands
+
+| Command | Description |
+|---------|-------------|
+| `/pencil` | Show status and connection check |
+| `/pencil generate "..."` | Generate UI from description |
+| `/pencil analyze path` | Analyze image for design tokens |
+| `/pencil moodboard "..."` | Generate moodboard from description |
+
+### Browser Automation
+
+Pencil.dev uses browser automation to interact with the web tool:
+
+```
+Playwright (primary) → BrowserMCP (fallback)
+```
+
+- **Playwright**: Full browser control, screenshot capture, element interaction
+- **BrowserMCP**: Alternative browser automation when Playwright is unavailable
+
+### Integration with Moodboard
+
+- **Path A** (existing refs): `/pencil analyze` to analyze collected images
+- **Path B** (no refs): `/pencil moodboard` to generate references from text
+
+---
+
+## Stitch MCP Integration (Fallback)
 
 > Configuration: `config/ui-ux.jsonc`
 > Command: `/stitch`
+> **Note**: Stitch activates as fallback when Pencil.dev is unavailable
 
 ### Capabilities
 
@@ -234,12 +323,13 @@ Generates:
 ### Fallback Chain
 
 ```
-Stitch → Figma MCP → Claude Vision → Manual Wireframes
+Pencil.dev (Playwright) → Pencil.dev (BrowserMCP) → Stitch → Figma MCP → Claude Vision → Manual Wireframes
 ```
 
-- **Quota exceeded**: Auto-fallback to Figma MCP
-- **API error**: Retry 2x, then fallback
-- **Timeout**: Fallback to Claude Vision
+- **Pencil.dev browser failed**: Fallback to Stitch MCP
+- **Stitch quota exceeded**: Auto-fallback to Figma MCP
+- **API error**: Retry 2x, then next fallback
+- **All tools unavailable**: Claude Vision analysis + manual wireframes
 
 ### Best Practices
 

@@ -124,6 +124,22 @@
       "notify_user": true
     }
   },
+  "pencil_dev": {
+    "primary": "playwright",
+    "fallbacks": ["browsermcp", "stitch", "figma-dev-mode", "claude_vision"],
+    "url": "https://pencil.dev",
+    "rules": {
+      "on_browser_failed": "use_fallback",
+      "on_timeout": "retry_then_fallback",
+      "retry_count": 2,
+      "retry_delay_ms": 2000,
+      "timeout_ms": 30000
+    },
+    "on_error": {
+      "action": "use_fallback_chain",
+      "message": "Pencil.dev browser automation failed. Falling back to {{FALLBACK_TOOL}}."
+    }
+  },
   "figma": {
     "primary": "figma-dev-mode",
     "fallbacks": [],
@@ -176,16 +192,18 @@
       "reason": "Architecture pattern/documentation search"
     },
     "04-ui-ux": {
-      "ui_generation": ["stitch", "figma-dev-mode", "claude_vision"],
+      "ui_generation": ["pencil_dev", "stitch", "figma-dev-mode", "claude_vision"],
+      "ui_analysis": ["pencil_dev", "stitch", "figma-dev-mode", "claude_vision"],
       "browser": [
-        "figma-dev-mode",
-        "playwright"
+        "playwright",
+        "browsermcp",
+        "figma-dev-mode"
       ],
       "search": [
         "exa",
         "web_search"
       ],
-      "reason": "Stitch for UI generation, Figma for design tokens"
+      "reason": "Pencil.dev for UI generation/analysis (1st), Stitch fallback, Figma for design tokens"
     },
     "06-implementation": {
       "search": [
@@ -316,6 +334,12 @@
         "command": "test -x scripts/codex-wrapper.sh",
         "on_failure": "warn",
         "message": "codex-wrapper.sh not executable"
+      },
+      {
+        "name": "pencil_dev_access",
+        "command": "curl -s -o /dev/null -w '%{http_code}' https://pencil.dev | grep -q '200'",
+        "on_failure": "warn",
+        "message": "Pencil.dev not accessible. Stitch MCP will be used as fallback for UI generation."
       },
       {
         "name": "stitch_mcp",
