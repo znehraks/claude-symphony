@@ -5,6 +5,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-01-30
+
+### Documentation & Cleanup Release
+
+**Status**: README fully synchronized with codebase, obsolete docs removed
+
+### Changed
+
+#### README.md Full Sync
+- **Version references**: Updated `v0.3.x` → `v0.4.x` across all sections
+- **Pipeline Stages**: Added `+ Claude` to parallel execution stages (03, 04, 07, 09)
+- **Sub-Agent System**: Added Tier 2 (4 agents) and Tier 3 (6 agents) tables with status
+- **CLI Commands**: Expanded from 2 to 6 commands (added `create`, `stage`, `validate`, `checkpoint`)
+- **Slash Commands**: Reorganized into 5 categories covering all 34 commands
+- **Repository Structure**: Expanded `src/` tree (core/, hooks/, integrations/, types/, utils/), added `test/`, `agents/`
+- **Build Commands**: Expanded from 5 to 10 (added `test:watch`, `test:coverage`, `test:pipeline`, `benchmark`, `clean`)
+- **Testing section**: Added Vitest framework mention, fixed broken docs references
+- **Documentation references**: Replaced broken `docs/` paths with valid `template/.claude/agents/`, `template/docs/`, `CHANGELOG.md`
+
+### Removed
+- **`docs/` directory**: Removed 19 obsolete developer documentation files
+  - `docs/agent-task-tool-integration.md`
+  - `docs/architecture.md`
+  - `docs/end-user-workflow-subagents.md`
+  - `docs/sub-agents-roadmap.md`
+  - `docs/testing-guide.md`
+  - `docs/v1.0.0-release-notes.md`
+  - `docs/workflow-simulation.md`
+  - `docs/사용자_가이드_서브에이전트.md`
+  - `docs/archived/` (11 files)
+- Documentation consolidated into `template/docs/` (end-user) and `CHANGELOG.md` (release history)
+
+---
+
 ## [1.0.0] - 2026-02-XX
 
 ### 🎉 First Stable Release
