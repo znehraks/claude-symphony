@@ -48,7 +48,7 @@ npx claude-symphony init
 cd my-project
 
 # Edit project brief
-# stages/01-brainstorm/inputs/project_brief.md
+# stages/01-brainstorm/inputs/project_brief_sample.md
 
 # Start development with Claude Code
 /brainstorm
@@ -93,7 +93,7 @@ claude-symphony features a sub-agent system where specialized agents execute tas
 - **Context Preservation**: 0% main session usage (agents run separately)
 - **Automatic Integration**: Hooks trigger agents at key moments (`/next`, `/validate`, etc.)
 - **Fallback Support**: Legacy validation available if agents fail (95%+ reliability)
-- **Extended Thinking**: All agents use extended thinking for deep analysis
+- **Extended Thinking**: Tier 1 agents use extended thinking for deep analysis
 
 ### Documentation
 
