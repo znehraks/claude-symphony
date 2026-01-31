@@ -61,6 +61,28 @@ export interface PipelineResult {
 }
 
 /**
+ * Retry state for a stage attempt
+ */
+export interface StageRetryState {
+  stageId: StageId;
+  attempt: number;
+  maxAttempts: number;
+  validationErrors: string[];
+  lastScore: number;
+}
+
+/**
+ * Pipeline state (persisted for pause/resume)
+ */
+export interface PipelineState {
+  status: 'running' | 'paused' | 'completed' | 'failed';
+  currentStage: StageId | null;
+  retryState: StageRetryState | null;
+  startedAt: string;
+  pausedAt?: string;
+}
+
+/**
  * Orchestrator configuration
  */
 export interface OrchestratorConfig {
@@ -345,4 +367,206 @@ export async function finalizeStage(
   }
 
   return { success: true, validation, nextStage };
+}
+
+/**
+ * Build a retry prompt that includes validation feedback from the failed attempt.
+ */
+export function buildRetryPrompt(
+  projectRoot: string,
+  stageId: StageId,
+  retryState: StageRetryState
+): string {
+  const basePrompt = buildStagePrompt(projectRoot, stageId);
+  const errorList = retryState.validationErrors
+    .map((e, i) => `${i + 1}. ${e}`)
+    .join('\n');
+
+  return `${basePrompt}
+
+---
+
+## RETRY ATTEMPT ${retryState.attempt} of ${retryState.maxAttempts}
+
+The previous attempt failed validation (score: ${retryState.lastScore.toFixed(2)}). Please fix the following issues:
+
+${errorList}
+
+Focus on producing all required output files with sufficient content. Check the "Required Outputs" section above carefully.`;
+}
+
+/**
+ * Finalize a stage with retry support.
+ * Returns updated retry state if validation fails within retry budget.
+ */
+export async function finalizeStageWithRetry(
+  projectRoot: string,
+  stageId: StageId,
+  retryState: StageRetryState | null
+): Promise<{
+  success: boolean;
+  validation: ValidationSummary;
+  nextStage: StageId | null;
+  retryState: StageRetryState | null;
+  shouldRetry: boolean;
+}> {
+  const validation = await validateStage(projectRoot, stageId);
+  const maxAttempts = retryState?.maxAttempts ?? 3;
+  const currentAttempt = retryState?.attempt ?? 1;
+
+  if (validation.failed > 0) {
+    const errors = validation.checks
+      .filter((c) => !c.passed)
+      .map((c) => c.message || `Check "${c.name}" failed`);
+
+    if (currentAttempt < maxAttempts) {
+      const newRetryState: StageRetryState = {
+        stageId,
+        attempt: currentAttempt + 1,
+        maxAttempts,
+        validationErrors: errors,
+        lastScore: validation.score,
+      };
+
+      logError(
+        `Stage ${stageId} validation failed (attempt ${currentAttempt}/${maxAttempts}, score: ${validation.score.toFixed(2)}). Retrying...`
+      );
+
+      return {
+        success: false,
+        validation,
+        nextStage: null,
+        retryState: newRetryState,
+        shouldRetry: true,
+      };
+    }
+
+    logError(
+      `Stage ${stageId} failed after ${maxAttempts} attempts. Pipeline paused.`
+    );
+
+    return {
+      success: false,
+      validation,
+      nextStage: null,
+      retryState: null,
+      shouldRetry: false,
+    };
+  }
+
+  // Validation passed — finalize
+  await generateStageHandoff(projectRoot, stageId);
+
+  const pm = new ProgressManager(projectRoot);
+  await pm.completeCurrentStage();
+
+  const nextStage = await pm.getNextStage();
+  const isComplete = await pm.isComplete();
+
+  if (isComplete) {
+    logSuccess('Pipeline complete! All stages finished.');
+  } else if (nextStage) {
+    logInfo(`Next stage: ${nextStage} (${STAGE_NAMES[nextStage]})`);
+  }
+
+  return {
+    success: true,
+    validation,
+    nextStage,
+    retryState: null,
+    shouldRetry: false,
+  };
+}
+
+// --- Pipeline state persistence ---
+
+const PIPELINE_STATE_FILE = 'state/pipeline_state.json';
+
+/**
+ * Load pipeline state from disk
+ */
+export function loadPipelineState(projectRoot: string): PipelineState | null {
+  const statePath = path.join(projectRoot, PIPELINE_STATE_FILE);
+  if (!fs.existsSync(statePath)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(statePath, 'utf-8'));
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Save pipeline state to disk
+ */
+export function savePipelineState(
+  projectRoot: string,
+  state: PipelineState
+): void {
+  const statePath = path.join(projectRoot, PIPELINE_STATE_FILE);
+  fs.writeFileSync(statePath, JSON.stringify(state, null, 2));
+}
+
+/**
+ * Pause the pipeline
+ */
+export function pausePipeline(projectRoot: string): PipelineState {
+  const existing = loadPipelineState(projectRoot) ?? {
+    status: 'running' as const,
+    currentStage: null,
+    retryState: null,
+    startedAt: new Date().toISOString(),
+  };
+
+  const paused: PipelineState = {
+    ...existing,
+    status: 'paused',
+    pausedAt: new Date().toISOString(),
+  };
+
+  savePipelineState(projectRoot, paused);
+  logInfo('Pipeline paused. Run /resume to continue.');
+  return paused;
+}
+
+/**
+ * Resume a paused pipeline
+ */
+export function resumePipeline(projectRoot: string): PipelineState | null {
+  const state = loadPipelineState(projectRoot);
+  if (!state || state.status !== 'paused') {
+    logError('No paused pipeline to resume.');
+    return null;
+  }
+
+  const resumed: PipelineState = {
+    ...state,
+    status: 'running',
+    pausedAt: undefined,
+  };
+
+  savePipelineState(projectRoot, resumed);
+  logInfo(`Pipeline resumed from stage ${state.currentStage}.`);
+  return resumed;
+}
+
+/**
+ * Skip the current stage
+ */
+export async function skipStage(
+  projectRoot: string,
+  stageId: StageId
+): Promise<StageId | null> {
+  const pm = new ProgressManager(projectRoot);
+  await pm.setCurrentStage(stageId, 'skipped');
+
+  // Mark as skipped, not completed
+  const progress = await pm.load();
+  if (progress && progress.stages[stageId]) {
+    progress.stages[stageId].status = 'skipped';
+    await pm.save();
+  }
+
+  const nextStage = await pm.getNextStage();
+  logInfo(`Skipped stage ${stageId}. Next: ${nextStage ?? 'none'}`);
+  return nextStage;
 }

@@ -31,6 +31,9 @@ Run `/auto-pilot` to start the automatic 10-stage pipeline. The orchestrator wil
 | Command | Description |
 |---------|-------------|
 | `/auto-pilot` | Start automatic pipeline execution |
+| `/pause` | Pause the pipeline after current stage |
+| `/resume` | Resume a paused pipeline |
+| `/skip` | Skip the current stage |
 | `/status` | View current pipeline progress |
 | `/checkpoint` | Create a checkpoint (save point) |
 | `/restore` | Restore from a checkpoint |

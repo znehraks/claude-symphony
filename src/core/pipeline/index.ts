@@ -4,6 +4,8 @@
 export {
   prepareStageExecution,
   finalizeStage,
+  finalizeStageWithRetry,
+  buildRetryPrompt,
   getPipelineStatus,
   buildStagePrompt,
   loadStagePersona,
@@ -12,6 +14,11 @@ export {
   loadPreviousHandoff,
   validateStage,
   generateStageHandoff,
+  loadPipelineState,
+  savePipelineState,
+  pausePipeline,
+  resumePipeline,
+  skipStage,
 } from './orchestrator.js';
 
 export type {
@@ -20,4 +27,6 @@ export type {
   StageExecutionResult,
   PipelineResult,
   OrchestratorConfig,
+  StageRetryState,
+  PipelineState,
 } from './orchestrator.js';

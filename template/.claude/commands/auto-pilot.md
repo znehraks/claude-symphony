@@ -44,9 +44,34 @@ After each stage completes, verify the required outputs exist:
 ## Retry Logic
 
 If a stage's outputs are incomplete or validation fails:
-1. First retry: Feed the validation errors back to the agent and re-run
-2. Second retry: Simplify the requirements and retry
-3. Third failure: Stop and report the error to the user
+
+1. **Attempt 1 (retry with feedback)**: Feed the specific validation errors back to the agent. Include the list of missing/failing checks in the prompt and re-run the stage.
+2. **Attempt 2 (simplified retry)**: Simplify the requirements — focus only on producing the required output files with correct structure. Re-run with explicit file-by-file instructions.
+3. **Attempt 3 fails → Pause**: Stop the pipeline and report the error to the user. Save pipeline state to `state/pipeline_state.json` with `"status": "paused"`. The user can fix issues manually and `/resume`, or `/skip` the stage.
+
+When retrying, always include this in the prompt:
+```
+## RETRY ATTEMPT N of 3
+The previous attempt failed validation. Fix these issues:
+1. [specific error]
+2. [specific error]
+```
+
+## Pipeline State
+
+Save pipeline state to `state/pipeline_state.json`:
+```json
+{
+  "status": "running",
+  "currentStage": "03-planning",
+  "retryState": null,
+  "startedAt": "2026-01-31T..."
+}
+```
+
+Valid statuses: `running`, `paused`, `completed`, `failed`
+
+Check for paused state at startup — if paused, inform user and ask whether to resume or restart.
 
 ## HANDOFF Generation
 
@@ -67,13 +92,21 @@ After each stage completion, display progress:
 ...
 ```
 
+## Pause/Resume Support
+
+- If `state/pipeline_state.json` has `"status": "paused"`, ask the user before continuing
+- The user can run `/pause` at any time to stop after the current stage
+- The user can run `/skip` to skip a problematic stage
+- The user can run `/resume` to continue from where they left off
+
 ## Start
 
 Read `state/progress.json` now and begin executing from the current stage. If starting fresh, begin with stage 01-brainstorm.
 
 DO NOT ask for confirmation. Execute each stage automatically. Only stop if:
-- A stage fails validation 3 times
+- A stage fails validation 3 times (pause pipeline)
 - The pipeline reaches completion (all 10 stages done)
 - A critical error occurs
+- The user runs `/pause`
 
 $ARGUMENTS

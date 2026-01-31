@@ -83,11 +83,14 @@ Zero config required — just drop files in the folder.
 
 ## Commands
 
-Inside Claude Code, you have 6 commands:
+Inside Claude Code, you have 9 commands:
 
 | Command | Description |
 |---------|-------------|
 | `/auto-pilot` | Start automatic pipeline execution |
+| `/pause` | Pause the pipeline after current stage |
+| `/resume` | Resume a paused pipeline |
+| `/skip` | Skip the current stage |
 | `/status` | View current pipeline progress |
 | `/checkpoint` | Create a save point |
 | `/restore` | Restore from a save point |
