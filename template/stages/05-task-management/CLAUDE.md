@@ -1,101 +1,51 @@
 # Stage 05: Task Management
 
-> **Notion Task Creation Rules**
-> - Tasks must be created **one at a time sequentially**
-> - **Status** field required for all tasks (default: To Do)
-> - Specify order with **Order** field (View sorting is manual)
-> - Schema: `templates/task_schema.yaml` | Guide: `templates/notion_integration.md`
+## Objective
+Decompose the project plan into implementable tasks with clear priorities and dependencies.
 
-Task breakdown and sprint planning stage
+## Inputs
+- `stages/03-planning/HANDOFF.md` — architecture and plan context
+- `stages/04-ui-ux/HANDOFF.md` — UI/UX design context
+- `stages/03-planning/outputs/project_plan.md` — milestone plan
+- `stages/04-ui-ux/outputs/components.md` — component specifications
+- `references/05-task-management/` — task templates, sprint examples
 
-## Persona: Project Organizer
+## Tasks
 
-> You are a Project Organizer.
-> Break down all work into small, actionable units.
-> Each task must have clear completion criteria and dependencies.
+1. **Task decomposition** — break down each milestone into implementable tasks (4-8 hours each)
+2. **Dependency mapping** — identify task dependencies and ordering constraints
+3. **Priority assignment** — assign priority (P0-P3) based on feature criticality and dependencies
+4. **Implementation ordering** — determine optimal implementation sequence
+5. **Acceptance criteria** — define clear done criteria for each task
 
-### Characteristics
-- Systematic breakdown
-- Dependency analysis
-- Priority setting
-- Actionability
+## Required Outputs
 
-### Recommended Actions
-- Break into small units
-- Clear completion criteria
-- Explicit dependencies
-- Actionable tasks
+Save all files to `stages/05-task-management/outputs/`:
 
-### Actions to Avoid
-- Vague tasks
-- Large units
-- Ignoring dependencies
+### `tasks.md` (required)
+- Complete task list with:
+  - Task ID, title, description
+  - Priority (P0-P3)
+  - Estimated effort (S/M/L/XL)
+  - Dependencies (which tasks must complete first)
+  - Acceptance criteria
+- Tasks grouped by milestone/feature area
 
-### AI Settings
-- **Temperature**: 0.3 (high precision)
-- **Precision**: High
+### `implementation_order.md` (required)
+- Ordered list of tasks for implementation
+- Dependency graph (text-based)
+- Critical path identified
+- Parallel work opportunities noted
 
-## Execution Model
-- **Primary**: ClaudeCode (structured task breakdown)
-- **Mode**: Plan Mode
+## Quality Criteria
+- Every feature from planning maps to at least one task
+- No task is larger than 1 day of work
+- Dependencies are acyclic (no circular dependencies)
+- Acceptance criteria are testable
 
-## Goals
-1. Feature-based task breakdown
-2. Dependency mapping
-3. Sprint plan establishment
-4. Deliverables per milestone definition
-
-## Input Files
-- `$STAGES_ROOT/03-planning/outputs/project_plan.md`
-- `$STAGES_ROOT/03-planning/outputs/architecture.md`
-- `$STAGES_ROOT/04-ui-ux/outputs/design_system.md`
-- `$STAGES_ROOT/04-ui-ux/HANDOFF.md`
-
-## Output Files
-- `outputs/tasks.md` - Task list
-- `outputs/sprint_plan.md` - Sprint plan
-- `outputs/milestones.md` - Milestone definitions
-- `HANDOFF.md` - Handoff document for next stage
-
-## Workflow
-
-### 1. Task Breakdown
-- Feature → Epic → Story → Task
-- Estimate work effort
-- Identify technical dependencies
-
-### 2. Priority Decision
-- MoSCoW classification
-- Business value vs technical complexity
-- Risk-based prioritization
-
-### 3. Sprint Planning
-- Determine sprint length
-- Capacity-based allocation
-- Include buffer
-
-### 4. Milestone Definition
-- Deliverables per checkpoint
-- Success criteria
-- Validation methods
-
-## Task Format
-```markdown
-## TASK-XXX: [Task Name]
-- **Epic**: [Epic Name]
-- **Story**: [User Story]
-- **Priority**: Must/Should/Could
-- **Estimated Time**: Xh
-- **Dependencies**: [TASK-YYY, TASK-ZZZ]
-- **Assigned Stage**: 06-implementation
-```
-
-## Completion Criteria
-- [ ] Complete task list creation
-- [ ] Generate dependency graph
-- [ ] Plan 3+ sprints
-- [ ] Define milestone deliverables
-- [ ] Generate HANDOFF.md
-
-## Next Stage
-→ **06-implementation**: Core feature implementation
+## HANDOFF
+Generate `stages/05-task-management/HANDOFF.md` summarizing:
+- Total task count and distribution by priority
+- Implementation order rationale
+- Critical path tasks
+- First 5 tasks to implement

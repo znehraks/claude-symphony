@@ -1,133 +1,47 @@
 # Stage 08: QA
 
-Quality assurance and code review stage
+## Objective
+Perform quality assurance: code review, security audit, accessibility check, and bug identification.
 
-## Persona: Quality Guardian
+## Inputs
+- `stages/07-refactoring/HANDOFF.md` — refactoring context
+- `stages/07-refactoring/outputs/refactoring_report.md` — what was refactored
+- Source code in project root
+- `references/08-qa/` — QA checklists, testing standards
 
-> You are a Quality Guardian.
-> Find all possible issues and ensure quality.
-> Pay special attention to edge cases and security vulnerabilities.
+## Tasks
 
-### Characteristics
-- Thorough review
-- Edge case discovery
-- Security awareness
-- User perspective
+1. **Security review** — check for OWASP Top 10 vulnerabilities (XSS, injection, auth issues)
+2. **Accessibility audit** — verify WCAG 2.1 AA compliance (semantic HTML, ARIA, contrast)
+3. **Error handling review** — ensure proper error boundaries, fallbacks, user-facing messages
+4. **Edge case analysis** — identify untested edge cases and boundary conditions
+5. **Bug identification** — manually trace user flows and document bugs found
 
-### Recommended Actions
-- Edge case exploration
-- Security vulnerability inspection
-- Performance issue identification
-- Usability review
+## Required Outputs
 
-### Actions to Avoid
-- Surface-level review
-- Positive assumptions
-- Ignoring bugs
+Save all files to `stages/08-qa/outputs/`:
 
-### AI Settings
-- **Temperature**: 0.3 (thorough review)
-- **Thoroughness**: High
-- **Skeptical Attitude**: Healthy
+### `qa_report.md` (required)
+- Security findings (severity: critical/high/medium/low)
+- Accessibility issues found
+- Error handling gaps
+- Code quality concerns
+- Overall quality assessment (pass/fail with score)
 
-## Execution Model
-- **Primary**: ClaudeCode (code review, bug fixing)
-- **Mode**: Plan + Sandbox
+### `bug_list.md` (optional but recommended)
+- Bug ID, description, severity, steps to reproduce
+- Suggested fix for each bug
+- Priority order for fixes
 
-## Goals
-1. Perform code review
-2. Identify and fix bugs
-3. Security vulnerability inspection
-4. Quality standards compliance verification
+## Quality Criteria
+- No critical security vulnerabilities remain unfixed
+- All user-facing error states have proper handling
+- Core user flows work without crashes
+- Accessibility basics are met (keyboard nav, screen reader, contrast)
 
-## Input Files
-- `$STAGES_ROOT/07-refactoring/outputs/refactored_code/`
-- `$STAGES_ROOT/07-refactoring/outputs/refactoring_report.md`
-- `$STAGES_ROOT/07-refactoring/HANDOFF.md`
-
-## Output Files
-- `outputs/qa_report.md` - QA report
-- `outputs/bug_fixes.md` - Bug fix history
-- `HANDOFF.md` - Handoff document for next stage
-
-## Workflow
-
-### 1. Code Review
-- Verify coding standards compliance
-- Best practices application status
-- Documentation level review
-
-### 2. Functional Testing
-- Feature verification against requirements
-- Edge case testing
-- Error handling verification
-
-### 3. Security Inspection
-- OWASP Top 10 check
-- Input validation
-- Authentication/authorization verification
-- Sensitive information exposure inspection
-
-### 4. Performance Review
-- Response time measurement
-- Memory usage
-- Unnecessary re-renders
-
-### 5. Bug Fixing
-- Prioritize identified bugs
-- Fix and verify
-- Regression testing
-
----
-
-## ⚠️ Mandatory Git Commit Rule
-
-> **CRITICAL**: Git commit is REQUIRED after every task completion in this stage.
-
-### Per-Task Commit Protocol
-After completing each task:
-
-1. **Stage changes**
-   ```bash
-   git add <relevant-files>
-   ```
-
-2. **Commit with conventional format**
-   ```bash
-   git commit -m "fix(qa): <task description>"
-   ```
-
-3. **Verify clean state**
-   ```bash
-   git status  # Should show "nothing to commit"
-   ```
-
-### Commit Message Format
-| Task Type | Format | Example |
-|-----------|--------|---------|
-| Bug fix | `fix(qa): ...` | `fix(qa): fix login validation bug` |
-| Security fix | `fix(qa): ...` | `fix(qa): sanitize user input` |
-| Code review fix | `fix(qa): ...` | `fix(qa): address code review comments` |
-| Test fix | `fix(qa): ...` | `fix(qa): fix flaky test in auth module` |
-
-### ❌ Prohibited
-- Proceeding to next task without committing
-- Batching multiple tasks into single commit
-- WIP or meaningless commit messages
-
-### ✅ Required
-- One commit per task (minimum)
-- Meaningful, descriptive commit messages
-- Clean working directory before next task
-
----
-
-## Completion Criteria
-- [ ] Code review complete
-- [ ] Security inspection passed
-- [ ] Identified bugs fixed
-- [ ] QA report written
-- [ ] HANDOFF.md generated
-
-## Next Stage
-→ **09-testing**: Test code writing and E2E testing
+## HANDOFF
+Generate `stages/08-qa/HANDOFF.md` summarizing:
+- Critical issues found and fixed
+- Remaining issues (prioritized)
+- Areas that need test coverage
+- QA pass/fail status

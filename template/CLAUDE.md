@@ -1,917 +1,141 @@
-# claude-symphony - Multi-AI Orchestration Framework
+# claude-symphony — Auto-Pilot Development Pipeline
 
-10-Stage Software Development Workflow Orchestration System
+Describe your app. We handle the rest — planning, architecture, code, tests, deployment.
 
-## Pipeline Overview
+## Quick Start
 
-| Stage | Name | AI Model | Execution Mode |
-|-------|------|----------|----------------|
-| 01 | Brainstorming | Gemini + ClaudeCode | YOLO (Container) |
-| 02 | Research | Claude | Plan Mode |
-| 03 | Planning | Gemini | Plan Mode |
-| 04 | UI/UX Planning | Gemini | Plan Mode |
-| 05 | Task Management | ClaudeCode | Plan Mode |
-| 06 | Implementation | ClaudeCode | Plan + Sandbox |
-| 07 | Refactoring | Codex | Deep Dive |
-| 08 | QA | ClaudeCode | Plan + Sandbox |
-| 09 | Testing & E2E | Codex | Sandbox + Playwright |
-| 10 | CI/CD & Deployment | ClaudeCode | Headless |
+Run `/auto-pilot` to start the automatic 10-stage pipeline. The orchestrator will:
+1. Read each stage's instructions from `stages/XX/CLAUDE.md`
+2. Load reference materials from `references/XX/`
+3. Execute the stage work using a specialized AI agent
+4. Validate outputs and generate HANDOFF context
+5. Auto-progress to the next stage
 
-## Context Management Rules
+## Pipeline Stages
 
-> Configuration file: `config/context.yaml`
+| # | Stage | Focus | Model |
+|---|-------|-------|-------|
+| 01 | Brainstorming | Ideas, features, requirements | sonnet (creative) |
+| 02 | Research | Tech evaluation, feasibility | sonnet |
+| 03 | Planning | Architecture, data models, API | sonnet |
+| 04 | UI/UX | Wireframes, components, design | sonnet |
+| 05 | Tasks | Task decomposition, priorities | haiku |
+| 06 | Implementation | Write actual code | sonnet |
+| 07 | Refactoring | Code quality, optimization | sonnet |
+| 08 | QA | Security, accessibility, bugs | sonnet |
+| 09 | Testing | Unit, integration, E2E tests | sonnet |
+| 10 | Deployment | CI/CD, hosting, production | sonnet |
 
-### Percentage-Based Thresholds (Based on Remaining Context)
+## Commands
 
-| Threshold | Trigger | Action |
-|-----------|---------|--------|
-| **60%** (warning) | Display warning | Calculate compression ratio, show banner |
-| **50%** (action) | Auto-save | Save state to `state/context/`, recommend compression |
-| **40%** (critical) | `/clear` recommended | Force save, generate recovery HANDOFF |
+| Command | Description |
+|---------|-------------|
+| `/auto-pilot` | Start automatic pipeline execution |
+| `/status` | View current pipeline progress |
+| `/checkpoint` | Create a checkpoint (save point) |
+| `/restore` | Restore from a checkpoint |
+| `/stages` | List all stages with status |
+| `/run-stage [id]` | Run a specific stage manually |
 
-### Task-Based Auto-Save
-- **Auto-save every 5 completed tasks**
-- Save location: `state/context/state_{timestamp}_{stage}.md`
+## Reference Materials
 
-### State Save Format
-> Template: `state/templates/phase_state.md.template`
+Drop files into `references/<stage-id>/` to provide additional context for any stage:
 
-```markdown
-# Work State Save - {{TIMESTAMP}}
-
-## Context State
-- Remaining context: {{REMAINING_PERCENT}}%
-- Save trigger: {{TRIGGER_REASON}}
-
-## Current Stage
-{{STAGE_ID}}: {{STAGE_NAME}}
-
-## Progress
-- Completed: [list]
-- In progress: [current task]
-- Pending: [remaining tasks]
-
-## Key Context
-- Major decisions
-- Modified files
-- Active issues/bugs
-
-## AI Call Log
-| AI | Time | Prompt | Result |
-|----|------|--------|--------|
-
-## Recovery Instructions
-1. Read this file
-2. Reference {{HANDOFF_FILE}}
-3. Resume from {{CURRENT_TASK}}
+```
+references/
+├── 01-brainstorm/    # Competitor analysis, market research
+├── 02-research/      # Technical papers, library comparisons
+├── 03-planning/      # Architecture examples, API specs
+├── 04-ui-ux/         # Design references, wireframes, style guides
+├── 05-task-management/# Task templates, sprint examples
+├── 06-implementation/ # Coding conventions, example code
+├── 07-refactoring/   # Quality rules, performance benchmarks
+├── 08-qa/            # QA checklists, testing standards
+├── 09-testing/       # Test examples, coverage requirements
+└── 10-deployment/    # CI/CD templates, infrastructure configs
 ```
 
-### Context Compression Strategies
-1. **summarize_completed**: Replace completed work with summaries
-2. **externalize_code**: Replace code blocks with file references
-3. **handoff_generation**: Externalize current state to HANDOFF.md
+Supported formats: `.md`, `.txt`, `.json`, `.yaml`, `.ts`, `.js`, `.tsx`, `.jsx`, `.css`, `.html`
 
-### Context Check Protocol
+## Project Structure
 
-> Run `/context` every 5 completed tasks to check token usage.
-
-| Remaining Context | Status | Recommended Action |
-|-------------------|--------|-------------------|
-| **60%+** | Normal | Continue working |
-| **50-60%** | Warning | Consider `/compact` |
-| **40-50%** | Action | Run `/compact`, save state |
-| **<40%** | Critical | `/clear` or handoff required |
-
-**Protocol Steps:**
-1. After every 5 tasks, run `/context` to check usage
-2. If warning level reached, run `/compact` to compress context
-3. If critical level reached, generate HANDOFF.md before `/clear`
-
-## Recommended Plugins
-
-### 🎯 claude-hud (Context Monitoring) - Highly Recommended!
-
-Visualizes context usage, tool activity, and todo progress in the statusline.
-
-**Installation (run in Claude Code):**
-```bash
-/plugin marketplace add jarrodwatts/claude-hud
-/plugin install claude-hud
-
-# Step 3: Setup (optional)
-/claude-hud:setup
 ```
-
-**Features:**
-- Context window usage visualization
-- Tool activity tracking
-- Agent state monitoring
-- Todo progress display
-- Git branch info
-
-**GitHub:** https://github.com/jarrodwatts/claude-hud
+your-project/
+├── CLAUDE.md              # This file (pipeline instructions)
+├── config/
+│   ├── pipeline.jsonc     # Pipeline configuration
+│   ├── stage_personas.jsonc # AI persona per stage
+│   ├── handoff_intelligence.jsonc
+│   ├── context.jsonc
+│   └── output_validation.jsonc
+├── stages/
+│   └── XX-stage/
+│       ├── CLAUDE.md      # Stage instructions (agent-executable)
+│       ├── outputs/       # Stage deliverables
+│       └── HANDOFF.md     # Generated context for next stage
+├── references/            # User-provided reference materials
+│   └── XX-stage/
+├── state/
+│   ├── progress.json      # Pipeline progress tracker
+│   ├── checkpoints/       # Save points
+│   └── handoffs/          # HANDOFF archive
+└── .claude/
+    ├── commands/          # Slash commands
+    └── agents/            # Sub-agent definitions
+```
 
 ## Stage Transition Protocol
 
-### Required Sequence
-1. Verify all outputs for current stage are generated
-2. Generate `HANDOFF.md` (required)
-3. Create checkpoint (implementation/refactoring stages)
-4. Update `state/progress.json`
-5. Load next stage `CLAUDE.md`
-
-### Required HANDOFF.md Contents
-- Completed tasks checklist
-- Key decisions and rationale
-- Successful/failed approaches
-- Immediate next steps for next stage
-- Checkpoint references (if applicable)
-
-## Slash Commands
-
-### Basic Commands
-| Command | Description |
-|---------|-------------|
-| `/init-project` | Initialize new project |
-| `/run-stage [id]` | Run specific stage |
-| `/handoff` | Generate current stage HANDOFF.md |
-| `/checkpoint` | Create checkpoint |
-| `/gemini [prompt]` | Call Gemini CLI |
-| `/codex [prompt]` | Call Codex CLI |
-
-### Multi-AI Commands
-| Command | Description |
-|---------|-------------|
-| `/collaborate` | Run Multi-AI collaboration |
-| `/benchmark` | AI model benchmarking |
-| `/fork` | Pipeline branch management |
-| `/validate` | Run output validation (uses validation-agent) |
-
-### Visibility Commands
-| Command | Description |
-|---------|-------------|
-| `/status` | Check pipeline status |
-| `/stages` | Stage list and details |
-| `/context` | Context (token) state management |
-
-### Navigation Commands
-| Command | Description |
-|---------|-------------|
-| `/next` | Transition to next stage (or next Sprint in Stage 06) |
-| `/next --stage` | Force stage transition (skip Sprint check) |
-| `/restore` | Restore from checkpoint |
-
-### Sprint Commands
-| Command | Description |
-|---------|-------------|
-| `/sprint` | Show current sprint status |
-| `/sprint tasks` | List tasks for current sprint |
-| `/sprint complete` | Mark current sprint as complete |
-
-### Loop-back Commands
-| Command | Description |
-|---------|-------------|
-| `/goto <stage>` | Jump to previous stage (intentional loop-back) |
-| `/goto --list` | Show available stages for loop-back |
-| `/goto --history` | Show loop-back history |
-| `/goto <stage> --reason <text>` | Loop-back with recorded reason |
-
-### Configuration Commands
-| Command | Description |
-|---------|-------------|
-| `/config sprint enable` | Enable sprint mode |
-| `/config sprint disable` | Disable sprint mode (single-pass) |
-| `/config sprint status` | Show current iteration settings |
-| `/config sprint count <n>` | Set default sprint count |
-
-### Stage Shortcut Commands
-| Command | Stage |
-|---------|-------|
-| `/brainstorm` | 01-brainstorm |
-| `/research` | 02-research |
-| `/planning` | 03-planning |
-| `/ui-ux` | 04-ui-ux |
-| `/tasks` | 05-task-management |
-| `/implement` | 06-implementation |
-| `/refactor` | 07-refactoring |
-| `/qa` | 08-qa |
-| `/test` | 09-testing |
-| `/deploy` | 10-deployment |
-
-### Requirements & Design Commands
-| Command | Description |
-|---------|-------------|
-| `/refine` | Interactive requirements refinement (Epic → Feature → Task) |
-| `/refine --validate` | Validate requirements against INVEST criteria |
-| `/moodboard` | Collect design references and analyze design tokens |
-| `/moodboard generate` | Generate moodboard from text description (Path B: no existing refs) |
-| `/moodboard analyze` | Extract colors, fonts, styles from collected images |
-| `/moodboard skip` | Skip moodboard collection (use AI-generated design) |
-| `/pencil` | Show Pencil.dev status and connection check |
-| `/pencil generate "..."` | Generate UI from text description via Pencil.dev |
-| `/pencil analyze path` | Analyze image for design tokens via Pencil.dev |
-| `/pencil moodboard "..."` | Generate moodboard from text description via Pencil.dev |
-
-### Task Management & Sync Commands
-| Command | Description |
-|---------|-------------|
-| `/sync notion` | Sync tasks with Notion database |
-| `/synthesize` | Consolidate parallel AI outputs |
-| `/synthesize --verbose` | Show detailed synthesis analysis |
-
-## Skills (Auto-Activated)
-
-| Skill | Trigger | Description |
-|-------|---------|-------------|
-| `stage-transition` | "completed", "/next" | Stage completion detection and transition automation |
-| `stage-routing` | Work type keywords detected | Automatic stage recommendation based on prompt analysis |
-| `context-compression` | Token 50k+ | Context compression and state save |
-| `smart-handoff` | Stage completion | Smart context extraction and HANDOFF generation |
-| `ai-collaboration` | `/collaborate` | Multi-AI collaboration orchestration |
-| `auto-checkpoint` | Trigger conditions met | Automatic checkpoint generation |
-| `output-validator` | `/validate`, stage completion | Output validation with sub-agent (auto-fallback to legacy) |
-
-## Git Auto-Commit Rules
-
-> Configuration file: `config/git.yaml`
-
-### Auto-Commit Triggers
-- **On task completion**: Commit related files
-- **On stage completion**: Commit all changes + create tag
-- **On checkpoint creation**: Checkpoint commit + tag
-
-### Commit Message Format (Conventional Commits)
-```
-<type>(<scope>): <description>
-```
-
-| Stage | Type | Scope | Example |
-|-------|------|-------|---------|
-| 06-implementation | `feat` | `impl` | `feat(impl): implement user authentication` |
-| 07-refactoring | `refactor` | `refactor` | `refactor(refactor): optimize auth service` |
-| 08-qa | `fix` | `qa` | `fix(qa): fix session expiry bug` |
-| 09-testing | `test` | `test` | `test(test): add E2E tests` |
-| 10-deployment | `ci` | `deploy` | `ci(deploy): configure GitHub Actions` |
-
-### Commit Principles
-- Commit frequently in small units
-- Write meaningful commit messages
-- Run lint/format before commit
-
-## AI Call Logging
-
-> Configuration file: `config/ai_logging.yaml`
-
-### AI Call Recording
-- All AI calls (Gemini, Codex, ClaudeCode) are recorded in HANDOFF.md
-- Track call time, prompt file, result file, and status
-
-### Gemini Call Verification Checklist
-| Step | Check Item | Command |
-|------|------------|---------|
-| 1 | CLI installation check | `which gemini` |
-| 2 | Use wrapper | `scripts/gemini-wrapper.sh` |
-| 3 | tmux session check | `tmux attach -t symphony-gemini` |
-| 4 | Save output file | `outputs/` directory |
-
-### AI Call Log Format (HANDOFF.md)
-```markdown
-## AI Call Log
-| AI | Call Time | Prompt | Result | Status |
-|----|-----------|--------|--------|--------|
-| Gemini | 14:30 | prompts/ideation.md | outputs/ideas.md | Success |
-```
-
-## Q&A Auto-Recording (Q&A Logging)
-
-> Configuration file: `config/qa_logging.yaml`
-
-### Auto-Recording Triggers
-- **On stage completion**: Record key Q&A for that stage
-- **On issue discovery**: Record problem and solution
-- **On process change request**: Record changes and rationale
-
-### Recording Format
-```markdown
-### Q{{number}}: {{title}}
-**Question**: {{question}}
-**Answer**: {{answer}}
-**Solution**: {{solution}}
-**Future Improvement Suggestions**: {{suggestion}}
-```
-
-### Recording Target Files
-- Default: `feedback.md`
-- Backup: `state/qa_backups/`
-
-### Categories
-- `workflow_improvements`: Workflow improvements
-- `tool_usage`: Tool usage
-- `process_changes`: Process changes
-- `bug_fixes`: Bug fixes
-- `best_practices`: Best practices
-
-## Prohibited Actions
-
-- Stage transition without HANDOFF.md
-- Destructive operations without checkpoint (implementation/refactoring)
-- Mixing multiple stages in single session
-- Modifying previous stage outputs
-- WIP commits, meaningless commit messages
-
-## Directory Structure (Issue #17 Resolution)
-
-### ⚠️ Key Distinction: TEMPLATE_ROOT vs PROJECT_ROOT
-
-```
-TEMPLATE_ROOT (Pipeline Management)    PROJECT_ROOT (Source Code)
-/my-new-project/                       /my-new-project/[project-name]/
-├── stages/        ← Outputs           ├── src/
-│   └── XX-stage/                      ├── public/
-│       └── outputs/                   ├── package.json
-├── config/                            └── ...
-├── state/
-└── CLAUDE.md
-```
-
-### Path Rules
-
-| Type | Save Location | Example |
-|------|---------------|---------|
-| Outputs (documents) | `stages/XX/outputs/` | `ideas.md`, `architecture.md` |
-| Source code | `[project-name]/src/` | Components, API |
-| State files | `state/` | `progress.json`, checkpoints |
-| HANDOFF | `stages/XX/` | `HANDOFF.md` |
-
-### ⚠️ Prohibited: Creating stages/ in PROJECT_ROOT
-```
-❌ Incorrect structure
-/my-new-project/my-app/
-├── stages/        ← Should not be created here!
-└── src/
-
-✅ Correct structure
-/my-new-project/
-├── stages/        ← Only exists in TEMPLATE_ROOT
-└── my-app/
-    └── src/       ← PROJECT_ROOT
-```
-
-### Pipeline File Structure
-
-```
-config/
-  pipeline.yaml        # Pipeline definition
-  models.yaml          # AI model assignment
-  context.yaml         # Context management settings
-  model_enforcement.yaml  # Sub-agent model enforcement settings
-  git.yaml             # Git auto-commit rules
-  mcp_fallbacks.yaml   # MCP fallback settings
-  ai_logging.yaml      # AI call logging settings
-  qa_logging.yaml      # Q&A auto-recording settings
-  implementation.yaml.template  # Implementation rules template
-
-stages/
-  XX-stage-name/
-    CLAUDE.md          # Stage AI instructions
-    config.yaml        # Stage settings
-    prompts/           # Prompt templates
-    templates/         # Output templates
-    inputs/            # Input files (previous stage links)
-    outputs/           # Output files (deliverables)
-    HANDOFF.md         # Generated handoff
-
-state/
-  progress.json        # Pipeline progress
-  checkpoints/         # Checkpoint storage
-  context/             # Context state storage
-  handoffs/            # Handoff archive
-  templates/           # State templates
-```
-
-## Key File Locations
-
-Quick reference for frequently accessed files:
-
-| File | Location | Description |
-|------|----------|-------------|
-| **Project Brief** | `stages/01-brainstorm/inputs/project_brief.md` | Initial project requirements and scope |
-| **Progress State** | `state/progress.json` | Pipeline progress and current state |
-| **Configuration** | `config/*.yaml` | All configuration files |
-| **HANDOFF** | `stages/XX-stage/HANDOFF.md` | Stage transition documents |
-| **Checkpoints** | `state/checkpoints/` | Saved checkpoint files |
-| **Stage Outputs** | `stages/XX-stage/outputs/` | Generated deliverables per stage |
-
-## Design Patterns Applied
-
-1. **Sequential Workflow Architecture** - Sequential stage definition and auto-progression
-2. **Stateless Orchestration** - Stateless context transfer (HANDOFF.md)
-3. **Orchestrator-Workers** - Parallel agent execution (Brainstorm stage)
-4. **Proactive State Externalization** - External state file management
-5. **State Machine Workflow** - State transition management (progress.json)
-6. **Layered Configuration** - Hierarchical configuration structure (global → stage)
-
----
-
-## MCP Server Selection Guide
-
-> Configuration file: `config/mcp_fallbacks.yaml`
-
-### Use Case by MCP Server
-
-| MCP Server | Best For | Example Use Cases |
-|------------|----------|-------------------|
-| **Exa Search** | Web research, market analysis | Competitor research, trend analysis, API docs |
-| **Context7** | Code documentation, library references | Framework docs, package APIs, code examples |
-| **Firecrawl** | Deep website scraping | Extracting structured data, full page content |
-| **Notion** | Task management, collaboration | Creating/updating tasks, project tracking |
-| **Figma** | Design token extraction | Colors, typography, component specs |
-
-### Stage-Specific Recommendations
-
-| Stage | Primary MCP | Fallback | Notes |
-|-------|-------------|----------|-------|
-| 02-research | Exa Search | Context7 | Use Exa for market data, Context7 for tech docs |
-| 03-planning | Context7 | Exa Search | Architecture patterns, framework best practices |
-| 04-ui-ux | Pencil.dev (browser) | Stitch → Figma → Claude Vision | Pencil.dev primary for UI gen/analysis; Stitch fallback |
-| 05-task-management | Notion | Markdown files | Falls back to local files if Notion not configured |
-
-### Fallback Conditions
-- **API quota exceeded**: Automatic switch to fallback provider
-- **Response quality insufficient**: Manual switch recommended
-- **Timeout**: Retry with fallback after 30 seconds
-
----
-
-## Notion Integration Guide
-
-> Configuration file: `stages/05-task-management/config.yaml`
-> Detailed guide: `stages/05-task-management/templates/notion_integration.md`
-
-### Quick Setup
-
-1. **Enable Notion MCP** in your Claude Code settings
-2. **Configure workspace** in `stages/05-task-management/config.yaml`:
-   ```yaml
-   notion_integration:
-     enabled: true
-     workspace_name: "Your Workspace"
-   ```
-
-### Usage by Stage
-
-| Stage | Notion Usage | Command |
-|-------|--------------|---------|
-| 05-task-management | Task database creation | Auto |
-| 06-implementation | Progress tracking | `/sync notion` |
-| 08-qa | Bug tracking | Auto |
-
-### Task Creation Rules (Critical)
-
-> ⚠️ **Sequential creation required** - Notion API may fail with concurrent requests
-
-```yaml
-task_creation:
-  mode: "sequential"
-  batch_size: 1
-  delay_ms: 100
-```
-
-### Troubleshooting
-
-| Issue | Solution |
-|-------|----------|
-| MCP connection failed | Check Notion MCP server status |
-| Permission denied | Verify workspace access token |
-| Duplicate tasks | Enable `check_duplicates: true` |
-
-### Disable Notion (Optional)
-
-Set `notion_integration.enabled: false` to use markdown-based task management instead.
-
----
-
-## Multi-AI Orchestration
-
-> Configuration files: `config/ai_collaboration.yaml`, `config/ai_benchmarking.yaml`
-
-### AI Collaboration Modes
-
-| Mode | Description | Used In Stages |
-|------|-------------|----------------|
-| `parallel` | Execute same task with multiple AIs simultaneously | 01-brainstorm, 02-research |
-| `sequential` | Sequential handoff between AIs (review chain) | 06-implementation, 07-refactoring |
-| `debate` | AI debate to reach optimal conclusions | 03-planning, 04-ui-ux |
-
-### AI Model Specialization
-
-| AI Model | Strengths | Optimal Stages |
-|----------|-----------|----------------|
-| Claude | Accurate code generation, logic analysis | 06-implementation, 08-qa |
-| Gemini | Creative ideas, rapid exploration | 01-brainstorm, 03-planning |
-| Codex | Deep analysis, refactoring | 07-refactoring, 09-testing |
-
-### Usage
-```bash
-# Parallel collaboration execution
-/collaborate --mode parallel --models claude,gemini --task "idea generation"
-
-# Debate mode
-/collaborate --mode debate --rounds 3
-
-# AI benchmarking
-/benchmark --task code_generation --models claude,codex
-```
-
----
-
-## Parallel AI Execution Policy
-
-### Overview
-All defined AI models execute the same task in parallel, and each output is synthesized to produce the final result.
-
-### Execution Flow
-1. **Parallel Execution**: Designated models perform the task simultaneously
-2. **Individual Output**: Each model generates `output_modelName.md`
-3. **Synthesis**: ClaudeCode analyzes all outputs and generates `final_output.md`
-
-### Stage Model Assignment
-
-| Stage | Parallel Models | Synthesizer | Output |
-|-------|-----------------|-------------|--------|
-| 01-brainstorm | Gemini + ClaudeCode | ClaudeCode | ideas.md |
-| 03-planning | Gemini + ClaudeCode | ClaudeCode | architecture.md |
-| 04-ui-ux | Gemini + ClaudeCode | ClaudeCode | wireframes.md |
-| 07-refactoring | Codex + ClaudeCode | ClaudeCode | refactoring_report.md |
-| 09-testing | Codex + ClaudeCode | ClaudeCode | tests/ |
-
-> Single-model stages (02, 05, 06, 08, 10) maintain existing behavior
-
-### Synthesis Criteria
-1. **Extract Commonalities**: Prioritize content all models agree on
-2. **Analyze Differences**: Compare pros/cons, select best approach
-3. **Complementary Integration**: Merge unique insights from each model
-4. **Quality Filtering**: Remove low-quality content
-
----
-
-## Default Parallel Execution
-
-### Parallel Mode is NOW DEFAULT for:
-| Stage | Models | Synthesizer |
-|-------|--------|-------------|
-| 01-brainstorm | Gemini + ClaudeCode | ClaudeCode |
-| 03-planning | Gemini + ClaudeCode | ClaudeCode |
-| 04-ui-ux | Gemini + ClaudeCode | ClaudeCode |
-| 07-refactoring | Codex + ClaudeCode | ClaudeCode |
-| 09-testing | Codex + ClaudeCode | ClaudeCode |
-
-### Execution Policy Configuration
-> Configuration file: `config/ai_collaboration.yaml`
-
-```yaml
-execution_policy:
-  default_mode: "parallel"
-  stage_classification:
-    parallel_capable: [01-brainstorm, 03-planning, 04-ui-ux, 07-refactoring, 09-testing]
-    sequential_only: [02-research, 05-task-management, 06-implementation, 08-qa, 10-deployment]
-```
-
-### Consolidation Workflow
-Claude Code automatically consolidates parallel outputs:
-1. **Collect** - Gather all model outputs
-2. **Analyze** - Identify commonalities → HIGH CONFIDENCE
-3. **Evaluate** - Compare unique contributions
-4. **Synthesize** - Create final unified output
-5. **Validate** - Verify completeness and quality
-
-### Synthesis Commands
-```bash
-/synthesize              # Consolidate current stage outputs
-/synthesize --verbose    # Show detailed analysis
-/synthesize --dry-run    # Preview without writing
-/synthesize --force      # Re-synthesize even if output exists
-```
-
-### Quality Threshold
-- Default: 0.8 (80%)
-- Outputs below threshold trigger review prompt
-
----
-
-## Smart HANDOFF System
-
-> Configuration files: `config/handoff_intelligence.yaml`, `config/memory_integration.yaml`
-
-### Auto-Extracted Items
-- Completed tasks (`completed_tasks`)
-- Key decisions (`key_decisions`)
-- Modified files (`modified_files`)
-- Pending issues (`pending_issues`)
-- AI call history (`ai_call_history`)
-
-### Context Compression
-- **Strategy**: Semantic-based compression (`semantic`)
-- **Target ratio**: 30% of original
-- **Preserved items**: Key decisions, blocking issues, file changes
-
-### AI Memory Integration
-- Integration with claude-mem MCP
-- Auto-save to memory on stage completion
-- Previous context injection on stage start
-
-### HANDOFF Modes
-```bash
-# Default (smart) HANDOFF
-/handoff
-
-# Compact mode (minimum essential info only)
-/handoff --compact
-
-# Detailed recovery HANDOFF
-/handoff --recovery
-```
-
----
-
-## Auto-Checkpoint System
-
-> Configuration files: `config/auto_checkpoint.yaml`, `config/smart_rollback.yaml`
-
-### Auto-Generation Triggers
-
-| Trigger | Condition | Action |
-|---------|-----------|--------|
-| Task-based | 5 tasks completed | Create checkpoint |
-| File change | 100+ lines changed | Create checkpoint |
-| Destructive operation | rm, delete, drop patterns | Force checkpoint |
-| Time-based | 30 minutes elapsed | Create checkpoint |
-
-### Retention Policy
-- Max retention: 10
-- Milestone retention: Stage completion checkpoints preserved permanently
-
-### Smart Rollback
-```bash
-# Checkpoint list
-/restore --list
-
-# Rollback to specific checkpoint
-/restore checkpoint_20240101_120000
-
-# Partial rollback (file level)
-/restore checkpoint_id --partial --files "src/auth/*"
-```
-
----
-
-## Pipeline Forking
-
-> Configuration file: `config/pipeline_forking.yaml`
-
-### Fork Points
-- When architecture alternatives are proposed (03-planning)
-- When technical choices exist (06-implementation)
-
-### Fork Management
-- **Max active forks**: 3
-- **Merge strategy**: Best performer basis (`best_performer`)
-
-### Comparison Metrics
-- Code quality (`code_quality`)
-- Performance (`performance`)
-- Maintainability (`maintainability`)
-
-### Usage
-```bash
-# Create fork
-/fork create --reason "architecture alternative exploration" --direction "microservices"
-
-# Fork list
-/fork list
-
-# Compare forks
-/fork compare
-
-# Merge fork
-/fork merge fork_name
-
-# Delete fork
-/fork delete fork_name
-```
-
----
+Each stage follows this sequence:
+1. Load stage `CLAUDE.md` for instructions
+2. Load previous stage `HANDOFF.md` for context
+3. Load `references/<stage>/` for user-provided materials
+4. Execute all tasks defined in the stage instructions
+5. Save outputs to `stages/<stage>/outputs/`
+6. Validate outputs (required files exist, minimum quality)
+7. Generate `HANDOFF.md` for the next stage
+8. Update `state/progress.json`
+9. Create checkpoint (for implementation-heavy stages)
 
 ## Stage Personas
 
-> Configuration file: `config/stage_personas.yaml`
+Each stage uses an optimized AI behavior profile:
 
-Defines optimized AI behavior characteristics for each stage.
+| Stage | Persona | Temperature |
+|-------|---------|-------------|
+| 01 Brainstorm | Creative Explorer | 0.9 |
+| 02 Research | Analytical Investigator | 0.5 |
+| 03 Planning | Strategic Architect | 0.6 |
+| 04 UI/UX | Creative Designer | 0.7 |
+| 05 Tasks | Systematic Organizer | 0.4 |
+| 06 Implementation | Precise Builder | 0.3 |
+| 07 Refactoring | Code Surgeon | 0.5 |
+| 08 QA | Quality Guardian | 0.4 |
+| 09 Testing | Methodical Tester | 0.3 |
+| 10 Deployment | DevOps Engineer | 0.3 |
 
-| Stage | Persona | Characteristics | Temperature |
-|-------|---------|-----------------|-------------|
-| 01-brainstorm | Creative Explorer | Divergent thinking, unconstrained ideas | 0.9 |
-| 02-research | Analytical Investigator | Systematic analysis, in-depth investigation | 0.5 |
-| 03-planning | Strategic Architect | Long-term perspective, structural thinking | 0.6 |
-| 06-implementation | Precise Builder | Accurate implementation, error prevention | 0.3 |
-| 07-refactoring | Code Surgeon | Deep analysis, performance optimization | 0.5 |
-| 08-qa | Quality Guardian | Thorough verification, risk detection | 0.4 |
+## HANDOFF System
 
----
+HANDOFF.md files transfer context between stages. Each contains:
+- What was accomplished
+- Key decisions and rationale
+- Files created/modified
+- What the next stage needs to know
+- Unresolved issues
 
 ## Output Validation
 
-> Configuration file: `config/output_validation.yaml`
+Each stage has required outputs that are validated before progression:
+- File existence checks
+- Minimum content size
+- Required markdown sections
+- Build/lint/test commands (for code stages)
 
-### Validation Items
+If validation fails, the stage is retried with feedback.
 
-| Stage | Required Outputs | Validation Command |
-|-------|------------------|-------------------|
-| 01-brainstorm | `ideas.md` (minimum 5 ideas) | - |
-| 06-implementation | `src/` (lint, typecheck pass) | `npm run lint`, `npm run typecheck` |
-| 09-testing | `tests/` (coverage 80%+) | `npm run test:coverage` |
+## Prohibited Actions
 
-### Quality Metrics
-- Code quality threshold: 0.8
-- Test coverage threshold: 80%
-
-### Usage
-```bash
-# Validate current stage
-/validate
-
-# Validate specific stage
-/validate --stage 06-implementation
-
-# Include auto-fix
-/validate --fix
-
-# Verbose output
-/validate --verbose
-
-# Proceed despite failure (not recommended)
-/validate --force
-```
-
----
-
-## Sub-Agent System (Advanced)
-
-### What are Sub-Agents?
-
-claude-symphony uses **sub-agents** to perform specialized tasks in isolated contexts, preserving your main session's context window.
-
-**Currently Available Sub-Agents:**
-- **validation-agent**: Validates stage outputs (used by `/validate` command)
-
-### How Sub-Agents Work
-
-When you run `/validate`:
-1. A **Validation Agent** spawns in a separate context
-2. Agent performs checks using restricted tools (Read, Glob, Grep, Bash)
-3. Results are returned and saved to `state/validations/`
-4. Your main session context is **completely preserved**
-
-### Benefits for Users
-
-#### 1. Context Preservation
-```
-Example: You're coding in stage 06 with 45% context remaining
-- Without sub-agents: /validate uses 5-8% → 37-40% left
-- With sub-agents: /validate uses 0% → 45% left (Agent runs separately)
-```
-
-#### 2. Validation History
-All validation results are saved:
-```
-state/validations/
-├── 01-brainstorm_20260128_143000.json
-├── 03-planning_20260128_150000.json
-└── 06-implementation_20260128_163000.json
-```
-
-You can review past validation results anytime.
-
-#### 3. Intelligent Analysis
-Sub-agents use **extended thinking** to reason about issues:
-- Not just "file too small"
-- But "why is it small?" and "what's missing?"
-- Contextual suggestions for fixing issues
-
-#### 4. Automatic Fallback
-If a sub-agent fails, the system automatically falls back to legacy validation.
-You always get validation results.
-
-### When Sub-Agents Are Used
-
-| Command | Sub-Agent Used | Context Impact |
-|---------|----------------|----------------|
-| `/validate` | validation-agent | None (separate context) |
-| `/next` | validation-agent (if outputs need validation) | None |
-| Regular coding/work | No sub-agent | Normal context usage |
-
-### Checking Sub-Agent Results
-
-View saved validation results:
-```bash
-# List all validation results
-ls state/validations/
-
-# View specific result
-cat state/validations/01-brainstorm_20260128_143000.json
-```
-
-### Disabling Sub-Agents (Optional)
-
-Sub-agents are enabled by default. To disable:
-```yaml
-# config/output_validation.yaml
-use_agent: false  # Falls back to legacy validation
-```
-
-**Note**: Most users should keep sub-agents enabled for better context management.
-
----
-
-## Sub-Agent Model Enforcement Policy
-
-### Overview
-
-Each sub-agent has a designated AI model defined in its `agent.json` file. When spawning sub-agents via the Task tool, **you MUST pass the correct model parameter** to ensure cost efficiency and performance alignment.
-
-### 3-Step Model Selection Protocol
-
-When spawning any sub-agent, follow this protocol:
-
-1. **Read** the agent definition: `.claude/agents/{agent-name}/agent.json`
-2. **Extract** the `model` field value (e.g., `"sonnet"`, `"haiku"`, `"opus"`)
-3. **Pass** the value to the Task tool's `model` parameter
-
-**If the model field is `"inherit"` or absent**, omit the `model` parameter entirely (the agent inherits the parent session's model).
-
-### Agent Model Quick Reference
-
-| Agent | Model | Rationale |
-|-------|-------|-----------|
-| validation-agent | sonnet | Complex output analysis |
-| output-synthesis-agent | sonnet | Multi-output consolidation |
-| handoff-generator-agent | sonnet | Context compression |
-| benchmark-analyzer-agent | sonnet | Performance analysis |
-| checkpoint-manager-agent | **haiku** | Lightweight background task |
-| architecture-review-agent | sonnet | Architecture validation |
-| qa-analysis-agent | sonnet | Security/quality scanning |
-| requirements-validation-agent | sonnet | Requirements analysis |
-| research-analysis-agent | sonnet | Research synthesis |
-| task-decomposition-agent | sonnet | Task breakdown |
-| refactoring-analysis-agent | sonnet | Code analysis |
-| test-execution-agent | sonnet | Test orchestration |
-| smart-rollback-agent | sonnet | Rollback analysis |
-| cicd-validation-agent | sonnet | CI/CD validation |
-| moodboard-analysis-agent | sonnet | Design analysis |
-
-### Rules
-
-- **ALWAYS** read the agent's `agent.json` before spawning to get the current model value
-- **NEVER** hardcode model values — always read from `agent.json` at spawn time
-- **NEVER** ignore the model field or use a different model than specified
-- **Cost control**: `checkpoint-manager-agent` uses `haiku` for background tasks — this is intentional for cost efficiency
-
-### Example
-
-```
-# Correct: Read agent.json, pass model
-agent.json → { "model": "haiku" }
-Task tool → model: "haiku"
-
-# Correct: model is "inherit"
-agent.json → { "model": "inherit" }
-Task tool → (omit model parameter)
-
-# WRONG: Ignoring agent.json model
-agent.json → { "model": "haiku" }
-Task tool → (no model parameter) ← VIOLATION
-```
-
----
-
-## New Configuration Files
-
-| File | Description |
-|------|-------------|
-| `config/ai_collaboration.yaml` | AI collaboration mode settings |
-| `config/ai_benchmarking.yaml` | AI benchmarking settings |
-| `config/handoff_intelligence.yaml` | Smart HANDOFF settings |
-| `config/memory_integration.yaml` | AI memory integration settings |
-| `config/auto_checkpoint.yaml` | Auto-checkpoint settings |
-| `config/smart_rollback.yaml` | Smart rollback settings |
-| `config/pipeline_forking.yaml` | Pipeline forking settings |
-| `config/stage_personas.yaml` | Stage persona settings |
-| `config/output_validation.yaml` | Output validation settings |
-
-## New State Directories
-
-| Directory | Description |
-|-----------|-------------|
-| `state/ai_benchmarks/` | AI benchmark results storage |
-| `state/forks/` | Pipeline fork state storage |
-| `state/validations/` | Validation results storage |
+- Skipping a stage without completing required outputs
+- Modifying previous stage outputs
+- Proceeding without generating HANDOFF.md
+- Destructive operations without checkpoint (stages 06-10)

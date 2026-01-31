@@ -1,186 +1,51 @@
-# Stage 09: Testing & E2E
+# Stage 09: Testing
 
-Test code writing and E2E testing stage
+## Objective
+Write comprehensive tests and achieve adequate test coverage.
 
-## Persona: Test Engineer
+## Inputs
+- `stages/08-qa/HANDOFF.md` — QA context
+- `stages/08-qa/outputs/qa_report.md` — issues found
+- `stages/08-qa/outputs/bug_list.md` — bugs to verify
+- Source code in project root
+- `references/09-testing/` — test examples, coverage requirements
 
-> You are a Test Engineer.
-> Write reliable and maintainable tests.
-> Aim for high coverage and clear test cases.
+## Tasks
 
-### Characteristics
-- Systematic testing
-- Coverage optimization
-- Automation-oriented
-- Reproducibility
+1. **Test infrastructure setup** — configure test framework (Vitest/Jest), add test scripts
+2. **Unit tests** — test individual functions, utilities, and business logic
+3. **Integration tests** — test API endpoints, database operations, service interactions
+4. **Component tests** — test UI components with their props and states
+5. **E2E tests** — test critical user flows end-to-end (if Playwright/Cypress configured)
+6. **Run all tests** — execute test suite and capture results
 
-### Recommended Actions
-- High test coverage
-- Various scenarios
-- Automated tests
-- Clear assertions
+## Required Outputs
 
-### Actions to Avoid
-- Flaky tests
-- Hardcoded values
-- Tests with many dependencies
+### Test files (in project source)
+- Test files alongside or in `__tests__/` directories
+- Test configuration files (vitest.config.ts, playwright.config.ts)
 
-### AI Settings
-- **Temperature**: 0.4 (systematic design)
-- **Coverage Focus**: High
-- **Automation Level**: High
+### `stages/09-testing/outputs/test_report.md` (required)
+- Test execution results (pass/fail counts)
+- Failed test details and analysis
+- Flaky test identification
+- Test execution time
 
-## Execution Model
-- **Primary**: Codex (test code generation)
-- **Mode**: Sandbox + Playwright
-- **MCP**: playwright server integration
+### `stages/09-testing/outputs/coverage_report.md` (required)
+- Line coverage percentage
+- Branch coverage percentage
+- Uncovered critical paths identified
+- Recommendations for additional coverage
 
-## Parallel Execution Protocol
+## Quality Criteria
+- All tests pass
+- Test coverage is at least 60% for core modules
+- Critical user flows have E2E coverage
+- No flaky tests in the suite
 
-### Models
-- **Primary**: Codex (test generation)
-- **Secondary**: ClaudeCode (test validation)
-
-### Execution
-1. Codex: Generate `output_codex.md`
-2. ClaudeCode: Generate `output_claudecode.md`
-3. ClaudeCode (Synthesizer): Synthesize → `tests/`
-
-### Output Files
-- `output_codex.md` - Codex results
-- `output_claudecode.md` - ClaudeCode results
-- `tests/` - Final synthesized test files
-
-### Synthesis Criteria
-1. Extract commonalities first
-2. Analyze differences and select best
-3. Integrate unique insights
-4. Filter low-quality content
-
-## Goals
-1. Unit test writing
-2. Integration test writing
-3. E2E test writing (Playwright)
-4. Test coverage achievement
-
-## Input Files
-- `$STAGES_ROOT/07-refactoring/outputs/refactored_code/` (or modified code)
-- `$STAGES_ROOT/08-qa/outputs/qa_report.md`
-- `$STAGES_ROOT/08-qa/HANDOFF.md`
-
-## Output Files
-- `outputs/tests/` - Test code
-- `outputs/test_report.md` - Test results report
-- `outputs/coverage_report.md` - Coverage report
-- `HANDOFF.md` - Handoff document for next stage
-
-## Codex CLI Usage
-
-### Unit Test Generation
-```bash
-/codex "Write unit tests for the following function:
-[function code]
-Test framework: Vitest/Jest
-Coverage target: 80%"
-```
-
-### E2E Test Generation
-```bash
-/codex "Write Playwright tests for the following user flows:
-1. Login flow
-2. Core feature test
-3. Error scenarios"
-```
-
-## Workflow
-
-### 1. Test Environment Setup
-```bash
-# Vitest setup
-npm install -D vitest @testing-library/react
-
-# Playwright setup
-npm install -D @playwright/test
-npx playwright install
-```
-
-### 2. Unit Test Writing
-- Utility functions
-- Component rendering
-- Hook tests
-- API handlers
-
-### 3. Integration Tests
-- API integration tests
-- Component integration tests
-- Data flow tests
-
-### 4. E2E Tests
-- Core user flows
-- Authentication flows
-- Error handling scenarios
-
-### 5. Coverage Analysis
-- Verify target coverage
-- Identify uncovered areas
-
-## Coverage Targets
-- **Statements**: 80%
-- **Branches**: 75%
-- **Functions**: 80%
-- **Lines**: 80%
-
----
-
-## ⚠️ Mandatory Git Commit Rule
-
-> **CRITICAL**: Git commit is REQUIRED after every task completion in this stage.
-
-### Per-Task Commit Protocol
-After completing each task:
-
-1. **Stage changes**
-   ```bash
-   git add <relevant-files>
-   ```
-
-2. **Commit with conventional format**
-   ```bash
-   git commit -m "test(test): <task description>"
-   ```
-
-3. **Verify clean state**
-   ```bash
-   git status  # Should show "nothing to commit"
-   ```
-
-### Commit Message Format
-| Task Type | Format | Example |
-|-----------|--------|---------|
-| Unit test | `test(test): ...` | `test(test): add user service unit tests` |
-| Integration test | `test(test): ...` | `test(test): add API integration tests` |
-| E2E test | `test(test): ...` | `test(test): add auth E2E tests` |
-| Test fix | `test(test): ...` | `test(test): fix flaky async test` |
-
-### ❌ Prohibited
-- Proceeding to next task without committing
-- Batching multiple tasks into single commit
-- WIP or meaningless commit messages
-
-### ✅ Required
-- One commit per task (minimum)
-- Meaningful, descriptive commit messages
-- Clean working directory before next task
-
----
-
-## Completion Criteria
-- [ ] Unit tests written (coverage 80%+)
-- [ ] Integration tests written
-- [ ] E2E tests written (core flows)
-- [ ] All tests passing
-- [ ] Coverage report generated
-- [ ] HANDOFF.md generated
-
-## Next Stage
-→ **10-deployment**: CI/CD and deployment
+## HANDOFF
+Generate `stages/09-testing/HANDOFF.md` summarizing:
+- Test coverage achieved
+- Critical paths tested
+- Known test gaps
+- Deployment readiness assessment

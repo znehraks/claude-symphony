@@ -6,6 +6,7 @@ import path from 'path';
 import { readJson, writeJson, pathExists } from '../../utils/fs.js';
 import { getTimestamp } from '../../utils/shell.js';
 import { ProgressSchema, type Progress, createInitialProgress } from '../../types/state.js';
+import { STAGE_IDS } from '../../types/stage.js';
 import type { StageId, StageStatus } from '../../types/stage.js';
 
 /**
@@ -312,5 +313,45 @@ export class ProgressManager {
 
     progress.stage_status = 'completed';
     return this.save();
+  }
+
+  /**
+   * Get the next stage after the current one.
+   * Returns the next StageId or null if pipeline is complete.
+   */
+  async getNextStage(): Promise<StageId | null> {
+    const progress = await this.load();
+    if (!progress) return null;
+
+    const currentIndex = STAGE_IDS.indexOf(progress.current_stage);
+    if (currentIndex === -1 || currentIndex >= STAGE_IDS.length - 1) {
+      return null;
+    }
+    return STAGE_IDS[currentIndex + 1]!;
+  }
+
+  /**
+   * Check if all stages are completed.
+   */
+  async isComplete(): Promise<boolean> {
+    const progress = await this.load();
+    if (!progress) return false;
+
+    return STAGE_IDS.every(
+      (stageId) => progress.stages[stageId]?.status === 'completed' || progress.stages[stageId]?.status === 'skipped'
+    );
+  }
+
+  /**
+   * Get all stages with their statuses.
+   */
+  async getStageStatuses(): Promise<Array<{ id: StageId; status: StageStatus }>> {
+    const progress = await this.load();
+    if (!progress) return [];
+
+    return STAGE_IDS.map((id) => ({
+      id,
+      status: progress.stages[id]?.status ?? 'pending',
+    }));
   }
 }

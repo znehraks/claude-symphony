@@ -52,28 +52,10 @@ describe('Agent Loading and Configuration', () => {
     expect(agent.extendedThinking).toBe(true);
   });
 
-  it('should load output-synthesis-agent definition', async () => {
-    const agent = await registry.loadAgent('output-synthesis-agent');
-    expect(agent.name).toBe('output-synthesis-agent');
-    expect(agent.description).toContain('parallel AI outputs');
-    expect(agent.model).toBe('sonnet');
-    expect(agent.extendedThinking).toBe(true);
-  });
-
-  it('should load architecture-review-agent definition', async () => {
-    const agent = await registry.loadAgent('architecture-review-agent');
-    expect(agent.name).toBe('architecture-review-agent');
-    expect(agent.description).toContain('architecture');
-    expect(agent.model).toBe('sonnet');
-    expect(agent.extendedThinking).toBe(true);
-  });
-
-  it('should load research-analysis-agent definition', async () => {
-    const agent = await registry.loadAgent('research-analysis-agent');
-    expect(agent.name).toBe('research-analysis-agent');
-    expect(agent.description).toContain('research');
-    expect(agent.model).toBe('sonnet');
-    expect(agent.extendedThinking).toBe(true);
+  it('should fail to load deleted agents', async () => {
+    await expect(registry.loadAgent('output-synthesis-agent')).rejects.toThrow('Agent not found');
+    await expect(registry.loadAgent('architecture-review-agent')).rejects.toThrow('Agent not found');
+    await expect(registry.loadAgent('research-analysis-agent')).rejects.toThrow('Agent not found');
   });
 });
 
@@ -113,37 +95,14 @@ describe('Agent Spawning', () => {
     expect(result.mode).toBe('foreground');
   });
 
-  it('should spawn output-synthesis-agent', async () => {
+  it('should fail to spawn deleted agents', async () => {
     const result = await spawnAgent('output-synthesis-agent', {
       projectRoot: PROJECT_ROOT,
       stage: '01-brainstorm',
-      data: {
-        modelOutputs: ['ideas_gemini.md', 'ideas_claude.md'],
-      },
     });
 
-    expect(result).toBeDefined();
-    expect(result.mode).toBe('foreground');
-  });
-
-  it('should spawn architecture-review-agent', async () => {
-    const result = await spawnAgent('architecture-review-agent', {
-      projectRoot: PROJECT_ROOT,
-      stage: '03-planning',
-    });
-
-    expect(result).toBeDefined();
-    expect(result.mode).toBe('foreground');
-  });
-
-  it('should spawn research-analysis-agent', async () => {
-    const result = await spawnAgent('research-analysis-agent', {
-      projectRoot: PROJECT_ROOT,
-      stage: '02-research',
-    });
-
-    expect(result).toBeDefined();
-    expect(result.mode).toBe('foreground');
+    expect(result.success).toBe(false);
+    expect(result.errors![0]).toContain('Agent not found');
   });
 });
 

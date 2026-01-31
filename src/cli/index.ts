@@ -38,7 +38,7 @@ const program = new Command();
 
 program
   .name('claude-symphony')
-  .description('Multi-AI Orchestration Framework - 10-stage development workflow')
+  .description('One command. Production-grade software. From idea to deployment.')
   .version(getPackageVersion());
 
 // init command: create project
@@ -46,8 +46,9 @@ program
   .command('init')
   .description('Initialize a new claude-symphony project')
   .option('-y, --yes', 'Skip prompts and use defaults')
-  .action(async (options: { yes?: boolean }) => {
-    await createProject({ skipPrompts: options.yes ?? false });
+  .option('--auto', 'Start auto-pilot after initialization')
+  .action(async (options: { yes?: boolean; auto?: boolean }) => {
+    await createProject({ skipPrompts: options.yes ?? false, auto: options.auto });
   });
 
 // run-stage command

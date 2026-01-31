@@ -1,97 +1,46 @@
 # Stage 02: Research
 
-Technical research and market analysis stage
+## Objective
+Conduct technical research and feasibility analysis based on the brainstorming outputs.
 
-## Persona: Analytical Investigator
+## Inputs
+- `stages/01-brainstorm/HANDOFF.md` — context from brainstorming
+- `stages/01-brainstorm/outputs/` — ideas and requirements
+- `references/02-research/` — any research reference materials
 
-> You are an Analytical Investigator.
-> Provide evidence for all claims and investigate from multiple perspectives.
-> Clarify trade-offs and provide objective analysis.
+## Tasks
 
-### Characteristics
-- Systematic investigation
-- Evidence-based analysis
-- Comparative evaluation
-- Comprehensive judgment
+1. **Technology evaluation** — research and compare tech stack options (frameworks, databases, hosting)
+2. **Library analysis** — identify key libraries/packages needed, compare alternatives
+3. **Competitor analysis** — study 3-5 similar products, identify gaps and opportunities
+4. **Feasibility assessment** — evaluate technical feasibility of proposed features
+5. **Risk identification** — identify technical risks and mitigation strategies
 
-### Recommended Actions
-- Research multiple sources
-- Data-driven analysis
-- Trade-off comparison
-- Clear evidence presentation
+## Required Outputs
 
-### Actions to Avoid
-- Relying on speculation
-- Single source dependency
-- Emotional judgment
+Save all files to `stages/02-research/outputs/`:
 
-### AI Settings
-- **Temperature**: 0.4 (high accuracy)
-- **Rigor**: High
+### `tech_research.md` (required, min 2000 bytes)
+- Framework comparison (pros/cons/recommendation)
+- Database options analysis
+- Key library recommendations with justification
+- Performance considerations
 
-## Execution Model
-- **Primary**: Claude (in-depth analysis, document synthesis)
-- **Mode**: Plan Mode - structured research
+### `feasibility_report.md` (required)
+- Feature feasibility matrix (feature vs difficulty vs value)
+- Technical risks and mitigations
+- Recommended tech stack with rationale
+- MVP timeline estimate
 
-## Goals
-1. Technical stack feasibility review
-2. Market analysis and competitive landscape
-3. External API/service research
-4. Technical risk identification
+## Quality Criteria
+- Every recommendation has a clear rationale
+- Trade-offs are explicitly documented
+- At least 2 alternatives considered per major decision
+- Research is based on current (2024+) information
 
-## Input Files
-- `$STAGES_ROOT/01-brainstorm/outputs/ideas.md`
-- `$STAGES_ROOT/01-brainstorm/outputs/requirements_analysis.md`
-- `$STAGES_ROOT/01-brainstorm/HANDOFF.md`
-
-## Output Files
-- `outputs/tech_research.md` - Technical research results
-- `outputs/market_analysis.md` - Market analysis
-- `outputs/feasibility_report.md` - Feasibility report
-- `HANDOFF.md` - Handoff document for next stage
-
-## MCP Server Usage
-
-### firecrawl
-Web crawling and data collection
-```
-Analyze competitor websites with firecrawl
-```
-
-### exa
-AI-powered search
-```
-Search for latest technology trends and best practices
-```
-
-### context7
-Documentation search
-```
-Query official library/framework documentation
-```
-
-## Workflow
-
-### 1. Technology Stack Research
-- Research optimal tech stack for each MVP feature
-- Compare pros and cons of each technology
-- Evaluate learning curve and community support
-
-### 2. Market Analysis
-- Detailed competitor analysis
-- Market size and trends
-- Entry barrier analysis
-
-### 3. Feasibility Assessment
-- Technical feasibility
-- Time/resource requirements
-- Risk assessment
-
-## Completion Criteria
-- [ ] Complete technology stack comparison analysis
-- [ ] In-depth analysis of 3+ competitors
-- [ ] Write feasibility report
-- [ ] Generate HANDOFF.md
-
-## Next Stage
-→ **03-planning**: System architecture and technology stack decisions
+## HANDOFF
+Generate `stages/02-research/HANDOFF.md` summarizing:
+- Recommended tech stack
+- Key technical decisions and rationale
+- Identified risks
+- What the planning stage needs to know

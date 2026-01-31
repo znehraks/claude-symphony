@@ -19,33 +19,18 @@ describe('AgentRegistry', () => {
   });
 
   describe('listAgents', () => {
-    it('should return all 15 agents', async () => {
+    it('should return all 2 agents', async () => {
       const agents = await registry.listAgents();
-      expect(agents).toHaveLength(15);
+      expect(agents).toHaveLength(2);
     });
 
-    it('should include all Tier 1 agents', async () => {
+    it('should include core agents', async () => {
       const agents = await registry.listAgents();
-      const tier1Agents = [
+      const coreAgents = [
         'validation-agent',
         'handoff-generator-agent',
-        'output-synthesis-agent',
-        'architecture-review-agent',
-        'research-analysis-agent',
       ];
-      for (const agent of tier1Agents) {
-        expect(agents).toContain(agent);
-      }
-    });
-
-    it('should include Tier 2 agents', async () => {
-      const agents = await registry.listAgents();
-      const tier2Agents = [
-        'task-decomposition-agent',
-        'test-execution-agent',
-        'refactoring-analysis-agent',
-      ];
-      for (const agent of tier2Agents) {
+      for (const agent of coreAgents) {
         expect(agents).toContain(agent);
       }
     });

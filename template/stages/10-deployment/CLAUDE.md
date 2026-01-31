@@ -1,157 +1,55 @@
-# Stage 10: CI/CD & Deployment
+# Stage 10: Deployment
 
-Deployment pipeline setup and deployment stage
+## Objective
+Set up CI/CD pipeline and deploy the application to production.
 
-## Persona: DevOps Specialist
+## Inputs
+- `stages/09-testing/HANDOFF.md` — testing context
+- `stages/09-testing/outputs/` — test results and coverage
+- `stages/03-planning/outputs/tech_stack.md` — hosting platform selection
+- Source code in project root
+- `references/10-deployment/` — CI/CD templates, infrastructure configs
 
-> You are a DevOps Specialist.
-> Build safe and repeatable deployment processes.
-> Always consider rollback possibilities and set up monitoring.
+## Tasks
 
-### Characteristics
-- Automation expertise
-- Security emphasis
-- Monitoring design
-- Rollback readiness
+1. **CI pipeline** — configure GitHub Actions (or chosen CI) for lint, typecheck, test on push
+2. **Environment configuration** — set up environment variables, secrets management
+3. **Build configuration** — optimize production build (minification, tree-shaking, etc.)
+4. **Deployment setup** — configure hosting platform (Vercel/Netlify/Railway/etc.)
+5. **Database migration** — set up production database and run migrations
+6. **Deployment verification** — deploy and verify the application works in production
 
-### Recommended Actions
-- Automated pipelines
-- Environment separation
-- Rollback strategy
-- Monitoring setup
+## Required Outputs
 
-### Actions to Avoid
-- Manual deployment
-- Hardcoded configuration
-- Ignoring security
+### CI/CD configuration (in project root)
+- `.github/workflows/ci.yml` — CI pipeline
+- `.github/workflows/deploy.yml` — deployment pipeline (if applicable)
+- Hosting platform configuration (vercel.json, netlify.toml, etc.)
 
-### AI Settings
-- **Temperature**: 0.2 (safety first)
-- **Safety Focus**: Critical
-- **Automation Level**: High
+### `stages/10-deployment/outputs/deployment_guide.md` (required)
+- Deployment steps (manual and automated)
+- Environment variables needed
+- Database setup instructions
+- Monitoring and logging setup
+- Rollback procedure
+- Production URL(s)
 
-## Execution Model
-- **Primary**: ClaudeCode (CI/CD configuration)
-- **Mode**: Headless - CI/CD environment automation
+### `stages/10-deployment/outputs/ci_config.yaml` (optional)
+- CI/CD pipeline documentation
 
-## Goals
-1. CI/CD pipeline setup
-2. Deployment environment configuration
-3. Monitoring setup
-4. Documentation completion
+## Quality Criteria
+- CI pipeline runs lint, typecheck, and tests
+- Application deploys without errors
+- Production environment is accessible
+- Environment variables are properly configured (no secrets in code)
 
-## Input Files
-- `source_code/` - Final source code (in PROJECT_ROOT)
-- `$STAGES_ROOT/09-testing/outputs/tests/`
-- `$STAGES_ROOT/09-testing/outputs/test_report.md`
-- `$STAGES_ROOT/09-testing/HANDOFF.md`
+## HANDOFF
+Generate `stages/10-deployment/HANDOFF.md` summarizing:
+- Deployment URLs and access info
+- CI/CD pipeline status
+- Post-deployment checklist
+- Monitoring and maintenance notes
 
-## Output Files
-- `outputs/.github/workflows/` - GitHub Actions
-- `outputs/deployment_config/` - Deployment configuration
-- `outputs/deployment_log.md` - Deployment log
-- `HANDOFF.md` (final)
-
-## Workflow
-
-### 1. CI Pipeline Setup
-```yaml
-# .github/workflows/ci.yml
-name: CI
-on: [push, pull_request]
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run type-check
-      - run: npm test
-```
-
-### 2. CD Pipeline Setup
-- Staging environment deployment
-- Production environment deployment
-- Rollback strategy
-
-### 3. Environment Configuration
-- Environment variable management
-- Secret configuration
-- Domain/SSL
-
-### 4. Monitoring Setup
-- Error tracking (Sentry)
-- Performance monitoring
-- Log collection
-
-### 5. Documentation
-- Deployment guide
-- Operations manual
-- Troubleshooting guide
-
-## Deployment Platform Options
-- **Vercel**: Recommended for Next.js
-- **Railway**: Full-stack
-- **AWS**: Enterprise
-- **Cloudflare**: Edge
-
----
-
-## ⚠️ Mandatory Git Commit Rule
-
-> **CRITICAL**: Git commit is REQUIRED after every task completion in this stage.
-
-### Per-Task Commit Protocol
-After completing each task:
-
-1. **Stage changes**
-   ```bash
-   git add <relevant-files>
-   ```
-
-2. **Commit with conventional format**
-   ```bash
-   git commit -m "ci(deploy): <task description>"
-   ```
-
-3. **Verify clean state**
-   ```bash
-   git status  # Should show "nothing to commit"
-   ```
-
-### Commit Message Format
-| Task Type | Format | Example |
-|-----------|--------|---------|
-| CI pipeline | `ci(deploy): ...` | `ci(deploy): configure GitHub Actions CI` |
-| CD pipeline | `ci(deploy): ...` | `ci(deploy): add Vercel deployment workflow` |
-| Config | `chore(deploy): ...` | `chore(deploy): add environment variables` |
-| Monitoring | `ci(deploy): ...` | `ci(deploy): configure Sentry error tracking` |
-
-### ❌ Prohibited
-- Proceeding to next task without committing
-- Batching multiple tasks into single commit
-- WIP or meaningless commit messages
-
-### ✅ Required
-- One commit per task (minimum)
-- Meaningful, descriptive commit messages
-- Clean working directory before next task
-
----
-
-## Completion Criteria
-- [ ] CI pipeline configured
-- [ ] CD pipeline configured
-- [ ] Staging deployment successful
-- [ ] Production deployment successful
-- [ ] Monitoring configured
-- [ ] Deployment documentation written
-- [ ] HANDOFF.md generated (final)
-
-## Pipeline Completion
-This is the final stage. After deployment completion:
-1. Project retrospective
-2. Document lessons learned
-3. Establish maintenance plan
+## Pipeline Complete
+This is the final stage. After successful deployment, the pipeline is complete.
+Update `state/progress.json` to reflect pipeline completion.

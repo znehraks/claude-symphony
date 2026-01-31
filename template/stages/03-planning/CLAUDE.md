@@ -1,171 +1,52 @@
 # Stage 03: Planning
 
-System architecture and technology stack decision stage
+## Objective
+Design the system architecture, data models, and API structure based on research findings.
 
-## Persona: Strategic Architect
+## Inputs
+- `stages/02-research/HANDOFF.md` — context from research
+- `stages/02-research/outputs/` — tech research and feasibility report
+- `references/03-planning/` — architecture examples, API specs
 
-> You are a Strategic Architect.
-> Design the big picture and establish systematic plans.
-> Identify risks in advance and prepare alternatives.
+## Tasks
 
-### Characteristics
-- Strategic thinking
-- Structuring ability
-- Risk assessment
-- Priority judgment
+1. **System architecture** — design high-level architecture (monolith/microservices, client-server topology)
+2. **Data modeling** — define database schema, entities, and relationships
+3. **API design** — define endpoints, request/response formats, authentication flow
+4. **Tech stack finalization** — confirm framework, database, hosting, and key libraries
+5. **Project plan** — create milestone-based plan with deliverables per milestone
 
-### Recommended Actions
-- Design overall picture
-- Define milestones
-- Identify risks
-- Propose alternative paths
+## Required Outputs
 
-### Actions to Avoid
-- Focus on detailed implementation
-- Consider only short-term perspective
-- Present single path only
+Save all files to `stages/03-planning/outputs/`:
 
-### AI Settings
-- **Temperature**: 0.6 (balanced creativity)
-- **Structuring emphasis**: High
+### `architecture.md` (required)
+- System architecture diagram (text-based)
+- Component descriptions and responsibilities
+- Data flow between components
+- Infrastructure requirements
 
-## Execution Model
-- **Primary**: Gemini (architecture design, diagrams)
-- **Mode**: Plan Mode - structured design
+### `tech_stack.md` (required)
+- Final tech stack selections with versions
+- Database schema (tables, fields, relationships)
+- API endpoint list with methods and paths
+- Authentication/authorization strategy
 
-## Parallel Execution Protocol
+### `project_plan.md` (required)
+- Milestone breakdown (3-5 milestones)
+- Deliverables per milestone
+- Dependencies between components
+- Risk mitigation plan
 
-### Models
-- **Primary**: Gemini (architecture design)
-- **Secondary**: ClaudeCode (technical validation)
+## Quality Criteria
+- Architecture supports all must-have features from Stage 01
+- Data model covers all entities without redundancy
+- API design follows RESTful conventions (or GraphQL if chosen)
+- Plan is actionable with clear deliverables
 
-### Execution
-1. Gemini: Generate `output_gemini.md`
-2. ClaudeCode: Generate `output_claudecode.md`
-3. ClaudeCode (Synthesizer): Synthesize → `architecture.md`
-
-### Output Files
-- `output_gemini.md` - Gemini results
-- `output_claudecode.md` - ClaudeCode results
-- `architecture.md` - Final synthesized result
-
-### Synthesis Criteria
-1. Extract commonalities first
-2. Analyze differences and select best
-3. Integrate unique insights
-4. Filter low-quality content
-
-## Goals
-1. System architecture design
-2. Final technology stack decision
-3. Project plan establishment
-4. Milestone definition
-
-## Input Files
-- `$STAGES_ROOT/02-research/outputs/tech_research.md`
-- `$STAGES_ROOT/02-research/outputs/feasibility_report.md`
-- `$STAGES_ROOT/02-research/HANDOFF.md`
-
-## Output Files
-- `outputs/architecture.md` - System architecture
-- `outputs/tech_stack.md` - Technology stack decision
-- `outputs/project_plan.md` - Project plan
-- `outputs/implementation.yaml` - **Implementation rules** (template: `config/implementation.yaml.template`)
-- `HANDOFF.md` - Handoff document for next stage
-
-### implementation.yaml Required
-Based on `config/implementation.yaml.template`, define project implementation rules:
-- Component type (functional/class)
-- Styling approach (css-modules/tailwind/styled-components)
-- State management (context/redux/zustand)
-- Naming conventions (PascalCase/kebab-case)
-- Folder structure (feature-based/type-based)
-
-## Workflow
-
-### 1. Architecture Design
-- Define system components
-- Design data flow
-- API design overview
-- Infrastructure configuration
-
-### 2. Technology Stack Finalization
-- Review Research stage recommended stack
-- Document final selection and rationale
-- Define versions and dependencies
-
-### 3. Project Planning
-- Sprint planning
-- Milestone definition
-- Resource allocation
-
-## Architecture Diagram Inclusions
-- System context diagram
-- Container diagram
-- Component diagram
-- Sequence diagram (core flows)
-
----
-
-## Requirements Refinement (Required)
-
-> Configuration: `config/requirements_refinement.yaml`
-> Command: `/refine`
-
-Before completing this stage, all requirements must be refined to at least Feature level.
-
-### Refinement Workflow
-
-```bash
-/refine                    # Start refinement wizard
-/refine --validate         # Validate all requirements
-/refine --list             # Check refinement status
-```
-
-### 4-Level Hierarchy
-
-| Level | Description | Max Hours |
-|-------|-------------|-----------|
-| Epic | Large theme/capability | - |
-| Feature | User-facing functionality | 40h |
-| Task | Technical implementation | 8h |
-| Subtask | Atomic step | 2h |
-
-### Validation Before Completion
-
-Run `/refine --validate` to check:
-- [ ] All requirements have acceptance criteria
-- [ ] Estimates within thresholds (Feature ≤40h, Task ≤8h)
-- [ ] Dependencies mapped
-- [ ] INVEST criteria met for tasks
-
-### INVEST Criteria
-
-Tasks should be:
-- **I**ndependent - Can be developed alone
-- **N**egotiable - Details flexible
-- **V**aluable - Delivers user value
-- **E**stimable - Has hour estimate
-- **S**mall - ≤ 8 hours
-- **T**estable - Has acceptance criteria
-
-### Output File
-
-Generate `outputs/refined_requirements.md` with the complete hierarchy:
-- Epic → Features → Tasks breakdown
-- Estimates at each level
-- Dependencies mapped
-- Acceptance criteria defined
-
----
-
-## Completion Criteria
-- [ ] Write system architecture document
-- [ ] Final technology stack decision
-- [ ] Establish project plan
-- [ ] Define 3+ milestones
-- [ ] **Requirements refined** (`/refine --validate` passes)
-- [ ] Generate HANDOFF.md
-
-## Next Stage
-→ **04-ui-ux**: User interface and experience design
+## HANDOFF
+Generate `stages/03-planning/HANDOFF.md` summarizing:
+- Architecture decisions and trade-offs
+- Tech stack selections
+- Database schema summary
+- Implementation priorities for Stage 05
