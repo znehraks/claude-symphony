@@ -3,6 +3,18 @@
   "version": "0.6.0",
   "description": "One command. Production-grade software. From idea to deployment, automatically.",
   "type": "module",
+  "main": "./dist/core/index.js",
+  "types": "./dist/core/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/core/index.js",
+      "types": "./dist/core/index.d.ts"
+    },
+    "./core": {
+      "import": "./dist/core/index.js",
+      "types": "./dist/core/index.d.ts"
+    }
+  },
   "bin": {
     "claude-symphony": "./dist/cli/index.js"
   },
