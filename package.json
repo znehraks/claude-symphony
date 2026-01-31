@@ -1,6 +1,6 @@
 {
   "name": "claude-symphony",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "One command. Production-grade software. From idea to deployment, automatically.",
   "type": "module",
   "main": "./dist/core/index.js",
