@@ -5,6 +5,57 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-01-31
+
+### Auto-Pilot Pipeline — "One Command, Production-Grade Software"
+
+### Added
+- **PipelineOrchestrator**: 10-stage auto-pilot 실행 엔진 (`src/core/pipeline/orchestrator.ts`)
+  - Stage prompt building (instructions + persona + handoff + references)
+  - Output validation and stage finalization
+  - HANDOFF.md 자동 생성 for stage transitions
+- **Retry & Pipeline Controls**: 3-attempt retry with validation feedback injection
+  - `pausePipeline()`, `resumePipeline()`, `skipStage()` 함수
+  - Pipeline state persistence (`state/pipeline_state.json`)
+  - `/pause`, `/resume`, `/skip` slash commands
+- **Import Mode**: `claude-symphony import ./path` for existing projects
+  - 프로젝트 구조 분석 (source, tests, CI/CD, UI, QA)
+  - 완료된 스테이지 자동 감지 & 스킵
+  - `--dry-run` 옵션 지원
+- **Core Sub-path Export**: 라이브러리 소비자를 위한 분리 빌드
+  - `import { ... } from 'claude-symphony/core'` 지원
+  - CLI (shebang 포함) / Library (shebang 없음) 빌드 분리
+- **TUI Progress Display**: 파이프라인 진행 상태 터미널 UI
+- **`/auto-pilot` slash command**: 10-stage 자동 실행
+- **ProgressManager 확장**: `getNextStage()`, `isComplete()`, `getStageStatuses()`
+- **37 new tests**: orchestrator (20), progress (10), TUI (7) — 총 141개 통과
+- **Pencil.dev 통합**: UI 디자인 도구로 pre-start intake 프로세스 추가
+- **Sub-agent model policy**: prompt 기반 모델 선택 정책
+
+### Changed
+- **프레임워크 피봇**: 수동 오케스트레이션 → auto-pilot 파이프라인
+- **init 명령어 간소화**: 단일 질문 ("What do you want to build?")
+- **빌드 설정 분리**: tsup config을 CLI/Library 2개 엔트리로 분할
+
+### Removed
+- **230+ 미사용 템플릿 파일**: 14개 에이전트 → 2개 core (validation, handoff-generator)
+- **28+ slash commands**: 34개 → 6개 essential commands
+- **20+ config 파일**: 25개 → 5개 core configs
+- **Stage 보일러플레이트**: README, config.jsonc, HANDOFF.md.template, prompts/, outputs/, templates/ 등
+- **Internal tracking files**: IMPLEMENTATION_PROGRESS.md, PHASE3_IMPLEMENTATION_STATUS.md, state/ artifacts
+
+---
+
+## [0.5.1] - 2026-01-30
+
+### Minor Fixes
+- **Sub-agent model enforcement**: prompt-based model selection policy
+- **README cleanup**: remove false claims and vaporware
+- **Pencil.dev integration**: add as primary UI tool
+- **License**: add missing LICENSE file, complete slash command categories
+
+---
+
 ## [0.5.0] - 2026-01-30
 
 ### Documentation & Cleanup Release
@@ -36,83 +87,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `docs/사용자_가이드_서브에이전트.md`
   - `docs/archived/` (11 files)
 - Documentation consolidated into `template/docs/` (end-user) and `CHANGELOG.md` (release history)
-
----
-
-## [1.0.0] - 2026-02-XX
-
-### 🎉 First Stable Release
-
-**Major Milestone**: Production-ready release with 5 Tier 1 sub-agents achieving 100% success rate and 100-120% cumulative context savings.
-
-### Added
-
-#### Release Documentation
-- `docs/v1.0.0-release-notes.md`: Comprehensive release notes with migration guide and roadmap
-- Updated `docs/sub-agents-implementation-progress.md`: Reflects Phase 3 completion (Tier 1: 100%, Tier 2-3: structure only)
-- Archived outdated plan files to `~/.claude/plans/archived/`
-
-#### Automated Testing Infrastructure (NEW)
-- Task tool mocking strategy for agent testing
-- Vitest configuration for agent tests
-- Unit test coverage for all Tier 1 agents
-- E2E test for complete stage transition workflow
-
-#### Performance Benchmarking (NEW)
-- `scripts/benchmark-agents.ts`: Measures cumulative context savings across sample projects
-- Performance metrics validation (execution time, success rate, context usage)
-- Sample project test suites (3 projects)
-
-### Changed
-
-#### Documentation
-- **BREAKING**: Updated agent status from "In Progress (Phase 1)" to accurate tier-based status
-  - Tier 1 (5 agents): ✅ Completed (Phase 3) - Logic implemented and tested
-  - Tier 2-3 (9 agents): 🟡 Structure Only (Phase 1) - CLAUDE.md exists, logic NOT implemented
-- Clarified v1.0.0 scope: Ships with Tier 1 only, Tier 2-3 deferred to v1.1/v1.2
-
-#### Roadmap
-- **v1.1.0 (Q2 2026)**: Tier 2 agents (qa-analysis, checkpoint-manager, benchmark-analyzer, test-execution)
-- **v1.2.0 (Q3 2026)**: Tier 3 agents (requirements-validation, task-decomposition, moodboard-analysis, cicd-validation, smart-rollback)
-
-### Performance (Verified)
-
-- **Context Savings**: 100-120% cumulative across project lifecycle (verified via testing)
-- **Average Execution Time**: 31 seconds (target: <60s) ✅ 2x faster
-- **Success Rate**: 100% (5/5 tests) ✅ Exceeded 95% target
-- **Context Isolation**: 0% main session usage ✅ Perfect
-
-### Quality Metrics
-
-- **Validation accuracy**: 100% (all stage validations passed)
-- **HANDOFF token efficiency**: 96% (3850/4000 tokens)
-- **Synthesis quality score**: 0.85 (exceeded 0.8 threshold)
-- **Architecture review**: 100% circular dependency detection
-- **Research analysis confidence**: 82% average (GO WITH CONDITIONS)
-
-### Known Limitations
-
-- **Tier 2-3 agents**: Structure only (9 agents have CLAUDE.md but no logic implementation)
-- **Automated testing**: Partial (manual testing complete, automated test mocking in progress)
-- **Benchmarking**: Performance benchmark script not yet created
-- **End-user tutorials**: Video tutorials not yet created
-
-### Migration Guide
-
-**From v0.4.0 to v1.0.0**: No breaking changes, fully backward compatible.
-
-**Recommended Actions**:
-1. Update to v1.0.0: `npm update -g claude-symphony`
-2. Verify agent integration: Run `/validate` in existing projects
-3. Review new documentation: `docs/v1.0.0-release-notes.md`
-
-### Security
-
-- Security audit completed (`npm audit`)
-- All critical and high severity vulnerabilities resolved
-- Dependency updates applied
-
----
 
 ## [0.4.1] - 2026-01-29
 
@@ -266,24 +240,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Template directory structure
 - CLI initialization command
 
-## Future Work (v1.1+)
-
-### Planned for v1.1
-- [ ] Automated integration tests (requires Task tool mocking)
-- [ ] Performance regression tests
-- [ ] Fallback mechanism testing
-- [ ] E2E pipeline tests
-- [ ] User guide for sub-agents
-- [ ] Troubleshooting guide
-
-### Deferred to v1.2+
-- Tier 2 agents (implementation, refactoring, testing)
-- Tier 3 agents (documentation, collaboration)
-- Web dashboard for visualization
-- Agent marketplace
-- Team collaboration features
-
----
-
-**v1.0.0 Released**: 2026-01-28
-**Next Target**: v1.1.0 - Integration Tests & E2E
