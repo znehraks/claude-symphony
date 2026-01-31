@@ -102,11 +102,25 @@ Inside Claude Code, you have 9 commands:
 ```bash
 claude-symphony init              # Create new project
 claude-symphony init --auto       # Create and auto-start
+claude-symphony import ./my-app   # Import existing project
+claude-symphony import ./my-app --dry-run  # Analyze without modifying
 claude-symphony status            # Show pipeline status
 claude-symphony stages            # List all stages
 claude-symphony checkpoint        # Create checkpoint
 claude-symphony restore [id]      # Restore from checkpoint
 ```
+
+### Import Existing Projects
+
+Already have a project? Import it and run only the remaining stages:
+
+```bash
+claude-symphony import ./existing-app
+# Analyzes your project → detects tests, CI/CD, components, etc.
+# Skips completed stages → runs only what's missing
+```
+
+This is perfect for taking a Lovable/Bolt.new prototype and running it through QA → Testing → Deployment.
 
 ## Key Features
 

@@ -16,6 +16,7 @@ import {
   deleteCheckpointCommand,
   cleanupCheckpointsCommand,
 } from './commands/checkpoint.js';
+import { importProject } from './commands/import.js';
 import type { StageId } from '../types/stage.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -49,6 +50,15 @@ program
   .option('--auto', 'Start auto-pilot after initialization')
   .action(async (options: { yes?: boolean; auto?: boolean }) => {
     await createProject({ skipPrompts: options.yes ?? false, auto: options.auto });
+  });
+
+// import command: import existing project
+program
+  .command('import <path>')
+  .description('Import an existing project into claude-symphony')
+  .option('--dry-run', 'Analyze without modifying files')
+  .action(async (targetPath: string, options: { dryRun?: boolean }) => {
+    await importProject(targetPath, { dryRun: options.dryRun });
   });
 
 // run-stage command
