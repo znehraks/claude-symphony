@@ -21,9 +21,7 @@
   "files": [
     "dist/",
     "template/",
-    "assets/",
-    "schemas/",
-    "scripts/"
+    "schemas/"
   ],
   "scripts": {
     "build": "tsup && npm run build:schema",

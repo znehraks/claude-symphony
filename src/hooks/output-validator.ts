@@ -257,11 +257,29 @@ async function validateStageOutputs(
     case '06-implementation':
       checkDirectoryExists(state, projectRoot, `stages/${stageId}/outputs/source_code`, true);
       checkFileExists(state, projectRoot, `stages/${stageId}/outputs/implementation_log.md`, true);
+      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/test_summary.md`, true);
 
-      // Build validation if package.json exists
+      // 4-Level Quality Gate for implementation
       if (existsSync(path.join(projectRoot, 'package.json'))) {
-        await runValidationCommand(state, 'lint', 'npm run lint', projectRoot, true);
-        await runValidationCommand(state, 'typecheck', 'npm run typecheck', projectRoot, true);
+        // Level 1: Build
+        await runValidationCommand(state, 'build', 'npm run build', projectRoot, true);
+
+        // Level 2: Unit & Integration Tests
+        await runValidationCommand(state, 'test', 'npm run test', projectRoot, true);
+
+        // Level 3: E2E Tests (optional — not all projects have E2E)
+        const pkgContent = readFileSync(path.join(projectRoot, 'package.json'), 'utf-8');
+        const hasE2E = pkgContent.includes('test:e2e');
+        if (hasE2E) {
+          await runValidationCommand(state, 'e2e', 'npm run test:e2e', projectRoot, false);
+        }
+
+        // Level 4: Lint & Typecheck
+        await runValidationCommand(state, 'lint', 'npm run lint', projectRoot, false);
+        const hasTypecheck = pkgContent.includes('typecheck');
+        if (hasTypecheck) {
+          await runValidationCommand(state, 'typecheck', 'npm run typecheck', projectRoot, false);
+        }
       }
       break;
 
@@ -414,10 +432,14 @@ function getValidationRulesForStage(stageId: StageId): Record<string, any> {
       ],
       files: [
         { path: 'stages/06-implementation/outputs/implementation_log.md', required: true },
+        { path: 'stages/06-implementation/outputs/test_summary.md', required: true },
       ],
       commands: [
-        { name: 'lint', command: 'npm run lint', required: true },
-        { name: 'typecheck', command: 'npm run typecheck', required: true },
+        { name: 'build', command: 'npm run build', required: true },
+        { name: 'test', command: 'npm run test', required: true },
+        { name: 'e2e', command: 'npm run test:e2e', required: false },
+        { name: 'lint', command: 'npm run lint', required: false },
+        { name: 'typecheck', command: 'npm run typecheck', required: false },
       ],
     },
     '07-refactoring': {

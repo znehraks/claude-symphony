@@ -1,0 +1,37 @@
+# Source (dist/ is published instead)
+src/
+tsup.config.ts
+tsconfig.json
+vitest.config.ts
+
+# Development scripts
+scripts/
+
+# Tests
+test/
+tests/
+**/*.test.ts
+**/*.spec.ts
+coverage/
+
+# Development files
+.github/
+.vscode/
+.claude/
+.env*
+*.log
+
+# Documentation (README.md is included by default)
+docs/
+CLAUDE.md
+CHANGELOG.md
+CONTRIBUTING.md
+
+# Assets not needed at runtime
+assets/
+
+# Misc
+node_modules/
+.git/
+.DS_Store
+*.tgz

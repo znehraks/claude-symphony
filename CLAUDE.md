@@ -1,70 +1,70 @@
 # claude-symphony Framework Development
 
-이 파일은 claude-symphony **프레임워크 자체**를 개발하는 개발자를 위한 AI 지시문입니다.
-**생성된 프로젝트**에서 작업하는 경우 `template/CLAUDE.md`를 참조하세요.
+This file contains AI instructions for developers working on the **claude-symphony framework itself**.
+If you're working on a **generated project**, refer to `template/CLAUDE.md` instead.
 
-## 프로젝트 구조
+## Project Structure
 
 ```
 /claude-symphony
-├── src/                # TypeScript 소스코드
-│   ├── cli/            # CLI 구현
-│   └── hooks/          # Hook 구현
-├── dist/               # 빌드 출력 (git 제외)
-├── template/           # End-User 프로젝트 템플릿
-├── schemas/            # JSON 스키마 (config 검증용)
-├── scripts/            # 개발/테스트 스크립트
-│   ├── dev/            # 개발 유틸리티
-│   ├── test/           # 테스트 스크립트
-│   └── user/           # 사용자 유틸리티
-└── docs/               # 개발자 문서
+├── src/                # TypeScript source code
+│   ├── cli/            # CLI implementation
+│   └── hooks/          # Hook implementation
+├── dist/               # Build output (git-ignored)
+├── template/           # End-user project template
+├── schemas/            # JSON schemas (for config validation)
+├── scripts/            # Development/test scripts
+│   ├── dev/            # Development utilities
+│   ├── test/           # Test scripts
+│   └── user/           # User utilities
+└── docs/               # Developer documentation
 ```
 
-## 빌드 & 테스트
+## Build & Test
 
-| 명령어 | 설명 |
-|--------|------|
-| `pnpm install` | 의존성 설치 |
-| `pnpm run build` | TypeScript 컴파일 + 스키마 생성 |
-| `pnpm run dev` | Watch 모드 |
-| `pnpm run typecheck` | 타입 체크 |
-| `pnpm run test` | Unit 테스트 |
-| `pnpm run test:pipeline` | 파이프라인 테스트 |
+| Command | Description |
+|---------|-------------|
+| `pnpm install` | Install dependencies |
+| `pnpm run build` | TypeScript compile + schema generation |
+| `pnpm run dev` | Watch mode |
+| `pnpm run typecheck` | Type check |
+| `pnpm run test` | Unit tests |
+| `pnpm run test:pipeline` | Pipeline tests |
 
-## 핵심 파일
+## Key Files
 
-| 파일 | 역할 |
+| File | Role |
 |------|------|
-| `src/cli/index.ts` | CLI 진입점 |
-| `template/CLAUDE.md` | End-User AI 지시문 |
-| `template/.claude/` | 명령어, 훅, 스킬 |
-| `schemas/*.json` | Config 스키마 |
-| `tsup.config.ts` | 빌드 설정 |
+| `src/cli/index.ts` | CLI entry point |
+| `template/CLAUDE.md` | End-user AI instructions |
+| `template/.claude/` | Commands, hooks, skills |
+| `schemas/*.json` | Config schemas |
+| `tsup.config.ts` | Build configuration |
 
-## Agent 아키텍처 (v0.2.14+)
+## Agent Architecture (v0.2.14+)
 
-**Task Tool 기반 구현** - Agent SDK에서 Claude Code native Task tool로 마이그레이션
+**Task Tool-based implementation** — Migrated from Agent SDK to Claude Code native Task tool
 
-### 구조
+### Structure
 
 ```
 src/core/agents/
 ├── task-spawner.ts   # Task Tool wrapper (~154 lines)
-├── registry.ts       # Agent 정의 로더 (168 lines)
+├── registry.ts       # Agent definition loader (168 lines)
 ├── types.ts          # Type definitions (93 lines)
 └── index.ts          # Public exports
 ```
 
-### 주요 변경사항
+### Key Changes
 
-| 변경 | Before (SDK) | After (Task Tool) |
-|------|--------------|-------------------|
-| 코드량 | 266 lines (sdk.ts) | 154 lines (task-spawner.ts) |
-| 의존성 | @anthropic-ai/claude-agent-sdk | 없음 (zero dependency) |
-| 통합 | SDK wrapper | Claude Code native |
-| 유지보수 | SDK 업데이트 필요 | Claude Code와 함께 진화 |
+| Change | Before (SDK) | After (Task Tool) |
+|--------|--------------|-------------------|
+| Code size | 266 lines (sdk.ts) | 154 lines (task-spawner.ts) |
+| Dependencies | @anthropic-ai/claude-agent-sdk | None (zero dependency) |
+| Integration | SDK wrapper | Claude Code native |
+| Maintenance | SDK updates required | Evolves with Claude Code |
 
-### 사용 예시
+### Usage Example
 
 ```typescript
 import { spawnAgent } from '../core/agents/index.js';
@@ -80,64 +80,64 @@ const result = await spawnAgent(
 );
 ```
 
-## MCP 서버 연동
+## MCP Server Integration
 
-### 사용 가능한 MCP 서버
+### Available MCP Servers
 
-| MCP 서버 | 용도 | 활용 |
-|----------|------|------|
-| **Serena** | 코드 심볼 분석 | `find_symbol`, `get_symbols_overview` 로 코드 탐색 |
-| **Context7** | 라이브러리 문서 | 외부 패키지 문서 조회 |
-| **Playwright** | E2E 테스트 | 브라우저 자동화 테스트 |
+| MCP Server | Purpose | Usage |
+|-----------|---------|-------|
+| **Serena** | Code symbol analysis | Use `find_symbol`, `get_symbols_overview` for code exploration |
+| **Context7** | Library documentation | Retrieve external package docs |
+| **Playwright** | E2E testing | Browser automation testing |
 
-### Serena 활용 예시
+### Serena Usage Examples
 
 ```
-# 심볼 검색
+# Symbol search
 mcp__serena__find_symbol: "CLICommand"
 
-# 파일 심볼 개요
+# File symbol overview
 mcp__serena__get_symbols_overview: "src/cli/index.ts"
 
-# 참조 찾기
+# Find references
 mcp__serena__find_referencing_symbols: "initProject"
 ```
 
-## 기여 가이드
+## Contributing
 
-### 브랜치 전략
+### Branch Strategy
 
-| 브랜치 | 용도 |
-|--------|------|
-| `main` | 안정 버전 |
-| `feature/*` | 새 기능 개발 |
-| `fix/*` | 버그 수정 |
-| `docs/*` | 문서 수정 |
+| Branch | Purpose |
+|--------|---------|
+| `main` | Stable release |
+| `feature/*` | New feature development |
+| `fix/*` | Bug fixes |
+| `docs/*` | Documentation changes |
 
-### PR 규칙
+### PR Rules
 
-1. **제목 형식**: `type(scope): description`
+1. **Title format**: `type(scope): description`
    - `feat(cli): add new command`
    - `fix(hooks): resolve fallback issue`
    - `docs(readme): update installation guide`
 
-2. **필수 체크리스트**:
-   - [ ] `pnpm run build` 성공
-   - [ ] `pnpm run test` 통과
-   - [ ] `pnpm run typecheck` 에러 없음
+2. **Required checklist**:
+   - [ ] `pnpm run build` succeeds
+   - [ ] `pnpm run test` passes
+   - [ ] `pnpm run typecheck` no errors
 
-3. **리뷰 요청 전**:
-   - 관련 문서 업데이트
-   - CHANGELOG.md 항목 추가 (해당 시)
+3. **Before requesting review**:
+   - Update related documentation
+   - Add CHANGELOG.md entry (if applicable)
 
-### 코드 스타일
+### Code Style
 
 - TypeScript strict mode
-- ESLint 규칙 준수
-- 함수/클래스에 JSDoc 주석
-- 파일당 단일 책임 원칙
+- ESLint rules enforced
+- JSDoc comments on functions/classes
+- Single responsibility per file
 
-### 테스트 작성
+### Writing Tests
 
 ```typescript
 // tests/cli.test.ts
@@ -148,27 +148,27 @@ describe('CLI', () => {
 });
 ```
 
-## 릴리스 프로세스
+## Release Process
 
-1. `package.json` 버전 업데이트
-2. `CHANGELOG.md` 작성
+1. Update `package.json` version
+2. Write `CHANGELOG.md`
 3. `pnpm run build && pnpm run test`
 4. `git commit -m "chore: bump version to x.x.x"`
 5. `git tag vx.x.x`
 6. `npm publish`
 
-## 수정 시 주의사항
+## Important Notes When Modifying
 
-| 영역 | 주의사항 |
-|------|----------|
-| `template/` | End-User에게 복사됨 - 개발자 전용 내용 금지 |
-| `schemas/` | 수정 후 `build:schema` 실행 필요 |
-| `src/` | 수정 후 빌드 필요 (`dist/`에 반영) |
-| Config | `$schema` URL은 GitHub raw URL 사용 |
+| Area | Caution |
+|------|---------|
+| `template/` | Copied to end-users — no developer-only content |
+| `schemas/` | Run `build:schema` after changes |
+| `src/` | Build required after changes (output goes to `dist/`) |
+| Config | `$schema` URLs use GitHub raw URLs |
 
-## 금지 사항
+## Prohibited
 
-- template/ 내부에 개발자 전용 내용 추가 금지
-- dist/ 직접 수정 금지 (빌드로 생성)
-- node_modules/ 커밋 금지
-- package-lock.json 사용 금지 (pnpm 사용)
+- Adding developer-only content inside `template/`
+- Directly modifying `dist/` (generated by build)
+- Committing `node_modules/`
+- Using `package-lock.json` (use pnpm)

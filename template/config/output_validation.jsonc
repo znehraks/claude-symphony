@@ -176,7 +176,7 @@
         "validation_commands": []
       },
       "06-implementation": {
-        "description": "Implementation output validation",
+        "description": "Implementation output validation (TDD-first: build → test → E2E → lint)",
         "required_outputs": {
           "source_code/": {
             "exists": true,
@@ -185,29 +185,55 @@
           "implementation_log.md": {
             "exists": true,
             "format": "changelog"
+          },
+          "test_summary.md": {
+            "exists": true,
+            "content_checks": {
+              "sections": [
+                "Unit",
+                "Integration",
+                "Coverage"
+              ]
+            }
           }
         },
         "validation_commands": [
           {
+            "name": "build",
+            "command": "npm run build",
+            "required": true,
+            "description": "Level 1: Project must compile"
+          },
+          {
+            "name": "test",
+            "command": "npm run test",
+            "required": true,
+            "description": "Level 2: All unit and integration tests must pass"
+          },
+          {
+            "name": "e2e",
+            "command": "npm run test:e2e",
+            "required": false,
+            "description": "Level 3: E2E tests for critical user flows"
+          },
+          {
             "name": "lint",
             "command": "npm run lint",
-            "required": true,
-            "allow_warnings": true
+            "required": false,
+            "allow_warnings": true,
+            "description": "Level 4: Static analysis"
           },
           {
             "name": "typecheck",
             "command": "npm run typecheck",
-            "required": true
-          },
-          {
-            "name": "build",
-            "command": "npm run build",
-            "required": true
+            "required": false,
+            "description": "Level 4: Type checking"
           }
         ],
         "quality_metrics": {
-          "lint_score": 0.9,
-          "type_coverage": 0.95
+          "test_pass_rate": 1.0,
+          "test_coverage_min": 0.6,
+          "lint_score": 0.9
         }
       },
       "07-refactoring": {

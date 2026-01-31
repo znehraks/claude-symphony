@@ -2,21 +2,17 @@
 {
   "$schema": "https://raw.githubusercontent.com/znehraks/claude-symphony/main/schemas/pipeline.schema.json",
   "pipeline": {
-    "name": "Multi-AI Development Workflow",
+    "name": "Claude Code Development Pipeline",
     "version": "1.0.0",
-    "description": "10-stage software development workflow with multi-AI orchestration"
+    "description": "10-stage software development pipeline with TDD-first quality gates"
   },
   "stages": [
     {
       "id": "01-brainstorm",
       "name": "Brainstorming",
       "description": "Divergent idea generation and requirements exploration",
-      "models": [
-        "gemini",
-        "claudecode"
-      ],
+      "models": ["claudecode"],
       "mode": "yolo",
-      "container": true,
       "inputs": [
         "project_brief.md",
         "user_requirements.md"
@@ -32,13 +28,9 @@
       "id": "02-research",
       "name": "Research",
       "description": "Technical research and market analysis",
-      "models": [
-        "claude"
-      ],
+      "models": ["claudecode"],
       "mode": "plan",
       "mcp_servers": [
-        "firecrawl",
-        "exa",
         "context7"
       ],
       "inputs": [
@@ -56,10 +48,7 @@
       "id": "03-planning",
       "name": "Planning",
       "description": "System architecture and tech stack decisions",
-      "models": [
-        "gemini",
-        "claudecode"
-      ],
+      "models": ["claudecode"],
       "mode": "plan",
       "inputs": [
         "tech_research.md",
@@ -77,10 +66,7 @@
       "id": "04-ui-ux",
       "name": "UI/UX Planning",
       "description": "User interface and experience design",
-      "models": [
-        "gemini",
-        "claudecode"
-      ],
+      "models": ["claudecode"],
       "mode": "plan",
       "inputs": [
         "requirements_analysis.md",
@@ -98,9 +84,7 @@
       "id": "05-task-management",
       "name": "Task Management",
       "description": "Task breakdown and sprint planning",
-      "models": [
-        "claudecode"
-      ],
+      "models": ["claudecode"],
       "mode": "plan",
       "inputs": [
         "project_plan.md",
@@ -116,11 +100,9 @@
     },
     {
       "id": "06-implementation",
-      "name": "Implementation",
-      "description": "Core feature implementation",
-      "models": [
-        "claudecode"
-      ],
+      "name": "Implementation (TDD-First)",
+      "description": "TDD implementation: write tests first, then code, verify before moving on",
+      "models": ["claudecode"],
       "mode": "plan_sandbox",
       "sandbox": true,
       "inputs": [
@@ -131,6 +113,7 @@
       "outputs": [
         "source_code/",
         "implementation_log.md",
+        "test_summary.md",
         "HANDOFF.md"
       ],
       "timeout": 14400,
@@ -139,12 +122,9 @@
     {
       "id": "07-refactoring",
       "name": "Refactoring",
-      "description": "Code quality improvement and optimization",
-      "models": [
-        "codex",
-        "claudecode"
-      ],
-      "mode": "deep_dive",
+      "description": "Code quality improvement with test coverage maintenance",
+      "models": ["claudecode"],
+      "mode": "plan_sandbox",
       "inputs": [
         "source_code/",
         "implementation_log.md"
@@ -160,10 +140,8 @@
     {
       "id": "08-qa",
       "name": "QA",
-      "description": "Quality assurance and code review",
-      "models": [
-        "claudecode"
-      ],
+      "description": "Security audit, accessibility review, E2E scenario expansion",
+      "models": ["claudecode"],
       "mode": "plan_sandbox",
       "sandbox": true,
       "inputs": [
@@ -172,20 +150,17 @@
       ],
       "outputs": [
         "qa_report.md",
-        "bug_fixes.md",
+        "bug_list.md",
         "HANDOFF.md"
       ],
       "timeout": 3600
     },
     {
       "id": "09-testing",
-      "name": "Testing & E2E",
-      "description": "Test code writing and E2E testing",
-      "models": [
-        "codex",
-        "claudecode"
-      ],
-      "mode": "sandbox_playwright",
+      "name": "Testing — Edge Cases & Performance",
+      "description": "Edge-case tests, performance benchmarks, coverage hardening",
+      "models": ["claudecode"],
+      "mode": "plan_sandbox",
       "sandbox": true,
       "mcp_servers": [
         "playwright"
@@ -206,9 +181,7 @@
       "id": "10-deployment",
       "name": "CI/CD & Deployment",
       "description": "Deployment pipeline setup and deployment",
-      "models": [
-        "claudecode"
-      ],
+      "models": ["claudecode"],
       "mode": "headless",
       "inputs": [
         "source_code/",
@@ -235,17 +208,9 @@
     },
     "task_save_frequency": 5,
     "auto_actions": {
-      "on_warning": [
-        "display_banner"
-      ],
-      "on_action": [
-        "save_snapshot",
-        "suggest_compact"
-      ],
-      "on_critical": [
-        "save_snapshot",
-        "require_compact"
-      ]
+      "on_warning": ["display_banner"],
+      "on_action": ["save_snapshot", "suggest_compact"],
+      "on_critical": ["save_snapshot", "require_compact"]
     },
     "statusline": {
       "enabled": true,
@@ -281,235 +246,79 @@
       "max_rollback_stages": 2
     }
   },
-  "test_first_flow": {
+  "quality_gates": {
     "enabled": true,
-    "description": "Run tests immediately after implementation/refactoring stages for early bug detection",
-    "test_gates": [
+    "description": "TDD-first quality gates: tests must pass before stage completion",
+    "gates": [
       {
         "stage": "06-implementation",
-        "required_tests": [
+        "required_checks": [
           {
-            "type": "smoke",
-            "command": "npm run dev",
-            "description": "Verify dev server starts",
-            "timeout": 60
+            "name": "build",
+            "command": "npm run build",
+            "description": "Level 1: Project compiles",
+            "required": true
           },
           {
-            "type": "lint",
-            "command": "npm run lint",
-            "description": "Static analysis",
-            "timeout": 120
+            "name": "test",
+            "command": "npm run test",
+            "description": "Level 2: All unit/integration tests pass",
+            "required": true
           },
           {
-            "type": "typecheck",
-            "command": "npm run typecheck",
-            "description": "Type checking",
-            "timeout": 120
-          },
-          {
-            "type": "playwright_smoke",
-            "command": "npx playwright test --grep @smoke",
-            "description": "Verify basic UI functionality",
-            "timeout": 180,
-            "optional": true
+            "name": "e2e",
+            "command": "npm run test:e2e",
+            "description": "Level 3: E2E tests pass",
+            "required": false
           }
         ],
         "on_failure": {
           "action": "block_handoff",
-          "message": "Tests failed - resolve issues before proceeding with HANDOFF"
+          "message": "Tests failed — resolve issues before proceeding"
         }
       },
       {
         "stage": "07-refactoring",
-        "required_tests": [
+        "required_checks": [
           {
-            "type": "regression",
+            "name": "test",
             "command": "npm run test",
-            "description": "Run existing tests (regression prevention)",
-            "timeout": 300
+            "description": "Regression prevention: all tests still pass",
+            "required": true
           },
           {
-            "type": "lint",
+            "name": "lint",
             "command": "npm run lint",
-            "description": "Verify code quality after refactoring",
-            "timeout": 120
-          }
-        ],
-        "on_failure": {
-          "action": "warn_and_continue",
-          "message": "Regression tests failed - attention required"
-        }
-      },
-      {
-        "stage": "08-qa",
-        "required_tests": [
-          {
-            "type": "full_test",
-            "command": "npm run test",
-            "description": "Full test suite",
-            "timeout": 600
-          },
-          {
-            "type": "e2e",
-            "command": "npx playwright test",
-            "description": "E2E tests",
-            "timeout": 600,
-            "optional": true
+            "description": "Code quality after refactoring",
+            "required": false
           }
         ],
         "on_failure": {
           "action": "block_handoff",
-          "message": "QA tests failed - bug fixes required"
+          "message": "Regression detected — fix before proceeding"
         }
-      }
-    ],
-    "tracking": {
-      "enabled": true,
-      "log_file": "state/test_results.json",
-      "include_in_handoff": true
-    },
-    "notifications": {
-      "on_test_failure": true,
-      "on_bug_found": true,
-      "include_stack_trace": true
-    }
-  },
-  "forking": {
-    "enabled": true,
-    "fork_points": [
-      {
-        "stage": "03-planning",
-        "condition": "multiple_architectures_proposed",
-        "description": "Fork for architecture alternative exploration"
       },
       {
-        "stage": "06-implementation",
-        "condition": "technology_alternatives",
-        "description": "Fork for tech stack alternative exploration"
-      }
-    ],
-    "management": {
-      "max_active_forks": 3,
-      "state_directory": "state/forks",
-      "auto_merge": {
-        "enabled": false,
-        "strategy": "best_performer"
-      },
-      "cleanup": {
-        "delete_merged_forks": false,
-        "archive_directory": "state/forks/archived"
-      }
-    },
-    "comparison": {
-      "enabled": true,
-      "metrics": [
-        {
-          "name": "code_quality",
-          "weight": 0.4,
-          "command": "npm run lint -- --format json"
-        },
-        {
-          "name": "performance",
-          "weight": 0.3,
-          "command": "npm run benchmark"
-        },
-        {
-          "name": "maintainability",
-          "weight": 0.3,
-          "tool": "sonarqube"
+        "stage": "08-qa",
+        "required_checks": [
+          {
+            "name": "test",
+            "command": "npm run test",
+            "description": "Full test suite",
+            "required": true
+          },
+          {
+            "name": "e2e",
+            "command": "npm run test:e2e",
+            "description": "E2E tests including new scenarios",
+            "required": false
+          }
+        ],
+        "on_failure": {
+          "action": "block_handoff",
+          "message": "QA tests failed — bug fixes required"
         }
-      ]
-    },
-    "commands": {
-      "create": "/fork create",
-      "list": "/fork list",
-      "compare": "/fork compare",
-      "merge": "/fork merge",
-      "delete": "/fork delete"
-    }
-  },
-  "sprint_mode": {
-    "enabled": true,
-    "type": "sprint_based",
-    "sprint_config": {
-      "enabled": true,
-      "source": "stages/05-task-management/outputs/sprint_plan.md",
-      "default_sprints": 3,
-      "auto_detect": true,
-      "completion_criteria": {
-        "require_all_must_tasks": true,
-        "require_tests_pass": true,
-        "allow_force_complete": true
       }
-    },
-    "stage_iterations": {
-      "06-implementation": {
-        "iterative": true,
-        "iteration_unit": "sprint",
-        "completion_check": "all_sprints_complete"
-      }
-    },
-    "loop_back": {
-      "enabled": true,
-      "max_stages_back": 3,
-      "triggers": [
-        {
-          "name": "bug_found",
-          "from_stages": [
-            "08-qa",
-            "09-testing"
-          ],
-          "to_stage": "06-implementation",
-          "auto_suggest": true
-        },
-        {
-          "name": "requirements_change",
-          "from_stages": [
-            "*"
-          ],
-          "to_stage": "03-planning",
-          "require_confirmation": true
-        },
-        {
-          "name": "feature_addition",
-          "from_stages": [
-            "07-refactoring"
-          ],
-          "to_stage": "06-implementation",
-          "auto_suggest": true
-        }
-      ],
-      "on_loop_back": [
-        "create_checkpoint",
-        "record_reason",
-        "update_handoff",
-        "notify_user"
-      ]
-    }
-  },
-  "epic_cycles": {
-    "config_file": "config/epic_cycles.yaml",
-    "preset_scopes": {
-      "ideation": "01-brainstorm -> 03-planning",
-      "design": "01-brainstorm -> 05-task-management",
-      "full": "01-brainstorm -> 10-deployment",
-      "implementation": "06-implementation -> 09-testing"
-    },
-    "integration": {
-      "hierarchy": [
-        "epic",
-        "sprint",
-        "task"
-      ],
-      "loop_back_scope": "current_epic",
-      "sprint_reset_on_new_epic": true
-    },
-    "commands": {
-      "status": "/epic",
-      "new": "/epic new [scope]",
-      "set_count": "/epic set-count <n>",
-      "set_scope": "/epic set-scope <start> <end>",
-      "history": "/epic history"
-    }
+    ]
   }
 }

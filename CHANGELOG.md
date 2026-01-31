@@ -5,43 +5,81 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-01-31
+
+### TDD-First Quality Gates — "Code exists ≠ Code works"
+
+### Added
+- **TDD-first implementation stage**: Stage 06 now enforces Write-Test-Verify loop per feature
+  - Tests must be written BEFORE implementation code
+  - `test_summary.md` required output with pass rates and coverage
+  - 4-level quality gate: build → test → E2E → lint/typecheck
+- **Enhanced output validator**: `src/hooks/output-validator.ts` now runs build, test, E2E, and lint for Stage 06
+- **Retry prompt enhancement**: Test/build failure details injected into retry prompts for faster fixes
+- **Stage role redefinition**:
+  - Stage 07: Refactoring with test coverage maintenance
+  - Stage 08: QA with E2E scenario expansion
+  - Stage 09: Edge-case tests and performance benchmarks
+
+### Changed
+- **Pipeline config cleanup**: Removed vaporware (forking, epic_cycles, sprint_mode, multi-model orchestration)
+  - All stages now use `claudecode` model only (no Gemini/Codex references)
+  - Replaced `test_first_flow` with simpler `quality_gates` config
+- **Package hygiene**: Removed `scripts/` and `assets/` from npm package `files` array
+- **Documentation**: Translated CLAUDE.md and CHANGELOG.md to English
+- **Output validation config**: Stage 06 now requires test pass and coverage metrics
+
+### Added (Documentation)
+- `.npmignore` for optimized npm package size
+- `docs/getting-started.md` — 5-minute quickstart guide
+- `docs/how-it-works.md` — Pipeline architecture explanation
+
+### Removed
+- `forking` config section (unimplemented)
+- `epic_cycles` config section (unimplemented)
+- `sprint_mode` config section (unimplemented)
+- `gemini` and `codex` model references from pipeline config
+- `firecrawl` and `exa` MCP server references (unused)
+
+---
+
 ## [0.6.0] - 2026-01-31
 
 ### Auto-Pilot Pipeline — "One Command, Production-Grade Software"
 
 ### Added
-- **PipelineOrchestrator**: 10-stage auto-pilot 실행 엔진 (`src/core/pipeline/orchestrator.ts`)
+- **PipelineOrchestrator**: 10-stage auto-pilot execution engine (`src/core/pipeline/orchestrator.ts`)
   - Stage prompt building (instructions + persona + handoff + references)
   - Output validation and stage finalization
-  - HANDOFF.md 자동 생성 for stage transitions
+  - Automatic HANDOFF.md generation for stage transitions
 - **Retry & Pipeline Controls**: 3-attempt retry with validation feedback injection
-  - `pausePipeline()`, `resumePipeline()`, `skipStage()` 함수
+  - `pausePipeline()`, `resumePipeline()`, `skipStage()` functions
   - Pipeline state persistence (`state/pipeline_state.json`)
   - `/pause`, `/resume`, `/skip` slash commands
 - **Import Mode**: `claude-symphony import ./path` for existing projects
-  - 프로젝트 구조 분석 (source, tests, CI/CD, UI, QA)
-  - 완료된 스테이지 자동 감지 & 스킵
-  - `--dry-run` 옵션 지원
-- **Core Sub-path Export**: 라이브러리 소비자를 위한 분리 빌드
-  - `import { ... } from 'claude-symphony/core'` 지원
-  - CLI (shebang 포함) / Library (shebang 없음) 빌드 분리
-- **TUI Progress Display**: 파이프라인 진행 상태 터미널 UI
-- **`/auto-pilot` slash command**: 10-stage 자동 실행
-- **ProgressManager 확장**: `getNextStage()`, `isComplete()`, `getStageStatuses()`
-- **37 new tests**: orchestrator (20), progress (10), TUI (7) — 총 141개 통과
-- **Pencil.dev 통합**: UI 디자인 도구로 pre-start intake 프로세스 추가
-- **Sub-agent model policy**: prompt 기반 모델 선택 정책
+  - Project structure analysis (source, tests, CI/CD, UI, QA)
+  - Auto-detect completed stages and skip them
+  - `--dry-run` option support
+- **Core Sub-path Export**: Separate build for library consumers
+  - `import { ... } from 'claude-symphony/core'` support
+  - CLI (with shebang) / Library (without shebang) build separation
+- **TUI Progress Display**: Pipeline progress terminal UI
+- **`/auto-pilot` slash command**: 10-stage automatic execution
+- **ProgressManager extensions**: `getNextStage()`, `isComplete()`, `getStageStatuses()`
+- **37 new tests**: orchestrator (20), progress (10), TUI (7) — 141 total passing
+- **Pencil.dev integration**: UI design tool with pre-start intake process
+- **Sub-agent model policy**: Prompt-based model selection policy
 
 ### Changed
-- **프레임워크 피봇**: 수동 오케스트레이션 → auto-pilot 파이프라인
-- **init 명령어 간소화**: 단일 질문 ("What do you want to build?")
-- **빌드 설정 분리**: tsup config을 CLI/Library 2개 엔트리로 분할
+- **Framework pivot**: Manual orchestration → auto-pilot pipeline
+- **Init command simplification**: Single question ("What do you want to build?")
+- **Build config separation**: tsup config split into CLI/Library entries
 
 ### Removed
-- **230+ 미사용 템플릿 파일**: 14개 에이전트 → 2개 core (validation, handoff-generator)
-- **28+ slash commands**: 34개 → 6개 essential commands
-- **20+ config 파일**: 25개 → 5개 core configs
-- **Stage 보일러플레이트**: README, config.jsonc, HANDOFF.md.template, prompts/, outputs/, templates/ 등
+- **230+ unused template files**: 14 agents → 2 core (validation, handoff-generator)
+- **28+ slash commands**: 34 → 6 essential commands
+- **20+ config files**: 25 → 5 core configs
+- **Stage boilerplate**: README, config.jsonc, HANDOFF.md.template, prompts/, outputs/, templates/
 - **Internal tracking files**: IMPLEMENTATION_PROGRESS.md, PHASE3_IMPLEMENTATION_STATUS.md, state/ artifacts
 
 ---
@@ -49,10 +87,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.5.1] - 2026-01-30
 
 ### Minor Fixes
-- **Sub-agent model enforcement**: prompt-based model selection policy
-- **README cleanup**: remove false claims and vaporware
-- **Pencil.dev integration**: add as primary UI tool
-- **License**: add missing LICENSE file, complete slash command categories
+- **Sub-agent model enforcement**: Prompt-based model selection policy
+- **README cleanup**: Remove false claims and vaporware
+- **Pencil.dev integration**: Add as primary UI tool
+- **License**: Add missing LICENSE file, complete slash command categories
 
 ---
 
@@ -77,15 +115,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 - **`docs/` directory**: Removed 19 obsolete developer documentation files
-  - `docs/agent-task-tool-integration.md`
-  - `docs/architecture.md`
-  - `docs/end-user-workflow-subagents.md`
-  - `docs/sub-agents-roadmap.md`
-  - `docs/testing-guide.md`
-  - `docs/v1.0.0-release-notes.md`
-  - `docs/workflow-simulation.md`
-  - `docs/사용자_가이드_서브에이전트.md`
-  - `docs/archived/` (11 files)
 - Documentation consolidated into `template/docs/` (end-user) and `CHANGELOG.md` (release history)
 
 ## [0.4.1] - 2026-01-29
@@ -140,75 +169,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 1. **validation-agent** (v0.3.1)
    - Validates stage outputs against quality criteria
    - 5 validation checks: file existence, size, markdown structure, key sections, completeness
-   - Execution time: ~15 seconds
-   - Success rate: 100% (1/1 tests passed)
-   - Documentation: `docs/validation-agent-complete.md`
 
 2. **handoff-generator-agent** (v0.3.2)
    - Generates intelligent stage transition documents (HANDOFF.md)
-   - Extracts completed tasks, key decisions, pending issues from stage outputs
    - Token budget management (target: 4000 tokens, compression ratio: ~30%)
-   - Execution time: ~30 seconds
-   - Success rate: 100% (1/1 tests passed)
-   - Documentation: `docs/handoff-generator-agent-complete.md`
 
 3. **output-synthesis-agent** (Phase 3)
-   - Consolidates parallel AI outputs (Gemini + Claude)
-   - Consensus detection (semantic similarity across models)
-   - Quality scoring (consensus ratio + keyword coverage + completeness)
-   - 100% retention of high-quality unique contributions
-   - Execution time: ~35 seconds
-   - Success rate: 100% (1/1 tests passed)
-   - Documentation: `docs/output-synthesis-agent-complete.md`
+   - Consolidates parallel AI outputs
+   - Consensus detection and quality scoring
 
 4. **architecture-review-agent** (Phase 3)
    - Validates architecture.md and implementation.yaml
-   - Detects circular dependencies using topological sort
-   - Cross-document consistency checks
-   - Blocks stage transition on critical issues (score < 0.7)
-   - Execution time: ~40 seconds
-   - Success rate: 100% (1/1 tests passed)
-   - Documentation: `docs/architecture-review-agent-complete.md`
+   - Circular dependency detection, cross-document consistency checks
 
 5. **research-analysis-agent** (Phase 3)
-   - Cross-references research outputs (tech, market, competitor)
-   - Detects contradictions across sources
-   - Finds supporting evidence with confidence scores
-   - Assesses risks and provides GO/NO-GO recommendations
-   - Execution time: ~45 seconds
-   - Success rate: 100% (1/1 tests passed)
-   - Documentation: `docs/research-analysis-agent-complete.md`
-
-#### Documentation
-- `docs/agent-task-tool-integration.md`: Complete architecture guide (327 lines)
-- `docs/TASK_TOOL_INTEGRATION_COMPLETE.md`: Implementation guide with examples
-- `docs/phase3-progress-summary.md`: Phase 3 progress tracking (updated to 100%)
-- `docs/*-agent-complete.md`: Individual agent test reports with results
-- Integration test stubs: `test/integration/agents.test.ts`
+   - Cross-references research outputs
+   - Contradiction detection, risk assessment, GO/NO-GO recommendations
 
 #### CLI & Hooks
 - Updated `/validate` command to use validation-agent (auto-fallback to legacy)
 - Updated `/handoff` command to use handoff-generator-agent
-- Added `/synthesize` command for parallel output consolidation
 - Hook integration: Auto-validation on stage completion
 
 ### Changed
 - **Agent Registry**: Added `loadAgentSync()` method for synchronous agent loading
-- **Task Spawner**: Updated architectural explanation (TypeScript cannot invoke Task tool, Claude Code does)
-- **README.md**: Added sub-agent system section with Tier 1 agent table
 - **Output Validator Hook**: Integrated validation-agent with fallback to legacy validation
-
-### Performance
-- **Average Execution Time**: 31 seconds (validation: 15s, handoff: 30s, synthesis: 35s, architecture: 40s, research: 45s)
-- **Context Savings**: 0% main session usage for all agents (100% isolation confirmed)
-- **Success Rate**: 100% (5/5 agents passed tests) - exceeds 95% target
-- **Cumulative Context Savings**: 100-120% across project lifecycle
-
-### Quality Metrics
-- **Extended Thinking**: Successfully used by all agents for deep analysis
-- **JSON Parsing**: Robust handling of markdown-wrapped JSON (````json blocks)
-- **Error Handling**: Fallback strategies in place for all agents
-- **Traceability**: All agent outputs include source document references
 
 ## [0.3.2] - 2026-01-27
 
@@ -239,4 +224,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Configuration system (YAML)
 - Template directory structure
 - CLI initialization command
-

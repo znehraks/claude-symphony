@@ -20,7 +20,7 @@ npx claude-symphony init
 # > Pipeline starts automatically → 10 stages → production-ready app
 ```
 
-Unlike prototyping tools (Lovable, Bolt.new) that generate MVPs, claude-symphony runs a **disciplined development process** with quality gates, test coverage, and CI/CD — producing production-grade software.
+Unlike prototyping tools (Lovable, Bolt.new) that generate MVPs, claude-symphony runs a **disciplined development process** with TDD enforcement, quality gates, test coverage, and CI/CD — producing production-grade software.
 
 ## How It Works
 
@@ -33,10 +33,10 @@ claude-symphony orchestrates a 10-stage pipeline where AI agents execute each st
 | 03 | **Planning** | Design architecture, data models, API |
 | 04 | **UI/UX** | Create wireframes, component tree, design tokens |
 | 05 | **Tasks** | Decompose into implementable tasks with priorities |
-| 06 | **Implementation** | Write the actual code |
-| 07 | **Refactoring** | Improve code quality and performance |
-| 08 | **QA** | Security audit, accessibility, bug hunting |
-| 09 | **Testing** | Unit, integration, and E2E tests |
+| 06 | **Implementation** | Write code using **TDD** (tests first, then code) |
+| 07 | **Refactoring** | Improve code quality, maintain test coverage |
+| 08 | **QA** | Security audit, accessibility, E2E test expansion |
+| 09 | **Testing** | Edge-case tests, performance benchmarks |
 | 10 | **Deployment** | CI/CD pipeline, hosting, production deploy |
 
 Each stage:
@@ -44,6 +44,31 @@ Each stage:
 - Validates outputs before progressing (quality gates)
 - Generates a HANDOFF document passing context to the next stage
 - Can be retried automatically if validation fails
+
+## TDD-First Quality Gates
+
+**"Code exists ≠ Code works."** This is the core problem claude-symphony solves.
+
+Stage 06 (Implementation) enforces a Write-Test-Verify loop for every feature:
+
+```
+For EACH feature:
+  1. Write tests first (unit + integration)
+  2. Write implementation code
+  3. Run tests → must pass before moving to next feature
+  4. If tests fail → fix implementation, re-run
+```
+
+Quality gate (4 levels, must pass to complete):
+
+| Level | Check | Required |
+|-------|-------|----------|
+| 1 | `npm run build` | Yes |
+| 2 | `npm test` — all tests pass | Yes |
+| 3 | `npm run test:e2e` — E2E tests | If configured |
+| 4 | Lint + typecheck | Recommended |
+
+If validation fails, the stage retries with failure details injected into the prompt.
 
 ## Quick Start
 
@@ -61,6 +86,8 @@ claude
 
 That's it. The pipeline runs through all 10 stages automatically.
 
+See [Getting Started](docs/getting-started.md) for more details.
+
 ## Reference Materials
 
 Drop any files into `references/<stage>/` to give the AI additional context:
@@ -71,12 +98,8 @@ references/
 ├── 02-research/      # Technical papers, library comparisons
 ├── 03-planning/      # Architecture examples, API specs to follow
 ├── 04-ui-ux/         # Design references, wireframes, style guides
-├── 05-task-management/
 ├── 06-implementation/ # Coding conventions, example code, patterns
-├── 07-refactoring/
-├── 08-qa/            # QA checklists, testing standards
-├── 09-testing/       # Test examples, coverage requirements
-└── 10-deployment/    # CI/CD templates, infrastructure configs
+└── ...
 ```
 
 Zero config required — just drop files in the folder.
@@ -120,12 +143,15 @@ claude-symphony import ./existing-app
 # Skips completed stages → runs only what's missing
 ```
 
-This is perfect for taking a Lovable/Bolt.new prototype and running it through QA → Testing → Deployment.
+This is perfect for taking a Lovable/Bolt.new prototype and running it through QA, Testing, and Deployment.
 
 ## Key Features
 
+### TDD-First Implementation
+Every feature is built with tests first. No code is considered "done" until tests pass. This is enforced at the pipeline level — not just a suggestion.
+
 ### Quality Gates
-Every stage validates its outputs before progression. No skipping broken stages.
+Every stage validates its outputs before progression. Build must compile, tests must pass, coverage must meet thresholds.
 
 ### Stage Personas
 Each stage uses an AI persona optimized for the task:
@@ -141,17 +167,36 @@ If a stage fails validation, it's automatically retried with feedback. Checkpoin
 
 ## Differentiation
 
-| | claude-symphony | Lovable/Bolt.new | SuperClaude | Raw Claude Code |
-|---|---|---|---|---|
-| **Output** | Production app | Prototype | Tools | Code |
-| **Process** | 10-stage pipeline | Single generation | Manual commands | Manual |
-| **Quality gates** | Yes | No | No | No |
-| **Tests & CI/CD** | Automatic | No | No | Manual |
-| **Persona switching** | Per-stage | No | No | No |
+| | claude-symphony | Lovable/Bolt.new | Raw Claude Code |
+|---|---|---|---|
+| **Output** | Production app with tests | Prototype | Code |
+| **Process** | 10-stage pipeline | Single generation | Manual |
+| **TDD enforcement** | Yes (per feature) | No | No |
+| **Quality gates** | 4-level verification | No | No |
+| **Tests & CI/CD** | Automatic | No | Manual |
+| **Context management** | HANDOFF system | None | Token window |
+
+<!-- ## Showcase
+
+Coming soon — example projects built entirely with claude-symphony:
+
+| Project | Description | Status |
+|---------|-------------|--------|
+| Todo App | Full-stack with auth | Planned |
+| CLI Tool | Command-line utility | Planned |
+| REST API | API + database | Planned |
+
+-->
+
+## Documentation
+
+- [Getting Started](docs/getting-started.md) — 5-minute quickstart
+- [How It Works](docs/how-it-works.md) — Pipeline architecture explained
+- [CHANGELOG](CHANGELOG.md) — Release history
 
 ## Prerequisites
 
-- [Claude Code](https://claude.ai/claude-code) installed and authenticated
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed and authenticated
 - Node.js >= 20.12.0
 
 ## Contributing

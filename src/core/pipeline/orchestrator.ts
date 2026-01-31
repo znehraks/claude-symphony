@@ -382,6 +382,24 @@ export function buildRetryPrompt(
     .map((e, i) => `${i + 1}. ${e}`)
     .join('\n');
 
+  // For implementation/testing stages, try to include test failure output
+  let testFailureContext = '';
+  if (['06-implementation', '07-refactoring', '08-qa', '09-testing'].includes(stageId)) {
+    const testErrors = retryState.validationErrors.filter(
+      (e) => e.includes('test') || e.includes('Test') || e.includes('build') || e.includes('Build')
+    );
+    if (testErrors.length > 0) {
+      testFailureContext = `
+
+## Test/Build Failure Details
+
+The following test or build commands failed. Focus on fixing these FIRST before addressing other issues:
+${testErrors.map((e) => `- ${e}`).join('\n')}
+
+**Strategy**: Run the failing command locally, read the error output, fix the root cause, then re-run to verify.`;
+    }
+  }
+
   return `${basePrompt}
 
 ---
@@ -391,8 +409,9 @@ export function buildRetryPrompt(
 The previous attempt failed validation (score: ${retryState.lastScore.toFixed(2)}). Please fix the following issues:
 
 ${errorList}
+${testFailureContext}
 
-Focus on producing all required output files with sufficient content. Check the "Required Outputs" section above carefully.`;
+Focus on producing all required output files with sufficient content. Check the "Required Outputs" and "Quality Gate" sections above carefully.`;
 }
 
 /**
