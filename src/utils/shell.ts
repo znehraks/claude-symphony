@@ -17,6 +17,7 @@ export interface CommandOptions {
   timeout?: number;
   shell?: boolean;
   stdio?: 'pipe' | 'inherit' | 'ignore';
+  input?: string;
 }
 
 /**
@@ -35,6 +36,7 @@ export async function exec(
       shell: options.shell ?? false,
       stdio: options.stdio ?? 'pipe',
       reject: false,
+      ...(options.input !== undefined && { input: options.input }),
     };
 
     const result = await execa(command, args, execaOptions);

@@ -65,7 +65,9 @@ export async function callCodex(
   }
 
   try {
-    const args = fullAuto ? ['--full-auto', prompt] : [prompt];
+    const args = fullAuto
+      ? ['exec', '--full-auto', prompt]
+      : ['exec', prompt];
     logInfo(`Calling Codex CLI${fullAuto ? ' (--full-auto)' : ''} (timeout: ${timeout}s)...`);
 
     const result = await exec('codex', args, {

@@ -17,15 +17,47 @@ For each stage in the pipeline:
 
 ## Stage Execution Protocol
 
-For EACH stage, use the Task tool to spawn a sub-agent:
+For EACH stage:
+
+### 1. Load context
+Read `state/progress.json` to determine the current stage. Then load:
+- The stage's `CLAUDE.md` for instructions
+- Previous stage's `HANDOFF.md` for context
+- `references/<stage-id>/` for user-provided materials
+
+### 2. External AI check (multi-model pipeline)
+Read `config/pipeline.jsonc` for the current stage's `models` array.
+If it contains a non-claudecode model (gemini, codex):
+
+a) Use the Write tool to save the assembled prompt to `state/prompts/<stage-id>.md`
+   (the Write tool creates parent directories automatically)
+b) Run via Bash:
+```bash
+claude-symphony ai-call --stage <stage-id> --prompt-file state/prompts/<stage-id>.md
+```
+c) If exit code 0: Parse JSON from stdout, use the Write tool to save
+   the `output` field to `state/ai-outputs/<stage-id>.md`
+d) If exit code 10 (fallback) or 1 (error): Log the reason from JSON, proceed with claudecode-only execution
+
+### 3. Spawn Task tool agent
+Use the Task tool to spawn a sub-agent for the stage:
 
 ```
 Task tool parameters:
 - subagent_type: "general-purpose"
 - description: "Execute stage <stage-id>"
 - prompt: [stage CLAUDE.md content + previous HANDOFF + references]
+         If external AI output was obtained in step 2, include it as:
+         ## External AI Analysis
+         <content from state/ai-outputs/<stage-id>.md>
 - model: [from config/stage_personas.jsonc]
 ```
+
+### 4. Validate outputs
+Verify the required outputs exist (see Validation section below).
+
+### 5. Generate HANDOFF and progress
+Generate HANDOFF.md and update `state/progress.json` as usual.
 
 ## Validation
 

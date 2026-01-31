@@ -34,6 +34,7 @@ export interface AICallResult {
 export interface AICallOptions {
   timeout?: number;
   projectRoot?: string;
+  quiet?: boolean;
 }
 
 /**
@@ -97,7 +98,32 @@ export async function callAI(
   prompt: string,
   options: AICallOptions = {}
 ): Promise<AICallResult> {
-  const { timeout = 300, projectRoot } = options;
+  const { timeout = 300, projectRoot, quiet = false } = options;
+
+  // In quiet mode, redirect console.log to stderr so stdout is JSON-only
+  const originalLog = console.log;
+  if (quiet) {
+    console.log = console.error;
+  }
+
+  try {
+    return await callAIInner(model, prompt, { timeout, projectRoot, quiet });
+  } finally {
+    if (quiet) {
+      console.log = originalLog;
+    }
+  }
+}
+
+/**
+ * Inner implementation of callAI (separated to support quiet mode cleanup)
+ */
+async function callAIInner(
+  model: AIModel,
+  prompt: string,
+  options: { timeout: number; projectRoot?: string; quiet: boolean }
+): Promise<AICallResult> {
+  const { timeout, projectRoot } = options;
 
   // Normalize model name
   const normalizedModel = model.toLowerCase() as AIModel;

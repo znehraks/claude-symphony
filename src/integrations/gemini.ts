@@ -65,7 +65,7 @@ export async function callGemini(
   try {
     logInfo(`Calling Gemini CLI (timeout: ${timeout}s)...`);
 
-    const result = await exec('gemini', [prompt], {
+    const result = await exec('gemini', ['-p', prompt, '--yolo'], {
       timeout: timeout * 1000,
       cwd: options.cwd,
     });

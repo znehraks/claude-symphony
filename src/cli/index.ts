@@ -17,6 +17,7 @@ import {
   cleanupCheckpointsCommand,
 } from './commands/checkpoint.js';
 import { importProject } from './commands/import.js';
+import { aiCallCommand } from './commands/ai-call.js';
 import type { StageId } from '../types/stage.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -212,6 +213,19 @@ program
     const projectRoot = process.cwd();
     const maxRetention = parseInt(options.max, 10);
     await cleanupCheckpointsCommand(projectRoot, maxRetention);
+  });
+
+// ai-call command: call external AI model for a pipeline stage
+program
+  .command('ai-call')
+  .description('Call external AI model for a pipeline stage')
+  .requiredOption('--stage <id>', 'Stage ID (e.g. 01-brainstorm)')
+  .option('--prompt <text>', 'Prompt text')
+  .option('--prompt-file <path>', 'Path to prompt file')
+  .option('--timeout <seconds>', 'Timeout in seconds', '300')
+  .action(async (options: { stage: string; prompt?: string; promptFile?: string; timeout?: string }) => {
+    const exitCode = await aiCallCommand(options);
+    process.exit(exitCode);
   });
 
 program.parse();
