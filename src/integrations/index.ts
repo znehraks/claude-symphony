@@ -1,7 +1,6 @@
 /**
  * Integrations module barrel export
  */
-export * from './tmux/index.js';
 export {
   callGemini,
   isGeminiAvailable,

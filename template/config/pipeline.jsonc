@@ -11,7 +11,7 @@
       "id": "01-brainstorm",
       "name": "Brainstorming",
       "description": "Divergent idea generation and requirements exploration",
-      "models": ["claudecode"],
+      "models": ["gemini", "claudecode"],
       "mode": "yolo",
       "inputs": [
         "project_brief.md",
@@ -28,7 +28,7 @@
       "id": "02-research",
       "name": "Research",
       "description": "Technical research and market analysis",
-      "models": ["claudecode"],
+      "models": ["claude"],
       "mode": "plan",
       "mcp_servers": [
         "context7"
@@ -48,7 +48,7 @@
       "id": "03-planning",
       "name": "Planning",
       "description": "System architecture and tech stack decisions",
-      "models": ["claudecode"],
+      "models": ["gemini", "claudecode"],
       "mode": "plan",
       "inputs": [
         "tech_research.md",
@@ -66,7 +66,7 @@
       "id": "04-ui-ux",
       "name": "UI/UX Planning",
       "description": "User interface and experience design",
-      "models": ["claudecode"],
+      "models": ["gemini", "claudecode"],
       "mode": "plan",
       "inputs": [
         "requirements_analysis.md",
@@ -123,7 +123,7 @@
       "id": "07-refactoring",
       "name": "Refactoring",
       "description": "Code quality improvement with test coverage maintenance",
-      "models": ["claudecode"],
+      "models": ["codex", "claudecode"],
       "mode": "plan_sandbox",
       "inputs": [
         "source_code/",
@@ -159,7 +159,7 @@
       "id": "09-testing",
       "name": "Testing — Edge Cases & Performance",
       "description": "Edge-case tests, performance benchmarks, coverage hardening",
-      "models": ["claudecode"],
+      "models": ["codex", "claudecode"],
       "mode": "plan_sandbox",
       "sandbox": true,
       "mcp_servers": [
@@ -196,6 +196,14 @@
       "timeout": 3600
     }
   ],
+  "fallback": {
+    "enabled": true,
+    "chain": {
+      "gemini": "claudecode",
+      "codex": "claudecode",
+      "claude": "claudecode"
+    }
+  },
   "state_management": {
     "progress_file": "state/progress.json",
     "checkpoints_dir": "state/checkpoints",

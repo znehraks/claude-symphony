@@ -554,13 +554,6 @@ export class ConfigValidator {
       }
     }
 
-    // Check tmux availability
-    if (await commandExists('tmux')) {
-      this.addPass(`tmux is installed (required for AI wrappers)`);
-    } else {
-      this.addResult('high', 'ai_wrapper_health', `tmux not installed - AI wrappers will not function`);
-    }
-
     // Check optional AI CLIs
     for (const cli of ['gemini', 'codex']) {
       if (await commandExists(cli)) {
@@ -983,12 +976,6 @@ export function printRecoveryGuide(): void {
   console.log('  Recovery:');
   console.log('    1. Create stages/XX-stage/CLAUDE.md');
   console.log('    2. Copy from template and customize\n');
-
-  console.log('[HIGH] tmux not installed');
-  console.log('  Problem: AI wrapper scripts require tmux');
-  console.log('  Recovery:');
-  console.log('    macOS:  brew install tmux');
-  console.log('    Ubuntu: sudo apt install tmux\n');
 
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 }

@@ -26,18 +26,20 @@ Unlike prototyping tools (Lovable, Bolt.new) that generate MVPs, claude-symphony
 
 claude-symphony orchestrates a 10-stage pipeline where AI agents execute each stage automatically:
 
-| # | Stage | What happens |
-|---|-------|-------------|
-| 01 | **Brainstorm** | Generate features, user stories, requirements |
-| 02 | **Research** | Evaluate tech options, analyze feasibility |
-| 03 | **Planning** | Design architecture, data models, API |
-| 04 | **UI/UX** | Create wireframes, component tree, design tokens |
-| 05 | **Tasks** | Decompose into implementable tasks with priorities |
-| 06 | **Implementation** | Write code using **TDD** (tests first, then code) |
-| 07 | **Refactoring** | Improve code quality, maintain test coverage |
-| 08 | **QA** | Security audit, accessibility, E2E test expansion |
-| 09 | **Testing** | Edge-case tests, performance benchmarks |
-| 10 | **Deployment** | CI/CD pipeline, hosting, production deploy |
+| # | Stage | Model | What happens |
+|---|-------|-------|-------------|
+| 01 | **Brainstorm** | Gemini + Claude | Generate features, user stories, requirements |
+| 02 | **Research** | Claude | Evaluate tech options, analyze feasibility |
+| 03 | **Planning** | Gemini + Claude | Design architecture, data models, API |
+| 04 | **UI/UX** | Gemini + Claude | Create wireframes, component tree, design tokens |
+| 05 | **Tasks** | Claude | Decompose into implementable tasks with priorities |
+| 06 | **Implementation** | Claude | Write code using **TDD** (tests first, then code) |
+| 07 | **Refactoring** | Codex + Claude | Improve code quality, maintain test coverage |
+| 08 | **QA** | Claude | Security audit, accessibility, E2E test expansion |
+| 09 | **Testing** | Codex + Claude | Edge-case tests, performance benchmarks |
+| 10 | **Deployment** | Claude | CI/CD pipeline, hosting, production deploy |
+
+> **Multi-model fallback**: If Gemini/Codex CLI is not installed, the stage automatically falls back to Claude Code.
 
 Each stage:
 - Has a specialized AI persona (creative for brainstorming, precise for implementation)

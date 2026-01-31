@@ -1,20 +1,9 @@
 /**
  * Gemini CLI wrapper
- * tmux-based Gemini CLI wrapper with channel-based synchronization
- * Migrated from gemini-wrapper.sh
+ * Direct execa-based Gemini CLI invocation with fallback signaling
  */
-import { tmpdir } from 'os';
-import { join } from 'path';
-import { existsSync, unlinkSync, readFileSync } from 'fs';
 import { commandExists, exec } from '../utils/shell.js';
 import { logInfo, logSuccess, logWarning, logError } from '../utils/logger.js';
-import {
-  getTmuxPath,
-  sessionExists,
-  createSession,
-  sendKeys,
-  waitForChannel,
-} from './tmux/utils.js';
 
 /**
  * Fallback signal types
@@ -41,10 +30,9 @@ export interface GeminiResult {
  */
 export interface GeminiOptions {
   timeout?: number; // seconds, default 300
-  sessionName?: string;
+  cwd?: string;
 }
 
-const DEFAULT_SESSION = 'ax-gemini';
 const DEFAULT_TIMEOUT = 300;
 
 /**
@@ -55,44 +43,17 @@ export async function isGeminiAvailable(): Promise<boolean> {
 }
 
 /**
- * Call Gemini CLI via tmux
+ * Call Gemini CLI directly via execa
  */
 export async function callGemini(
   prompt: string,
   options: GeminiOptions = {}
 ): Promise<GeminiResult> {
-  const sessionName = options.sessionName ?? DEFAULT_SESSION;
   const timeout = options.timeout ?? DEFAULT_TIMEOUT;
-  const channel = `${sessionName}-done-${process.pid}`;
-  const outputFile = join(tmpdir(), `${sessionName}-output-${process.pid}`);
-
-  // Check tmux availability
-  const tmuxPath = await getTmuxPath();
-  if (!tmuxPath) {
-    logError('tmux is not installed.');
-    console.log('Install: brew install tmux (macOS) or apt install tmux (Ubuntu)');
-    return {
-      success: false,
-      fallbackRequired: true,
-      fallbackSignal: 'CLI_NOT_FOUND',
-      fallbackReason: 'tmux not installed',
-    };
-  }
 
   // Check Gemini CLI availability
   if (!(await isGeminiAvailable())) {
-    logWarning('gemini CLI is not installed.');
-    console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    logWarning('FALLBACK REQUIRED');
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log('  Primary AI: gemini');
-    console.log('  Fallback AI: claudecode');
-    console.log('  Reason: CLI not installed');
-    console.log('\nPrompt to execute with ClaudeCode:');
-    console.log('---');
-    console.log(prompt);
-    console.log('---\n');
-
+    logWarning('gemini CLI is not installed — falling back to claudecode.');
     return {
       success: false,
       fallbackRequired: true,
@@ -101,125 +62,47 @@ export async function callGemini(
     };
   }
 
-  // Cleanup handler
-  const cleanup = () => {
-    if (existsSync(outputFile)) {
-      try {
-        unlinkSync(outputFile);
-      } catch {
-        // Ignore cleanup errors
-      }
-    }
-  };
-
   try {
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    logInfo('Gemini CLI Call');
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log(`  Session: ${sessionName}`);
-    console.log(`  Timeout: ${timeout}s\n`);
+    logInfo(`Calling Gemini CLI (timeout: ${timeout}s)...`);
 
-    // Ensure tmux session exists
-    if (!(await sessionExists(sessionName))) {
-      logWarning(`Creating new tmux session: ${sessionName}`);
-      await createSession(sessionName);
-      // Give session time to initialize
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    }
-
-    // Escape prompt for shell
-    const escapedPrompt = prompt.replace(/"/g, '\\"').replace(/'/g, "'\\''");
-
-    // Execute Gemini CLI
-    logInfo('Calling Gemini...');
-    const command = `gemini "${escapedPrompt}" 2>&1 | tee ${outputFile}; tmux wait-for -S ${channel}`;
-    await sendKeys(sessionName, command);
-
-    // Set up timeout
-    const timeoutPromise = new Promise<void>(resolve => {
-      setTimeout(async () => {
-        // Signal channel on timeout
-        await exec('tmux', ['wait-for', '-S', channel]).catch(() => {});
-        resolve();
-      }, timeout * 1000);
+    const result = await exec('gemini', [prompt], {
+      timeout: timeout * 1000,
+      cwd: options.cwd,
     });
 
-    // Wait for completion or timeout
-    await Promise.race([
-      waitForChannel(channel),
-      timeoutPromise,
-    ]);
+    const output = result.stdout.trim();
 
-    // Read output
-    console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    logSuccess('Gemini Response:');
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-
-    if (!existsSync(outputFile)) {
-      logError('Failed to capture output.');
-      cleanup();
-      return {
-        success: false,
-        fallbackRequired: true,
-        fallbackSignal: 'OUTPUT_FAILED',
-        fallbackReason: 'Output capture failed',
-      };
-    }
-
-    const output = readFileSync(outputFile, 'utf-8');
-
-    // Check for empty output (timeout)
-    if (!output.trim()) {
-      logError('Empty response received (possible timeout).');
-      console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-      logWarning('FALLBACK REQUIRED');
-      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-      console.log('  Primary AI: gemini');
-      console.log('  Fallback AI: claudecode');
-      console.log('  Reason: API timeout or empty response');
-      cleanup();
+    // Empty output
+    if (!output) {
+      logWarning('Gemini returned empty response — falling back.');
       return {
         success: false,
         fallbackRequired: true,
         fallbackSignal: 'TIMEOUT',
-        fallbackReason: 'API timeout or empty response',
+        fallbackReason: 'Empty response from Gemini CLI',
       };
     }
 
     // Check for error patterns
-    const errorPatterns = /error|failed|rate.limit|quota/i;
-    if (errorPatterns.test(output)) {
-      console.log(output);
-      console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-      logWarning('FALLBACK RECOMMENDED');
-      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-      console.log('  Primary AI: gemini');
-      console.log('  Fallback AI: claudecode');
-      console.log('  Reason: API error detected in response');
-      cleanup();
+    const errorPatterns = /rate.limit|quota.exceeded|authentication.failed/i;
+    if (!result.success || errorPatterns.test(output)) {
+      logWarning('Gemini API error detected — falling back.');
       return {
         success: false,
         output,
         fallbackRequired: true,
         fallbackSignal: 'API_ERROR',
-        fallbackReason: 'API error detected in response',
+        fallbackReason: result.stderr || 'API error detected in response',
       };
     }
 
-    // Success
-    console.log(output);
-    console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    logSuccess('Gemini call completed');
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-
-    cleanup();
+    logSuccess('Gemini call completed.');
     return {
       success: true,
       output,
       fallbackRequired: false,
     };
   } catch (error) {
-    cleanup();
     logError(`Gemini call failed: ${error}`);
     return {
       success: false,

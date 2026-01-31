@@ -22,9 +22,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Stage 09: Edge-case tests and performance benchmarks
 
 ### Changed
-- **Pipeline config cleanup**: Removed vaporware (forking, epic_cycles, sprint_mode, multi-model orchestration)
-  - All stages now use `claudecode` model only (no Gemini/Codex references)
+- **Pipeline config cleanup**: Removed vaporware (forking, epic_cycles, sprint_mode)
   - Replaced `test_first_flow` with simpler `quality_gates` config
+- **Gemini/Codex integration simplified**: Replaced tmux-based wrappers with direct execa calls (~460 lines removed)
+  - `src/integrations/tmux/` directory removed (310 lines)
+  - `gemini.ts` and `codex.ts` rewritten from ~230 lines each to ~100 lines each
+  - No longer requires tmux as a system dependency
 - **Package hygiene**: Removed `scripts/` and `assets/` from npm package `files` array
 - **Documentation**: Translated CLAUDE.md and CHANGELOG.md to English
 - **Output validation config**: Stage 06 now requires test pass and coverage metrics
@@ -38,8 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `forking` config section (unimplemented)
 - `epic_cycles` config section (unimplemented)
 - `sprint_mode` config section (unimplemented)
-- `gemini` and `codex` model references from pipeline config
 - `firecrawl` and `exa` MCP server references (unused)
+- `src/integrations/tmux/` directory (replaced by direct execa calls)
 
 ---
 
