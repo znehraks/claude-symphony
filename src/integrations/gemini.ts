@@ -4,15 +4,9 @@
  */
 import { commandExists, exec } from '../utils/shell.js';
 import { logInfo, logSuccess, logWarning, logError } from '../utils/logger.js';
+import { type IntegrationMetadata, type FallbackSignal } from '../types/integration.js';
 
-/**
- * Fallback signal types
- */
-export type FallbackSignal =
-  | 'CLI_NOT_FOUND'
-  | 'TIMEOUT'
-  | 'API_ERROR'
-  | 'OUTPUT_FAILED';
+export type { FallbackSignal, IntegrationMetadata };
 
 /**
  * Gemini call result
@@ -23,6 +17,7 @@ export interface GeminiResult {
   fallbackRequired: boolean;
   fallbackSignal?: FallbackSignal;
   fallbackReason?: string;
+  metadata?: IntegrationMetadata;
 }
 
 /**
@@ -50,6 +45,7 @@ export async function callGemini(
   options: GeminiOptions = {}
 ): Promise<GeminiResult> {
   const timeout = options.timeout ?? DEFAULT_TIMEOUT;
+  const startTime = Date.now();
 
   // Check Gemini CLI availability
   if (!(await isGeminiAvailable())) {
@@ -59,11 +55,21 @@ export async function callGemini(
       fallbackRequired: true,
       fallbackSignal: 'CLI_NOT_FOUND',
       fallbackReason: 'Gemini CLI not installed',
+      metadata: {
+        command: 'N/A',
+        exitCode: -1,
+        stderr: 'CLI not found in PATH',
+        durationMs: Date.now() - startTime,
+        stdoutLength: 0,
+        timestamp: new Date().toISOString(),
+      },
     };
   }
 
   try {
     logInfo(`Calling Gemini CLI (timeout: ${timeout > 0 ? timeout + 's' : 'none'})...`);
+
+    const commandStr = `gemini -p <${prompt.length}chars> --yolo`;
 
     const result = await exec('gemini', ['-p', prompt, '--yolo'], {
       timeout: timeout > 0 ? timeout * 1000 : 0,
@@ -71,6 +77,18 @@ export async function callGemini(
     });
 
     const output = result.stdout.trim();
+    const durationMs = Date.now() - startTime;
+
+    const metadata: IntegrationMetadata = {
+      command: commandStr,
+      exitCode: result.success ? 0 : 1,
+      stderr: result.stderr ?? '',
+      durationMs,
+      stdoutLength: output.length,
+      timestamp: new Date().toISOString(),
+    };
+
+    console.error(`[TRACE] gemini stdout=${output.length}B exit=${metadata.exitCode} ${durationMs}ms`);
 
     // Empty output
     if (!output) {
@@ -80,6 +98,32 @@ export async function callGemini(
         fallbackRequired: true,
         fallbackSignal: 'TIMEOUT',
         fallbackReason: 'Empty response from Gemini CLI',
+        metadata,
+      };
+    }
+
+    // Minimum length check
+    if (output.length < 50) {
+      logWarning(`Gemini output too short (${output.length} chars) — falling back.`);
+      return {
+        success: false,
+        fallbackRequired: true,
+        fallbackSignal: 'OUTPUT_FAILED',
+        fallbackReason: `Output too short (${output.length} chars)`,
+        metadata,
+      };
+    }
+
+    // Refusal pattern detection
+    const refusalPattern = /I cannot|I'm unable|I can't help|as an AI/i;
+    if (refusalPattern.test(output.substring(0, 200))) {
+      logWarning('Gemini model refusal detected — falling back.');
+      return {
+        success: false,
+        fallbackRequired: true,
+        fallbackSignal: 'OUTPUT_FAILED',
+        fallbackReason: 'Model refusal detected',
+        metadata,
       };
     }
 
@@ -93,6 +137,7 @@ export async function callGemini(
         fallbackRequired: true,
         fallbackSignal: 'API_ERROR',
         fallbackReason: result.stderr || 'API error detected in response',
+        metadata,
       };
     }
 
@@ -101,14 +146,27 @@ export async function callGemini(
       success: true,
       output,
       fallbackRequired: false,
+      metadata,
     };
   } catch (error) {
+    const durationMs = Date.now() - startTime;
+    const metadata: IntegrationMetadata = {
+      command: `gemini -p <${prompt.length}chars> --yolo`,
+      exitCode: -1,
+      stderr: String(error),
+      durationMs,
+      stdoutLength: 0,
+      timestamp: new Date().toISOString(),
+    };
+
+    console.error(`[TRACE] gemini stdout=0B exit=-1 ${durationMs}ms error`);
     logError(`Gemini call failed: ${error}`);
     return {
       success: false,
       fallbackRequired: true,
       fallbackSignal: 'API_ERROR',
       fallbackReason: String(error),
+      metadata,
     };
   }
 }

@@ -10,6 +10,9 @@ import { callCodex, type CodexResult } from '../../integrations/codex.js';
 import { logInfo, logSuccess, logWarning, logError } from '../../utils/logger.js';
 import { readJson, writeJson, ensureDirAsync } from '../../utils/fs.js';
 import { getTimestamp } from '../../utils/shell.js';
+import { type IntegrationMetadata } from '../../types/integration.js';
+
+export type { IntegrationMetadata };
 
 /**
  * Supported AI models
@@ -26,6 +29,7 @@ export interface AICallResult {
   fallbackUsed: boolean;
   fallbackModel?: AIModel;
   fallbackReason?: string;
+  metadata?: IntegrationMetadata;
 }
 
 /**
@@ -208,6 +212,7 @@ async function callAIInner(
       fallbackUsed: true,
       fallbackModel: 'claudecode',
       fallbackReason: result.fallbackReason,
+      metadata: result.metadata,
     };
   }
 
@@ -217,6 +222,7 @@ async function callAIInner(
     model: normalizedModel,
     output: result.output,
     fallbackUsed: false,
+    metadata: result.metadata,
   };
 }
 

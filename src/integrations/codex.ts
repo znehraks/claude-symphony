@@ -4,15 +4,9 @@
  */
 import { commandExists, exec } from '../utils/shell.js';
 import { logInfo, logSuccess, logWarning, logError } from '../utils/logger.js';
+import { type IntegrationMetadata, type FallbackSignal } from '../types/integration.js';
 
-/**
- * Fallback signal types
- */
-export type FallbackSignal =
-  | 'CLI_NOT_FOUND'
-  | 'TIMEOUT'
-  | 'API_ERROR'
-  | 'OUTPUT_FAILED';
+export type { FallbackSignal, IntegrationMetadata };
 
 /**
  * Codex call result
@@ -23,6 +17,7 @@ export interface CodexResult {
   fallbackRequired: boolean;
   fallbackSignal?: FallbackSignal;
   fallbackReason?: string;
+  metadata?: IntegrationMetadata;
 }
 
 /**
@@ -52,6 +47,7 @@ export async function callCodex(
 ): Promise<CodexResult> {
   const timeout = options.timeout ?? DEFAULT_TIMEOUT;
   const fullAuto = options.fullAuto ?? true;
+  const startTime = Date.now();
 
   // Check Codex CLI availability
   if (!(await isCodexAvailable())) {
@@ -61,6 +57,14 @@ export async function callCodex(
       fallbackRequired: true,
       fallbackSignal: 'CLI_NOT_FOUND',
       fallbackReason: 'Codex CLI not installed',
+      metadata: {
+        command: 'N/A',
+        exitCode: -1,
+        stderr: 'CLI not found in PATH',
+        durationMs: Date.now() - startTime,
+        stdoutLength: 0,
+        timestamp: new Date().toISOString(),
+      },
     };
   }
 
@@ -68,6 +72,7 @@ export async function callCodex(
     const args = fullAuto
       ? ['exec', '--full-auto', prompt]
       : ['exec', prompt];
+    const commandStr = `codex ${args.slice(0, -1).join(' ')} <${prompt.length}chars>`;
     logInfo(`Calling Codex CLI${fullAuto ? ' (--full-auto)' : ''} (timeout: ${timeout > 0 ? timeout + 's' : 'none'})...`);
 
     const result = await exec('codex', args, {
@@ -76,6 +81,18 @@ export async function callCodex(
     });
 
     const output = result.stdout.trim();
+    const durationMs = Date.now() - startTime;
+
+    const metadata: IntegrationMetadata = {
+      command: commandStr,
+      exitCode: result.success ? 0 : 1,
+      stderr: result.stderr ?? '',
+      durationMs,
+      stdoutLength: output.length,
+      timestamp: new Date().toISOString(),
+    };
+
+    console.error(`[TRACE] codex stdout=${output.length}B exit=${metadata.exitCode} ${durationMs}ms`);
 
     // Empty output
     if (!output) {
@@ -85,6 +102,32 @@ export async function callCodex(
         fallbackRequired: true,
         fallbackSignal: 'TIMEOUT',
         fallbackReason: 'Empty response from Codex CLI',
+        metadata,
+      };
+    }
+
+    // Minimum length check
+    if (output.length < 50) {
+      logWarning(`Codex output too short (${output.length} chars) — falling back.`);
+      return {
+        success: false,
+        fallbackRequired: true,
+        fallbackSignal: 'OUTPUT_FAILED',
+        fallbackReason: `Output too short (${output.length} chars)`,
+        metadata,
+      };
+    }
+
+    // Refusal pattern detection
+    const refusalPattern = /I cannot|I'm unable|I can't help|as an AI/i;
+    if (refusalPattern.test(output.substring(0, 200))) {
+      logWarning('Codex model refusal detected — falling back.');
+      return {
+        success: false,
+        fallbackRequired: true,
+        fallbackSignal: 'OUTPUT_FAILED',
+        fallbackReason: 'Model refusal detected',
+        metadata,
       };
     }
 
@@ -98,6 +141,7 @@ export async function callCodex(
         fallbackRequired: true,
         fallbackSignal: 'API_ERROR',
         fallbackReason: result.stderr || 'API error detected in response',
+        metadata,
       };
     }
 
@@ -106,14 +150,27 @@ export async function callCodex(
       success: true,
       output,
       fallbackRequired: false,
+      metadata,
     };
   } catch (error) {
+    const durationMs = Date.now() - startTime;
+    const metadata: IntegrationMetadata = {
+      command: `codex exec${fullAuto ? ' --full-auto' : ''} <${prompt.length}chars>`,
+      exitCode: -1,
+      stderr: String(error),
+      durationMs,
+      stdoutLength: 0,
+      timestamp: new Date().toISOString(),
+    };
+
+    console.error(`[TRACE] codex stdout=0B exit=-1 ${durationMs}ms error`);
     logError(`Codex call failed: ${error}`);
     return {
       success: false,
       fallbackRequired: true,
       fallbackSignal: 'API_ERROR',
       fallbackReason: String(error),
+      metadata,
     };
   }
 }
