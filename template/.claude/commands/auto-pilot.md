@@ -25,19 +25,37 @@ Read `state/progress.json` to determine the current stage. Then load:
 - Previous stage's `HANDOFF.md` for context
 - `references/<stage-id>/` for user-provided materials
 
-### 2. External AI check (multi-model pipeline)
-Read `config/pipeline.jsonc` for the current stage's `models` array.
-If it contains a non-claudecode model (gemini, codex):
+### 2. Multi-model gate (MANDATORY — DO NOT SKIP)
 
+Every stage MUST be classified before execution. There is no "do nothing" path.
+
+**MULTI-MODEL stages** (external AI call required): `01-brainstorm`, `03-planning`, `04-ui-ux`, `07-refactoring`, `09-testing`
+**SINGLE-MODEL stages** (claudecode-only): `02-research`, `05-task-management`, `06-implementation`, `08-qa`, `10-deployment`
+
+Read `config/pipeline.jsonc` to confirm the stage's `models` array. Then:
+
+#### Path A — SINGLE-MODEL stage
+Append a log entry to `state/ai-call-log.jsonl` and proceed to Step 3:
+```jsonl
+{"stage":"<stage-id>","type":"single-model","action":"skipped","reason":"claudecode-only stage","ts":"<ISO-8601>"}
+```
+
+#### Path B — MULTI-MODEL stage (MUST execute — this is NOT optional)
 a) Use the Write tool to save the assembled prompt to `state/prompts/<stage-id>.md`
    (the Write tool creates parent directories automatically)
 b) Run via Bash:
 ```bash
 claude-symphony ai-call --stage <stage-id> --prompt-file state/prompts/<stage-id>.md
 ```
-c) If exit code 0: Parse JSON from stdout, use the Write tool to save
-   the `output` field to `state/ai-outputs/<stage-id>.md`
-d) If exit code 10 (fallback) or 1 (error): Log the reason from JSON, proceed with claudecode-only execution
+c) Append a log entry to `state/ai-call-log.jsonl` based on the exit code:
+   - **Exit 0 (success)**: Parse JSON from stdout, save the `output` field to `state/ai-outputs/<stage-id>.md`.
+     Log: `{"stage":"<stage-id>","type":"multi-model","exitCode":0,"model":"<model>","action":"called","reason":null,"ts":"<ISO-8601>"}`
+   - **Exit 10 (fallback)**: Log: `{"stage":"<stage-id>","type":"multi-model","exitCode":10,"model":"<model>","action":"fallback","reason":"<reason from JSON>","ts":"<ISO-8601>"}`
+     Proceed with claudecode-only execution.
+   - **Exit 1 (error)**: Log: `{"stage":"<stage-id>","type":"multi-model","exitCode":1,"model":"<model>","action":"error","reason":"<reason from JSON>","ts":"<ISO-8601>"}`
+     Proceed with claudecode-only execution.
+
+Skipping the external AI call on a multi-model stage is a **protocol violation**. If the ai-call command fails, you MUST still log it and proceed — but you must NOT silently skip the call.
 
 ### 3. Spawn Task tool agent
 Use the Task tool to spawn a sub-agent for the stage:
@@ -46,12 +64,19 @@ Use the Task tool to spawn a sub-agent for the stage:
 Task tool parameters:
 - subagent_type: "general-purpose"
 - description: "Execute stage <stage-id>"
-- prompt: [stage CLAUDE.md content + previous HANDOFF + references]
-         If external AI output was obtained in step 2, include it as:
-         ## External AI Analysis
-         <content from state/ai-outputs/<stage-id>.md>
+- prompt: [assembled as described below]
 - model: [from config/stage_personas.jsonc]
 ```
+
+**Prompt assembly rules:**
+- Always include: stage CLAUDE.md content + previous HANDOFF + references
+- For MULTI-MODEL stages where Step 2 exit code was 0: you MUST prepend the external AI output.
+  Read `state/ai-outputs/<stage-id>.md` and include it at the top of the prompt as:
+  ```
+  ## External AI Analysis (from <model>)
+  <content from state/ai-outputs/<stage-id>.md>
+  ```
+  This section is MANDATORY when external AI output exists. Do NOT omit it.
 
 ### 4. Validate outputs
 Verify the required outputs exist (see Validation section below).
@@ -72,6 +97,19 @@ After each stage completes, verify the required outputs exist:
 - Stage 08: `outputs/qa_report.md`
 - Stage 09: Test files + `outputs/test_report.md`, `outputs/coverage_report.md`
 - Stage 10: CI/CD config + `outputs/deployment_guide.md`
+
+## Multi-Model Compliance Check
+
+When the pipeline completes all 10 stages, pauses, or fails, perform this compliance check:
+
+1. Read `state/ai-call-log.jsonl`
+2. Verify that **every multi-model stage** (`01-brainstorm`, `03-planning`, `04-ui-ux`, `07-refactoring`, `09-testing`) has at least one log entry with `"type":"multi-model"`
+3. If any multi-model stage is missing from the log:
+   - Display a **compliance warning** listing the missing stages
+   - Example: `⚠ COMPLIANCE: Multi-model gate was not executed for stages: 03-planning, 09-testing`
+4. If all multi-model stages are present, display: `✓ Multi-model compliance: all gates executed`
+
+This check ensures the pipeline never silently skips external AI calls on stages that require them.
 
 ## Retry Logic
 

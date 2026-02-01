@@ -14,6 +14,7 @@ import type { StageId } from '../types/stage.js';
 import { STAGE_IDS } from '../types/stage.js';
 import type { Progress } from '../types/state.js';
 import { spawnAgent } from '../core/agents/index.js';
+import { verifyMultiModelGate } from '../utils/multi-model-gate.js';
 
 /**
  * Validation check result
@@ -218,6 +219,15 @@ async function validateStageOutputs(
   projectRoot: string,
   stageId: StageId
 ): Promise<void> {
+  // Multi-model gate check (before any other checks)
+  const gateResult = await verifyMultiModelGate(projectRoot, stageId);
+  state.addCheck(
+    'Multi-model gate',
+    gateResult.passed,
+    gateResult.message,
+    true
+  );
+
   // HANDOFF.md check (common for all stages)
   checkFileExists(state, projectRoot, `stages/${stageId}/HANDOFF.md`, true);
 

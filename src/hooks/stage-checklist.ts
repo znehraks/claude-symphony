@@ -8,6 +8,7 @@ import chalk from 'chalk';
 import { writeJson, ensureDirAsync, listDir } from '../utils/fs.js';
 import { logWarning, logError } from '../utils/logger.js';
 import { execShell } from '../utils/shell.js';
+import { verifyMultiModelGate } from '../utils/multi-model-gate.js';
 import type { StageId } from '../types/stage.js';
 import { STAGE_IDS } from '../types/stage.js';
 
@@ -28,7 +29,7 @@ export interface ChecklistItem {
   description: string;
   check: () => Promise<CheckResult>;
   required: boolean;
-  category: 'input' | 'mcp' | 'cli' | 'output' | 'test' | 'git' | 'checkpoint';
+  category: 'input' | 'mcp' | 'cli' | 'output' | 'test' | 'git' | 'checkpoint' | 'multimodel';
 }
 
 /**
@@ -422,6 +423,18 @@ export function createChecklist(
     });
   }
 
+  // 8. Multi-model gate check
+  items.push({
+    id: 'multimodel:gate',
+    description: 'Multi-model gate: external AI call executed if required',
+    category: 'multimodel',
+    required: true,
+    check: async () => {
+      const result = await verifyMultiModelGate(projectRoot, stage);
+      return { passed: result.passed, message: result.message };
+    },
+  });
+
   return { stage, items, results: new Map() };
 }
 
@@ -505,6 +518,7 @@ function getCategoryIcon(category: ChecklistItem['category']): string {
     test: 'TEST',
     git: 'GIT',
     checkpoint: 'CHECKPOINT',
+    multimodel: 'AI-GATE',
   };
   return icons[category] || category.toUpperCase();
 }

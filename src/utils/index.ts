@@ -7,3 +7,4 @@ export * from './yaml.js';
 export * from './jsonc.js';
 export * from './fs.js';
 export * from './auto-handoff.js';
+export * from './multi-model-gate.js';
