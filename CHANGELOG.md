@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.1] - 2026-02-01
+
+### Multi-Model CLI Bug Fixes
+
+### Fixed
+- **Gemini CLI invocation**: Changed `gemini [prompt]` → `gemini -p "prompt" --yolo` for correct non-interactive mode with auto-approval
+- **Codex CLI invocation**: Changed `codex --full-auto prompt` → `codex exec --full-auto "prompt"` adding required `exec` subcommand
+- **JSONC parsing**: Replaced regex-based comment stripping (which corrupted URLs containing `//`) with project's `loadJsonc` utility in `ai-call.ts`
+
+### Added
+- **stdin `input` support in `shell.ts`**: `CommandOptions.input` field for passing long prompts safely via stdin to execa
+- **`ai-call` CLI command**: Wired into CLI entry point with `--stage`, `--prompt`, `--prompt-file`, `--timeout` options
+- **Quiet mode for orchestrator**: `AICallOptions.quiet` flag to keep stdout clean for JSON-only output
+
+### Changed
+- **`auto-pilot.md`**: Clarified Write tool usage for saving prompts and AI outputs (parent directory auto-creation)
+- **`getStageModels` in `ai-call.ts`**: Now async, uses `loadJsonc` instead of manual `readFileSync` + regex
+
+---
+
 ## [0.8.0] - 2026-02-01
 
 ### Multi-Model Restore & execa Refactor
