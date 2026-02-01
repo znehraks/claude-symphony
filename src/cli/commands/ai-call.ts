@@ -63,7 +63,7 @@ export async function aiCallCommand(options: AiCallOptions): Promise<number> {
   const startTime = Date.now();
   const projectRoot = process.cwd();
   const { stage, timeout: timeoutStr } = options;
-  const timeout = parseInt(timeoutStr ?? '300', 10);
+  const timeout = parseInt(timeoutStr ?? '0', 10);
 
   // Resolve prompt text
   let prompt: string;

@@ -29,12 +29,12 @@ export interface CodexResult {
  * Codex wrapper options
  */
 export interface CodexOptions {
-  timeout?: number; // seconds, default 300
+  timeout?: number; // seconds, 0 = no limit (default)
   fullAuto?: boolean; // default true
   cwd?: string;
 }
 
-const DEFAULT_TIMEOUT = 300;
+const DEFAULT_TIMEOUT = 0; // 0 = wait until process exits (no timeout)
 
 /**
  * Check if Codex CLI is available
@@ -68,10 +68,10 @@ export async function callCodex(
     const args = fullAuto
       ? ['exec', '--full-auto', prompt]
       : ['exec', prompt];
-    logInfo(`Calling Codex CLI${fullAuto ? ' (--full-auto)' : ''} (timeout: ${timeout}s)...`);
+    logInfo(`Calling Codex CLI${fullAuto ? ' (--full-auto)' : ''} (timeout: ${timeout > 0 ? timeout + 's' : 'none'})...`);
 
     const result = await exec('codex', args, {
-      timeout: timeout * 1000,
+      timeout: timeout > 0 ? timeout * 1000 : 0,
       cwd: options.cwd,
     });
 

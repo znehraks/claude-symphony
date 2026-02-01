@@ -98,7 +98,7 @@ export async function callAI(
   prompt: string,
   options: AICallOptions = {}
 ): Promise<AICallResult> {
-  const { timeout = 300, projectRoot, quiet = false } = options;
+  const { timeout = 0, projectRoot, quiet = false } = options;
 
   // In quiet mode, redirect console.log to stderr so stdout is JSON-only
   const originalLog = console.log;
@@ -132,7 +132,7 @@ async function callAIInner(
   logInfo('AI Call Router');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   console.log(`  Model: ${normalizedModel}`);
-  console.log(`  Timeout: ${timeout}s\n`);
+  console.log(`  Timeout: ${timeout > 0 ? timeout + 's' : 'none (wait for completion)'}\n`);
 
   // Handle ClaudeCode directly (no wrapper needed)
   if (normalizedModel === 'claudecode' || normalizedModel === 'claude') {

@@ -106,7 +106,7 @@ export async function executeParallel(
     promptContent: providedPrompt,
     dryRun = false,
     force = false,
-    timeout = 300,
+    timeout = 0,
   } = options;
 
   const stagesDir = path.join(projectRoot, 'stages');

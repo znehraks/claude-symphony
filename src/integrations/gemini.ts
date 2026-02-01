@@ -29,11 +29,11 @@ export interface GeminiResult {
  * Gemini wrapper options
  */
 export interface GeminiOptions {
-  timeout?: number; // seconds, default 300
+  timeout?: number; // seconds, 0 = no limit (default)
   cwd?: string;
 }
 
-const DEFAULT_TIMEOUT = 300;
+const DEFAULT_TIMEOUT = 0; // 0 = wait until process exits (no timeout)
 
 /**
  * Check if Gemini CLI is available
@@ -63,10 +63,10 @@ export async function callGemini(
   }
 
   try {
-    logInfo(`Calling Gemini CLI (timeout: ${timeout}s)...`);
+    logInfo(`Calling Gemini CLI (timeout: ${timeout > 0 ? timeout + 's' : 'none'})...`);
 
     const result = await exec('gemini', ['-p', prompt, '--yolo'], {
-      timeout: timeout * 1000,
+      timeout: timeout > 0 ? timeout * 1000 : 0,
       cwd: options.cwd,
     });
 
