@@ -13,18 +13,18 @@ Run `/auto-pilot` to start the automatic 10-stage pipeline. The orchestrator wil
 
 ## Pipeline Stages
 
-| # | Stage | Focus | Model |
-|---|-------|-------|-------|
-| 01 | Brainstorming | Ideas, features, requirements | sonnet (creative) |
-| 02 | Research | Tech evaluation, feasibility | sonnet |
-| 03 | Planning | Architecture, data models, API | sonnet |
-| 04 | UI/UX | Wireframes, components, design | sonnet |
-| 05 | Tasks | Task decomposition, priorities | haiku |
-| 06 | Implementation | Write actual code | sonnet |
-| 07 | Refactoring | Code quality, optimization | sonnet |
-| 08 | QA | Security, accessibility, bugs | sonnet |
-| 09 | Testing | Unit, integration, E2E tests | sonnet |
-| 10 | Deployment | CI/CD, hosting, production | sonnet |
+| # | Stage | Focus | Model | Debate |
+|---|-------|-------|-------|--------|
+| 01 | Brainstorming | Ideas, features, requirements | claude (debate) | full |
+| 02 | Research | Tech evaluation, feasibility | claude (debate) | standard |
+| 03 | Planning | Architecture, data models, API | claude (debate) | full |
+| 04 | UI/UX | Wireframes, components, design | claude (debate) | standard |
+| 05 | Tasks | Task decomposition, priorities | claude (debate) | light |
+| 06 | Implementation | Write actual code | claude (debate) | full |
+| 07 | Refactoring | Code quality, optimization | claude (debate) | full |
+| 08 | QA | Security, accessibility, bugs | claude (debate) | full |
+| 09 | Testing | Unit, integration, E2E tests | claude (debate) | standard |
+| 10 | Deployment | CI/CD, hosting, production | claude (debate) | light |
 
 ## Commands
 
@@ -39,6 +39,7 @@ Run `/auto-pilot` to start the automatic 10-stage pipeline. The orchestrator wil
 | `/restore` | Restore from a checkpoint |
 | `/stages` | List all stages with status |
 | `/run-stage [id]` | Run a specific stage manually |
+| `/debate` | Run multi-agent debate for current stage |
 
 ## Reference Materials
 

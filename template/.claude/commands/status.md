@@ -33,16 +33,16 @@ scripts/show-status.sh
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Progress: [████████░░░░░░░░░░░░] 40% (4/10)
 
- 01 ✅ brainstorm     completed  [Gemini+Claude]
- 02 ✅ research       completed  [Claude+MCP]
- 03 ✅ planning       completed  [Gemini]
- 04 🔄 ui-ux         in progress [Gemini]
- 05 ⏳ task-mgmt     pending     [ClaudeCode]
- 06 ⏳ implementation pending     [ClaudeCode]
- 07 ⏳ refactoring   pending     [Codex]
- 08 ⏳ qa            pending     [ClaudeCode]
- 09 ⏳ testing       pending     [Codex]
- 10 ⏳ deployment    pending     [ClaudeCode]
+ 01 ✅ brainstorm     completed  [Claude debate:full]
+ 02 ✅ research       completed  [Claude debate:standard]
+ 03 ✅ planning       completed  [Claude debate:full]
+ 04 🔄 ui-ux         in progress [Claude debate:standard]
+ 05 ⏳ task-mgmt     pending     [Claude debate:light]
+ 06 ⏳ implementation pending     [Claude debate:full]
+ 07 ⏳ refactoring   pending     [Claude debate:full]
+ 08 ⏳ qa            pending     [Claude debate:full]
+ 09 ⏳ testing       pending     [Claude debate:standard]
+ 10 ⏳ deployment    pending     [Claude debate:light]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Checkpoints: 2 | Last handoff: 03-planning

@@ -29,11 +29,11 @@
           "format": "issue_list",
           "priority_order": true
         },
-        "ai_call_history": {
+        "debate_history": {
           "enabled": true,
           "format": "table",
-          "include_prompts": false,
-          "include_results_summary": true
+          "include_round_details": true,
+          "include_contention_scores": true
         },
         "epic_cycle": {
           "enabled": true,
@@ -111,7 +111,7 @@
           "completed_tasks": 60
         },
         {
-          "ai_call_history": 50
+          "debate_history": 50
         }
       ]
     },
@@ -164,7 +164,7 @@
           "max_tokens": 1000,
           "content": [
             "completed_tasks_summary",
-            "ai_call_summary",
+            "debate_summary",
             "implementation_order",
             "requirements_refinement_status"
           ]
@@ -356,7 +356,7 @@
           "auto_generate": true
         },
         {
-          "name": "AI Call History",
+          "name": "Debate History",
           "required": false,
           "auto_generate": true
         },

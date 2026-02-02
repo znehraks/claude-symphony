@@ -11,7 +11,8 @@
       "id": "01-brainstorm",
       "name": "Brainstorming",
       "description": "Divergent idea generation and requirements exploration",
-      "models": ["gemini", "claudecode"],
+      "models": ["claudecode"],
+      "debate_mode": "full",
       "mode": "yolo",
       "inputs": [
         "project_brief.md",
@@ -28,7 +29,8 @@
       "id": "02-research",
       "name": "Research",
       "description": "Technical research and market analysis",
-      "models": ["claude"],
+      "models": ["claudecode"],
+      "debate_mode": "standard",
       "mode": "plan",
       "mcp_servers": [
         "context7"
@@ -48,7 +50,8 @@
       "id": "03-planning",
       "name": "Planning",
       "description": "System architecture and tech stack decisions",
-      "models": ["gemini", "claudecode"],
+      "models": ["claudecode"],
+      "debate_mode": "full",
       "mode": "plan",
       "inputs": [
         "tech_research.md",
@@ -66,7 +69,8 @@
       "id": "04-ui-ux",
       "name": "UI/UX Planning",
       "description": "User interface and experience design",
-      "models": ["gemini", "claudecode"],
+      "models": ["claudecode"],
+      "debate_mode": "standard",
       "mode": "plan",
       "inputs": [
         "requirements_analysis.md",
@@ -85,6 +89,7 @@
       "name": "Task Management",
       "description": "Task breakdown and sprint planning",
       "models": ["claudecode"],
+      "debate_mode": "light",
       "mode": "plan",
       "inputs": [
         "project_plan.md",
@@ -103,6 +108,7 @@
       "name": "Implementation (TDD-First)",
       "description": "TDD implementation: write tests first, then code, verify before moving on",
       "models": ["claudecode"],
+      "debate_mode": "full",
       "mode": "plan_sandbox",
       "sandbox": true,
       "inputs": [
@@ -123,7 +129,8 @@
       "id": "07-refactoring",
       "name": "Refactoring",
       "description": "Code quality improvement with test coverage maintenance",
-      "models": ["codex", "claudecode"],
+      "models": ["claudecode"],
+      "debate_mode": "full",
       "mode": "plan_sandbox",
       "inputs": [
         "source_code/",
@@ -142,6 +149,7 @@
       "name": "QA",
       "description": "Security audit, accessibility review, E2E scenario expansion",
       "models": ["claudecode"],
+      "debate_mode": "full",
       "mode": "plan_sandbox",
       "sandbox": true,
       "inputs": [
@@ -159,7 +167,8 @@
       "id": "09-testing",
       "name": "Testing — Edge Cases & Performance",
       "description": "Edge-case tests, performance benchmarks, coverage hardening",
-      "models": ["codex", "claudecode"],
+      "models": ["claudecode"],
+      "debate_mode": "standard",
       "mode": "plan_sandbox",
       "sandbox": true,
       "mcp_servers": [
@@ -182,6 +191,7 @@
       "name": "CI/CD & Deployment",
       "description": "Deployment pipeline setup and deployment",
       "models": ["claudecode"],
+      "debate_mode": "light",
       "mode": "headless",
       "inputs": [
         "source_code/",
@@ -196,13 +206,10 @@
       "timeout": 3600
     }
   ],
-  "fallback": {
+  "debate": {
     "enabled": true,
-    "chain": {
-      "gemini": "claudecode",
-      "codex": "claudecode",
-      "claude": "claudecode"
-    }
+    "config_file": "config/debate.jsonc",
+    "description": "Claude multi-agent debate system for all pipeline stages"
   },
   "state_management": {
     "progress_file": "state/progress.json",

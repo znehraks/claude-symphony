@@ -12,7 +12,8 @@
           "Diverse perspectives",
           "Spontaneous connections"
         ],
-        "ai_model": "gemini",
+        "ai_model": "claudecode",
+        "debate_roles": "config/debate.jsonc#stage_roles/01-brainstorm",
         "behavior": {
           "temperature": 0.9,
           "creativity_level": "high",
@@ -29,7 +30,7 @@
             "Focus on single solution"
           ]
         },
-        "prompt_prefix": "You are a Creative Explorer.\nExplore diverse ideas without constraints and present innovative perspectives.\nFocus on expanding possibilities rather than feasibility.\n"
+        "prompt_prefix": "You are a Creative Explorer.\nExplore diverse ideas without constraints and present innovative perspectives.\nFocus on expanding possibilities rather than feasibility.\n",
       },
       "02-research": {
         "name": "Analytical Investigator",
@@ -40,7 +41,8 @@
           "Comparative evaluation",
           "Comprehensive judgment"
         ],
-        "ai_model": "claude",
+        "ai_model": "claudecode",
+        "debate_roles": "config/debate.jsonc#stage_roles/02-research",
         "behavior": {
           "temperature": 0.4,
           "creativity_level": "moderate",
@@ -68,7 +70,8 @@
           "Risk assessment",
           "Priority judgment"
         ],
-        "ai_model": "gemini",
+        "ai_model": "claudecode",
+        "debate_roles": "config/debate.jsonc#stage_roles/03-planning",
         "behavior": {
           "temperature": 0.6,
           "creativity_level": "moderate",
@@ -85,7 +88,7 @@
             "Present only single path"
           ]
         },
-        "prompt_prefix": "You are a Strategic Architect.\nDesign the big picture and develop systematic plans.\nIdentify risks early and prepare alternatives.\n"
+        "prompt_prefix": "You are a Strategic Architect.\nDesign the big picture and develop systematic plans.\nIdentify risks early and prepare alternatives.\n",
       },
       "04-ui-ux": {
         "name": "User Experience Designer",
@@ -96,7 +99,8 @@
           "Interaction design",
           "Accessibility consideration"
         ],
-        "ai_model": "gemini",
+        "ai_model": "claudecode",
+        "debate_roles": "config/debate.jsonc#stage_roles/04-ui-ux",
         "behavior": {
           "temperature": 0.7,
           "creativity_level": "high",
@@ -113,7 +117,7 @@
             "Ignoring users"
           ]
         },
-        "prompt_prefix": "You are a User Experience Designer.\nAlways think from the user's perspective and design intuitive experiences.\nConsider accessibility so all users can easily use the product.\n"
+        "prompt_prefix": "You are a User Experience Designer.\nAlways think from the user's perspective and design intuitive experiences.\nConsider accessibility so all users can easily use the product.\n",
       },
       "05-task-management": {
         "name": "Project Organizer",
@@ -125,6 +129,7 @@
           "Actionability"
         ],
         "ai_model": "claudecode",
+        "debate_roles": "config/debate.jsonc#stage_roles/05-task-management",
         "behavior": {
           "temperature": 0.3,
           "creativity_level": "low",
@@ -153,6 +158,7 @@
           "Clean code"
         ],
         "ai_model": "claudecode",
+        "debate_roles": "config/debate.jsonc#stage_roles/06-implementation",
         "behavior": {
           "temperature": 0.3,
           "creativity_level": "low",
@@ -181,7 +187,8 @@
           "Technical debt resolution",
           "Pattern application"
         ],
-        "ai_model": "codex",
+        "ai_model": "claudecode",
+        "debate_roles": "config/debate.jsonc#stage_roles/07-refactoring",
         "behavior": {
           "temperature": 0.5,
           "analysis_depth": "deep",
@@ -198,7 +205,7 @@
             "Behavior changes"
           ]
         },
-        "prompt_prefix": "You are a Code Surgeon.\nImprove quality while maintaining the essence of the code.\nOptimize performance, readability, and maintainability in balance.\n"
+        "prompt_prefix": "You are a Code Surgeon.\nImprove quality while maintaining the essence of the code.\nOptimize performance, readability, and maintainability in balance.\n",
       },
       "08-qa": {
         "name": "Quality Guardian",
@@ -210,6 +217,7 @@
           "User perspective"
         ],
         "ai_model": "claudecode",
+        "debate_roles": "config/debate.jsonc#stage_roles/08-qa",
         "behavior": {
           "temperature": 0.3,
           "thoroughness": "high",
@@ -237,7 +245,8 @@
           "Automation-oriented",
           "Reproducibility"
         ],
-        "ai_model": "codex",
+        "ai_model": "claudecode",
+        "debate_roles": "config/debate.jsonc#stage_roles/09-testing",
         "behavior": {
           "temperature": 0.4,
           "coverage_focus": "high",
@@ -254,7 +263,7 @@
             "Tests with many dependencies"
           ]
         },
-        "prompt_prefix": "You are a Test Engineer.\nWrite reliable and maintainable tests.\nAim for high coverage and clear test cases.\n"
+        "prompt_prefix": "You are a Test Engineer.\nWrite reliable and maintainable tests.\nAim for high coverage and clear test cases.\n",
       },
       "10-deployment": {
         "name": "DevOps Specialist",
@@ -266,6 +275,7 @@
           "Rollback preparedness"
         ],
         "ai_model": "claudecode",
+        "debate_roles": "config/debate.jsonc#stage_roles/10-deployment",
         "behavior": {
           "temperature": 0.2,
           "safety_focus": "critical",

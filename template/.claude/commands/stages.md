@@ -35,18 +35,18 @@ scripts/list-stages.sh "$ARGUMENTS"
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📋 Pipeline Stages
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- ##  Stage            AI Model        Mode          Status
-─────────────────────────────────────────────────────────
- 01  brainstorm       Gemini+Claude   YOLO          ✅
- 02  research         Claude+MCP      Plan Mode     ✅
- 03  planning         Gemini          Plan Mode     ✅
- 04  ui-ux            Gemini          Plan Mode     🔄 ←
- 05  task-management  ClaudeCode      Plan Mode     ⏳
- 06  implementation   ClaudeCode      Plan+Sandbox  ⏳
- 07  refactoring      Codex           Deep Dive     ⏳
- 08  qa               ClaudeCode      Plan+Sandbox  ⏳
- 09  testing          Codex           Playwright    ⏳
- 10  deployment       ClaudeCode      Headless      ⏳
+ ##  Stage            AI Model        Debate    Mode          Status
+──────────────────────────────────────────────────────────────────
+ 01  brainstorm       Claude          full      YOLO          ✅
+ 02  research         Claude          standard  Plan Mode     ✅
+ 03  planning         Claude          full      Plan Mode     ✅
+ 04  ui-ux            Claude          standard  Plan Mode     🔄 ←
+ 05  task-management  Claude          light     Plan Mode     ⏳
+ 06  implementation   Claude          full      Plan+Sandbox  ⏳
+ 07  refactoring      Claude          full      Plan+Sandbox  ⏳
+ 08  qa               Claude          full      Plan+Sandbox  ⏳
+ 09  testing          Claude          standard  Playwright    ⏳
+ 10  deployment       Claude          light     Headless      ⏳
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Current: 04-ui-ux | Next: /run-stage 05 or /tasks
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

@@ -39,10 +39,10 @@ You will receive these context variables:
    - List files created, modified, or deleted during stage
    - Categorize by type (source code, config, docs, tests)
 
-4. **Identify AI Call History** (if available)
-   - Extract AI model calls (Gemini, Codex, Claude)
-   - Note prompt files and result files
-   - Track success/failure status
+4. **Identify Debate History** (if available)
+   - Extract debate round summaries from `state/debate/<stage-id>/`
+   - Note contention scores and round counts
+   - Track consensus items and unresolved disagreements
 
 ### Step 2: Extract Key Information
 
@@ -121,20 +121,19 @@ Example:
   - Can be deferred: Not blocking for MVP
 ```
 
-#### E. AI Call Log
-- Summarize AI interactions during stage
-- Note any failed calls or fallbacks
-- Include timing and cost (if available)
+#### E. Debate History
+- Summarize multi-agent debate outcomes during stage
+- Note round counts and contention scores
+- Document consensus items and resolved disagreements
 
 Example:
 ```markdown
-## AI Call Log
+## Debate History
 
-| AI | Time | Task | Result | Status |
-|----|------|------|--------|--------|
-| Gemini | 14:30 | Ideation | 20 ideas generated | Success |
-| Claude | 15:15 | Requirements analysis | Functional + Non-functional specs | Success |
-| Codex | 16:00 | Architecture review | (Timeout, fell back to Claude) | Fallback |
+| Stage | Rounds | Agents | Contention Scores | Outcome |
+|-------|--------|--------|-------------------|---------|
+| 01-brainstorm | 3 | Visionary, Skeptic, Integrator | [0.8, 0.5] | Synthesized: 25 ideas with feasibility ratings |
+| 03-planning | 4 | Architect, Risk Analyst, Pragmatist | [0.9, 0.7, 0.4] | Extended debate on microservices vs monolith, resolved via majority |
 ```
 
 ### Step 3: Apply Template & Compress

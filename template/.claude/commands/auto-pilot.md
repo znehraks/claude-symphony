@@ -25,54 +25,73 @@ Read `state/progress.json` to determine the current stage. Then load:
 - Previous stage's `HANDOFF.md` for context
 - `references/<stage-id>/` for user-provided materials
 
-### 2. Multi-model gate (MANDATORY — DO NOT SKIP)
+### 2. Debate Protocol (MANDATORY for every stage)
 
-Every stage MUST be classified before execution. There is no "do nothing" path.
+Every stage uses the Claude multi-agent debate system. Read `config/debate.jsonc` to get the stage's intensity profile and roles.
 
-**MULTI-MODEL stages** (external AI call required): `01-brainstorm`, `03-planning`, `04-ui-ux`, `07-refactoring`, `09-testing`
-**SINGLE-MODEL stages** (claudecode-only): `02-research`, `05-task-management`, `06-implementation`, `08-qa`, `10-deployment`
+Read `config/pipeline.jsonc` to confirm the stage's `debate_mode` (full/standard/light).
 
-Read `config/pipeline.jsonc` to confirm the stage's `models` array. Then:
+#### Round 1 — Independent Parallel Production
 
-#### Path A — SINGLE-MODEL stage
-Append a log entry to `state/ai-call-log.jsonl` and proceed to Step 3:
+Launch N Task tool agents **in a single message** (parallel execution):
+- N = agent count from the intensity profile (2 for light, 3 for full/standard)
+- Each agent receives: stage CLAUDE.md content + previous HANDOFF + references + its role-specific directive from `config/debate.jsonc`
+- Each agent writes output to `state/debate/<stage-id>/round1/<role-name>.md`
+- **No cross-visibility** between agents in Round 1
+- **No output length limits** — each agent writes as much as the role requires
+
+#### Round 2 — Cross-Review & Rebuttal (skip for `light` intensity)
+
+Launch N Task tool agents **in parallel**:
+- Each agent reads **all** Round 1 outputs from `state/debate/<stage-id>/round1/`
+- Each agent writes a review to `state/debate/<stage-id>/round2/<role-name>_review.md`
+- **No repetition**: agents must NOT rewrite Round 1 content — only rebuttals, agreements, and additions
+
+#### Round 3+ — Additional Rebuttal Rounds (conditional)
+
+Launch 1 synthesizer agent (using `.claude/agents/debate-synthesizer-agent/`) to evaluate the previous round:
+- The synthesizer reads all outputs from the latest round
+- It assigns a **contention score** (0.0–1.0) based on the criteria in `config/debate.jsonc`
+- If contention score **≥ 0.7** and current round < max_rounds: launch another round
+  - Provide agents with an explicit list of **unresolved contentions only** to narrow focus
+  - Output to `state/debate/<stage-id>/roundN/<role-name>_rebuttal.md`
+- If contention score **< 0.7** or max_rounds reached: proceed to Final Round
+
+#### Final Round — Synthesis
+
+Launch 1 synthesizer agent that reads **all round outputs** and produces the final deliverables:
+- Write final outputs to `stages/<stage-id>/outputs/`
+- Apply synthesis rules from `config/debate.jsonc`:
+  - **Consensus items** (all agents agree): include with high confidence
+  - **Majority items** (2/3 agree): include with note of dissent
+  - **Contradictory items**: select better-supported position, document reasoning
+  - **Unique contributions**: evaluate on quality and include if valuable
+- **MUST include a `## Debate Notes` section** in each output file:
+  ```
+  ## Debate Notes
+  - **Rounds completed**: <N>
+  - **Contention scores**: [round-by-round scores]
+  - **Consensus items**: [list]
+  - **Resolved disagreements**: [list with resolution reasoning]
+  - **Minority opinions**: [preserved for reference]
+  ```
+
+#### Graceful Degradation
+
+- If at least 1 agent succeeds in any round, continue with available outputs
+- If ALL agents fail in Round 1: fall back to single-agent execution (no debate)
+- If token overflow occurs: compress previous round outputs to summaries before continuing
+- If an agent fails in extra rounds (3+): continue with remaining agents
+
+Log each debate to `state/ai-call-log.jsonl`:
 ```jsonl
-{"stage":"<stage-id>","type":"single-model","action":"skipped","reason":"claudecode-only stage","ts":"<ISO-8601>"}
+{"stage":"<stage-id>","type":"debate","rounds":<N>,"agents":<N>,"contention_scores":[...],"action":"synthesized","ts":"<ISO-8601>"}
 ```
 
-#### Path B — MULTI-MODEL stage (MUST execute — this is NOT optional)
-a) Use the Write tool to save the assembled prompt to `state/prompts/<stage-id>.md`
-   (the Write tool creates parent directories automatically)
-b) Run via Bash:
-```bash
-claude-symphony ai-call --stage <stage-id> --prompt-file state/prompts/<stage-id>.md
-```
-c) Parse JSON stdout. Check:
-   1. `exitCode === 0` (success)
-   2. `quality.passes === true` (output quality validation)
+### 3. Spawn Task tool agent (for single-pass stages or post-debate refinement)
 
-   If `exitCode === 0` but `quality.passes === false`:
-   - Re-run `claude-symphony ai-call` with an enhanced prompt. Prepend to the original prompt:
-     ```
-     CRITICAL: Generate ACTUAL CONTENT, not status messages or meta-commentary.
-     The previous attempt was rejected because: <quality.reason>
-     You MUST produce detailed, structured content with headings (##) and bullet points.
-     ```
-   - If the retry also fails quality: log `quality_failed` and proceed Claude-only.
+If the debate protocol (Step 2) already produced final outputs in `stages/<stage-id>/outputs/`, this step verifies and supplements them. If additional work is needed beyond the debate outputs:
 
-   Append a log entry to `state/ai-call-log.jsonl` based on the result:
-   - **Exit 0 + quality passes**: Parse JSON from stdout, save the `output` field to `state/ai-outputs/<stage-id>.md`.
-     Log: `{"stage":"<stage-id>","type":"multi-model","exitCode":0,"model":"<model>","action":"called","qualityPassed":true,"reason":null,"ts":"<ISO-8601>"}`
-   - **Exit 0 + quality failed** (after retry): Log: `{"stage":"<stage-id>","type":"multi-model","exitCode":0,"model":"<model>","action":"quality_failed","qualityPassed":false,"reason":"<quality.reason>","ts":"<ISO-8601>"}`
-     Proceed with claudecode-only execution.
-   - **Exit 10 (fallback)**: Log: `{"stage":"<stage-id>","type":"multi-model","exitCode":10,"model":"<model>","action":"fallback","reason":"<reason from JSON>","ts":"<ISO-8601>"}`
-     Proceed with claudecode-only execution.
-   - **Exit 1 (error)**: Log: `{"stage":"<stage-id>","type":"multi-model","exitCode":1,"model":"<model>","action":"error","reason":"<reason from JSON>","ts":"<ISO-8601>"}`
-     Proceed with claudecode-only execution.
-
-Skipping the external AI call on a multi-model stage is a **protocol violation**. If the ai-call command fails, you MUST still log it and proceed — but you must NOT silently skip the call.
-
-### 3. Spawn Task tool agent
 Use the Task tool to spawn a sub-agent for the stage:
 
 ```
@@ -85,34 +104,16 @@ Task tool parameters:
 
 **Prompt assembly rules:**
 - Always include: stage CLAUDE.md content + previous HANDOFF + references
-- For MULTI-MODEL stages where Step 2 exit code was 0 and quality passed: you MUST prepend the external AI output.
-  Read `state/ai-outputs/<stage-id>.md` and include it at the top of the prompt as:
+- Prepend the debate summary from `state/debate/<stage-id>/` as:
   ```
-  ## External AI Analysis (from <model>)
-  <content from state/ai-outputs/<stage-id>.md>
+  ## Debate Summary
+  <synthesized content from the debate Final Round>
   ```
-  This section is MANDATORY when external AI output exists. Do NOT omit it.
-
-- For ALL MULTI-MODEL stages, append this synthesis directive to the Task agent prompt:
+- Append this directive:
   ```
-  ## SYNTHESIS REQUIREMENT (MANDATORY)
-  You MUST include a "## Synthesis Notes" section in EACH output file. This section documents
-  how external AI contributions were handled. The stage transition gate will BLOCK if this is missing.
-
-  Format:
-  ## Synthesis Notes
-  - **External AI status**: [succeeded/failed/unavailable]
-  - **Incorporated ideas**: [list of ideas taken from external AI, or "N/A - external AI unavailable"]
-  - **Rejected ideas**: [list with reasons, or "N/A"]
-  - **Claude-only additions**: [list of content generated independently by Claude]
-  ```
-
-- For MULTI-MODEL stages where external AI failed (exit 10, exit 1, or quality_failed):
-  ```
-  ## Synthesis Notes
-  - **External AI status**: Failed (reason: <fallback reason from log>)
-  - **Incorporated ideas**: N/A - external AI output was unavailable or insufficient
-  - **Claude-only additions**: All content generated by Claude independently
+  ## DEBATE NOTES REQUIREMENT (MANDATORY)
+  You MUST include a "## Debate Notes" section in EACH output file. This section documents
+  the multi-agent debate outcomes. The stage transition gate will BLOCK if this is missing.
   ```
 
 ### 4. Validate outputs
@@ -135,18 +136,16 @@ After each stage completes, verify the required outputs exist:
 - Stage 09: Test files + `outputs/test_report.md`, `outputs/coverage_report.md`
 - Stage 10: CI/CD config + `outputs/deployment_guide.md`
 
-## Multi-Model Compliance Check
+## Debate Compliance Check
 
 When the pipeline completes all 10 stages, pauses, or fails, perform this compliance check:
 
 1. Read `state/ai-call-log.jsonl`
-2. Verify that **every multi-model stage** (`01-brainstorm`, `03-planning`, `04-ui-ux`, `07-refactoring`, `09-testing`) has at least one log entry with `"type":"multi-model"`
-3. If any multi-model stage is missing from the log:
+2. Verify that **every stage** has at least one log entry with `"type":"debate"`
+3. If any stage is missing from the log:
    - Display a **compliance warning** listing the missing stages
-   - Example: `⚠ COMPLIANCE: Multi-model gate was not executed for stages: 03-planning, 09-testing`
-4. If all multi-model stages are present, display: `✓ Multi-model compliance: all gates executed`
-
-This check ensures the pipeline never silently skips external AI calls on stages that require them.
+   - Example: `⚠ COMPLIANCE: Debate was not executed for stages: 03-planning, 09-testing`
+4. If all stages are present, display: `✓ Debate compliance: all stages executed with multi-agent debate`
 
 ## Retry Logic
 

@@ -1,7 +1,7 @@
 {
   "name": "claude-symphony",
   "version": "1.2.0",
-  "description": "Multi-AI Orchestration Framework",
+  "description": "Claude Multi-Agent Debate Framework",
 
   "statusLine": {
     "type": "command",
@@ -41,13 +41,9 @@
       "description": "Create checkpoint",
       "file": "commands/checkpoint.md"
     },
-    "gemini": {
-      "description": "Call Gemini CLI (tmux)",
-      "file": "commands/gemini.md"
-    },
-    "codex": {
-      "description": "Call Codex CLI (tmux)",
-      "file": "commands/codex.md"
+    "debate": {
+      "description": "Run multi-agent debate for current stage",
+      "file": "commands/debate.md"
     },
     "status": {
       "description": "Check pipeline status",
@@ -109,14 +105,6 @@
       "description": "Start 10-deployment stage",
       "file": "commands/deploy.md"
     },
-    "collaborate": {
-      "description": "Run Multi-AI collaboration",
-      "file": "commands/collaborate.md"
-    },
-    "benchmark": {
-      "description": "AI model benchmarking",
-      "file": "commands/benchmark.md"
-    },
     "fork": {
       "description": "Pipeline branch management",
       "file": "commands/fork.md"
@@ -130,10 +118,6 @@
     "smart-handoff": {
       "description": "Smart context extraction and HANDOFF generation",
       "directory": "skills/smart-handoff"
-    },
-    "ai-collaboration": {
-      "description": "Multi-AI collaboration orchestration",
-      "directory": "skills/ai-collaboration"
     },
     "auto-checkpoint": {
       "description": "Automatic checkpoint generation",

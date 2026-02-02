@@ -1,0 +1,245 @@
+// claude-symphony Debate System Configuration
+// All stages use Claude sub-agent multi-agent debate instead of external AI models.
+// Hybrid dynamic rounds (2-5): independent production → cross-review → optional rebuttal → synthesis.
+{
+  "debate": {
+    "enabled": true,
+    "description": "Claude multi-agent debate system for all pipeline stages",
+    "version": "1.0.0",
+
+    // ── Intensity Profiles ──────────────────────────────────────────────
+    "intensity_profiles": {
+      "full": {
+        "min_rounds": 3,
+        "max_rounds": 5,
+        "agent_count": 3,
+        "base_task_calls": 7,
+        "max_task_calls": 13,
+        "description": "Full debate with independent production, cross-review, optional rebuttal rounds, and synthesis"
+      },
+      "standard": {
+        "min_rounds": 2,
+        "max_rounds": 4,
+        "agent_count": 3,
+        "base_task_calls": 4,
+        "max_task_calls": 10,
+        "description": "Standard debate with independent production, optional cross-review, and synthesis"
+      },
+      "light": {
+        "min_rounds": 2,
+        "max_rounds": 3,
+        "agent_count": 2,
+        "base_task_calls": 3,
+        "max_task_calls": 5,
+        "description": "Light debate with independent production and synthesis only"
+      }
+    },
+
+    // ── Dynamic Round Extension ─────────────────────────────────────────
+    "dynamic_rounds": {
+      "contention_threshold": 0.7,
+      "description": "Synthesizer evaluates contention score (0.0-1.0) after each review round",
+      "extension_criteria": [
+        "Explicit disagreement on core conclusions between agents",
+        "Unresolved rebuttals remaining from previous round",
+        "Conflicting approaches each with valid supporting evidence"
+      ],
+      "on_max_rounds_reached": {
+        "action": "force_synthesis",
+        "strategy": "majority_vote_with_minority_opinion_recorded"
+      }
+    },
+
+    // ── Per-Stage Debate Roles ──────────────────────────────────────────
+    "stage_roles": {
+      "01-brainstorm": {
+        "intensity": "full",
+        "roles": [
+          {
+            "name": "Visionary",
+            "directive": "Generate bold, boundary-pushing ideas. Think laterally and explore unconventional approaches. What if there were no constraints? Propose 10+ innovative feature ideas that competitors would not consider."
+          },
+          {
+            "name": "Skeptic",
+            "directive": "Challenge every idea for feasibility, technical risk, and user value. Identify hidden assumptions, potential failure modes, and scope risks. Rate each idea on a 1-5 feasibility scale with justification."
+          },
+          {
+            "name": "Integrator",
+            "directive": "Find connections between disparate ideas. Synthesize themes, identify synergies, and propose combinations that create emergent value. Map ideas to user needs and market gaps."
+          }
+        ]
+      },
+      "02-research": {
+        "intensity": "standard",
+        "roles": [
+          {
+            "name": "Deep Diver",
+            "directive": "Conduct thorough technical investigation. Evaluate libraries, frameworks, and tools with benchmarks and evidence. Provide detailed comparison tables with quantified metrics."
+          },
+          {
+            "name": "Contrarian",
+            "directive": "Challenge mainstream technology choices. Advocate for alternative approaches, lesser-known tools, or unconventional architectures. Identify risks in popular choices that others overlook."
+          },
+          {
+            "name": "Synthesizer",
+            "directive": "Discover patterns across research findings. Identify where different sources agree and diverge. Create a unified technology recommendation with clear rationale."
+          }
+        ]
+      },
+      "03-planning": {
+        "intensity": "full",
+        "roles": [
+          {
+            "name": "Architect",
+            "directive": "Design the system architecture for scalability, maintainability, and performance. Define module boundaries, data flow, and communication patterns. Provide architectural decision records."
+          },
+          {
+            "name": "Risk Analyst",
+            "directive": "Identify failure modes, bottlenecks, and technical debt risks in the proposed architecture. Stress-test the design against edge cases, scale scenarios, and technology changes."
+          },
+          {
+            "name": "Pragmatist",
+            "directive": "Evaluate the architecture against real-world constraints: timeline, team size, budget, and complexity. Propose simplifications without sacrificing core requirements. Focus on what ships."
+          }
+        ]
+      },
+      "04-ui-ux": {
+        "intensity": "standard",
+        "roles": [
+          {
+            "name": "UX Advocate",
+            "directive": "Design from the user's perspective. Map user journeys, identify pain points, and ensure intuitive interactions. Prioritize accessibility (WCAG 2.1 AA) and inclusive design."
+          },
+          {
+            "name": "Visual Designer",
+            "directive": "Focus on layout, visual hierarchy, typography, and aesthetic coherence. Create wireframes and define the design system (colors, spacing, components). Ensure visual consistency."
+          },
+          {
+            "name": "Dev Liaison",
+            "directive": "Evaluate UI/UX proposals for technical feasibility. Identify implementation complexity, performance implications, and component reusability. Flag designs that would be difficult to build."
+          }
+        ]
+      },
+      "05-task-management": {
+        "intensity": "light",
+        "roles": [
+          {
+            "name": "Decomposer",
+            "directive": "Break down the project plan into granular, actionable tasks. Each task should have clear acceptance criteria, time estimates, and dependencies. Aim for 1-day task granularity."
+          },
+          {
+            "name": "Dependency Mapper",
+            "directive": "Analyze task dependencies, identify the critical path, and flag potential blockers. Optimize task ordering for maximum parallel execution and minimum idle time."
+          }
+        ]
+      },
+      "06-implementation": {
+        "intensity": "full",
+        "roles": [
+          {
+            "name": "Coder",
+            "directive": "Write clean, well-tested code following TDD principles. Write tests first, then implementation. Focus on correctness, type safety, and adherence to the architecture defined in planning."
+          },
+          {
+            "name": "Reviewer",
+            "directive": "Review all code for bugs, security vulnerabilities, performance issues, and maintainability. Suggest specific improvements with code examples. Check adherence to coding standards."
+          },
+          {
+            "name": "Tester",
+            "directive": "Design comprehensive test cases including edge cases, boundary conditions, and error scenarios. Verify test coverage meets targets. Identify untested code paths and write additional tests."
+          }
+        ]
+      },
+      "07-refactoring": {
+        "intensity": "full",
+        "roles": [
+          {
+            "name": "Performance Engineer",
+            "directive": "Profile the codebase for performance bottlenecks. Propose optimizations with quantified impact estimates. Focus on rendering, memory usage, and algorithmic efficiency."
+          },
+          {
+            "name": "Clean Code Advocate",
+            "directive": "Improve code readability, reduce complexity, and eliminate duplication. Apply SOLID principles and appropriate design patterns. Ensure consistent naming and code organization."
+          },
+          {
+            "name": "Regression Guardian",
+            "directive": "Ensure all refactoring preserves existing behavior. Run tests after every change. Flag any refactoring that risks breaking functionality. Verify backward compatibility."
+          }
+        ]
+      },
+      "08-qa": {
+        "intensity": "full",
+        "roles": [
+          {
+            "name": "Security Auditor",
+            "directive": "Audit the codebase for OWASP Top 10 vulnerabilities. Check for XSS, injection, insecure data storage, and authentication weaknesses. Provide severity ratings and remediation steps."
+          },
+          {
+            "name": "Accessibility Inspector",
+            "directive": "Verify WCAG 2.1 AA compliance. Check keyboard navigation, screen reader support, color contrast, and responsive behavior. Test with assistive technology patterns."
+          },
+          {
+            "name": "Edge Case Hunter",
+            "directive": "Systematically explore boundary conditions, unusual input combinations, and error scenarios. Test resource exhaustion, concurrent operations, and state corruption paths."
+          }
+        ]
+      },
+      "09-testing": {
+        "intensity": "standard",
+        "roles": [
+          {
+            "name": "Coverage Maximizer",
+            "directive": "Identify untested code paths and write targeted tests to maximize branch and line coverage. Use equivalence partitioning and boundary value analysis systematically."
+          },
+          {
+            "name": "Chaos Engineer",
+            "directive": "Design stress tests, adversarial inputs, and failure injection scenarios. Test race conditions, resource exhaustion, and recovery behavior. Think like an attacker."
+          },
+          {
+            "name": "Integration Specialist",
+            "directive": "Write integration tests that verify cross-module interactions. Test full user workflows end-to-end. Ensure data flows correctly between all system components."
+          }
+        ]
+      },
+      "10-deployment": {
+        "intensity": "light",
+        "roles": [
+          {
+            "name": "Infra Engineer",
+            "directive": "Design CI/CD pipeline, configure hosting, and set up deployment automation. Define build, test, and deploy stages. Ensure zero-downtime deployment capability."
+          },
+          {
+            "name": "Security Ops",
+            "directive": "Harden the deployment: manage secrets, configure HTTPS, set security headers, and establish monitoring. Review environment configurations for security best practices."
+          }
+        ]
+      }
+    },
+
+    // ── Graceful Degradation ────────────────────────────────────────────
+    "graceful_degradation": {
+      "min_successful_agents": 1,
+      "on_total_failure": "single_agent_fallback",
+      "on_token_overflow": "compress_previous_round_outputs",
+      "on_agent_failure_in_extra_round": "continue_with_remaining_agents"
+    },
+
+    // ── Output Paths ────────────────────────────────────────────────────
+    "output_paths": {
+      "base_dir": "state/debate",
+      "round1_pattern": "state/debate/<stage-id>/round1/<role-name>.md",
+      "round2_pattern": "state/debate/<stage-id>/round2/<role-name>_review.md",
+      "roundN_pattern": "state/debate/<stage-id>/roundN/<role-name>_rebuttal.md",
+      "final_pattern": "stages/<stage-id>/outputs/"
+    },
+
+    // ── Synthesis Rules ─────────────────────────────────────────────────
+    "synthesis_rules": {
+      "consensus_items": "Include with high confidence (all agents agree)",
+      "majority_items": "Include with note of dissent (2/3 agree)",
+      "contradictory_items": "Select better-supported position, document reasoning",
+      "unique_contributions": "Evaluate on quality and include if valuable",
+      "required_output_section": "## Debate Notes"
+    }
+  }
+}
