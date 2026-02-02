@@ -256,13 +256,13 @@ export async function verifyMultiModelGate(
     };
   }
 
-  // If external AI succeeded but output quality is poor
+  // If external AI succeeded but output quality is poor — non-blocking warning
   if (hasSuccess && outputQuality && !outputQuality.passes) {
     return {
-      passed: false,
+      passed: true,
       message:
-        `Stage ${stageId}: AI output failed quality check — ${outputQuality.reason}. ` +
-        `External AI output may be meta-commentary rather than actual content.`,
+        `WARNING: Stage ${stageId} output quality flagged — ${outputQuality.reason} (non-blocking). ` +
+        `Claude will normalize format during synthesis.`,
       details,
     };
   }

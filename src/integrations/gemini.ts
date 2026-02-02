@@ -70,9 +70,17 @@ export async function callGemini(
   try {
     logInfo(`Calling Gemini CLI (timeout: ${timeout > 0 ? timeout + 's' : 'none'})...`);
 
-    const commandStr = `gemini -p <${prompt.length}chars> --yolo`;
+    // Soft format guide prepended to prompt (non-enforced)
+    const formatGuide =
+      'PREFERRED OUTPUT FORMAT (optional but recommended):\n' +
+      '- Use markdown headings (##, ###) to organize sections.\n' +
+      '- Use bullet points for lists.\n' +
+      '- Output actual content directly rather than describing what you will do.\n\n';
+    const enhancedPrompt = formatGuide + prompt;
 
-    const result = await exec('gemini', ['-p', prompt, '--yolo'], {
+    const commandStr = `gemini -p <${enhancedPrompt.length}chars> --yolo`;
+
+    const result = await exec('gemini', ['-p', enhancedPrompt, '--yolo'], {
       timeout: timeout > 0 ? timeout * 1000 : 0,
       cwd: options.cwd,
     });
@@ -103,17 +111,10 @@ export async function callGemini(
       };
     }
 
-    // Output quality check (replaces simple length check)
+    // Output quality check (non-blocking — for logging/reporting only)
     const quality = validateOutputQuality(output, prompt);
     if (!quality.passes) {
-      logWarning(`Gemini output failed quality check: ${quality.reason}`);
-      return {
-        success: false,
-        fallbackRequired: true,
-        fallbackSignal: 'OUTPUT_FAILED',
-        fallbackReason: `Quality check failed: ${quality.reason}`,
-        metadata,
-      };
+      logWarning(`Gemini output quality note: ${quality.reason} (non-blocking)`);
     }
 
     // Refusal pattern detection

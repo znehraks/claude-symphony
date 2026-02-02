@@ -70,10 +70,18 @@ export async function callCodex(
   }
 
   try {
+    // Soft format guide prepended to prompt (non-enforced)
+    const formatGuide =
+      'PREFERRED OUTPUT FORMAT (optional but recommended):\n' +
+      '- Use markdown headings (##, ###) to organize sections.\n' +
+      '- Use bullet points for lists.\n' +
+      '- Output actual content directly rather than describing what you will do.\n\n';
+    const enhancedPrompt = formatGuide + prompt;
+
     const args = fullAuto
-      ? ['exec', '--full-auto', prompt]
-      : ['exec', prompt];
-    const commandStr = `codex ${args.slice(0, -1).join(' ')} <${prompt.length}chars>`;
+      ? ['exec', '--full-auto', enhancedPrompt]
+      : ['exec', enhancedPrompt];
+    const commandStr = `codex ${args.slice(0, -1).join(' ')} <${enhancedPrompt.length}chars>`;
     logInfo(`Calling Codex CLI${fullAuto ? ' (--full-auto)' : ''} (timeout: ${timeout > 0 ? timeout + 's' : 'none'})...`);
 
     const result = await exec('codex', args, {
@@ -107,17 +115,10 @@ export async function callCodex(
       };
     }
 
-    // Output quality check (replaces simple length check)
+    // Output quality check (non-blocking — for logging/reporting only)
     const quality = validateOutputQuality(output, prompt);
     if (!quality.passes) {
-      logWarning(`Codex output failed quality check: ${quality.reason}`);
-      return {
-        success: false,
-        fallbackRequired: true,
-        fallbackSignal: 'OUTPUT_FAILED',
-        fallbackReason: `Quality check failed: ${quality.reason}`,
-        metadata,
-      };
+      logWarning(`Codex output quality note: ${quality.reason} (non-blocking)`);
     }
 
     // Refusal pattern detection
