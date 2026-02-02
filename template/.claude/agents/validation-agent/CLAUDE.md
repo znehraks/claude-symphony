@@ -119,20 +119,26 @@ Return summary in this format:
 - `stages/05-task-management/outputs/tasks.md`
 
 ### 06-implementation
-**Required:**
-- Directory `stages/06-implementation/outputs/source_code/` exists
-- File `stages/06-implementation/outputs/implementation_log.md` exists
+**Required Source Code (in project root, NOT stages/06/outputs/):**
+- Use Glob to find `**/*.{ts,tsx,js,jsx,cs,py,go,rs,java}` in project root — **minimum 5 files required**
+- Project manifest MUST exist: one of `package.json`, `*.csproj`, `pyproject.toml`, `Cargo.toml`, `go.mod`
+- Run build command based on detected project type (see table below)
+- Run test command based on detected project type
 
-**Commands (if package.json exists):**
-- `npm run lint` (exit code 0)
-- `npm run typecheck` (exit code 0)
+**Required Documentation:**
+- `stages/06-implementation/outputs/implementation_log.md`
+- `stages/06-implementation/outputs/test_summary.md`
+
+**CRITICAL**: If `stages/06/outputs/` contains only markdown and the project root has NO source code files, this is a **HARD FAIL**. The primary output of Stage 06 is source code, not documentation.
 
 ### 07-refactoring
 **Required Files:**
 - `stages/07-refactoring/outputs/refactoring_report.md`
 
-**Optional:**
-- Directory `stages/07-refactoring/outputs/refactored_code/`
+**Source Code Verification:**
+- Source code files in project root: minimum 5 (Glob `**/*.{ts,tsx,js,jsx,cs,py,go,rs,java}`)
+- Build command must pass
+- Test command must pass (refactoring must not break tests)
 
 ### 08-qa
 **Required Files:**
@@ -141,14 +147,27 @@ Return summary in this format:
 **Optional Files:**
 - `stages/08-qa/outputs/bug_list.md`
 
-### 09-testing
-**Required:**
-- Directory `stages/09-testing/outputs/tests/` exists
-- File `stages/09-testing/outputs/test_report.md` exists
-- File `stages/09-testing/outputs/coverage_report.md` exists
+**Source Code Verification:**
+- Source code files must exist in project root
+- Build and test commands must pass after QA fixes
 
-**Commands (if package.json exists):**
-- `npm run test` (exit code 0)
+### 09-testing
+**Required Files:**
+- `stages/09-testing/outputs/test_report.md`
+- `stages/09-testing/outputs/coverage_report.md`
+
+**Source Code Verification:**
+- Source code + test files in project root: minimum 5
+- Test command must pass with all tests passing
+
+### Project Type Detection (for build/test commands)
+| Manifest | Build Command | Test Command |
+|----------|--------------|-------------|
+| `package.json` | `npm run build` | `npm test` |
+| `*.csproj` | `dotnet build` | `dotnet test` |
+| `pyproject.toml` | `python -m py_compile` | `pytest` |
+| `Cargo.toml` | `cargo build` | `cargo test` |
+| `go.mod` | `go build ./...` | `go test ./...` |
 
 ### 10-deployment
 **Required Files:**

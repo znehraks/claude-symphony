@@ -6,7 +6,9 @@
     "Read",
     "Glob",
     "Grep",
-    "Write"
+    "Write",
+    "Bash",
+    "Edit"
   ],
   "model": "reasoning",
   "permissionMode": "acceptEdits",

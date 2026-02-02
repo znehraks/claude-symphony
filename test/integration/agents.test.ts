@@ -132,17 +132,19 @@ describe('Error Handling', () => {
 
 describe('Fallback Behavior', () => {
   it('should execute fallback logic when Task tool unavailable', async () => {
-    // Since we can't call Task tool from TypeScript, verify fallback works
+    // Since we can't call Task tool from TypeScript, verify fallback returns failure
+    // to force legacy validation fallback
     const result = await spawnAgent('validation-agent', {
       projectRoot: PROJECT_ROOT,
       stage: '01-brainstorm',
     });
 
-    // Fallback returns success with default JSON structure
-    expect(result.success).toBe(true);
+    // Fallback returns failure with score 0.0 to force legacy validation
+    expect(result.success).toBe(false);
     const parsed = JSON.parse(result.result!);
     expect(parsed).toHaveProperty('note');
-    expect(parsed.note).toContain('Fallback result');
+    expect(parsed.note).toContain('Mock result');
+    expect(parsed.score).toBe(0.0);
   });
 
   it('should include warning in fallback response', async () => {

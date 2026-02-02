@@ -53,6 +53,7 @@
     // ── Per-Stage Debate Roles ──────────────────────────────────────────
     "stage_roles": {
       "01-brainstorm": {
+        "execution_mode": "debate",
         "intensity": "full",
         "default_model": "reasoning",
         "roles": [
@@ -74,6 +75,7 @@
         ]
       },
       "02-research": {
+        "execution_mode": "debate",
         "intensity": "standard",
         "default_model": "balanced",
         "roles": [
@@ -95,6 +97,7 @@
         ]
       },
       "03-planning": {
+        "execution_mode": "debate",
         "intensity": "full",
         "default_model": "reasoning",
         "roles": [
@@ -116,85 +119,102 @@
         ]
       },
       "04-ui-ux": {
+        "execution_mode": "sequential",
         "intensity": "standard",
         "default_model": "balanced",
-        "roles": [
+        "steps": [
           {
-            "name": "UX Advocate",
+            "name": "Designer",
             "model": "balanced",
-            "directive": "Design from the user's perspective. Map user journeys, identify pain points, and ensure intuitive interactions. Prioritize accessibility (WCAG 2.1 AA) and inclusive design."
+            "directive": "Design from the user's perspective. Map user journeys, create wireframes, define design system (colors, spacing, components). Prioritize accessibility (WCAG 2.1 AA). Write wireframes and component specs to stage outputs using Write tool.",
+            "output": "stages/04-ui-ux/outputs/ (wireframes.md, components.md, design_system.md)"
           },
           {
-            "name": "Visual Designer",
-            "model": "balanced",
-            "directive": "Focus on layout, visual hierarchy, typography, and aesthetic coherence. Create wireframes and define the design system (colors, spacing, components). Ensure visual consistency."
-          },
-          {
-            "name": "Dev Liaison",
+            "name": "Dev Reviewer",
             "model": "fast",
-            "directive": "Evaluate UI/UX proposals for technical feasibility. Identify implementation complexity, performance implications, and component reusability. Flag designs that would be difficult to build."
+            "directive": "Review the Designer's wireframes and component specs for technical feasibility. Identify implementation complexity, performance implications, and component reusability. Flag designs that would be difficult to build. Write feedback report.",
+            "input": "Designer's output files",
+            "output": "state/debate/04-ui-ux/step2/DevReviewer.md"
           }
         ]
       },
       "05-task-management": {
+        "execution_mode": "sequential",
         "intensity": "light",
         "default_model": "fast",
-        "roles": [
+        "steps": [
           {
             "name": "Decomposer",
             "model": "fast",
-            "directive": "Break down the project plan into granular, actionable tasks. Each task should have clear acceptance criteria, time estimates, and dependencies. Aim for 1-day task granularity."
-          },
-          {
-            "name": "Dependency Mapper",
-            "model": "fast",
-            "directive": "Analyze task dependencies, identify the critical path, and flag potential blockers. Optimize task ordering for maximum parallel execution and minimum idle time."
+            "directive": "Break down the project plan into granular, actionable tasks. Each task should have clear acceptance criteria and dependencies. Aim for 1-day task granularity. Write tasks.md and implementation_order.md to stage outputs using Write tool.",
+            "output": "stages/05-task-management/outputs/ (tasks.md, implementation_order.md)"
           }
         ]
       },
       "06-implementation": {
-        "intensity": "full",
+        "execution_mode": "sequential",
+        "code_producing": true,
         "default_model": "balanced",
-        "roles": [
+        "steps": [
           {
             "name": "Coder",
             "model": "balanced",
-            "directive": "Write clean, well-tested code following TDD principles. Write tests first, then implementation. Focus on correctness, type safety, and adherence to the architecture defined in planning."
+            "directive": "Scaffold the project and write source code. Include a filepath comment at the top of each code block. You MUST create a project manifest (package.json, *.csproj, pyproject.toml, Cargo.toml, go.mod, etc.) as appropriate. Use the Write tool to create real files in the project root. Do NOT just write markdown — produce actual source files.",
+            "output": "Source code files in project root + state/debate/06-implementation/step1/Coder.md (list of files created)"
           },
           {
             "name": "Reviewer",
             "model": "reasoning",
-            "directive": "Review all code for bugs, security vulnerabilities, performance issues, and maintainability. Suggest specific improvements with code examples. Check adherence to coding standards."
+            "directive": "Read the actual source files created by Coder using the Read tool. Review for bugs, security vulnerabilities, performance issues, and architecture violations. Report issues with filepath:line_number format.",
+            "input": "Coder's output (source files + file list)",
+            "output": "state/debate/06-implementation/step2/Reviewer.md"
+          },
+          {
+            "name": "CoderFix",
+            "model": "balanced",
+            "directive": "Apply Reviewer's feedback by modifying the actual source files. Use Edit/Write tools to update real files in the project root. Do NOT just describe fixes — apply them.",
+            "input": "Reviewer's review",
+            "output": "Updated source files + state/debate/06-implementation/step3/CoderFix.md"
           },
           {
             "name": "Tester",
             "model": "balanced",
-            "directive": "Design comprehensive test cases including edge cases, boundary conditions, and error scenarios. Verify test coverage meets targets. Identify untested code paths and write additional tests."
+            "directive": "Read the source code and write test files using the Write tool. Then run build and test commands using Bash. Report build/test results. If tests fail, document the failures.",
+            "input": "Updated source files",
+            "output": "Test files in project root + state/debate/06-implementation/step4/Tester.md (test results)"
           }
         ]
       },
       "07-refactoring": {
-        "intensity": "full",
+        "execution_mode": "sequential",
+        "code_producing": true,
         "default_model": "reasoning",
-        "roles": [
+        "steps": [
           {
-            "name": "Performance Engineer",
+            "name": "Analyzer",
             "model": "reasoning",
-            "directive": "Profile the codebase for performance bottlenecks. Propose optimizations with quantified impact estimates. Focus on rendering, memory usage, and algorithmic efficiency."
+            "directive": "Profile the codebase for performance bottlenecks, code smells, and duplication. Identify specific files and functions to refactor. Write analysis report.",
+            "output": "state/debate/07-refactoring/step1/Analyzer.md"
           },
           {
-            "name": "Clean Code Advocate",
+            "name": "Refactorer",
             "model": "balanced",
-            "directive": "Improve code readability, reduce complexity, and eliminate duplication. Apply SOLID principles and appropriate design patterns. Ensure consistent naming and code organization."
+            "directive": "Apply refactoring changes based on Analyzer's report. Use Edit/Write tools to modify actual source files. Improve readability, reduce complexity, apply SOLID principles.",
+            "input": "Analyzer's report",
+            "output": "Updated source files + state/debate/07-refactoring/step2/Refactorer.md"
           },
           {
-            "name": "Regression Guardian",
+            "name": "Tester",
             "model": "fast",
-            "directive": "Ensure all refactoring preserves existing behavior. Run tests after every change. Flag any refactoring that risks breaking functionality. Verify backward compatibility."
+            "directive": "Run build and test commands using Bash to verify refactoring preserved behavior. If tests fail, document failures. Ensure backward compatibility.",
+            "input": "Refactored source files",
+            "output": "state/debate/07-refactoring/step3/Tester.md (test results)"
           }
         ]
       },
       "08-qa": {
+        "execution_mode": "debate",
+        "code_producing": true,
         "intensity": "full",
         "default_model": "balanced",
         "roles": [
@@ -216,39 +236,42 @@
         ]
       },
       "09-testing": {
-        "intensity": "standard",
+        "execution_mode": "sequential",
+        "code_producing": true,
         "default_model": "balanced",
-        "roles": [
+        "steps": [
           {
-            "name": "Coverage Maximizer",
+            "name": "TestWriter",
             "model": "balanced",
-            "directive": "Identify untested code paths and write targeted tests to maximize branch and line coverage. Use equivalence partitioning and boundary value analysis systematically."
+            "directive": "Read the project source code and write comprehensive tests: unit, integration, and E2E. Use the Write tool to create real test files in the project. Cover edge cases, boundary conditions, and error scenarios.",
+            "output": "Test files in project root + state/debate/09-testing/step1/TestWriter.md"
           },
           {
-            "name": "Chaos Engineer",
-            "model": "balanced",
-            "directive": "Design stress tests, adversarial inputs, and failure injection scenarios. Test race conditions, resource exhaustion, and recovery behavior. Think like an attacker."
+            "name": "Runner",
+            "model": "fast",
+            "directive": "Run all tests using Bash (detect project type and run appropriate test command). Report results including pass/fail counts and coverage. Document any failures.",
+            "input": "Test files created by TestWriter",
+            "output": "state/debate/09-testing/step2/Runner.md (test results)"
           },
           {
-            "name": "Integration Specialist",
+            "name": "Fixer",
             "model": "balanced",
-            "directive": "Write integration tests that verify cross-module interactions. Test full user workflows end-to-end. Ensure data flows correctly between all system components."
+            "directive": "Fix any failing tests or source code bugs identified by Runner. Use Edit/Write tools to modify actual files. Re-run tests to verify fixes.",
+            "input": "Runner's test results",
+            "output": "Updated files + state/debate/09-testing/step3/Fixer.md"
           }
         ]
       },
       "10-deployment": {
+        "execution_mode": "sequential",
         "intensity": "light",
         "default_model": "fast",
-        "roles": [
+        "steps": [
           {
-            "name": "Infra Engineer",
+            "name": "ConfigWriter",
             "model": "fast",
-            "directive": "Design CI/CD pipeline, configure hosting, and set up deployment automation. Define build, test, and deploy stages. Ensure zero-downtime deployment capability."
-          },
-          {
-            "name": "Security Ops",
-            "model": "balanced",
-            "directive": "Harden the deployment: manage secrets, configure HTTPS, set security headers, and establish monitoring. Review environment configurations for security best practices."
+            "directive": "Design CI/CD pipeline, configure hosting, and set up deployment automation. Use the Write tool to create actual config files (Dockerfile, CI/CD YAML, deployment scripts). Write deployment guide to stage outputs.",
+            "output": "Config files + stages/10-deployment/outputs/deployment_guide.md"
           }
         ]
       }
@@ -277,7 +300,21 @@
       "majority_items": "Include with note of dissent (2/3 agree)",
       "contradictory_items": "Select better-supported position, document reasoning",
       "unique_contributions": "Evaluate on quality and include if valuable",
-      "required_output_section": "## Debate Notes"
+      "required_output_section": "## Debate Notes",
+      "code_stage_synthesis": {
+        "must_write_files_to_project_root": true,
+        "must_run_build": true,
+        "must_run_tests": true,
+        "min_source_files": 5
+      }
+    },
+
+    // ── Sequential Mode ───────────────────────────────────────────────
+    "sequential_mode": {
+      "description": "Role-based sequential execution. Each step's output becomes the next step's input.",
+      "max_fix_cycles": 3,
+      "fail_on_build_error": true,
+      "fail_on_test_error": true
     }
   }
 }

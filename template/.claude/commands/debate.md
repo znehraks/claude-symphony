@@ -13,7 +13,19 @@ You are the debate orchestrator. Run a multi-agent debate for the current (or sp
 
 1. **Determine stage**: Read `state/progress.json` to find the current stage, or use the argument if provided.
 
-2. **Load debate config**: Read `config/debate.jsonc` to get:
+2. **Check execution mode**: Read `config/debate.jsonc` and check the stage's `execution_mode` field.
+
+### Sequential Mode Stages (04, 05, 06, 07, 09, 10)
+
+If the target stage has `execution_mode: "sequential"` in config/debate.jsonc:
+- Do NOT run the debate protocol
+- Instead, inform the user: **"Stage `<id>` uses sequential workflow, not debate. Use `/run-stage <id>` or `/auto-pilot`."**
+- If the user explicitly requests debate for a sequential stage with a second confirmation, warn but allow override by running the stage's `steps` as if they were debate `roles`
+
+### Debate Mode Stages (01, 02, 03, 08)
+Proceed with the debate protocol below.
+
+3. **Load debate config**: Read `config/debate.jsonc` to get:
    - Intensity profile for this stage (full/standard/light)
    - Role definitions (agent names and directives)
    - Dynamic round settings (contention threshold, max rounds)

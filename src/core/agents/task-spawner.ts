@@ -151,7 +151,7 @@ export async function executeTaskTool(params: {
   );
 
   return {
-    success: true,
+    success: false,
     output: JSON.stringify({
       stage: 'unknown',
       timestamp: new Date().toISOString(),
@@ -159,12 +159,12 @@ export async function executeTaskTool(params: {
       passed: 0,
       failed: 0,
       warnings: 0,
-      score: 1.0,
+      score: 0.0,
       checks: [],
-      note: 'Fallback result - Task tool must be invoked from main Claude Code session',
+      note: 'Mock result — Task tool must be invoked from main Claude Code session. Returning failure to force legacy validation fallback.',
     }),
     task_id: `${params.subagent_type}-${Date.now()}`,
-    num_turns: 1,
+    num_turns: 0,
     total_cost_usd: 0,
   };
 }

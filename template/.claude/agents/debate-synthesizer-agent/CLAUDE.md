@@ -77,6 +77,33 @@ When called to produce the final synthesized output:
 - **Coherence over completeness**: The final output must read as a unified document, not a patchwork of agent outputs
 - **Respect role expertise**: Weight agent input higher in their area of expertise (e.g., Security Auditor's opinion on security matters)
 
+## Code-Producing Stage Synthesis
+
+When synthesizing outputs for a stage with `code_producing: true` in `config/debate.jsonc` (stages 06, 07, 08, 09):
+
+### Additional Synthesis Steps (after standard synthesis):
+
+1. **Inventory source files**: Use Glob to find all source files in the project root (`**/*.{ts,tsx,js,jsx,cs,py,go,rs,java}`). Record the count.
+
+2. **Extract missing files from markdown**: Scan all round/step output markdown for code blocks with filepath comments (e.g., `// filepath: src/index.ts`). For each filepath that doesn't exist in the project root, extract the code and write it using Write tool.
+
+3. **Run build**: Detect project type from manifest (package.json → `npm run build`, *.csproj → `dotnet build`, etc.) and execute via Bash. Record result.
+
+4. **Run tests**: Execute test command (package.json → `npm test`, etc.) via Bash. Record result.
+
+5. **Fix cycle** (if build or tests fail): Analyze errors, fix source files using Edit/Write, re-run. Maximum 3 retry cycles.
+
+6. **Write summary**: After build+tests pass, write the standard markdown synthesis output to `stages/<stage-id>/outputs/`.
+
+### CRITICAL RULE
+**Build and test must pass before synthesis is considered complete.** If after 3 fix cycles the build/tests still fail, mark the synthesis as FAILED and document the remaining errors.
+
+### Minimum Requirements
+- At least 5 source code files in the project root
+- Project manifest file must exist (package.json, *.csproj, pyproject.toml, etc.)
+- Build command must exit with code 0
+- Test command must exit with code 0
+
 ## Context Variables
 
 You will receive:

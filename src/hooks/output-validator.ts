@@ -6,7 +6,7 @@
  * Now supports both legacy validation and Agent SDK-based validation
  */
 import path from 'path';
-import { existsSync, statSync, readFileSync } from 'fs';
+import { existsSync, statSync, readFileSync, readdirSync } from 'fs';
 import { readJson, writeJson, ensureDirAsync } from '../utils/fs.js';
 import { logInfo, logSuccess, logWarning, logError } from '../utils/logger.js';
 import { execShell } from '../utils/shell.js';
@@ -106,28 +106,6 @@ function checkFileExists(
 }
 
 /**
- * Check if directory exists
- */
-function checkDirectoryExists(
-  state: ValidationState,
-  projectRoot: string,
-  relativePath: string,
-  required: boolean = true
-): boolean {
-  const fullPath = path.join(projectRoot, relativePath);
-  const exists = existsSync(fullPath) && statSync(fullPath).isDirectory();
-
-  state.addCheck(
-    'Directory exists',
-    exists,
-    exists ? `${relativePath} directory exists` : `${relativePath} directory missing`,
-    required
-  );
-
-  return exists;
-}
-
-/**
  * Check file minimum size
  */
 function checkFileSize(
@@ -212,6 +190,149 @@ async function runValidationCommand(
 }
 
 /**
+ * Project type definition for multi-framework support
+ */
+interface ProjectType {
+  name: string;
+  manifestFile: string;
+  manifestGlob: string;
+  buildCommand: string;
+  testCommand: string;
+}
+
+const PROJECT_TYPES: ProjectType[] = [
+  { name: 'node', manifestFile: 'package.json', manifestGlob: 'package.json', buildCommand: 'npm run build', testCommand: 'npm test' },
+  { name: 'dotnet', manifestFile: '*.csproj', manifestGlob: '*.csproj', buildCommand: 'dotnet build', testCommand: 'dotnet test' },
+  { name: 'python', manifestFile: 'pyproject.toml', manifestGlob: 'pyproject.toml', buildCommand: 'python -m py_compile', testCommand: 'pytest' },
+  { name: 'rust', manifestFile: 'Cargo.toml', manifestGlob: 'Cargo.toml', buildCommand: 'cargo build', testCommand: 'cargo test' },
+  { name: 'go', manifestFile: 'go.mod', manifestGlob: 'go.mod', buildCommand: 'go build ./...', testCommand: 'go test ./...' },
+];
+
+/**
+ * Detect the project type based on manifest files in the project root
+ */
+export function detectProjectType(projectRoot: string): ProjectType | null {
+  for (const pt of PROJECT_TYPES) {
+    if (pt.manifestGlob.includes('*')) {
+      // Glob-style match (e.g., *.csproj)
+      const ext = pt.manifestGlob.replace('*', '');
+      try {
+        const files = readdirSync(projectRoot);
+        if (files.some((f) => f.endsWith(ext))) {
+          return pt;
+        }
+      } catch {
+        continue;
+      }
+    } else {
+      if (existsSync(path.join(projectRoot, pt.manifestFile))) {
+        return pt;
+      }
+    }
+  }
+  return null;
+}
+
+/**
+ * Count source code files in the project root (recursive)
+ */
+export function countSourceFiles(projectRoot: string): number {
+  const SOURCE_EXTENSIONS = new Set([
+    '.ts', '.tsx', '.js', '.jsx', '.cs', '.py', '.go', '.rs', '.java',
+    '.vue', '.svelte', '.rb', '.php', '.swift', '.kt', '.scala',
+  ]);
+
+  const IGNORE_DIRS = new Set([
+    'node_modules', '.git', 'dist', 'build', '.next', '__pycache__',
+    'target', 'bin', 'obj', '.cache', 'coverage', '.turbo',
+  ]);
+
+  let count = 0;
+
+  function walk(dir: string): void {
+    try {
+      const entries = readdirSync(dir, { withFileTypes: true });
+      for (const entry of entries) {
+        if (entry.isDirectory()) {
+          if (!IGNORE_DIRS.has(entry.name)) {
+            walk(path.join(dir, entry.name));
+          }
+        } else if (entry.isFile()) {
+          const ext = path.extname(entry.name).toLowerCase();
+          if (SOURCE_EXTENSIONS.has(ext)) {
+            count++;
+          }
+        }
+      }
+    } catch {
+      // Skip unreadable directories
+    }
+  }
+
+  walk(projectRoot);
+  return count;
+}
+
+/**
+ * Validate source code existence and run build/test for code-producing stages
+ */
+async function validateCodeProducingStage(
+  state: ValidationState,
+  projectRoot: string,
+  _stageId: StageId,
+  minSourceFiles: number = 5
+): Promise<void> {
+  // 1. Count source files
+  const sourceCount = countSourceFiles(projectRoot);
+  const hasEnoughFiles = sourceCount >= minSourceFiles;
+  state.addCheck(
+    'Source file count',
+    hasEnoughFiles,
+    hasEnoughFiles
+      ? `Found ${sourceCount} source files (>= ${minSourceFiles} required)`
+      : `Only ${sourceCount} source files found (minimum ${minSourceFiles} required) — HARD FAIL`,
+    true
+  );
+
+  // 2. Detect project type
+  const projectType = detectProjectType(projectRoot);
+  state.addCheck(
+    'Project manifest',
+    projectType !== null,
+    projectType
+      ? `Detected project type: ${projectType.name} (${projectType.manifestFile})`
+      : 'No project manifest found (package.json, *.csproj, pyproject.toml, Cargo.toml, go.mod) — HARD FAIL',
+    true
+  );
+
+  if (!projectType) {
+    return; // Cannot run build/test without manifest
+  }
+
+  // 3. Build
+  await runValidationCommand(state, 'build', projectType.buildCommand, projectRoot, true);
+
+  // 4. Test
+  await runValidationCommand(state, 'test', projectType.testCommand, projectRoot, true);
+
+  // 5. Optional: E2E tests (Node.js only)
+  if (projectType.name === 'node') {
+    const pkgPath = path.join(projectRoot, 'package.json');
+    if (existsSync(pkgPath)) {
+      const pkgContent = readFileSync(pkgPath, 'utf-8');
+      if (pkgContent.includes('test:e2e')) {
+        await runValidationCommand(state, 'e2e', 'npm run test:e2e', projectRoot, false);
+      }
+      // Optional lint/typecheck
+      await runValidationCommand(state, 'lint', 'npm run lint', projectRoot, false);
+      if (pkgContent.includes('typecheck')) {
+        await runValidationCommand(state, 'typecheck', 'npm run typecheck', projectRoot, false);
+      }
+    }
+  }
+}
+
+/**
  * Validate stage outputs
  */
 async function validateStageOutputs(
@@ -273,53 +394,35 @@ async function validateStageOutputs(
       break;
 
     case '06-implementation':
-      checkDirectoryExists(state, projectRoot, `stages/${stageId}/outputs/source_code`, true);
+      // Documentation outputs
       checkFileExists(state, projectRoot, `stages/${stageId}/outputs/implementation_log.md`, true);
       checkFileExists(state, projectRoot, `stages/${stageId}/outputs/test_summary.md`, true);
 
-      // 4-Level Quality Gate for implementation
-      if (existsSync(path.join(projectRoot, 'package.json'))) {
-        // Level 1: Build
-        await runValidationCommand(state, 'build', 'npm run build', projectRoot, true);
-
-        // Level 2: Unit & Integration Tests
-        await runValidationCommand(state, 'test', 'npm run test', projectRoot, true);
-
-        // Level 3: E2E Tests (optional — not all projects have E2E)
-        const pkgContent = readFileSync(path.join(projectRoot, 'package.json'), 'utf-8');
-        const hasE2E = pkgContent.includes('test:e2e');
-        if (hasE2E) {
-          await runValidationCommand(state, 'e2e', 'npm run test:e2e', projectRoot, false);
-        }
-
-        // Level 4: Lint & Typecheck
-        await runValidationCommand(state, 'lint', 'npm run lint', projectRoot, false);
-        const hasTypecheck = pkgContent.includes('typecheck');
-        if (hasTypecheck) {
-          await runValidationCommand(state, 'typecheck', 'npm run typecheck', projectRoot, false);
-        }
-      }
+      // Source code verification + build/test (HARD FAIL if missing)
+      await validateCodeProducingStage(state, projectRoot, stageId, 5);
       break;
 
     case '07-refactoring':
-      checkDirectoryExists(state, projectRoot, `stages/${stageId}/outputs/refactored_code`, false);
       checkFileExists(state, projectRoot, `stages/${stageId}/outputs/refactoring_report.md`, true);
+
+      // Source code must still exist and build/test after refactoring
+      await validateCodeProducingStage(state, projectRoot, stageId, 5);
       break;
 
     case '08-qa':
       checkFileExists(state, projectRoot, `stages/${stageId}/outputs/qa_report.md`, true);
       checkFileExists(state, projectRoot, `stages/${stageId}/outputs/bug_list.md`, false);
+
+      // Verify source code and build/test pass after QA fixes
+      await validateCodeProducingStage(state, projectRoot, stageId, 5);
       break;
 
     case '09-testing':
-      checkDirectoryExists(state, projectRoot, `stages/${stageId}/outputs/tests`, true);
       checkFileExists(state, projectRoot, `stages/${stageId}/outputs/test_report.md`, true);
       checkFileExists(state, projectRoot, `stages/${stageId}/outputs/coverage_report.md`, true);
 
-      // Test validation if package.json exists
-      if (existsSync(path.join(projectRoot, 'package.json'))) {
-        await runValidationCommand(state, 'test', 'npm run test', projectRoot, true);
-      }
+      // Source code + tests must build and pass
+      await validateCodeProducingStage(state, projectRoot, stageId, 5);
       break;
 
     case '10-deployment':
@@ -445,45 +548,50 @@ function getValidationRulesForStage(stageId: StageId): Record<string, any> {
       ],
     },
     '06-implementation': {
-      directories: [
-        { path: 'stages/06-implementation/outputs/source_code', required: true },
-      ],
+      sourceCodeCheck: {
+        minFiles: 5,
+        requireManifest: true,
+        requireBuild: true,
+        requireTest: true,
+      },
       files: [
         { path: 'stages/06-implementation/outputs/implementation_log.md', required: true },
         { path: 'stages/06-implementation/outputs/test_summary.md', required: true },
       ],
-      commands: [
-        { name: 'build', command: 'npm run build', required: true },
-        { name: 'test', command: 'npm run test', required: true },
-        { name: 'e2e', command: 'npm run test:e2e', required: false },
-        { name: 'lint', command: 'npm run lint', required: false },
-        { name: 'typecheck', command: 'npm run typecheck', required: false },
-      ],
     },
     '07-refactoring': {
-      directories: [
-        { path: 'stages/07-refactoring/outputs/refactored_code', required: false },
-      ],
+      sourceCodeCheck: {
+        minFiles: 5,
+        requireManifest: true,
+        requireBuild: true,
+        requireTest: true,
+      },
       files: [
         { path: 'stages/07-refactoring/outputs/refactoring_report.md', required: true },
       ],
     },
     '08-qa': {
+      sourceCodeCheck: {
+        minFiles: 5,
+        requireManifest: true,
+        requireBuild: true,
+        requireTest: true,
+      },
       files: [
         { path: 'stages/08-qa/outputs/qa_report.md', required: true },
         { path: 'stages/08-qa/outputs/bug_list.md', required: false },
       ],
     },
     '09-testing': {
-      directories: [
-        { path: 'stages/09-testing/outputs/tests', required: true },
-      ],
+      sourceCodeCheck: {
+        minFiles: 5,
+        requireManifest: true,
+        requireBuild: true,
+        requireTest: true,
+      },
       files: [
         { path: 'stages/09-testing/outputs/test_report.md', required: true },
         { path: 'stages/09-testing/outputs/coverage_report.md', required: true },
-      ],
-      commands: [
-        { name: 'test', command: 'npm run test', required: true },
       ],
     },
     '10-deployment': {

@@ -15,6 +15,23 @@ For each stage in the pipeline:
 8. Update `state/progress.json` to mark stage complete
 9. Move to the next stage
 
+## Execution Modes
+
+Read `config/debate.jsonc` to determine each stage's `execution_mode`:
+
+### debate mode (01, 02, 03, 08)
+Use the full debate protocol: Round 1 → Round 2 → Contention → Synthesis
+
+### sequential mode (04, 05, 06, 07, 09, 10)
+Role-based sequential execution:
+1. Read `config/debate.jsonc` and load the stage's `steps` array
+2. Execute each step in order as a Task agent
+3. Include previous step's output in the next step's prompt
+4. Save each step's output to `state/debate/<stage-id>/step<N>/<role-name>.md`
+5. For `code_producing` stages: build/test verification is mandatory after the last step
+
+---
+
 ## Stage Execution Protocol
 
 For EACH stage:
@@ -24,10 +41,11 @@ Read `state/progress.json` to determine the current stage. Then load:
 - The stage's `CLAUDE.md` for instructions
 - Previous stage's `HANDOFF.md` for context
 - `references/<stage-id>/` for user-provided materials
+- `config/debate.jsonc` for the stage's `execution_mode`
 
-### 2. Debate Protocol (MANDATORY for every stage)
+### 2a. Debate Protocol (for `execution_mode: "debate"` stages: 01, 02, 03, 08)
 
-Every stage uses the Claude multi-agent debate system. Read `config/debate.jsonc` to get the stage's intensity profile and roles.
+Read `config/debate.jsonc` to get the stage's intensity profile and roles.
 
 Read `config/pipeline.jsonc` to confirm the stage's `debate_mode` (full/standard/light).
 
@@ -80,6 +98,7 @@ Launch 1 synthesizer agent that reads **all round outputs** and produces the fin
   - **Resolved disagreements**: [list with resolution reasoning]
   - **Minority opinions**: [preserved for reference]
   ```
+- For `code_producing` stages (08): synthesizer MUST also verify source code exists and run build/test
 
 #### Graceful Degradation
 
@@ -93,9 +112,35 @@ Log each debate to `state/ai-call-log.jsonl`:
 {"stage":"<stage-id>","type":"debate","rounds":<N>,"agents":<N>,"contention_scores":[...],"action":"synthesized","ts":"<ISO-8601>"}
 ```
 
-### 3. Spawn Task tool agent (for single-pass stages or post-debate refinement)
+### 2b. Sequential Protocol (for `execution_mode: "sequential"` stages: 04, 05, 06, 07, 09, 10)
 
-If the debate protocol (Step 2) already produced final outputs in `stages/<stage-id>/outputs/`, this step verifies and supplements them. If additional work is needed beyond the debate outputs:
+For each step in the stage's `steps` array from `config/debate.jsonc`:
+
+1. **Load step config**: Get the step's `name`, `model`, `directive`, `input`, and `output` fields
+2. **Build prompt**: Combine stage CLAUDE.md + previous HANDOFF + step directive + all previous steps' outputs
+3. **Launch Task agent**: Use the step's `model` (fallback: stage `default_model` → `"balanced"`)
+4. **Agent writes output**: To `state/debate/<stage-id>/step<N>/<role-name>.md`
+5. **For `code_producing` stages**: Agent also writes source files to the project root via Write/Edit tools
+
+After ALL steps complete:
+1. **Source Code Verification** (for `code_producing` stages):
+   - Glob for source files (`**/*.{ts,tsx,js,jsx,cs,py,go,rs,java}`) — minimum 5 required
+   - Check project manifest exists (package.json, *.csproj, pyproject.toml, Cargo.toml, go.mod)
+2. **Build/Test Execution**:
+   - Detect project type from manifest
+   - Run build command (e.g., `npm run build`, `dotnet build`, `cargo build`)
+   - Run test command (e.g., `npm test`, `dotnet test`, `cargo test`)
+3. **On failure**: Launch a Fix agent (Coder role) with error output, retry up to 3 times
+4. **Generate HANDOFF.md and update progress**
+
+Log sequential execution to `state/ai-call-log.jsonl`:
+```jsonl
+{"stage":"<stage-id>","type":"sequential","steps":<N>,"code_producing":<bool>,"build_pass":<bool>,"test_pass":<bool>,"ts":"<ISO-8601>"}
+```
+
+### 3. Post-execution refinement (optional)
+
+If the protocol (Step 2a or 2b) already produced final outputs in `stages/<stage-id>/outputs/`, this step verifies and supplements them. If additional work is needed:
 
 Use the Task tool to spawn a sub-agent for the stage:
 
@@ -109,16 +154,10 @@ Task tool parameters:
 
 **Prompt assembly rules:**
 - Always include: stage CLAUDE.md content + previous HANDOFF + references
-- Prepend the debate summary from `state/debate/<stage-id>/` as:
+- Prepend the debate/sequential summary from `state/debate/<stage-id>/` as:
   ```
-  ## Debate Summary
-  <synthesized content from the debate Final Round>
-  ```
-- Append this directive:
-  ```
-  ## DEBATE NOTES REQUIREMENT (MANDATORY)
-  You MUST include a "## Debate Notes" section in EACH output file. This section documents
-  the multi-agent debate outcomes. The stage transition gate will BLOCK if this is missing.
+  ## Execution Summary
+  <synthesized content from the debate Final Round or sequential step outputs>
   ```
 
 ### 4. Validate outputs
@@ -126,6 +165,26 @@ Verify the required outputs exist (see Validation section below).
 
 ### 5. Generate HANDOFF and progress
 Generate HANDOFF.md and update `state/progress.json` as usual.
+
+## Code-Producing Stages (06, 07, 08, 09)
+
+These stages' primary deliverable is actual source code files in the project root.
+
+### Mandatory Pre-Transition Checks:
+1. **Source file count**: Glob for `**/*.{ts,tsx,js,jsx,cs,py,go,rs,java}` — minimum 5 files required
+2. **Project manifest**: One of `package.json`, `*.csproj`, `pyproject.toml`, `Cargo.toml`, `go.mod` must exist
+3. **Build pass**: Detect project type and run appropriate build command
+4. **Test pass**: Run appropriate test command
+5. **HARD FAIL**: If manifest missing or source files < 5, the stage CANNOT transition
+
+### Project Type Detection:
+| Manifest | Build Command | Test Command |
+|----------|--------------|-------------|
+| `package.json` | `npm run build` | `npm test` |
+| `*.csproj` | `dotnet build` | `dotnet test` |
+| `pyproject.toml` | `python -m py_compile` | `pytest` |
+| `Cargo.toml` | `cargo build` | `cargo test` |
+| `go.mod` | `go build ./...` | `go test ./...` |
 
 ## Validation
 
@@ -135,10 +194,10 @@ After each stage completes, verify the required outputs exist:
 - Stage 03: `outputs/architecture.md`, `outputs/tech_stack.md`, `outputs/project_plan.md`
 - Stage 04: `outputs/wireframes.md`, `outputs/components.md`
 - Stage 05: `outputs/tasks.md`, `outputs/implementation_order.md`
-- Stage 06: Source code files in the project root + `outputs/implementation_log.md`
-- Stage 07: Updated source files + `outputs/refactoring_report.md`
-- Stage 08: `outputs/qa_report.md`
-- Stage 09: Test files + `outputs/test_report.md`, `outputs/coverage_report.md`
+- Stage 06: **Source code files in project root (≥5)** + project manifest + build pass + test pass + `outputs/implementation_log.md` + `outputs/test_summary.md`
+- Stage 07: **Updated source files** + build pass + test pass + `outputs/refactoring_report.md`
+- Stage 08: `outputs/qa_report.md` + source code verification + build/test pass
+- Stage 09: **Test files in project root** + test pass + `outputs/test_report.md`, `outputs/coverage_report.md`
 - Stage 10: CI/CD config + `outputs/deployment_guide.md`
 
 ## Debate Compliance Check

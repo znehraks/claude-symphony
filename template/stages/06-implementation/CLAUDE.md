@@ -1,5 +1,26 @@
 # Stage 06: Implementation (TDD-First)
 
+## PRIMARY OUTPUT: Source Code in Project Root
+
+This stage's primary deliverable is **actual source code files created in the project root**.
+Markdown documents (implementation_log.md, test_summary.md) are secondary deliverables.
+
+### Sequential Workflow
+This stage uses a sequential workflow (NOT debate):
+1. **Coder**: Project scaffolding + source code writing (Write tool to create real files)
+2. **Reviewer**: Code review + feedback
+3. **Coder (Fix)**: Apply feedback to actual files
+4. **Tester**: Write tests + run build/tests (Bash tool)
+5. On failure: Coder fixes (up to 3 cycles)
+
+### Validation Criteria (FAIL if not met)
+- Source code files in project root: **minimum 5**
+- Project manifest exists (package.json, *.csproj, pyproject.toml, Cargo.toml, go.mod)
+- Build command succeeds
+- Test command succeeds
+
+**CRITICAL**: If `stages/06/outputs/` contains only markdown and the project root has no source code, this stage is FAILED.
+
 ## Objective
 Implement the application source code using **Test-Driven Development (TDD)**. Every feature must have tests written BEFORE implementation code. No feature is considered done until its tests pass.
 
@@ -26,12 +47,23 @@ For EACH feature/component:
 
 ## Tasks
 
-### 1. Project Scaffolding
-- Initialize the project with the chosen framework
-- Install all dependencies
-- **Set up test infrastructure immediately** (Vitest/Jest, testing-library, Playwright/Cypress)
-- Configure test scripts in `package.json`: `test`, `test:watch`, `test:e2e`
-- Verify: `npm test` runs successfully (even with 0 tests)
+### 1. Project Scaffolding (Framework-Agnostic)
+
+Initialize the project based on the tech stack chosen in Stage 03:
+
+| Stack | Init Command | Manifest | Test Setup |
+|-------|-------------|----------|------------|
+| Node.js/TypeScript | `npm init` / framework CLI | `package.json` | Vitest/Jest, testing-library |
+| .NET/C# | `dotnet new` | `*.csproj` | xUnit/NUnit |
+| Python | `poetry init` / `pip` | `pyproject.toml` | pytest |
+| Rust | `cargo init` | `Cargo.toml` | built-in `cargo test` |
+| Go | `go mod init` | `go.mod` | built-in `go test` |
+| Unity/C# | Unity project setup | `*.csproj` / `Assembly-CSharp` | Unity Test Framework |
+
+- **MUST create project manifest** — without it, validation will FAIL
+- Set up test infrastructure immediately
+- Verify: test command runs successfully (even with 0 tests)
+- Use the **Write** tool to create actual files — do NOT just describe them in markdown
 
 ### 2. Database Setup
 - Create database schema, migrations, seed data
@@ -119,16 +151,28 @@ Test: "User creates an account and uses the main feature"
 
 **ALL of the following must pass before this stage is complete:**
 
-- [ ] `npm run build` (or framework-equivalent) succeeds
-- [ ] `npm test` — all tests pass
-- [ ] `npm run test:e2e` — all E2E tests pass (if applicable)
-- [ ] `npm run lint` passes (if configured)
-- [ ] `npm run typecheck` passes (if TypeScript)
-- [ ] Dev server starts and core functionality works
+### Source Code Verification (HARD FAIL)
+- [ ] Source code files exist in project root (minimum 5 files)
+- [ ] Project manifest exists (package.json, *.csproj, pyproject.toml, Cargo.toml, go.mod)
+
+### Build & Test (project-type-dependent)
+| Manifest | Build | Test | Lint |
+|----------|-------|------|------|
+| `package.json` | `npm run build` | `npm test` | `npm run lint` |
+| `*.csproj` | `dotnet build` | `dotnet test` | — |
+| `pyproject.toml` | `python -m py_compile` | `pytest` | `ruff check` |
+| `Cargo.toml` | `cargo build` | `cargo test` | `cargo clippy` |
+| `go.mod` | `go build ./...` | `go test ./...` | `go vet ./...` |
+
+- [ ] Build command succeeds
+- [ ] Test command succeeds — all tests pass
+- [ ] E2E tests pass (if applicable)
+- [ ] Lint passes (if configured, optional)
+- [ ] Typecheck passes (if TypeScript, optional)
 - [ ] All P0 tasks are implemented with tests
 - [ ] Test coverage >= 60% for core modules
 
-**If any check fails, this stage CANNOT be marked complete.** Fix the issue and re-verify.
+**If source code or manifest is missing, or build/test fails, this stage CANNOT be marked complete.** Fix the issue and re-verify.
 
 ## Anti-Patterns (Do NOT Do These)
 
