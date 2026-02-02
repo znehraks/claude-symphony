@@ -21,16 +21,6 @@ export interface CreateOptions {
   auto?: boolean;
 }
 
-/**
- * Display ASCII banner
- */
-function displayAsciiBanner(): void {
-  const bannerPath = path.join(__dirname, '..', '..', 'assets', 'claude_symphony_ascii.txt');
-  if (fs.existsSync(bannerPath)) {
-    const banner = fs.readFileSync(bannerPath, 'utf8');
-    console.log(chalk.cyan(banner));
-  }
-}
 
 /**
  * Generate project brief from description
@@ -173,9 +163,6 @@ export async function createProject(
       process.exit(1);
     }
   }
-
-  // Display banner
-  displayAsciiBanner();
 
   console.log('');
   log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'cyan');

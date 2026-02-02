@@ -2,9 +2,10 @@
  * claude-symphony CLI entry point
  * Migrated from bin/create.js to TypeScript
  */
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import chalk from 'chalk';
 import { Command } from 'commander';
 import { createProject } from './commands/create.js';
 import { runStage, nextStage, gotoStage, listStages } from './commands/stage.js';
@@ -34,6 +35,19 @@ function getPackageVersion(): string {
   } catch {
     return '0.0.0';
   }
+}
+
+/**
+ * Display ASCII banner with version
+ */
+function displayBanner(): void {
+  const bannerPath = path.resolve(__dirname, '../../assets/claude_symphony_ascii.txt');
+  if (existsSync(bannerPath)) {
+    const banner = readFileSync(bannerPath, 'utf8');
+    console.log(chalk.cyan(banner));
+  }
+  console.log(chalk.dim(`  v${getPackageVersion()}`));
+  console.log('');
 }
 
 const program = new Command();
@@ -227,5 +241,11 @@ program
     const exitCode = await aiCallCommand(options);
     process.exit(exitCode);
   });
+
+// Display banner unless requesting version output only
+const isVersionFlag = process.argv.includes('--version') || process.argv.includes('-V');
+if (!isVersionFlag) {
+  displayBanner();
+}
 
 program.parse();
