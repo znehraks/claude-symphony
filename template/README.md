@@ -11,7 +11,7 @@ This is a Claude Symphony project - a 10-stage software development workflow pow
 
 2. **Check current status**:
    ```
-   /status
+   /progress
    ```
 
 3. **Begin the workflow**:
@@ -36,7 +36,7 @@ This is a Claude Symphony project - a 10-stage software development workflow pow
 
 ## Key Commands
 
-- `/status` - Check pipeline progress
+- `/progress` - Check pipeline progress
 - `/next` - Move to next stage
 - `/handoff` - Generate stage transition document
 - `/checkpoint` - Save current state
@@ -100,6 +100,6 @@ Each stage generates outputs in `stages/XX-stage/outputs/`. These outputs feed i
 ## Need Help?
 
 - Run `/stages` to see all available stages
-- Run `/status` for current pipeline state
+- Run `/progress` for current pipeline state
 - Run `/context` to check context usage
 - Check `CLAUDE.md` for detailed AI instructions

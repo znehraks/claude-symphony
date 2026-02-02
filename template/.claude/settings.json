@@ -45,9 +45,9 @@
       "description": "Run multi-agent debate for current stage",
       "file": "commands/debate.md"
     },
-    "status": {
+    "progress": {
       "description": "Check pipeline status",
-      "file": "commands/status.md"
+      "file": "commands/progress.md"
     },
     "stages": {
       "description": "Stage list and details",

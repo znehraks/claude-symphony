@@ -1,10 +1,10 @@
-# /status
+# /progress
 
 Check the overall pipeline status at a glance.
 
 ## Usage
 ```
-/status
+/progress
 ```
 
 ## Actions

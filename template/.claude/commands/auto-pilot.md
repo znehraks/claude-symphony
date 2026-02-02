@@ -153,7 +153,7 @@ If a stage's outputs are incomplete or validation fails:
 
 1. **Attempt 1 (retry with feedback)**: Feed the specific validation errors back to the agent. Include the list of missing/failing checks in the prompt and re-run the stage.
 2. **Attempt 2 (simplified retry)**: Simplify the requirements — focus only on producing the required output files with correct structure. Re-run with explicit file-by-file instructions.
-3. **Attempt 3 fails → Pause**: Stop the pipeline and report the error to the user. Save pipeline state to `state/pipeline_state.json` with `"status": "paused"`. The user can fix issues manually and `/resume`, or `/skip` the stage.
+3. **Attempt 3 fails → Pause**: Stop the pipeline and report the error to the user. Save pipeline state to `state/pipeline_state.json` with `"status": "paused"`. The user can fix issues manually and `/resume-stage`, or `/skip` the stage.
 
 When retrying, always include this in the prompt:
 ```
@@ -203,7 +203,7 @@ After each stage completion, display progress:
 - If `state/pipeline_state.json` has `"status": "paused"`, ask the user before continuing
 - The user can run `/pause` at any time to stop after the current stage
 - The user can run `/skip` to skip a problematic stage
-- The user can run `/resume` to continue from where they left off
+- The user can run `/resume-stage` to continue from where they left off
 
 ## Start
 
