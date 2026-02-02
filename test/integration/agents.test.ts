@@ -38,7 +38,7 @@ describe('Agent Loading and Configuration', () => {
     const agent = await registry.loadAgent('validation-agent');
     expect(agent.name).toBe('validation-agent');
     expect(agent.description).toContain('Validates stage outputs');
-    expect(agent.model).toBe('sonnet');
+    expect(agent.model).toBe('haiku');
     expect(agent.tools).toContain('Read');
     expect(agent.tools).toContain('Glob');
     expect(agent.extendedThinking).toBe(true);

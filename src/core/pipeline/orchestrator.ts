@@ -117,7 +117,7 @@ export function loadStagePersona(
     return {
       role: persona.role || persona.description || STAGE_NAMES[stageId],
       temperature: persona.temperature ?? 0.5,
-      model: persona.model || 'sonnet',
+      model: persona.model || persona.ai_model || 'sonnet',
       focus: persona.focus || '',
     };
   } catch {

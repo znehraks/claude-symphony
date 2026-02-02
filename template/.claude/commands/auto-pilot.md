@@ -36,6 +36,7 @@ Read `config/pipeline.jsonc` to confirm the stage's `debate_mode` (full/standard
 Launch N Task tool agents **in a single message** (parallel execution):
 - N = agent count from the intensity profile (2 for light, 3 for full/standard)
 - Each agent receives: stage CLAUDE.md content + previous HANDOFF + references + its role-specific directive from `config/debate.jsonc`
+- **Model routing**: Pass each role's `model` field from `config/debate.jsonc` to the Task tool's `model` parameter. Fallback chain: `role.model` → `stage.default_model` → `"sonnet"`
 - Each agent writes output to `state/debate/<stage-id>/round1/<role-name>.md`
 - **No cross-visibility** between agents in Round 1
 - **No output length limits** — each agent writes as much as the role requires
@@ -44,6 +45,7 @@ Launch N Task tool agents **in a single message** (parallel execution):
 
 Launch N Task tool agents **in parallel**:
 - Each agent reads **all** Round 1 outputs from `state/debate/<stage-id>/round1/`
+- **Model routing**: Same per-role model assignment as Round 1 (`role.model` → `stage.default_model` → `"sonnet"`)
 - Each agent writes a review to `state/debate/<stage-id>/round2/<role-name>_review.md`
 - **No repetition**: agents must NOT rewrite Round 1 content — only rebuttals, agreements, and additions
 
@@ -99,7 +101,7 @@ Task tool parameters:
 - subagent_type: "general-purpose"
 - description: "Execute stage <stage-id>"
 - prompt: [assembled as described below]
-- model: [from config/stage_personas.jsonc]
+- model: [from config/stage_personas.jsonc `model` field — opus/sonnet/haiku]
 ```
 
 **Prompt assembly rules:**

@@ -93,7 +93,7 @@ describe('spawner-helper', () => {
     it('should return model, tools, and extendedThinking', () => {
       const config = getAgentConfig('validation-agent', PROJECT_ROOT);
 
-      expect(config.model).toBe('sonnet');
+      expect(config.model).toBe('haiku');
       expect(config.tools).toEqual(['Read', 'Glob', 'Grep', 'Bash']);
       expect(config.extendedThinking).toBe(true);
     });
@@ -104,7 +104,7 @@ describe('spawner-helper', () => {
       const config = getAgentConfig('validation-agent', PROJECT_ROOT);
 
       // validation-agent uses 'sonnet', not 'inherit'
-      expect(config.model).toBe('sonnet');
+      expect(config.model).toBe('haiku');
     });
 
     it('should return executionMode', () => {

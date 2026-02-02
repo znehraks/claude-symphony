@@ -1,6 +1,6 @@
 # Claude Symphony Project
 
-This is a Claude Symphony project - a 10-stage software development workflow powered by multi-AI orchestration.
+This is a Claude Symphony project — a 10-stage software development workflow with quality gates and checkpoints.
 
 ## Quick Start
 

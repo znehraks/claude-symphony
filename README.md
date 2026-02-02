@@ -4,54 +4,50 @@
   <img src="https://raw.githubusercontent.com/znehraks/claude-symphony/main/assets/claude_symphony.webp" alt="Claude Symphony Logo" width="400">
 </p>
 
-**One command. Production-grade software. From idea to deployment.**
+**Structured AI development. 10 stages. Quality gates. Checkpoints.**
 
 [![npm version](https://badge.fury.io/js/claude-symphony.svg)](https://www.npmjs.com/package/claude-symphony)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## What is claude-symphony?
 
-Describe your app. We handle the rest — planning, architecture, code, tests, deployment.
+Describe your app. claude-symphony runs a 10-stage AI pipeline — from brainstorming to deployment — producing a tested, deployable codebase with quality gates at every step.
 
 ```bash
 npx claude-symphony init
 # > "What do you want to build?"
 # > "A real-time team collaboration tool with chat, file sharing, and video calls"
-# > Pipeline starts automatically → 10 stages → production-ready app
+# > Pipeline starts automatically → 10 stages → tested, deployable codebase
 ```
-
-Unlike prototyping tools (Lovable, Bolt.new) that generate MVPs, claude-symphony runs a **disciplined development process** with TDD enforcement, quality gates, test coverage, and CI/CD — producing production-grade software.
 
 ## How It Works
 
-claude-symphony orchestrates a 10-stage pipeline where AI agents execute each stage automatically:
+claude-symphony orchestrates a 10-stage pipeline where AI agents execute each stage:
 
-| # | Stage | Model | What happens |
-|---|-------|-------|-------------|
-| 01 | **Brainstorm** | Gemini + Claude | Generate features, user stories, requirements |
-| 02 | **Research** | Claude | Evaluate tech options, analyze feasibility |
-| 03 | **Planning** | Gemini + Claude | Design architecture, data models, API |
-| 04 | **UI/UX** | Gemini + Claude | Create wireframes, component tree, design tokens |
-| 05 | **Tasks** | Claude | Decompose into implementable tasks with priorities |
-| 06 | **Implementation** | Claude | Write code using **TDD** (tests first, then code) |
-| 07 | **Refactoring** | Codex + Claude | Improve code quality, maintain test coverage |
-| 08 | **QA** | Claude | Security audit, accessibility, E2E test expansion |
-| 09 | **Testing** | Codex + Claude | Edge-case tests, performance benchmarks |
-| 10 | **Deployment** | Claude | CI/CD pipeline, hosting, production deploy |
+| # | Stage | What happens |
+|---|-------|-------------|
+| 01 | **Brainstorm** | Generate features, user stories, requirements |
+| 02 | **Research** | Evaluate tech options, analyze feasibility |
+| 03 | **Planning** | Design architecture, data models, API |
+| 04 | **UI/UX** | Create wireframes, component tree, design tokens |
+| 05 | **Tasks** | Decompose into implementable tasks with priorities |
+| 06 | **Implementation** | Write code using a test-first workflow |
+| 07 | **Refactoring** | Improve code quality, maintain test coverage |
+| 08 | **QA** | Security audit, accessibility, E2E test expansion |
+| 09 | **Testing** | Edge-case tests, performance benchmarks |
+| 10 | **Deployment** | CI/CD pipeline, hosting, production deploy |
 
-> **Multi-model fallback**: If Gemini/Codex CLI is not installed, the stage automatically falls back to Claude Code.
+> **Multi-agent debate**: Stages can run multiple Claude agents with different perspectives (e.g., Visionary vs Skeptic). This is a prompt-based protocol — agents are instructed to critique and refine each other's outputs within the conversation.
 
 Each stage:
-- Has a specialized AI persona (creative for brainstorming, precise for implementation)
+- Includes role-specific instructions (creative for brainstorming, precise for implementation)
 - Validates outputs before progressing (quality gates)
 - Generates a HANDOFF document passing context to the next stage
 - Can be retried automatically if validation fails
 
-## TDD-First Quality Gates
+## Quality Gates
 
-**"Code exists ≠ Code works."** This is the core problem claude-symphony solves.
-
-Stage 06 (Implementation) enforces a Write-Test-Verify loop for every feature:
+Every stage validates its outputs. Stage 06 (Implementation) guides a Write-Test-Verify workflow for each feature:
 
 ```
 For EACH feature:
@@ -88,39 +84,24 @@ claude
 
 That's it. The pipeline runs through all 10 stages automatically.
 
-See [Getting Started](docs/getting-started.md) for more details.
-
-## Reference Materials
-
-Drop any files into `references/<stage>/` to give the AI additional context:
-
-```
-references/
-├── 01-brainstorm/    # Competitor screenshots, market research
-├── 02-research/      # Technical papers, library comparisons
-├── 03-planning/      # Architecture examples, API specs to follow
-├── 04-ui-ux/         # Design references, wireframes, style guides
-├── 06-implementation/ # Coding conventions, example code, patterns
-└── ...
-```
-
-Zero config required — just drop files in the folder.
+See [Getting Started](docs/getting-started.md) for more details. You can also drop reference files into `references/<stage>/` to give the AI additional context.
 
 ## Commands
 
-Inside Claude Code, you have 9 commands:
+Inside Claude Code, you have 10 commands:
 
 | Command | Description |
 |---------|-------------|
 | `/auto-pilot` | Start automatic pipeline execution |
 | `/pause` | Pause the pipeline after current stage |
-| `/resume` | Resume a paused pipeline |
+| `/resume-stage` | Resume a paused pipeline |
 | `/skip` | Skip the current stage |
-| `/status` | View current pipeline progress |
+| `/progress` | View current pipeline progress |
 | `/checkpoint` | Create a save point |
 | `/restore` | Restore from a save point |
 | `/stages` | List all stages with status |
 | `/run-stage [id]` | Run a specific stage manually |
+| `/debate` | Run multi-agent debate for current stage |
 
 ### CLI Commands
 
@@ -145,50 +126,17 @@ claude-symphony import ./existing-app
 # Skips completed stages → runs only what's missing
 ```
 
-This is perfect for taking a Lovable/Bolt.new prototype and running it through QA, Testing, and Deployment.
+This is useful for taking an existing prototype and running it through QA, Testing, and Deployment.
 
-## Key Features
+## Without vs With claude-symphony
 
-### TDD-First Implementation
-Every feature is built with tests first. No code is considered "done" until tests pass. This is enforced at the pipeline level — not just a suggestion.
-
-### Quality Gates
-Every stage validates its outputs before progression. Build must compile, tests must pass, coverage must meet thresholds.
-
-### Stage Personas
-Each stage uses an AI persona optimized for the task:
-- Brainstorming: Creative Explorer (temperature 0.9)
-- Implementation: Precise Builder (temperature 0.3)
-- QA: Quality Guardian (temperature 0.4)
-
-### HANDOFF System
-Context is intelligently transferred between stages via HANDOFF documents — not raw memory dumps, but curated context relevant to the next stage.
-
-### Retry & Recovery
-If a stage fails validation, it's automatically retried with feedback. Checkpoints let you rollback to any previous state.
-
-## Differentiation
-
-| | claude-symphony | Lovable/Bolt.new | Raw Claude Code |
-|---|---|---|---|
-| **Output** | Production app with tests | Prototype | Code |
-| **Process** | 10-stage pipeline | Single generation | Manual |
-| **TDD enforcement** | Yes (per feature) | No | No |
-| **Quality gates** | 4-level verification | No | No |
-| **Tests & CI/CD** | Automatic | No | Manual |
-| **Context management** | HANDOFF system | None | Token window |
-
-<!-- ## Showcase
-
-Coming soon — example projects built entirely with claude-symphony:
-
-| Project | Description | Status |
-|---------|-------------|--------|
-| Todo App | Full-stack with auth | Planned |
-| CLI Tool | Command-line utility | Planned |
-| REST API | API + database | Planned |
-
--->
+| | Without | With claude-symphony |
+|---|---|---|
+| **Output** | Code (quality varies) | Tested codebase with CI/CD config |
+| **Process** | Manual or single generation | 10-stage pipeline with checkpoints |
+| **Quality gates** | None | 4-level verification (build, test, E2E, lint) |
+| **Tests** | Manual setup | Generated per feature |
+| **Context management** | Token window only | HANDOFF system between stages |
 
 ## Documentation
 

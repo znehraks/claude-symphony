@@ -26,12 +26,14 @@ You are the debate orchestrator. Run a multi-agent debate for the current (or sp
 4. **Execute Round 1 — Independent Production**:
    - Launch N Task tool agents **in a single message** (parallel)
    - Each agent gets: base prompt + role-specific directive
+   - **Model routing**: Pass each role's `model` field from debate config to the Task tool's `model` parameter. If a role has no `model` field, use the stage's `default_model`. If neither exists, fall back to `"sonnet"`.
    - Each writes to `state/debate/<stage-id>/round1/<role-name>.md`
    - No cross-visibility between agents
 
 5. **Execute Round 2 — Cross-Review** (skip for `light` intensity):
    - Launch N Task tool agents in parallel
    - Each reads ALL Round 1 outputs + writes review
+   - **Model routing**: Same per-role model assignment as Round 1
    - Output to `state/debate/<stage-id>/round2/<role-name>_review.md`
    - No repetition of Round 1 content — reviews/rebuttals only
 

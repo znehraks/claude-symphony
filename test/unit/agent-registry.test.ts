@@ -19,9 +19,9 @@ describe('AgentRegistry', () => {
   });
 
   describe('listAgents', () => {
-    it('should return all 2 agents', async () => {
+    it('should return all 3 agents', async () => {
       const agents = await registry.listAgents();
-      expect(agents).toHaveLength(2);
+      expect(agents).toHaveLength(3);
     });
 
     it('should include core agents', async () => {
@@ -29,6 +29,7 @@ describe('AgentRegistry', () => {
       const coreAgents = [
         'validation-agent',
         'handoff-generator-agent',
+        'debate-synthesizer-agent',
       ];
       for (const agent of coreAgents) {
         expect(agents).toContain(agent);
@@ -50,7 +51,7 @@ describe('AgentRegistry', () => {
       expect(agent.description).toContain('Validates stage outputs');
       expect(agent.prompt).toContain('Validation Agent');
       expect(agent.tools).toEqual(['Read', 'Glob', 'Grep', 'Bash']);
-      expect(agent.model).toBe('sonnet');
+      expect(agent.model).toBe('haiku');
       expect(agent.permissionMode).toBe('acceptEdits');
       expect(agent.extendedThinking).toBe(true);
       expect(agent.executionMode).toBe('foreground');
