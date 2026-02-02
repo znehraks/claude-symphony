@@ -9,7 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 1.0 Stable Release
 
-claude-symphony reaches its first stable release. The 10-stage auto-pilot pipeline, multi-agent debate system, context management, and CLI are production-ready.
+claude-symphony reaches its first stable release. The 10-stage auto-pilot pipeline, multi-agent debate system, context management, and CLI are stable.
+
+### Docs
+- **README rewrite**: Removed false/exaggerated claims ("production-grade", "TDD enforced at pipeline level", competitor comparisons, temperature values not passed to API). Replaced with honest, code-backed descriptions.
+- **template/CLAUDE.md**: Removed Debate columns, temperature values, and debate references from Model Strategy
+- **template/README.md**: Aligned tagline with honest messaging
 
 ### Changed
 - **Command renames**: `/resume` → `/resume-stage`, `/status` → `/progress` to avoid conflicts with Claude Code built-in commands
@@ -83,10 +88,10 @@ claude-symphony reaches its first stable release. The 10-stage auto-pilot pipeli
 
 ## [0.7.0] - 2026-01-31
 
-### TDD-First Quality Gates — "Code exists ≠ Code works"
+### Quality Gates — "Code exists ≠ Code works"
 
 ### Added
-- **TDD-first implementation stage**: Stage 06 now enforces Write-Test-Verify loop per feature
+- **Test-first implementation stage**: Stage 06 now guides a Write-Test-Verify workflow per feature
   - Tests must be written BEFORE implementation code
   - `test_summary.md` required output with pass rates and coverage
   - 4-level quality gate: build → test → E2E → lint/typecheck
@@ -124,7 +129,7 @@ claude-symphony reaches its first stable release. The 10-stage auto-pilot pipeli
 
 ## [0.6.0] - 2026-01-31
 
-### Auto-Pilot Pipeline — "One Command, Production-Grade Software"
+### Auto-Pilot Pipeline — "One Command, Full Development Workflow"
 
 ### Added
 - **PipelineOrchestrator**: 10-stage auto-pilot execution engine (`src/core/pipeline/orchestrator.ts`)
