@@ -5,6 +5,7 @@
 import { commandExists, exec } from '../utils/shell.js';
 import { logInfo, logSuccess, logWarning, logError } from '../utils/logger.js';
 import { type IntegrationMetadata, type FallbackSignal } from '../types/integration.js';
+import { validateOutputQuality } from '../utils/output-quality.js';
 
 export type { FallbackSignal, IntegrationMetadata };
 
@@ -106,14 +107,15 @@ export async function callCodex(
       };
     }
 
-    // Minimum length check
-    if (output.length < 50) {
-      logWarning(`Codex output too short (${output.length} chars) — falling back.`);
+    // Output quality check (replaces simple length check)
+    const quality = validateOutputQuality(output, prompt);
+    if (!quality.passes) {
+      logWarning(`Codex output failed quality check: ${quality.reason}`);
       return {
         success: false,
         fallbackRequired: true,
         fallbackSignal: 'OUTPUT_FAILED',
-        fallbackReason: `Output too short (${output.length} chars)`,
+        fallbackReason: `Quality check failed: ${quality.reason}`,
         metadata,
       };
     }

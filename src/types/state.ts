@@ -55,6 +55,17 @@ export type CurrentIteration = z.infer<typeof CurrentIterationSchema>;
 /**
  * Progress JSON schema
  */
+/**
+ * Multi-model execution tracking for a stage
+ */
+export const MultiModelStatusSchema = z.object({
+  executed: z.boolean(),
+  quality_status: z.enum(['passed', 'failed', 'bypassed']),
+  synthesis_verified: z.boolean(),
+});
+
+export type MultiModelStatus = z.infer<typeof MultiModelStatusSchema>;
+
 export const ProgressSchema = z.object({
   project_name: z.string(),
   current_stage: StageIdSchema,
@@ -72,6 +83,7 @@ export const ProgressSchema = z.object({
     started_at: z.string().nullable(),
     completed_at: z.string().nullable(),
     checkpoint_id: z.string().nullable(),
+    multi_model: MultiModelStatusSchema.optional(),
   })),
   current_iteration: CurrentIterationSchema.optional(),
   sprints: z.record(z.string(), SprintStateSchema).optional(),

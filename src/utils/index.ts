@@ -8,3 +8,4 @@ export * from './jsonc.js';
 export * from './fs.js';
 export * from './auto-handoff.js';
 export * from './multi-model-gate.js';
+export * from './output-quality.js';

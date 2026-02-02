@@ -5,7 +5,7 @@
 import path from 'path';
 import { readJson, writeJson, pathExists } from '../../utils/fs.js';
 import { getTimestamp } from '../../utils/shell.js';
-import { ProgressSchema, type Progress, createInitialProgress } from '../../types/state.js';
+import { ProgressSchema, type Progress, type MultiModelStatus, createInitialProgress } from '../../types/state.js';
 import { STAGE_IDS } from '../../types/stage.js';
 import type { StageId, StageStatus } from '../../types/stage.js';
 
@@ -108,7 +108,8 @@ export async function updateCurrentStage(
 export async function completeStage(
   projectRoot: string,
   stageId: StageId,
-  checkpointId?: string
+  checkpointId?: string,
+  multiModel?: MultiModelStatus
 ): Promise<boolean> {
   const progress = await loadProgress(projectRoot);
   if (!progress) return false;
@@ -118,6 +119,9 @@ export async function completeStage(
     progress.stages[stageId].completed_at = getTimestamp();
     if (checkpointId) {
       progress.stages[stageId].checkpoint_id = checkpointId;
+    }
+    if (multiModel) {
+      progress.stages[stageId].multi_model = multiModel;
     }
   }
 

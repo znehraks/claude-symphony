@@ -14,7 +14,7 @@ import type { StageId } from '../types/stage.js';
 import { STAGE_IDS } from '../types/stage.js';
 import type { Progress } from '../types/state.js';
 import { spawnAgent } from '../core/agents/index.js';
-import { verifyMultiModelGate } from '../utils/multi-model-gate.js';
+import { verifyMultiModelGate, getMultiModelOutputFiles } from '../utils/multi-model-gate.js';
 
 /**
  * Validation check result
@@ -227,6 +227,14 @@ async function validateStageOutputs(
     gateResult.message,
     true
   );
+
+  // Additional synthesis section checks for multi-model stages
+  if (gateResult.details?.synthesisFound === false) {
+    const outputFiles = getMultiModelOutputFiles(projectRoot, stageId);
+    for (const file of outputFiles) {
+      checkMarkdownSections(state, projectRoot, file, ['Synthesis Notes']);
+    }
+  }
 
   // HANDOFF.md check (common for all stages)
   checkFileExists(state, projectRoot, `stages/${stageId}/HANDOFF.md`, true);

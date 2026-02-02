@@ -13,6 +13,7 @@ import { callAI, type AIModel } from '../../core/ai/orchestrator.js';
 import { logError } from '../../utils/logger.js';
 import { loadJsonc } from '../../utils/jsonc.js';
 import { writeFile, ensureDirAsync } from '../../utils/fs.js';
+import { validateOutputQuality, type QualityResult } from '../../utils/output-quality.js';
 
 /** Exit code constants */
 const EXIT_SUCCESS = 0;
@@ -248,8 +249,8 @@ export async function aiCallCommand(options: AiCallOptions): Promise<number> {
     }
   }
 
-  // Verify output files (Gap 5)
-  const verification = verifyOutputFiles(aiOutputsDir, stage, results, successResults);
+  // Verify output files (Gap 5) — pass prompt for quality validation
+  const verification = verifyOutputFiles(aiOutputsDir, stage, results, successResults, prompt);
 
   // Build JSON output (backward-compat: top-level fields from first result)
   const first = results[0] ?? { success: false, model: null, output: null, fallback: { used: true, reason: 'no models' } };
@@ -262,6 +263,7 @@ export async function aiCallCommand(options: AiCallOptions): Promise<number> {
     stage,
     duration_ms: Date.now() - startTime,
     verification,
+    quality: verification.quality ?? null,
   });
   process.stdout.write(jsonOutput + '\n');
 
@@ -281,16 +283,23 @@ interface VerificationFile {
 interface VerificationResult {
   allPresent: boolean;
   files: VerificationFile[];
+  quality?: {
+    passes: boolean;
+    score: number;
+    reason: string;
+  };
 }
 
 /**
- * Verify that all expected output files exist after writing.
+ * Verify that all expected output files exist after writing,
+ * and run quality validation on the combined output.
  */
 function verifyOutputFiles(
   aiOutputsDir: string,
   stage: string,
   allResults: ModelResult[],
   successResults: ModelResult[],
+  prompt?: string,
 ): VerificationResult {
   const files: VerificationFile[] = [];
 
@@ -337,21 +346,36 @@ function verifyOutputFiles(
   }
 
   // Combined .md should exist when there are successful results
+  let qualityResult: QualityResult | undefined;
   if (successResults.length > 0) {
     const combinedMdRelPath = `state/ai-outputs/${stage}.md`;
     const combinedMdAbsPath = path.join(aiOutputsDir, `${stage}.md`);
     const stat = statSync(combinedMdAbsPath, { throwIfNoEntry: false });
     const sizeBytes = stat?.size ?? 0;
+
+    // Run quality validation on the combined output
+    if (stat && sizeBytes > 0) {
+      try {
+        const content = readFileSync(combinedMdAbsPath, 'utf-8');
+        qualityResult = validateOutputQuality(content, prompt ?? '', { stageId: stage });
+      } catch {
+        // Quality check failure should not block verification
+      }
+    }
+
     files.push({
       path: combinedMdRelPath,
       exists: !!stat,
       sizeBytes,
-      adequate: !!stat && sizeBytes >= 50,
+      adequate: !!stat && sizeBytes >= 50 && (qualityResult?.passes ?? true),
     });
   }
 
   return {
     allPresent: files.every((f) => f.adequate),
     files,
+    quality: qualityResult
+      ? { passes: qualityResult.passes, score: qualityResult.score, reason: qualityResult.reason }
+      : undefined,
   };
 }

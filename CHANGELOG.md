@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.2] - 2026-02-02
+
+### Multi-LLM Output Quality Enforcement — "Generate content, not status messages"
+
+### Added
+- **`output-quality.ts` utility**: New 4-signal quality validator for external AI outputs
+  - Minimum 500 characters (10x increase from previous 50-char check)
+  - Meta-commentary anti-pattern detection (8 patterns: "I will generate...", "Stage N complete", etc.)
+  - Structural content verification (requires 2+ headings or 5+ bullet points)
+  - Prompt echo detection (rejects outputs with >60% sentence overlap with prompt)
+- **Quality field in `ai-call` JSON output**: `quality: { passes, score, reason }` for auto-pilot consumption
+- **Synthesis Notes enforcement**: Multi-model stage outputs must include `## Synthesis Notes` section documenting external AI contributions, rejections, and Claude-only additions
+- **`MultiModelStatus` state tracking**: `progress.json` now records `multi_model: { executed, quality_status, synthesis_verified }` per stage for audit trails
+- **Quality retry in auto-pilot**: Failed quality checks trigger re-run with enhanced prompt before falling back to Claude-only
+
+### Changed
+- **`gemini.ts` / `codex.ts`**: Replaced 50-char minimum length check with `validateOutputQuality()` — rejects meta-commentary at call time (Layer 1)
+- **`multi-model-gate.ts`**: Enhanced from log-only check to 4-layer verification: log exists → output file (500B+) → quality validation → Synthesis Notes presence. New `MultiModelGateDetails` interface exposes granular results
+- **`output-validator.ts`**: Added Synthesis Notes section checks for multi-model stage output files when gate reports missing synthesis
+- **`auto-pilot.md`**: Added quality check parsing, retry-on-quality-failure protocol, and mandatory Synthesis Notes directive for all multi-model stages
+
+### Defense Layers
+1. `gemini.ts`/`codex.ts` — reject low-quality output at external AI call time
+2. `ai-call.ts` — expose quality field in JSON for orchestrator inspection
+3. `multi-model-gate.ts` + `output-validator.ts` — pre-transition 4-layer gate
+4. `auto-pilot.md` — LLM instructions: quality retry + synthesis requirement
+5. `progress.json` — audit trail per stage
+
+---
+
 ## [0.8.1] - 2026-02-01
 
 ### Multi-Model CLI Bug Fixes
