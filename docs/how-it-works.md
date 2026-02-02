@@ -1,6 +1,6 @@
 # How It Works
 
-claude-symphony orchestrates a 10-stage development pipeline where AI agents execute each stage with quality gates, context handoffs, and TDD enforcement.
+claude-symphony orchestrates a 10-stage development pipeline where AI agents execute each stage with quality gates, context handoffs, and a test-first workflow.
 
 ## The Pipeline
 
@@ -23,7 +23,7 @@ For each stage:
   1. Load stage CLAUDE.md (instructions)
   2. Load previous HANDOFF.md (context)
   3. Load references/<stage>/ (user-provided materials)
-  4. Apply stage persona (role, focus, temperature)
+  4. Apply stage persona (role, focus)
   5. Execute the stage work
   6. Validate outputs (quality gate)
   7. Generate HANDOFF.md for next stage
@@ -31,9 +31,9 @@ For each stage:
   9. Create checkpoint (for code stages)
 ```
 
-## TDD-First Implementation (Stage 06)
+## Test-First Implementation (Stage 06)
 
-The implementation stage enforces Test-Driven Development:
+The implementation stage guides a test-first workflow:
 
 ```
 For EACH feature:
@@ -59,20 +59,20 @@ If any required check fails, the stage is retried automatically with the failure
 
 ## Stage Personas
 
-Each stage uses an AI behavior profile optimized for the task:
+Each stage includes role-specific instructions:
 
-| Stage | Persona | Temperature | Focus |
-|-------|---------|-------------|-------|
-| 01 Brainstorm | Creative Explorer | 0.9 | Divergent thinking |
-| 02 Research | Analytical Investigator | 0.5 | Evidence-based analysis |
-| 03 Planning | Strategic Architect | 0.6 | System design |
-| 04 UI/UX | Creative Designer | 0.7 | User experience |
-| 05 Tasks | Systematic Organizer | 0.4 | Decomposition |
-| 06 Implementation | Precise Builder | 0.3 | TDD, correctness |
-| 07 Refactoring | Code Surgeon | 0.5 | Quality improvement |
-| 08 QA | Quality Guardian | 0.4 | Security, accessibility |
-| 09 Testing | Methodical Tester | 0.3 | Edge cases, coverage |
-| 10 Deployment | DevOps Engineer | 0.3 | CI/CD, production |
+| Stage | Persona | Focus |
+|-------|---------|-------|
+| 01 Brainstorm | Creative Explorer | Divergent thinking |
+| 02 Research | Analytical Investigator | Evidence-based analysis |
+| 03 Planning | Strategic Architect | System design |
+| 04 UI/UX | Creative Designer | User experience |
+| 05 Tasks | Systematic Organizer | Decomposition |
+| 06 Implementation | Precise Builder | Test-first, correctness |
+| 07 Refactoring | Code Surgeon | Quality improvement |
+| 08 QA | Quality Guardian | Security, accessibility |
+| 09 Testing | Methodical Tester | Edge cases, coverage |
+| 10 Deployment | DevOps Engineer | CI/CD, production |
 
 ## HANDOFF System
 

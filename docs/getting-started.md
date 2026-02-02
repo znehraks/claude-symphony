@@ -1,6 +1,6 @@
 # Getting Started
 
-Get from idea to production-grade software in one command.
+Get from idea to a tested, deployable codebase in one command.
 
 ## Prerequisites
 
@@ -38,7 +38,7 @@ The pipeline runs automatically through all 10 stages:
 3. **Planning** — Designs architecture, data models, API
 4. **UI/UX** — Creates wireframes, component tree, design tokens
 5. **Tasks** — Decomposes into implementable tasks with priorities
-6. **Implementation** — Writes code using TDD (tests first, then code)
+6. **Implementation** — Writes code using a test-first workflow
 7. **Refactoring** — Improves code quality while maintaining test coverage
 8. **QA** — Security audit, accessibility review, E2E test expansion
 9. **Testing** — Edge-case tests, performance benchmarks
@@ -59,9 +59,9 @@ Each stage saves its work to `stages/<stage-id>/outputs/`. The final result is a
 |---------|-------------|
 | `/auto-pilot` | Start automatic pipeline |
 | `/pause` | Pause after current stage |
-| `/resume` | Resume a paused pipeline |
+| `/resume-stage` | Resume a paused pipeline |
 | `/skip` | Skip the current stage |
-| `/status` | View pipeline progress |
+| `/progress` | View pipeline progress |
 | `/checkpoint` | Create a save point |
 | `/restore` | Restore from a save point |
 
