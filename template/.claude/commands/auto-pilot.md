@@ -54,10 +54,13 @@ Launch N Task tool agents **in parallel**:
 Launch 1 synthesizer agent (using `.claude/agents/debate-synthesizer-agent/`) to evaluate the previous round:
 - The synthesizer reads all outputs from the latest round
 - It assigns a **contention score** (0.0–1.0) based on the criteria in `config/debate.jsonc`
-- If contention score **≥ 0.7** and current round < max_rounds: launch another round
+- **MANDATORY: If current round < min_rounds → ALWAYS launch another round (contention score irrelevant)**
+  - Provide agents with the synthesizer's feedback to improve quality even when forced
+- If contention score **≥ 0.5** and current round < max_rounds: launch another round
   - Provide agents with an explicit list of **unresolved contentions only** to narrow focus
   - Output to `state/debate/<stage-id>/roundN/<role-name>_rebuttal.md`
-- If contention score **< 0.7** or max_rounds reached: proceed to Final Round
+- If contention score **< 0.5** and current round >= min_rounds: proceed to Final Round
+- If max_rounds reached: proceed to Final Round
 
 #### Final Round — Synthesis
 

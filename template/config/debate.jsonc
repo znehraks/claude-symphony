@@ -37,7 +37,7 @@
 
     // ── Dynamic Round Extension ─────────────────────────────────────────
     "dynamic_rounds": {
-      "contention_threshold": 0.7,
+      "contention_threshold": 0.5,
       "description": "Synthesizer evaluates contention score (0.0-1.0) after each review round",
       "extension_criteria": [
         "Explicit disagreement on core conclusions between agents",

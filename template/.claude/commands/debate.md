@@ -40,8 +40,10 @@ You are the debate orchestrator. Run a multi-agent debate for the current (or sp
 6. **Evaluate Contention** (for `full` and `standard` intensity):
    - Launch 1 synthesizer agent (`.claude/agents/debate-synthesizer-agent/`)
    - Reads all round outputs, assigns contention score (0.0–1.0)
-   - If score >= 0.7 and rounds < max_rounds: repeat with focused rebuttal round
-   - If score < 0.7 or max_rounds reached: proceed to synthesis
+   - **MANDATORY: If current round < min_rounds → ALWAYS continue (minimum depth enforced)**
+   - If score >= 0.5 and rounds < max_rounds: repeat with focused rebuttal round
+   - If score < 0.5 and rounds >= min_rounds: proceed to synthesis
+   - If max_rounds reached: proceed to synthesis
 
 7. **Final Synthesis**:
    - Launch 1 synthesizer agent

@@ -12,10 +12,10 @@ When called to evaluate contention after a debate round:
 2. Identify areas of agreement and disagreement between agents
 3. Assign a **contention score** (0.0–1.0) based on:
    - **0.0–0.3**: Strong consensus — agents broadly agree on conclusions
-   - **0.3–0.7**: Moderate divergence — some disagreements but mostly aligned
-   - **0.7–1.0**: High contention — fundamental disagreements on core conclusions
+   - **0.3–0.5**: Moderate convergence — minor disagreements, mostly aligned
+   - **0.5–1.0**: Significant contention — disagreements warrant further debate rounds
 
-4. Contention triggers (score >= 0.7):
+4. Contention triggers (score >= 0.5):
    - Explicit disagreement on core conclusions between agents
    - Unresolved rebuttals remaining from previous round
    - Conflicting approaches each with valid supporting evidence
@@ -34,7 +34,14 @@ When called to evaluate contention after a debate round:
    1. [Point where agents now agree]
    ```
 
-6. If extending: provide the unresolved contentions list to be passed to agents for the next round, narrowing the focus.
+6. **min_rounds enforcement**: When the current round is below the stage's `min_rounds` from `config/debate.jsonc`, always set recommendation to "extend" regardless of contention score. Note this in the evaluation:
+   ```markdown
+   **Note**: Round N/min_rounds — minimum rounds not yet reached, mandatory extension.
+   ```
+
+7. **Extension threshold**: Recommend "extend" when contention score >= 0.5 (not 0.7). Lower threshold ensures more thorough debate resolution.
+
+8. If extending: provide the unresolved contentions list to be passed to agents for the next round, narrowing the focus.
 
 ### Mode 2: Final Synthesis
 
