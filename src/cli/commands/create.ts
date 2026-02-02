@@ -6,8 +6,12 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { input } from '@inquirer/prompts';
 import chalk from 'chalk';
+import ora from 'ora';
 import { log } from '../../utils/logger.js';
 import { copyDirSync, ensureDir } from '../../utils/fs.js';
+import { batchSetJsoncValues } from '../../utils/jsonc.js';
+import { resolveModels, assignModelsToRoles } from '../../core/models/index.js';
+import type { ModelAssignment } from '../../core/models/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -82,6 +86,51 @@ function removeNestedGitDirs(dir: string, isRoot = true): void {
 }
 
 /**
+ * Apply resolved model assignments to debate.jsonc and stage_personas.jsonc
+ */
+async function applyModelAssignments(
+  targetDir: string,
+  assignments: ModelAssignment
+): Promise<void> {
+  const debatePath = path.join(targetDir, 'config', 'debate.jsonc');
+  const personasPath = path.join(targetDir, 'config', 'stage_personas.jsonc');
+
+  // Build batch updates for debate.jsonc
+  const debateUpdates: Array<{ path: (string | number)[]; value: unknown }> = [];
+
+  for (const [stage, defaultTier] of Object.entries(assignments.stageDefaults)) {
+    debateUpdates.push({
+      path: ['debate', 'stage_roles', stage, 'default_model'],
+      value: defaultTier,
+    });
+  }
+
+  for (const [stage, roles] of Object.entries(assignments.stageRoles)) {
+    for (const [indexStr, tier] of Object.entries(roles)) {
+      debateUpdates.push({
+        path: ['debate', 'stage_roles', stage, 'roles', Number(indexStr), 'model'],
+        value: tier,
+      });
+    }
+  }
+
+  // Build batch updates for stage_personas.jsonc
+  const personaUpdates: Array<{ path: (string | number)[]; value: unknown }> = [];
+
+  for (const [stage, tier] of Object.entries(assignments.personas)) {
+    personaUpdates.push({
+      path: ['stage_personas', 'personas', stage, 'model'],
+      value: tier,
+    });
+  }
+
+  await Promise.all([
+    batchSetJsoncValues(debatePath, debateUpdates),
+    batchSetJsoncValues(personasPath, personaUpdates),
+  ]);
+}
+
+/**
  * Main project creation function
  */
 export async function createProject(
@@ -153,6 +202,17 @@ export async function createProject(
 
   // Remove nested .git directories
   removeNestedGitDirs(targetDir);
+
+  // Resolve and apply optimal model assignments
+  const modelSpinner = ora('Detecting available models...').start();
+  try {
+    const resolved = await resolveModels();
+    const assignments = assignModelsToRoles(resolved);
+    await applyModelAssignments(targetDir, assignments);
+    modelSpinner.succeed(`Models configured (source: ${resolved.source})`);
+  } catch {
+    modelSpinner.info('Using default model configuration');
+  }
 
   // Initialize progress.json
   const progressTemplatePath = path.join(targetDir, 'state', 'progress.json.template');

@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "lastUpdated": "2025-05-01",
+  "tiers": {
+    "opus": { "id": "claude-opus-4-5-20251101", "available": true },
+    "sonnet": { "id": "claude-sonnet-4-20250514", "available": true },
+    "haiku": { "id": "claude-haiku-4-20250414", "available": true }
+  }
+}

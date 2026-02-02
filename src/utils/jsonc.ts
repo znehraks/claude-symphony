@@ -232,6 +232,45 @@ export function yamlToJsonc(
 }
 
 /**
+ * Batch-set multiple values in a JSONC file in a single read/write cycle.
+ * Preserves existing comments and formatting.
+ *
+ * @param filePath - Path to the JSONC file
+ * @param updates  - Array of { path: JSON path segments, value: new value }
+ * @returns true on success
+ */
+export async function batchSetJsoncValues(
+  filePath: string,
+  updates: Array<{ path: (string | number)[]; value: unknown }>
+): Promise<boolean> {
+  try {
+    let content: string;
+    try {
+      content = await fs.readFile(filePath, 'utf8');
+    } catch {
+      content = '{}';
+    }
+
+    for (const { path: jsonPath, value } of updates) {
+      const edits = modify(content, jsonPath, value, {
+        formattingOptions: {
+          tabSize: 2,
+          insertSpaces: true,
+          eol: '\n',
+        },
+      });
+      content = applyEdits(content, edits);
+    }
+
+    await fs.writeFile(filePath, content, 'utf8');
+    return true;
+  } catch (error) {
+    console.error(`Failed to batch-set values in ${filePath}:`, error);
+    return false;
+  }
+}
+
+/**
  * Determine config file path with extension detection
  * Returns JSONC path if exists, otherwise YAML path
  */
