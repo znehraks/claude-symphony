@@ -127,10 +127,10 @@ export class AgentRegistry {
     }
 
     // Validate model
-    if (agent.model && !['sonnet', 'opus', 'haiku', 'inherit'].includes(agent.model)) {
+    if (agent.model && !['reasoning', 'balanced', 'fast', 'inherit'].includes(agent.model)) {
       throw new Error(
         `Agent ${agent.name}: invalid model "${agent.model}". ` +
-        `Must be one of: sonnet, opus, haiku, inherit`
+        `Must be one of: reasoning, balanced, fast, inherit`
       );
     }
 

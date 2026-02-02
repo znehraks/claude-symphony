@@ -15,22 +15,22 @@ Run `/auto-pilot` to start the automatic 10-stage pipeline. The orchestrator wil
 
 | # | Stage | Focus | Model |
 |---|-------|-------|-------|
-| 01 | Brainstorming | Ideas, features, requirements | opus |
-| 02 | Research | Tech evaluation, feasibility | sonnet |
-| 03 | Planning | Architecture, data models, API | opus |
-| 04 | UI/UX | Wireframes, components, design | sonnet |
-| 05 | Tasks | Task decomposition, priorities | haiku |
-| 06 | Implementation | Write actual code | sonnet |
-| 07 | Refactoring | Code quality, optimization | opus |
-| 08 | QA | Security, accessibility, bugs | sonnet |
-| 09 | Testing | Unit, integration, E2E tests | sonnet |
-| 10 | Deployment | CI/CD, hosting, production | haiku |
+| 01 | Brainstorming | Ideas, features, requirements | reasoning |
+| 02 | Research | Tech evaluation, feasibility | balanced |
+| 03 | Planning | Architecture, data models, API | reasoning |
+| 04 | UI/UX | Wireframes, components, design | balanced |
+| 05 | Tasks | Task decomposition, priorities | fast |
+| 06 | Implementation | Write actual code | balanced |
+| 07 | Refactoring | Code quality, optimization | reasoning |
+| 08 | QA | Security, accessibility, bugs | balanced |
+| 09 | Testing | Unit, integration, E2E tests | balanced |
+| 10 | Deployment | CI/CD, hosting, production | fast |
 
 ### Model Strategy
 
-- **Opus 4.5**: Creative ideation, architecture design, security audit, performance analysis
-- **Sonnet**: Code generation, research, testing, QA
-- **Haiku**: Task decomposition, validation, deployment config
+- **reasoning**: Creative ideation, architecture design, security audit, performance analysis
+- **balanced**: Code generation, research, testing, QA
+- **fast**: Task decomposition, validation, deployment config
 
 ## Commands
 

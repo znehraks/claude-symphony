@@ -26,7 +26,7 @@ You are the debate orchestrator. Run a multi-agent debate for the current (or sp
 4. **Execute Round 1 — Independent Production**:
    - Launch N Task tool agents **in a single message** (parallel)
    - Each agent gets: base prompt + role-specific directive
-   - **Model routing**: Pass each role's `model` field from debate config to the Task tool's `model` parameter. If a role has no `model` field, use the stage's `default_model`. If neither exists, fall back to `"sonnet"`.
+   - **Model routing**: Pass each role's `model` field from debate config to the Task tool's `model` parameter. If a role has no `model` field, use the stage's `default_model`. If neither exists, fall back to `"balanced"`.
    - Each writes to `state/debate/<stage-id>/round1/<role-name>.md`
    - No cross-visibility between agents
 

@@ -8,7 +8,7 @@
     "Grep",
     "Write"
   ],
-  "model": "sonnet",
+  "model": "balanced",
   "permissionMode": "acceptEdits",
   "extendedThinking": true,
   "executionMode": "foreground"

@@ -326,7 +326,7 @@ export async function prepareStageExecution(
   // Build prompt
   const prompt = buildStagePrompt(projectRoot, stageId);
   const persona = loadStagePersona(projectRoot, stageId);
-  const model = persona?.model || 'sonnet';
+  const model = persona?.model || 'balanced';
 
   logInfo(`Prepared stage ${stageId} (${STAGE_NAMES[stageId]}) with model: ${model}`);
 

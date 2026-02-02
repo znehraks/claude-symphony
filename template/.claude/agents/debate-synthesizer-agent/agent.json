@@ -8,7 +8,7 @@
     "Grep",
     "Write"
   ],
-  "model": "opus",
+  "model": "reasoning",
   "permissionMode": "acceptEdits",
   "extendedThinking": true,
   "executionMode": "foreground"

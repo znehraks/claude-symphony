@@ -231,7 +231,7 @@ export const AgentConfigSchema = z.object({
   name: z.string().describe('Agent name (should match directory name)'),
   description: z.string().describe('Human-readable description of the agent\'s purpose'),
   tools: z.array(z.string()).optional().describe('Allowed tools (if undefined, inherits all tools)'),
-  model: z.enum(['sonnet', 'opus', 'haiku', 'inherit']).optional().describe('Model to use (sonnet, opus, haiku, inherit)'),
+  model: z.enum(['reasoning', 'balanced', 'fast', 'inherit']).optional().describe('Model role: reasoning (deep thinking), balanced (general), fast (quick tasks)'),
   permissionMode: z.enum(['default', 'acceptEdits', 'bypassPermissions', 'plan']).optional()
     .describe('Permission mode for tool execution'),
   extendedThinking: z.boolean().optional().describe('Enable extended thinking (increases quality, 2-3x cost)'),

@@ -51,7 +51,7 @@ describe('AgentRegistry', () => {
       expect(agent.description).toContain('Validates stage outputs');
       expect(agent.prompt).toContain('Validation Agent');
       expect(agent.tools).toEqual(['Read', 'Glob', 'Grep', 'Bash']);
-      expect(agent.model).toBe('haiku');
+      expect(agent.model).toBe('fast');
       expect(agent.permissionMode).toBe('acceptEdits');
       expect(agent.extendedThinking).toBe(true);
       expect(agent.executionMode).toBe('foreground');
@@ -116,7 +116,7 @@ describe('AgentRegistry', () => {
       // Since validateAgent is private, we test it through loadAgent behavior
       // The actual agents in the codebase should be valid
       const agent = await registry.loadAgent('validation-agent');
-      expect(['sonnet', 'opus', 'haiku', 'inherit', undefined]).toContain(agent.model);
+      expect(['reasoning', 'balanced', 'fast', 'inherit', undefined]).toContain(agent.model);
     });
 
     it('should reject agent with invalid permissionMode', async () => {

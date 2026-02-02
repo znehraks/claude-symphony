@@ -26,12 +26,12 @@
         "model": {
           "type": "string",
           "enum": [
-            "sonnet",
-            "opus",
-            "haiku",
+            "reasoning",
+            "balanced",
+            "fast",
             "inherit"
           ],
-          "description": "Model to use (sonnet, opus, haiku, inherit)"
+          "description": "Model role: reasoning (deep thinking), balanced (general), fast (quick tasks)"
         },
         "permissionMode": {
           "type": "string",

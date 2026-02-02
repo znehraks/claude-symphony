@@ -12,7 +12,7 @@
           "Diverse perspectives",
           "Spontaneous connections"
         ],
-        "model": "opus",
+        "model": "reasoning",
         "debate_roles": "config/debate.jsonc#stage_roles/01-brainstorm",
         "behavior": {
           "temperature": 0.9,
@@ -41,7 +41,7 @@
           "Comparative evaluation",
           "Comprehensive judgment"
         ],
-        "model": "sonnet",
+        "model": "balanced",
         "debate_roles": "config/debate.jsonc#stage_roles/02-research",
         "behavior": {
           "temperature": 0.4,
@@ -70,7 +70,7 @@
           "Risk assessment",
           "Priority judgment"
         ],
-        "model": "opus",
+        "model": "reasoning",
         "debate_roles": "config/debate.jsonc#stage_roles/03-planning",
         "behavior": {
           "temperature": 0.6,
@@ -99,7 +99,7 @@
           "Interaction design",
           "Accessibility consideration"
         ],
-        "model": "sonnet",
+        "model": "balanced",
         "debate_roles": "config/debate.jsonc#stage_roles/04-ui-ux",
         "behavior": {
           "temperature": 0.7,
@@ -128,7 +128,7 @@
           "Priority setting",
           "Actionability"
         ],
-        "model": "haiku",
+        "model": "fast",
         "debate_roles": "config/debate.jsonc#stage_roles/05-task-management",
         "behavior": {
           "temperature": 0.3,
@@ -157,7 +157,7 @@
           "Testable code",
           "Clean code"
         ],
-        "model": "sonnet",
+        "model": "balanced",
         "debate_roles": "config/debate.jsonc#stage_roles/06-implementation",
         "behavior": {
           "temperature": 0.3,
@@ -187,7 +187,7 @@
           "Technical debt resolution",
           "Pattern application"
         ],
-        "model": "opus",
+        "model": "reasoning",
         "debate_roles": "config/debate.jsonc#stage_roles/07-refactoring",
         "behavior": {
           "temperature": 0.5,
@@ -216,7 +216,7 @@
           "Security awareness",
           "User perspective"
         ],
-        "model": "sonnet",
+        "model": "balanced",
         "debate_roles": "config/debate.jsonc#stage_roles/08-qa",
         "behavior": {
           "temperature": 0.3,
@@ -245,7 +245,7 @@
           "Automation-oriented",
           "Reproducibility"
         ],
-        "model": "sonnet",
+        "model": "balanced",
         "debate_roles": "config/debate.jsonc#stage_roles/09-testing",
         "behavior": {
           "temperature": 0.4,
@@ -274,7 +274,7 @@
           "Monitoring design",
           "Rollback preparedness"
         ],
-        "model": "haiku",
+        "model": "fast",
         "debate_roles": "config/debate.jsonc#stage_roles/10-deployment",
         "behavior": {
           "temperature": 0.2,

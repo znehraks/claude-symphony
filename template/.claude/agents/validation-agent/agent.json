@@ -8,7 +8,7 @@
     "Grep",
     "Bash"
   ],
-  "model": "haiku",
+  "model": "fast",
   "permissionMode": "acceptEdits",
   "extendedThinking": true,
   "executionMode": "foreground"

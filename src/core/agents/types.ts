@@ -14,8 +14,8 @@ export interface AgentDefinition {
   prompt: string;
   /** Allowed tools (if undefined, inherits all tools) */
   tools?: string[];
-  /** Model to use (sonnet, opus, haiku, inherit) */
-  model?: 'sonnet' | 'opus' | 'haiku' | 'inherit';
+  /** Model to use (reasoning, balanced, fast, inherit) */
+  model?: 'reasoning' | 'balanced' | 'fast' | 'inherit';
   /** Permission mode */
   permissionMode?: 'default' | 'acceptEdits' | 'bypassPermissions' | 'plan';
   /** Enable extended thinking */

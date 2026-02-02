@@ -5,6 +5,7 @@
 import { AgentRegistry } from './registry.js';
 import type { AgentContext, AgentResult, AgentDefinition } from './types.js';
 import { logInfo, logError, logWarning } from '../../utils/logger.js';
+import { resolveToTier } from '../models/registry.js';
 
 /**
  * Spawn agent using Claude Code's Task tool
@@ -81,20 +82,11 @@ function buildPromptWithContext(agentDef: AgentDefinition, context: AgentContext
 }
 
 /**
- * Map agent model names to Task tool model identifiers
+ * Map user-facing role names to Task tool model identifiers.
+ * "reasoning" → "opus", "balanced" → "sonnet", "fast" → "haiku"
  */
 function mapModelName(model?: string): string | undefined {
-  if (!model || model === 'inherit') {
-    return undefined;
-  }
-
-  const modelMap: Record<string, string> = {
-    'sonnet': 'sonnet',
-    'opus': 'opus',
-    'haiku': 'haiku',
-  };
-
-  return modelMap[model] || model;
+  return resolveToTier(model);
 }
 
 /**
