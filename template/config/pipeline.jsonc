@@ -4,7 +4,7 @@
   "pipeline": {
     "name": "Claude Code Development Pipeline",
     "version": "1.0.0",
-    "description": "10-stage software development pipeline with TDD-first quality gates"
+    "description": "8-stage software development pipeline with TDD-first quality gates"
   },
   "stages": [
     {
@@ -126,49 +126,11 @@
       "checkpoint_required": true
     },
     {
-      "id": "07-refactoring",
-      "name": "Refactoring",
-      "description": "Code quality improvement with test coverage maintenance",
+      "id": "07-qa",
+      "name": "QA & Full Testing",
+      "description": "Security audit, accessibility review, bug fixing, full E2E + test suite execution until all pass",
       "models": ["claudecode"],
       "debate_mode": "full",
-      "mode": "plan_sandbox",
-      "inputs": [
-        "source_code/",
-        "implementation_log.md"
-      ],
-      "outputs": [
-        "refactored_code/",
-        "refactoring_report.md",
-        "HANDOFF.md"
-      ],
-      "timeout": 7200,
-      "checkpoint_required": true
-    },
-    {
-      "id": "08-qa",
-      "name": "QA",
-      "description": "Security audit, accessibility review, E2E scenario expansion",
-      "models": ["claudecode"],
-      "debate_mode": "full",
-      "mode": "plan_sandbox",
-      "sandbox": true,
-      "inputs": [
-        "refactored_code/",
-        "refactoring_report.md"
-      ],
-      "outputs": [
-        "qa_report.md",
-        "bug_list.md",
-        "HANDOFF.md"
-      ],
-      "timeout": 3600
-    },
-    {
-      "id": "09-testing",
-      "name": "Testing — Edge Cases & Performance",
-      "description": "Edge-case tests, performance benchmarks, coverage hardening",
-      "models": ["claudecode"],
-      "debate_mode": "standard",
       "mode": "plan_sandbox",
       "sandbox": true,
       "mcp_servers": [
@@ -176,10 +138,12 @@
       ],
       "inputs": [
         "source_code/",
-        "qa_report.md"
+        "refactoring_report.md",
+        "e2e-test-sheet.md"
       ],
       "outputs": [
-        "tests/",
+        "qa_report.md",
+        "bug_list.md",
         "test_report.md",
         "coverage_report.md",
         "HANDOFF.md"
@@ -187,7 +151,7 @@
       "timeout": 7200
     },
     {
-      "id": "10-deployment",
+      "id": "08-deployment",
       "name": "CI/CD & Deployment",
       "description": "Deployment pipeline setup and deployment",
       "models": ["claudecode"],
@@ -195,7 +159,7 @@
       "mode": "headless",
       "inputs": [
         "source_code/",
-        "tests/",
+        "qa_report.md",
         "test_report.md"
       ],
       "outputs": [
@@ -253,8 +217,7 @@
     "allow_skip": false,
     "require_handoff": true,
     "require_checkpoint": [
-      "06-implementation",
-      "07-refactoring"
+      "06-implementation"
     ],
     "rollback": {
       "enabled": true,
@@ -283,8 +246,8 @@
           {
             "name": "e2e",
             "command": "npm run test:e2e",
-            "description": "Level 3: E2E tests pass",
-            "required": false
+            "description": "Level 3: E2E tests pass (mandatory — test sheet scenarios)",
+            "required": true
           }
         ],
         "on_failure": {
@@ -293,45 +256,30 @@
         }
       },
       {
-        "stage": "07-refactoring",
+        "stage": "07-qa",
         "required_checks": [
           {
             "name": "test",
             "command": "npm run test",
-            "description": "Regression prevention: all tests still pass",
-            "required": true
-          },
-          {
-            "name": "lint",
-            "command": "npm run lint",
-            "description": "Code quality after refactoring",
-            "required": false
-          }
-        ],
-        "on_failure": {
-          "action": "block_handoff",
-          "message": "Regression detected — fix before proceeding"
-        }
-      },
-      {
-        "stage": "08-qa",
-        "required_checks": [
-          {
-            "name": "test",
-            "command": "npm run test",
-            "description": "Full test suite",
+            "description": "Full unit + integration test suite",
             "required": true
           },
           {
             "name": "e2e",
             "command": "npm run test:e2e",
-            "description": "E2E tests including new scenarios",
+            "description": "Full E2E test sheet — all scenarios must pass",
+            "required": true
+          },
+          {
+            "name": "coverage",
+            "command": "npm run test:coverage",
+            "description": "Coverage report — target 80%",
             "required": false
           }
         ],
         "on_failure": {
           "action": "block_handoff",
-          "message": "QA tests failed — bug fixes required"
+          "message": "Tests failed — fix and re-run until all pass"
         }
       }
     ]

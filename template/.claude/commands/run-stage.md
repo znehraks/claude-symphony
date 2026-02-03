@@ -14,10 +14,8 @@ Run a specific stage.
 - `04-ui-ux` - UI/UX Design
 - `05-task-management` - Task Management
 - `06-implementation` - Implementation
-- `07-refactoring` - Refactoring
-- `08-qa` - QA
-- `09-testing` - Testing
-- `10-deployment` - Deployment
+- `07-qa` - QA & Full Testing
+- `08-deployment` - Deployment
 
 ## Actions
 
@@ -75,4 +73,4 @@ Run /handoff to generate the handoff document.
 
 ## Cautions
 - Stage skipping not allowed (sequential execution)
-- Checkpoint-required stages (06, 07) cannot proceed without checkpoint
+- Checkpoint-required stages (06) cannot proceed without checkpoint

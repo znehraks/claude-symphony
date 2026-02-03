@@ -13,10 +13,8 @@ export const STAGE_IDS = [
   '04-ui-ux',
   '05-task-management',
   '06-implementation',
-  '07-refactoring',
-  '08-qa',
-  '09-testing',
-  '10-deployment',
+  '07-qa',
+  '08-deployment',
 ] as const;
 
 export type StageId = (typeof STAGE_IDS)[number];
@@ -24,7 +22,7 @@ export type StageId = (typeof STAGE_IDS)[number];
 /**
  * Stage ID schema
  */
-export const StageIdSchema = z.enum(STAGE_IDS).describe('Unique identifier for a pipeline stage (01-brainstorm through 10-deployment)');
+export const StageIdSchema = z.enum(STAGE_IDS).describe('Unique identifier for a pipeline stage (01-brainstorm through 08-deployment)');
 
 /**
  * AI models available in the pipeline
@@ -81,10 +79,8 @@ export const STAGE_NAMES: Record<StageId, string> = {
   '04-ui-ux': 'UI/UX Design',
   '05-task-management': 'Task Management',
   '06-implementation': 'Implementation',
-  '07-refactoring': 'Refactoring',
-  '08-qa': 'QA',
-  '09-testing': 'Testing',
-  '10-deployment': 'Deployment',
+  '07-qa': 'QA & Full Testing',
+  '08-deployment': 'Deployment',
 };
 
 /**
@@ -97,10 +93,8 @@ export const STAGE_AI_MODELS: Record<StageId, string> = {
   '04-ui-ux': 'Gemini',
   '05-task-management': 'ClaudeCode',
   '06-implementation': 'ClaudeCode',
-  '07-refactoring': 'Codex',
-  '08-qa': 'ClaudeCode',
-  '09-testing': 'Codex',
-  '10-deployment': 'ClaudeCode',
+  '07-qa': 'ClaudeCode',
+  '08-deployment': 'ClaudeCode',
 };
 
 /**

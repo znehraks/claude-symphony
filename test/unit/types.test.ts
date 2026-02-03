@@ -13,19 +13,20 @@ import {
 
 describe('Stage Types', () => {
   describe('STAGE_IDS', () => {
-    it('should have 10 stages', () => {
-      expect(STAGE_IDS).toHaveLength(10);
+    it('should have 8 stages', () => {
+      expect(STAGE_IDS).toHaveLength(8);
     });
 
     it('should contain all expected stages', () => {
       expect(STAGE_IDS).toContain('01-brainstorm');
       expect(STAGE_IDS).toContain('06-implementation');
-      expect(STAGE_IDS).toContain('10-deployment');
+      expect(STAGE_IDS).toContain('07-qa');
+      expect(STAGE_IDS).toContain('08-deployment');
     });
 
     it('should be in correct order', () => {
       expect(STAGE_IDS[0]).toBe('01-brainstorm');
-      expect(STAGE_IDS[9]).toBe('10-deployment');
+      expect(STAGE_IDS[7]).toBe('08-deployment');
     });
   });
 
@@ -39,7 +40,7 @@ describe('Stage Types', () => {
     });
 
     it('should return correct name for deployment stage', () => {
-      expect(getStageName('10-deployment')).toBe('Deployment');
+      expect(getStageName('08-deployment')).toBe('Deployment');
     });
   });
 
@@ -49,7 +50,7 @@ describe('Stage Types', () => {
     });
 
     it('should return completed for last stage', () => {
-      expect(getNextStage('10-deployment')).toBe('completed');
+      expect(getNextStage('08-deployment')).toBe('completed');
     });
 
     it('should return correct middle stage transitions', () => {
@@ -75,7 +76,7 @@ describe('Stage Types', () => {
     it('should return true for valid stage IDs', () => {
       expect(isValidStageId('01-brainstorm')).toBe(true);
       expect(isValidStageId('06-implementation')).toBe(true);
-      expect(isValidStageId('10-deployment')).toBe(true);
+      expect(isValidStageId('08-deployment')).toBe(true);
     });
 
     it('should return false for invalid stage IDs', () => {

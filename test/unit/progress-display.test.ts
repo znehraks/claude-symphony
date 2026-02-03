@@ -15,10 +15,8 @@ function makeStages(
     { id: '04-ui-ux', name: 'UI/UX Design', status: 'pending' },
     { id: '05-task-management', name: 'Task Management', status: 'pending' },
     { id: '06-implementation', name: 'Implementation', status: 'pending' },
-    { id: '07-refactoring', name: 'Refactoring', status: 'pending' },
-    { id: '08-qa', name: 'QA', status: 'pending' },
-    { id: '09-testing', name: 'Testing', status: 'pending' },
-    { id: '10-deployment', name: 'Deployment', status: 'pending' },
+    { id: '07-qa', name: 'QA & Full Testing', status: 'pending' },
+    { id: '08-deployment', name: 'Deployment', status: 'pending' },
   ];
 
   return defaults.map((s) => ({
@@ -29,7 +27,7 @@ function makeStages(
 
 describe('Progress Display', () => {
   describe('renderPipelineProgress', () => {
-    it('should render all 10 stages', () => {
+    it('should render all 8 stages', () => {
       const output = renderPipelineProgress({
         projectName: 'test-app',
         stages: makeStages(),
@@ -37,7 +35,7 @@ describe('Progress Display', () => {
       });
       expect(output).toContain('test-app');
       expect(output).toContain('01');
-      expect(output).toContain('10');
+      expect(output).toContain('08');
       expect(output).toContain('0%');
     });
 
@@ -91,8 +89,8 @@ describe('Progress Display', () => {
       const allCompleted: Partial<Record<StageId, StageStatus>> = {};
       const ids: StageId[] = [
         '01-brainstorm', '02-research', '03-planning', '04-ui-ux',
-        '05-task-management', '06-implementation', '07-refactoring',
-        '08-qa', '09-testing', '10-deployment',
+        '05-task-management', '06-implementation', '07-qa',
+        '08-deployment',
       ];
       for (const id of ids) {
         allCompleted[id] = 'completed';

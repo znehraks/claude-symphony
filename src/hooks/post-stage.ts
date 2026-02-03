@@ -59,7 +59,7 @@ export async function runPostStageTasks(
 
   // 3. Create checkpoint for critical stages
   console.log('\n[3/4] Checkpoint management...');
-  const criticalStages: StageId[] = ['06-implementation', '07-refactoring', '08-qa'];
+  const criticalStages: StageId[] = ['06-implementation', '07-qa'];
   if (criticalStages.includes(stageId)) {
     logInfo('Critical stage - creating checkpoint');
     const checkpoint = await createCheckpoint(projectRoot, stageId, {

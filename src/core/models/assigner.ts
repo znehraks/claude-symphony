@@ -33,13 +33,11 @@ const ROLE_IDEAL_TIERS: Record<string, Tier[]> = {
   '01-brainstorm': ['opus', 'sonnet', 'sonnet'],        // Visionary, Skeptic, Integrator
   '02-research':   ['sonnet', 'sonnet', 'sonnet'],       // Deep Diver, Contrarian, Synthesizer
   '03-planning':   ['opus', 'opus', 'sonnet'],            // Architect, Risk Analyst, Pragmatist
-  '04-ui-ux':      ['sonnet', 'sonnet', 'haiku'],         // UX Advocate, Visual Designer, Dev Liaison
+  '04-ui-ux':      ['sonnet', 'opus', 'haiku'],           // UX Designer, UI Critic, Dev Feasibility
   '05-task-management': ['haiku', 'haiku'],               // Decomposer, Dependency Mapper
   '06-implementation':  ['sonnet', 'opus', 'sonnet'],     // Coder, Reviewer, Tester
-  '07-refactoring':     ['opus', 'sonnet', 'haiku'],      // Perf Engineer, Clean Code, Regression Guardian
-  '08-qa':              ['opus', 'sonnet', 'sonnet'],      // Security Auditor, Accessibility, Edge Case
-  '09-testing':         ['sonnet', 'sonnet', 'sonnet'],    // Coverage, Chaos, Integration
-  '10-deployment':      ['haiku', 'sonnet'],               // Infra Engineer, Security Ops
+  '07-qa':              ['opus', 'sonnet', 'sonnet'],      // Security Auditor, Accessibility, Edge Case
+  '08-deployment':      ['haiku', 'sonnet'],               // Infra Engineer, Security Ops
 };
 
 /** Ideal tier for each stage's default_model and persona */
@@ -50,10 +48,8 @@ const STAGE_IDEAL_TIERS: Record<string, Tier> = {
   '04-ui-ux':           'sonnet',
   '05-task-management': 'haiku',
   '06-implementation':  'sonnet',
-  '07-refactoring':     'opus',
-  '08-qa':              'sonnet',
-  '09-testing':         'sonnet',
-  '10-deployment':      'haiku',
+  '07-qa':              'sonnet',
+  '08-deployment':      'haiku',
 };
 
 /** Fallback chain: opus→sonnet, haiku→sonnet, sonnet stays sonnet */

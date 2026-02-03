@@ -34,12 +34,10 @@
                       "04-ui-ux",
                       "05-task-management",
                       "06-implementation",
-                      "07-refactoring",
-                      "08-qa",
-                      "09-testing",
-                      "10-deployment"
+                      "07-qa",
+                      "08-deployment"
                     ],
-                    "description": "Unique identifier for a pipeline stage (01-brainstorm through 10-deployment)"
+                    "description": "Unique identifier for a pipeline stage (01-brainstorm through 08-deployment)"
                   },
                   "description": "Stages supporting parallel execution"
                 },
@@ -54,12 +52,10 @@
                       "04-ui-ux",
                       "05-task-management",
                       "06-implementation",
-                      "07-refactoring",
-                      "08-qa",
-                      "09-testing",
-                      "10-deployment"
+                      "07-qa",
+                      "08-deployment"
                     ],
-                    "description": "Unique identifier for a pipeline stage (01-brainstorm through 10-deployment)"
+                    "description": "Unique identifier for a pipeline stage (01-brainstorm through 08-deployment)"
                   },
                   "description": "Stages requiring sequential execution"
                 }

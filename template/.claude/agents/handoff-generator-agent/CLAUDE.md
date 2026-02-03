@@ -417,13 +417,13 @@ handoffTemplate: "compact"
 
 Output:
 ```markdown
-# HANDOFF: 06-implementation → 07-refactoring
+# HANDOFF: 06-implementation → 07-qa
 
 **Status**: ✅ Completed (Sprint 3/3)
 **Outputs**: `my-app/src/` (Auth module, User CRUD, API endpoints)
 **Tests**: 85% coverage (passed)
 **Blockers**: None
-**Next**: Review performance bottlenecks in auth service
+**Next**: Full QA audit and testing
 ```
 
 ---

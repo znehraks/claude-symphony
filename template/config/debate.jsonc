@@ -119,22 +119,24 @@
         ]
       },
       "04-ui-ux": {
-        "execution_mode": "sequential",
-        "intensity": "standard",
+        "execution_mode": "debate",
+        "intensity": "full",
         "default_model": "balanced",
-        "steps": [
+        "roles": [
           {
-            "name": "Designer",
+            "name": "UX Designer",
             "model": "balanced",
-            "directive": "Design from the user's perspective. Map user journeys, create wireframes, define design system (colors, spacing, components). Prioritize accessibility (WCAG 2.1 AA). Write wireframes and component specs to stage outputs using Write tool.",
-            "output": "stages/04-ui-ux/outputs/ (wireframes.md, components.md, design_system.md)"
+            "directive": "Design from the user's perspective. Map user journeys, create wireframes, define design system. Prioritize accessibility (WCAG 2.1 AA). Ensure all designs follow UI/UX conventions from Stage 03 conventions.md."
           },
           {
-            "name": "Dev Reviewer",
+            "name": "UI Critic",
+            "model": "reasoning",
+            "directive": "Challenge every design decision for usability, consistency, and convention compliance. Identify potential UX friction, inconsistent patterns, and accessibility gaps. Verify alignment with Stage 03 conventions."
+          },
+          {
+            "name": "Dev Feasibility",
             "model": "fast",
-            "directive": "Review the Designer's wireframes and component specs for technical feasibility. Identify implementation complexity, performance implications, and component reusability. Flag designs that would be difficult to build. Write feedback report.",
-            "input": "Designer's output files",
-            "output": "state/debate/04-ui-ux/step2/DevReviewer.md"
+            "directive": "Evaluate designs for technical feasibility. Identify implementation complexity, performance implications, and component reusability. Flag designs that would be difficult to build within the tech stack chosen in Stage 03."
           }
         ]
       },
@@ -185,34 +187,7 @@
           }
         ]
       },
-      "07-refactoring": {
-        "execution_mode": "sequential",
-        "code_producing": true,
-        "default_model": "reasoning",
-        "steps": [
-          {
-            "name": "Analyzer",
-            "model": "reasoning",
-            "directive": "Profile the codebase for performance bottlenecks, code smells, and duplication. Identify specific files and functions to refactor. Write analysis report.",
-            "output": "state/debate/07-refactoring/step1/Analyzer.md"
-          },
-          {
-            "name": "Refactorer",
-            "model": "balanced",
-            "directive": "Apply refactoring changes based on Analyzer's report. Use Edit/Write tools to modify actual source files. Improve readability, reduce complexity, apply SOLID principles.",
-            "input": "Analyzer's report",
-            "output": "Updated source files + state/debate/07-refactoring/step2/Refactorer.md"
-          },
-          {
-            "name": "Tester",
-            "model": "fast",
-            "directive": "Run build and test commands using Bash to verify refactoring preserved behavior. If tests fail, document failures. Ensure backward compatibility.",
-            "input": "Refactored source files",
-            "output": "state/debate/07-refactoring/step3/Tester.md (test results)"
-          }
-        ]
-      },
-      "08-qa": {
+      "07-qa": {
         "execution_mode": "debate",
         "code_producing": true,
         "intensity": "full",
@@ -235,34 +210,7 @@
           }
         ]
       },
-      "09-testing": {
-        "execution_mode": "sequential",
-        "code_producing": true,
-        "default_model": "balanced",
-        "steps": [
-          {
-            "name": "TestWriter",
-            "model": "balanced",
-            "directive": "Read the project source code and write comprehensive tests: unit, integration, and E2E. Use the Write tool to create real test files in the project. Cover edge cases, boundary conditions, and error scenarios.",
-            "output": "Test files in project root + state/debate/09-testing/step1/TestWriter.md"
-          },
-          {
-            "name": "Runner",
-            "model": "fast",
-            "directive": "Run all tests using Bash (detect project type and run appropriate test command). Report results including pass/fail counts and coverage. Document any failures.",
-            "input": "Test files created by TestWriter",
-            "output": "state/debate/09-testing/step2/Runner.md (test results)"
-          },
-          {
-            "name": "Fixer",
-            "model": "balanced",
-            "directive": "Fix any failing tests or source code bugs identified by Runner. Use Edit/Write tools to modify actual files. Re-run tests to verify fixes.",
-            "input": "Runner's test results",
-            "output": "Updated files + state/debate/09-testing/step3/Fixer.md"
-          }
-        ]
-      },
-      "10-deployment": {
+      "08-deployment": {
         "execution_mode": "sequential",
         "intensity": "light",
         "default_model": "fast",
@@ -271,7 +219,7 @@
             "name": "ConfigWriter",
             "model": "fast",
             "directive": "Design CI/CD pipeline, configure hosting, and set up deployment automation. Use the Write tool to create actual config files (Dockerfile, CI/CD YAML, deployment scripts). Write deployment guide to stage outputs.",
-            "output": "Config files + stages/10-deployment/outputs/deployment_guide.md"
+            "output": "Config files + stages/08-deployment/outputs/deployment_guide.md"
           }
         ]
       }

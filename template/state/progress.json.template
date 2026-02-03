@@ -94,7 +94,7 @@
       "outputs": [],
       "errors": []
     },
-    "07-refactoring": {
+    "07-qa": {
       "status": "pending",
       "started_at": null,
       "completed_at": null,
@@ -103,25 +103,7 @@
       "outputs": [],
       "errors": []
     },
-    "08-qa": {
-      "status": "pending",
-      "started_at": null,
-      "completed_at": null,
-      "handoff_generated": false,
-      "checkpoint_id": null,
-      "outputs": [],
-      "errors": []
-    },
-    "09-testing": {
-      "status": "pending",
-      "started_at": null,
-      "completed_at": null,
-      "handoff_generated": false,
-      "checkpoint_id": null,
-      "outputs": [],
-      "errors": []
-    },
-    "10-deployment": {
+    "08-deployment": {
       "status": "pending",
       "started_at": null,
       "completed_at": null,

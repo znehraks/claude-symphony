@@ -4,7 +4,7 @@ Describe your app. We handle the rest — planning, architecture, code, tests, d
 
 ## Quick Start
 
-Run `/auto-pilot` to start the automatic 10-stage pipeline. The orchestrator will:
+Run `/auto-pilot` to start the automatic 8-stage pipeline. The orchestrator will:
 1. Read each stage's instructions from `stages/XX/CLAUDE.md`
 2. Load reference materials from `references/XX/`
 3. Execute the stage work using a specialized AI agent
@@ -17,14 +17,12 @@ Run `/auto-pilot` to start the automatic 10-stage pipeline. The orchestrator wil
 |---|-------|-------|-------|
 | 01 | Brainstorming | Ideas, features, requirements | reasoning |
 | 02 | Research | Tech evaluation, feasibility | balanced |
-| 03 | Planning | Architecture, data models, API | reasoning |
+| 03 | Planning | Architecture, data models, API, conventions | reasoning |
 | 04 | UI/UX | Wireframes, components, design | balanced |
 | 05 | Tasks | Task decomposition, priorities | fast |
-| 06 | Implementation | Write actual code | balanced |
-| 07 | Refactoring | Code quality, optimization | reasoning |
-| 08 | QA | Security, accessibility, bugs | balanced |
-| 09 | Testing | Unit, integration, E2E tests | balanced |
-| 10 | Deployment | CI/CD, hosting, production | fast |
+| 06 | Implementation | Write actual code (TDD + refactoring + E2E sheet) | balanced |
+| 07 | QA & Full Testing | Security, bugs, all tests must pass | balanced |
+| 08 | Deployment | CI/CD, hosting, production | fast |
 
 ### Model Strategy
 
@@ -59,10 +57,8 @@ references/
 ├── 04-ui-ux/         # Design references, wireframes, style guides
 ├── 05-task-management/# Task templates, sprint examples
 ├── 06-implementation/ # Coding conventions, example code
-├── 07-refactoring/   # Quality rules, performance benchmarks
-├── 08-qa/            # QA checklists, testing standards
-├── 09-testing/       # Test examples, coverage requirements
-└── 10-deployment/    # CI/CD templates, infrastructure configs
+├── 07-qa/            # QA checklists, testing standards
+└── 08-deployment/    # CI/CD templates, infrastructure configs
 ```
 
 Supported formats: `.md`, `.txt`, `.json`, `.yaml`, `.ts`, `.js`, `.tsx`, `.jsx`, `.css`, `.html`
@@ -119,10 +115,8 @@ Each stage includes role-specific instructions:
 | 04 UI/UX | Creative Designer |
 | 05 Tasks | Systematic Organizer |
 | 06 Implementation | Precise Builder |
-| 07 Refactoring | Code Surgeon |
-| 08 QA | Quality Guardian |
-| 09 Testing | Methodical Tester |
-| 10 Deployment | DevOps Engineer |
+| 07 QA & Testing | Quality Guardian |
+| 08 Deployment | DevOps Engineer |
 
 ## HANDOFF System
 
@@ -148,4 +142,4 @@ If validation fails, the stage is retried with feedback.
 - Skipping a stage without completing required outputs
 - Modifying previous stage outputs
 - Proceeding without generating HANDOFF.md
-- Destructive operations without checkpoint (stages 06-10)
+- Destructive operations without checkpoint (stages 06-08)

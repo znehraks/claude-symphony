@@ -23,12 +23,12 @@ describe('AI Selector Hook', () => {
       expect(getStageModel('06-implementation')).toBe('claudecode');
     });
 
-    it('should return codex for refactoring stage', () => {
-      expect(getStageModel('07-refactoring')).toBe('codex');
+    it('should return claudecode for qa stage', () => {
+      expect(getStageModel('07-qa')).toBe('claudecode');
     });
 
-    it('should return codex for testing stage', () => {
-      expect(getStageModel('09-testing')).toBe('codex');
+    it('should return claudecode for deployment stage', () => {
+      expect(getStageModel('08-deployment')).toBe('claudecode');
     });
   });
 

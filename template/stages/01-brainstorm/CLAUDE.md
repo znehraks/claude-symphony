@@ -5,7 +5,10 @@ Transform the project brief into structured ideas, features, and requirements.
 
 ## Inputs
 - `stages/01-brainstorm/inputs/project_brief.md` — the user's project description
+- `config/tech_preferences.jsonc` — user's tech stack preferences (if any)
 - `references/01-brainstorm/` — any reference materials
+
+> **Tech Preferences**: If `config/tech_preferences.jsonc` has a non-empty `raw_input`, factor those preferences into feature ideation and requirements. Do not override them — treat them as user constraints.
 
 ## Tasks
 

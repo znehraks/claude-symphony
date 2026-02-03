@@ -1,14 +1,15 @@
-# Stage 10: Deployment
+# Stage 08: Deployment
 
 ## Objective
 Set up CI/CD pipeline and deploy the application to production.
 
 ## Inputs
-- `stages/09-testing/HANDOFF.md` — testing context
-- `stages/09-testing/outputs/` — test results and coverage
+- `stages/07-qa/HANDOFF.md` — QA & testing context
+- `stages/07-qa/outputs/` — test results, coverage, and QA reports
 - `stages/03-planning/outputs/tech_stack.md` — hosting platform selection
+- `stages/03-planning/outputs/conventions.md` — conventions (git workflow, CI rules)
 - Source code in project root
-- `references/10-deployment/` — CI/CD templates, infrastructure configs
+- `references/08-deployment/` — CI/CD templates, infrastructure configs
 
 ## Tasks
 
@@ -26,7 +27,7 @@ Set up CI/CD pipeline and deploy the application to production.
 - `.github/workflows/deploy.yml` — deployment pipeline (if applicable)
 - Hosting platform configuration (vercel.json, netlify.toml, etc.)
 
-### `stages/10-deployment/outputs/deployment_guide.md` (required)
+### `stages/08-deployment/outputs/deployment_guide.md` (required)
 - Deployment steps (manual and automated)
 - Environment variables needed
 - Database setup instructions
@@ -34,7 +35,7 @@ Set up CI/CD pipeline and deploy the application to production.
 - Rollback procedure
 - Production URL(s)
 
-### `stages/10-deployment/outputs/ci_config.yaml` (optional)
+### `stages/08-deployment/outputs/ci_config.yaml` (optional)
 - CI/CD pipeline documentation
 
 ## Quality Criteria
@@ -44,7 +45,7 @@ Set up CI/CD pipeline and deploy the application to production.
 - Environment variables are properly configured (no secrets in code)
 
 ## HANDOFF
-Generate `stages/10-deployment/HANDOFF.md` summarizing:
+Generate `stages/08-deployment/HANDOFF.md` summarizing:
 - Deployment URLs and access info
 - CI/CD pipeline status
 - Post-deployment checklist

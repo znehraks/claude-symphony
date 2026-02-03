@@ -150,10 +150,8 @@ export function createInitialProgress(projectName: string): Progress {
     '04-ui-ux',
     '05-task-management',
     '06-implementation',
-    '07-refactoring',
-    '08-qa',
-    '09-testing',
-    '10-deployment',
+    '07-qa',
+    '08-deployment',
   ] as const;
 
   for (const id of stageIds) {

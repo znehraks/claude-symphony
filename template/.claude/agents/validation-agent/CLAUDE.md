@@ -43,7 +43,7 @@ For markdown files with required sections:
 
 ### Step 4: Command Validation
 
-For stages with build/test commands (06-implementation, 09-testing):
+For stages with build/test commands (06-implementation, 07-qa):
 1. Check if `package.json` exists
 2. Run `Bash` command (e.g., `npm run lint`, `npm run test`)
 3. Record: PASS if exit code 0, FAIL if non-zero
@@ -131,34 +131,17 @@ Return summary in this format:
 
 **CRITICAL**: If `stages/06/outputs/` contains only markdown and the project root has NO source code files, this is a **HARD FAIL**. The primary output of Stage 06 is source code, not documentation.
 
-### 07-refactoring
+### 07-qa
 **Required Files:**
-- `stages/07-refactoring/outputs/refactoring_report.md`
-
-**Source Code Verification:**
-- Source code files in project root: minimum 5 (Glob `**/*.{ts,tsx,js,jsx,cs,py,go,rs,java}`)
-- Build command must pass
-- Test command must pass (refactoring must not break tests)
-
-### 08-qa
-**Required Files:**
-- `stages/08-qa/outputs/qa_report.md`
-
-**Optional Files:**
-- `stages/08-qa/outputs/bug_list.md`
+- `stages/07-qa/outputs/qa_report.md`
+- `stages/07-qa/outputs/bug_list.md`
+- `stages/07-qa/outputs/test_report.md`
+- `stages/07-qa/outputs/coverage_report.md`
 
 **Source Code Verification:**
 - Source code files must exist in project root
-- Build and test commands must pass after QA fixes
-
-### 09-testing
-**Required Files:**
-- `stages/09-testing/outputs/test_report.md`
-- `stages/09-testing/outputs/coverage_report.md`
-
-**Source Code Verification:**
-- Source code + test files in project root: minimum 5
-- Test command must pass with all tests passing
+- Build, test, and E2E commands must all pass
+- All tests must pass (zero failures)
 
 ### Project Type Detection (for build/test commands)
 | Manifest | Build Command | Test Command |
@@ -169,12 +152,12 @@ Return summary in this format:
 | `Cargo.toml` | `cargo build` | `cargo test` |
 | `go.mod` | `go build ./...` | `go test ./...` |
 
-### 10-deployment
+### 08-deployment
 **Required Files:**
-- `stages/10-deployment/outputs/deployment_guide.md`
+- `stages/08-deployment/outputs/deployment_guide.md`
 
 **Optional Files:**
-- `stages/10-deployment/outputs/ci_config.yaml`
+- `stages/08-deployment/outputs/ci_config.yaml`
 
 ## Extended Thinking
 

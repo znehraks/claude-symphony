@@ -42,8 +42,25 @@ For EACH feature/component:
 - `stages/05-task-management/outputs/implementation_order.md` — implementation sequence
 - `stages/03-planning/outputs/architecture.md` — architecture design
 - `stages/03-planning/outputs/tech_stack.md` — tech stack and API design
+- `stages/03-planning/outputs/conventions.md` — project conventions (code style, naming, structure)
 - `stages/04-ui-ux/outputs/` — wireframes and components
 - `references/06-implementation/` — coding conventions, example code, patterns
+
+## Design Asset Utilization
+
+If Stage 04 produced design assets from Stitch/Pencil.dev MCP tools:
+- `stages/04-ui-ux/outputs/design_assets/component_specs.json` — use as component implementation reference
+- `stages/04-ui-ux/outputs/design_assets/design_tokens.json` — use for styling (colors, spacing, typography)
+- `stages/04-ui-ux/outputs/design_assets/screen_screenshots/` — use as visual reference during implementation
+- `stages/04-ui-ux/outputs/design_assets/layout_specs.md` — use for layout implementation
+
+When implementing UI components:
+1. Reference the component_specs.json for exact props, variants, and dimensions
+2. Apply design_tokens.json values directly (do NOT hardcode colors/spacing)
+3. Compare implementation against screen_screenshots for visual accuracy
+4. Follow layout_specs.md for grid, spacing, and responsive behavior
+
+If Pencil.dev MCP is available during implementation, use `pencil__get_screenshot` to compare your implementation against the original designs.
 
 ## Tasks
 
@@ -93,29 +110,65 @@ For each feature in priority order (P0 first):
 - Run: npm test (all tests must pass)
 - Run: npm run build (must compile)
 - Run: npm run lint (must pass)
+- If any fail → fix before proceeding
+```
+
+#### Step D: Refactor (if needed)
+```
+- Check against conventions.md (naming, structure, style)
+- Look for code smells, duplication, complexity
+- Don't create unnecessary work — only refactor if there's a real issue
+```
+
+#### Step E: Re-verify (after refactoring)
+```
+- Run: npm test (all tests must still pass)
+- Run: npm run build (must compile)
 - If any fail → fix before proceeding to next feature
 ```
 
-**Repeat A→B→C for every feature. No exceptions.**
+**Repeat A→B→C→D→E for every feature. No exceptions.**
 
-### 4. E2E Tests (Written During Implementation)
+### 4. E2E Test Sheet (Mandatory — Updated Per Task)
 
-Write E2E tests for critical user flows as you implement them:
-- User registration/login flow
-- Core feature happy path (the main thing the app does)
-- Error states and edge cases for primary flows
+Maintain `e2e-test-sheet.md` in the project root throughout implementation.
 
-E2E tests should use Playwright or Cypress. Example:
+**Rule: On every task completion (or when work produces an E2E-testable flow):**
+1. Add the corresponding scenario to `e2e-test-sheet.md`
+2. Write E2E test code (Playwright or Cypress)
+3. Run E2E tests — must pass before moving to the next task
+
+E2E Test Sheet Format (`e2e-test-sheet.md`):
+```markdown
+| # | Scenario | Steps | Expected | Status | Sprint | Task ID |
+|---|----------|-------|----------|--------|--------|---------|
+| 1 | User signup | Go to /signup -> Fill form -> Submit | Redirect to dashboard | PASS | S1 | T-001 |
+| 2 | Core feature happy path | Login -> Use feature -> Verify | Expected outcome shown | PASS | S1 | T-003 |
 ```
-Test: "User creates an account and uses the main feature"
-  1. Navigate to signup page
-  2. Fill in form, submit
-  3. Verify redirect to dashboard
-  4. Use the core feature
-  5. Verify expected outcome
-```
 
-### 5. Integration
+### 5. Sprint Completion Gate (E2E Mandatory)
+
+At each Sprint completion, you MUST:
+1. Run all E2E scenarios added in the current Sprint
+2. Re-run all E2E scenarios from previous Sprints (regression)
+3. Run full unit/integration test suite
+4. **Sprint-level refactoring review:**
+   - Convention compliance check (verify conventions.md code conventions are followed)
+   - Code review across Sprint scope (duplication, structure, consistency)
+5. Re-run full test suite after refactoring (unit + integration + E2E regression)
+6. **All tests must pass before the next Sprint can begin**
+
+Sprint transition checklist:
+- [ ] All tasks in this Sprint completed
+- [ ] All E2E scenarios for this Sprint show PASS in `e2e-test-sheet.md`
+- [ ] Previous Sprint scenarios have no regressions
+- [ ] Sprint-level refactoring review completed (convention compliance + code quality)
+- [ ] `npm test` passes (unit + integration) — including post-refactoring
+- [ ] `npm run test:e2e` passes (all E2E) — including post-refactoring
+
+If any test fails: fix the issue and re-run. Do NOT proceed to the next Sprint with failing tests.
+
+### 6. Integration
 - Connect frontend to backend
 - Wire up authentication
 - **Run full test suite after integration**
@@ -147,6 +200,13 @@ Test: "User creates an account and uses the main feature"
 - Coverage report (line, branch, function percentages)
 - List of untested areas (with justification)
 
+### `stages/06-implementation/outputs/refactoring_report.md` (required)
+- Task-level refactoring summary (what was refactored per task)
+- Sprint-level refactoring summary (cross-cutting improvements per sprint)
+- Final codebase review results (convention compliance, architecture alignment)
+- Refactoring points identified and addressed
+- Convention compliance results (pass/fail per convention category)
+
 ## Quality Gate — Stage Completion Checklist
 
 **ALL of the following must pass before this stage is complete:**
@@ -173,6 +233,37 @@ Test: "User creates an account and uses the main feature"
 - [ ] Test coverage >= 60% for core modules
 
 **If source code or manifest is missing, or build/test fails, this stage CANNOT be marked complete.** Fix the issue and re-verify.
+
+## Stage Completion: Full Codebase Review & Final Refactoring
+
+After all Sprints are complete, before Stage 06 can be marked done:
+
+1. **Full codebase review:**
+   - Architecture flow verification (compare against Stage 03 architecture.md)
+   - Code consistency audit (conventions.md code conventions — full sweep)
+   - Naming convention check (files, folders, variables, functions, components)
+2. **Identify refactoring points** — duplicated code, complexity hotspots, unused code, performance issues, convention violations
+3. **Execute refactoring** — address all identified points
+4. **Re-run full test suite** — unit + integration + E2E (all must pass)
+5. **Generate `refactoring_report.md`** — document all changes, convention compliance results
+
+The stage CANNOT be completed until the full codebase review passes and all tests pass.
+
+## CRITICAL: Process Enforcement
+
+The TDD + Refactoring process is NON-NEGOTIABLE. The following sequence MUST be followed for every task:
+
+1. Write Tests → 2. Implement → 3. Verify (pass) → 4. Refactor (convention check) → 5. Re-verify (pass)
+
+**VIOLATIONS (will cause stage FAILURE):**
+- Implementing code before writing tests
+- Skipping the refactoring step
+- Skipping convention compliance check during refactoring
+- Proceeding to next task with failing tests
+- Skipping Sprint-level refactoring review
+- Marking stage complete without full codebase review
+
+Each violation must be caught and corrected immediately. There are no exceptions.
 
 ## Anti-Patterns (Do NOT Do These)
 

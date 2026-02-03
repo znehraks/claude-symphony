@@ -384,7 +384,7 @@ export function buildRetryPrompt(
 
   // For implementation/testing stages, try to include test failure output
   let testFailureContext = '';
-  if (['06-implementation', '07-refactoring', '08-qa', '09-testing'].includes(stageId)) {
+  if (['06-implementation', '07-qa'].includes(stageId)) {
     const testErrors = retryState.validationErrors.filter(
       (e) => e.includes('test') || e.includes('Test') || e.includes('build') || e.includes('Build')
     );

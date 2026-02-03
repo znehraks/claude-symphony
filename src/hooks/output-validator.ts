@@ -397,35 +397,23 @@ async function validateStageOutputs(
       // Documentation outputs
       checkFileExists(state, projectRoot, `stages/${stageId}/outputs/implementation_log.md`, true);
       checkFileExists(state, projectRoot, `stages/${stageId}/outputs/test_summary.md`, true);
+      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/refactoring_report.md`, true);
 
       // Source code verification + build/test (HARD FAIL if missing)
       await validateCodeProducingStage(state, projectRoot, stageId, 5);
       break;
 
-    case '07-refactoring':
-      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/refactoring_report.md`, true);
-
-      // Source code must still exist and build/test after refactoring
-      await validateCodeProducingStage(state, projectRoot, stageId, 5);
-      break;
-
-    case '08-qa':
+    case '07-qa':
       checkFileExists(state, projectRoot, `stages/${stageId}/outputs/qa_report.md`, true);
-      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/bug_list.md`, false);
-
-      // Verify source code and build/test pass after QA fixes
-      await validateCodeProducingStage(state, projectRoot, stageId, 5);
-      break;
-
-    case '09-testing':
+      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/bug_list.md`, true);
       checkFileExists(state, projectRoot, `stages/${stageId}/outputs/test_report.md`, true);
       checkFileExists(state, projectRoot, `stages/${stageId}/outputs/coverage_report.md`, true);
 
-      // Source code + tests must build and pass
+      // Verify source code and build/test pass after QA + testing
       await validateCodeProducingStage(state, projectRoot, stageId, 5);
       break;
 
-    case '10-deployment':
+    case '08-deployment':
       checkFileExists(state, projectRoot, `stages/${stageId}/outputs/deployment_guide.md`, true);
       checkFileExists(state, projectRoot, `stages/${stageId}/outputs/ci_config.yaml`, false);
       break;
@@ -557,9 +545,10 @@ function getValidationRulesForStage(stageId: StageId): Record<string, any> {
       files: [
         { path: 'stages/06-implementation/outputs/implementation_log.md', required: true },
         { path: 'stages/06-implementation/outputs/test_summary.md', required: true },
+        { path: 'stages/06-implementation/outputs/refactoring_report.md', required: true },
       ],
     },
-    '07-refactoring': {
+    '07-qa': {
       sourceCodeCheck: {
         minFiles: 5,
         requireManifest: true,
@@ -567,37 +556,14 @@ function getValidationRulesForStage(stageId: StageId): Record<string, any> {
         requireTest: true,
       },
       files: [
-        { path: 'stages/07-refactoring/outputs/refactoring_report.md', required: true },
+        { path: 'stages/07-qa/outputs/qa_report.md', required: true },
+        { path: 'stages/07-qa/outputs/bug_list.md', required: false },
       ],
     },
-    '08-qa': {
-      sourceCodeCheck: {
-        minFiles: 5,
-        requireManifest: true,
-        requireBuild: true,
-        requireTest: true,
-      },
+    '08-deployment': {
       files: [
-        { path: 'stages/08-qa/outputs/qa_report.md', required: true },
-        { path: 'stages/08-qa/outputs/bug_list.md', required: false },
-      ],
-    },
-    '09-testing': {
-      sourceCodeCheck: {
-        minFiles: 5,
-        requireManifest: true,
-        requireBuild: true,
-        requireTest: true,
-      },
-      files: [
-        { path: 'stages/09-testing/outputs/test_report.md', required: true },
-        { path: 'stages/09-testing/outputs/coverage_report.md', required: true },
-      ],
-    },
-    '10-deployment': {
-      files: [
-        { path: 'stages/10-deployment/outputs/deployment_guide.md', required: true },
-        { path: 'stages/10-deployment/outputs/ci_config.yaml', required: false },
+        { path: 'stages/08-deployment/outputs/deployment_guide.md', required: true },
+        { path: 'stages/08-deployment/outputs/ci_config.yaml', required: false },
       ],
     },
   };

@@ -45,7 +45,7 @@ describe('ProgressManager', () => {
 
     it('should return null at last stage', async () => {
       const progress = createInitialProgress('test');
-      progress.current_stage = '10-deployment';
+      progress.current_stage = '08-deployment';
       fs.writeFileSync(
         path.join(tmpDir, 'state', 'progress.json'),
         JSON.stringify(progress, null, 2)
@@ -97,10 +97,10 @@ describe('ProgressManager', () => {
   });
 
   describe('getStageStatuses', () => {
-    it('should return all 10 stages', async () => {
+    it('should return all 8 stages', async () => {
       const pm = new ProgressManager(tmpDir);
       const statuses = await pm.getStageStatuses();
-      expect(statuses).toHaveLength(10);
+      expect(statuses).toHaveLength(8);
     });
 
     it('should reflect updated status', async () => {

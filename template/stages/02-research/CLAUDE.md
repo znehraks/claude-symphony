@@ -6,7 +6,19 @@ Conduct technical research and feasibility analysis based on the brainstorming o
 ## Inputs
 - `stages/01-brainstorm/HANDOFF.md` — context from brainstorming
 - `stages/01-brainstorm/outputs/` — ideas and requirements
+- `config/tech_preferences.jsonc` — user's tech stack preferences (if any)
 - `references/02-research/` — any research reference materials
+
+## Tech Preference Handling
+
+Read `config/tech_preferences.jsonc`. If `raw_input` is non-empty:
+
+- **PRIMARY CONSTRAINT**: The user's stated preferences take priority. Research must evaluate them favorably unless there is a strong, documented technical reason against them.
+- If you recommend a different technology than the user's preference, you MUST include a `## Alignment with User Preferences` section in `tech_research.md` explaining:
+  - Why the preferred technology is not recommended
+  - Specific technical risks or limitations
+  - The proposed alternative and why it's better for this project
+- If the user's preferences are viable, use them as the recommended stack.
 
 ## Tasks
 
@@ -31,6 +43,16 @@ Save all files to `stages/02-research/outputs/`:
 - Technical risks and mitigations
 - Recommended tech stack with rationale
 - MVP timeline estimate
+
+## Comprehensive Research Mandate
+
+This is the project's dedicated research stage. Conduct thorough, systematic investigation:
+- Technology evaluation with real benchmarks and comparisons
+- Feasibility analysis for all proposed features
+- Market/competitor research where relevant
+- Performance characteristics of candidate technologies
+
+Research findings from this stage form the foundation for ALL subsequent stages. Be exhaustive.
 
 ## Quality Criteria
 - Every recommendation has a clear rationale

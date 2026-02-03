@@ -89,21 +89,21 @@
       "description": "Start 06-implementation stage",
       "file": "commands/implement.md"
     },
-    "refactor": {
-      "description": "Start 07-refactoring stage",
-      "file": "commands/refactor.md"
-    },
     "qa": {
-      "description": "Start 08-qa stage",
+      "description": "Start 07-qa stage",
       "file": "commands/qa.md"
     },
     "test": {
-      "description": "Start 09-testing stage",
+      "description": "Start 07-qa (QA & Full Testing) stage",
       "file": "commands/test.md"
     },
     "deploy": {
-      "description": "Start 10-deployment stage",
+      "description": "Start 08-deployment stage",
       "file": "commands/deploy.md"
+    },
+    "set-tech-prefs": {
+      "description": "Set or update tech stack preferences",
+      "file": "commands/set-tech-prefs.md"
     },
     "fork": {
       "description": "Pipeline branch management",

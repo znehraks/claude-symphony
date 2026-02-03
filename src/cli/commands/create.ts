@@ -25,7 +25,11 @@ export interface CreateOptions {
 /**
  * Generate project brief from description
  */
-function generateBriefContent(projectName: string, description: string): string {
+function generateBriefContent(projectName: string, description: string, techPreferences: string): string {
+  const techSection = techPreferences
+    ? `\n## Tech Preferences\n${techPreferences}\n\n> These preferences will be treated as primary constraints during research and planning.\n> The AI may suggest alternatives if there are strong technical reasons, but will ask for confirmation first.\n`
+    : '';
+
   return `# Project Brief
 
 ## Project Name
@@ -33,7 +37,7 @@ ${projectName}
 
 ## Description
 ${description || '[Describe your project]'}
-
+${techSection}
 ## What to Build
 Based on the description above, the AI pipeline will:
 1. Brainstorm features and requirements
@@ -41,11 +45,9 @@ Based on the description above, the AI pipeline will:
 3. Plan architecture and data models
 4. Design UI/UX components
 5. Break down into implementable tasks
-6. Write the code
-7. Refactor for quality
-8. Run QA checks
-9. Write tests
-10. Set up deployment
+6. Write the code (with TDD + refactoring)
+7. Run QA & full testing
+8. Set up deployment
 
 ## Notes
 - Drop reference files into \`references/<stage>/\` folders for additional context
@@ -170,12 +172,20 @@ export async function createProject(
   log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'cyan');
   console.log('');
 
-  // THE one question
+  // What to build
   let description = '';
   if (!skipPrompts) {
     description = await input({
       message: 'What do you want to build?',
       validate: (v) => (v.length > 0 ? true : 'Please describe what you want to build'),
+    });
+  }
+
+  // Optional tech preferences
+  let techPreferences = '';
+  if (!skipPrompts) {
+    techPreferences = await input({
+      message: 'Tech preferences? (e.g. "React, Node.js, PostgreSQL" — press Enter to skip):',
     });
   }
 
@@ -223,9 +233,34 @@ export async function createProject(
   const briefDir = path.dirname(briefPath);
 
   ensureDir(briefDir);
-  const briefContent = generateBriefContent(actualProjectName, description);
+  const briefContent = generateBriefContent(actualProjectName, description, techPreferences);
   fs.writeFileSync(briefPath, briefContent);
   log('  Project brief created', 'green');
+
+  // Create tech_preferences.jsonc
+  const techPrefsPath = path.join(targetDir, 'config', 'tech_preferences.jsonc');
+  const techPrefsContent = techPreferences
+    ? `// Tech Stack Preferences — user-specified during project init
+// These are treated as primary constraints during research (Stage 02) and planning (Stage 03).
+// The AI will respect these choices unless there is a strong technical reason to suggest alternatives.
+// To modify later, edit this file or run /set-tech-prefs.
+{
+  "raw_input": ${JSON.stringify(techPreferences)},
+  "locked": false
+}
+`
+    : `// Tech Stack Preferences
+// No preferences specified during init. The AI will choose freely.
+// To set preferences later, edit this file or run /set-tech-prefs.
+{
+  "raw_input": "",
+  "locked": false
+}
+`;
+  fs.writeFileSync(techPrefsPath, techPrefsContent);
+  if (techPreferences) {
+    log(`  Tech preferences saved: ${techPreferences}`, 'green');
+  }
 
   // Completion
   console.log('');

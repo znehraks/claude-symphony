@@ -12,7 +12,7 @@ Pause the auto-pilot pipeline. The current stage will finish its current work, t
 
 ```
 Pipeline paused at stage 04-ui-ux.
-Progress: 3/10 stages complete (30%)
+Progress: 3/8 stages complete (37%)
 
 Run /resume-stage to continue from stage 04-ui-ux.
 Run /skip to skip the current stage and move to the next.

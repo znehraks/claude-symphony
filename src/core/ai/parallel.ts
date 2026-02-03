@@ -19,8 +19,6 @@ export const PARALLEL_STAGES: StageId[] = [
   '01-brainstorm',
   '03-planning',
   '04-ui-ux',
-  '07-refactoring',
-  '09-testing',
 ];
 
 /**
@@ -30,8 +28,8 @@ export const SEQUENTIAL_STAGES: StageId[] = [
   '02-research',
   '05-task-management',
   '06-implementation',
-  '08-qa',
-  '10-deployment',
+  '07-qa',
+  '08-deployment',
 ];
 
 /**
@@ -41,8 +39,6 @@ const STAGE_MODELS: Record<string, AIModel[]> = {
   '01-brainstorm': ['gemini', 'claudecode'],
   '03-planning': ['gemini', 'claudecode'],
   '04-ui-ux': ['gemini', 'claudecode'],
-  '07-refactoring': ['codex', 'claudecode'],
-  '09-testing': ['codex', 'claudecode'],
 };
 
 /**

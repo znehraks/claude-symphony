@@ -50,10 +50,8 @@ const STAGE_MODEL_MAP: Record<StageId, AIModelType> = {
   '04-ui-ux': 'gemini',
   '05-task-management': 'claudecode',
   '06-implementation': 'claudecode',
-  '07-refactoring': 'codex',
-  '08-qa': 'claudecode',
-  '09-testing': 'codex',
-  '10-deployment': 'claudecode',
+  '07-qa': 'claudecode',
+  '08-deployment': 'claudecode',
 };
 
 /**

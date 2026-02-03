@@ -1,0 +1,7 @@
+// Tech Stack Preferences
+// No preferences specified during init. The AI will choose freely.
+// To set preferences later, edit this file or run /set-tech-prefs.
+{
+  "raw_input": "",
+  "locked": false
+}

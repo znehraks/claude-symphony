@@ -86,7 +86,7 @@ Continue? [y/N] y
 
 ## Required Checkpoint Stages
 - `06-implementation`: At major milestones during implementation
-- `07-refactoring`: Before/after refactoring
+- `07-qa`: Before/after QA testing
 
 ## Agent Model Selection
 

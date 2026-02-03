@@ -1,6 +1,6 @@
 # Auto-Pilot: Automatic Pipeline Execution
 
-You are the auto-pilot orchestrator for claude-symphony. Your job is to execute the entire 10-stage development pipeline automatically, from the current stage to completion.
+You are the auto-pilot orchestrator for claude-symphony. Your job is to execute the entire 8-stage development pipeline automatically, from the current stage to completion.
 
 ## How It Works
 
@@ -19,10 +19,10 @@ For each stage in the pipeline:
 
 Read `config/debate.jsonc` to determine each stage's `execution_mode`:
 
-### debate mode (01, 02, 03, 08)
+### debate mode (01, 02, 03, 04, 07)
 Use the full debate protocol: Round 1 → Round 2 → Contention → Synthesis
 
-### sequential mode (04, 05, 06, 07, 09, 10)
+### sequential mode (05, 06, 08)
 Role-based sequential execution:
 1. Read `config/debate.jsonc` and load the stage's `steps` array
 2. Execute each step in order as a Task agent
@@ -43,7 +43,7 @@ Read `state/progress.json` to determine the current stage. Then load:
 - `references/<stage-id>/` for user-provided materials
 - `config/debate.jsonc` for the stage's `execution_mode`
 
-### 2a. Debate Protocol (for `execution_mode: "debate"` stages: 01, 02, 03, 08)
+### 2a. Debate Protocol (for `execution_mode: "debate"` stages: 01, 02, 03, 04, 07-qa)
 
 Read `config/debate.jsonc` to get the stage's intensity profile and roles.
 
@@ -98,7 +98,7 @@ Launch 1 synthesizer agent that reads **all round outputs** and produces the fin
   - **Resolved disagreements**: [list with resolution reasoning]
   - **Minority opinions**: [preserved for reference]
   ```
-- For `code_producing` stages (08): synthesizer MUST also verify source code exists and run build/test
+- For `code_producing` stages (07): synthesizer MUST also verify source code exists and run build/test
 
 #### Graceful Degradation
 
@@ -112,7 +112,7 @@ Log each debate to `state/ai-call-log.jsonl`:
 {"stage":"<stage-id>","type":"debate","rounds":<N>,"agents":<N>,"contention_scores":[...],"action":"synthesized","ts":"<ISO-8601>"}
 ```
 
-### 2b. Sequential Protocol (for `execution_mode: "sequential"` stages: 04, 05, 06, 07, 09, 10)
+### 2b. Sequential Protocol (for `execution_mode: "sequential"` stages: 05, 06, 08)
 
 For each step in the stage's `steps` array from `config/debate.jsonc`:
 
@@ -137,6 +137,24 @@ Log sequential execution to `state/ai-call-log.jsonl`:
 ```jsonl
 {"stage":"<stage-id>","type":"sequential","steps":<N>,"code_producing":<bool>,"build_pass":<bool>,"test_pass":<bool>,"ts":"<ISO-8601>"}
 ```
+
+### 2c. Tech Preference Soft Gate (02→03 transition only)
+
+After Stage 02 completes, before transitioning to Stage 03:
+1. Read `config/tech_preferences.jsonc`
+2. If `raw_input` is non-empty, read `stages/02-research/outputs/tech_research.md`
+3. Check if the research recommendation aligns with the user's preferences
+4. If aligned → proceed automatically
+5. If NOT aligned (research recommends different tech) → display a summary:
+   ```
+   ⚠ Tech preference mismatch detected:
+   - Your preference: [raw_input]
+   - Research recommendation: [recommended stack]
+   - Reason: [brief reason from research]
+
+   Proceeding with research recommendation. Edit config/tech_preferences.jsonc or run /set-tech-prefs to change.
+   ```
+6. If `raw_input` is empty → display research recommendation and proceed automatically
 
 ### 3. Post-execution refinement (optional)
 
@@ -166,7 +184,7 @@ Verify the required outputs exist (see Validation section below).
 ### 5. Generate HANDOFF and progress
 Generate HANDOFF.md and update `state/progress.json` as usual.
 
-## Code-Producing Stages (06, 07, 08, 09)
+## Code-Producing Stages (06, 07)
 
 These stages' primary deliverable is actual source code files in the project root.
 
@@ -194,21 +212,19 @@ After each stage completes, verify the required outputs exist:
 - Stage 03: `outputs/architecture.md`, `outputs/tech_stack.md`, `outputs/project_plan.md`
 - Stage 04: `outputs/wireframes.md`, `outputs/components.md`
 - Stage 05: `outputs/tasks.md`, `outputs/implementation_order.md`
-- Stage 06: **Source code files in project root (≥5)** + project manifest + build pass + test pass + `outputs/implementation_log.md` + `outputs/test_summary.md`
-- Stage 07: **Updated source files** + build pass + test pass + `outputs/refactoring_report.md`
-- Stage 08: `outputs/qa_report.md` + source code verification + build/test pass
-- Stage 09: **Test files in project root** + test pass + `outputs/test_report.md`, `outputs/coverage_report.md`
-- Stage 10: CI/CD config + `outputs/deployment_guide.md`
+- Stage 06: **Source code files in project root (≥5)** + project manifest + build pass + test pass + `outputs/implementation_log.md` + `outputs/test_summary.md` + `outputs/refactoring_report.md`
+- Stage 07: `outputs/qa_report.md` + `outputs/test_report.md` + `outputs/coverage_report.md` + source code verification + build/test/e2e all pass
+- Stage 08: CI/CD config + `outputs/deployment_guide.md`
 
 ## Debate Compliance Check
 
-When the pipeline completes all 10 stages, pauses, or fails, perform this compliance check:
+When the pipeline completes all 8 stages, pauses, or fails, perform this compliance check:
 
 1. Read `state/ai-call-log.jsonl`
 2. Verify that **every stage** has at least one log entry with `"type":"debate"`
 3. If any stage is missing from the log:
    - Display a **compliance warning** listing the missing stages
-   - Example: `⚠ COMPLIANCE: Debate was not executed for stages: 03-planning, 09-testing`
+   - Example: `⚠ COMPLIANCE: Debate was not executed for stages: 03-planning, 07-qa`
 4. If all stages are present, display: `✓ Debate compliance: all stages executed with multi-agent debate`
 
 ## Retry Logic
@@ -255,11 +271,14 @@ After each stage, generate a HANDOFF.md containing:
 
 After each stage completion, display progress:
 ```
-[OK] 01 Brainstorming    Done
-[OK] 02 Research          Done
-[>>] 03 Planning          Running...
+[OK] 01 Brainstorming       Done
+[OK] 02 Research             Done
+[>>] 03 Planning             Running...
 [  ] 04 UI/UX
-...
+[  ] 05 Task Management
+[  ] 06 Implementation
+[  ] 07 QA & Full Testing
+[  ] 08 Deployment
 ```
 
 ## Pause/Resume Support
@@ -275,7 +294,7 @@ Read `state/progress.json` now and begin executing from the current stage. If st
 
 DO NOT ask for confirmation. Execute each stage automatically. Only stop if:
 - A stage fails validation 3 times (pause pipeline)
-- The pipeline reaches completion (all 10 stages done)
+- The pipeline reaches completion (all 8 stages done)
 - A critical error occurs
 - The user runs `/pause`
 

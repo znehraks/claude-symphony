@@ -65,7 +65,7 @@ function detectImplementation(projectRoot: string): StageDetection {
 }
 
 /**
- * Detect if a project has tests (stage 09)
+ * Detect if a project has tests (contributes to stage 07 QA & Testing)
  */
 function detectTests(projectRoot: string): StageDetection {
   const evidence: string[] = [];
@@ -103,7 +103,7 @@ function detectTests(projectRoot: string): StageDetection {
   }
 
   return {
-    stageId: '09-testing',
+    stageId: '07-qa',
     detected: evidence.length >= 2,
     confidence: evidence.length >= 3 ? 'high' : evidence.length >= 2 ? 'medium' : 'low',
     evidence,
@@ -111,7 +111,7 @@ function detectTests(projectRoot: string): StageDetection {
 }
 
 /**
- * Detect CI/CD setup (stage 10)
+ * Detect CI/CD setup (stage 08)
  */
 function detectDeployment(projectRoot: string): StageDetection {
   const evidence: string[] = [];
@@ -140,7 +140,7 @@ function detectDeployment(projectRoot: string): StageDetection {
   }
 
   return {
-    stageId: '10-deployment',
+    stageId: '08-deployment',
     detected: evidence.length >= 1,
     confidence: evidence.length >= 2 ? 'high' : 'medium',
     evidence,
@@ -225,7 +225,7 @@ function detectUIUX(projectRoot: string): StageDetection {
 }
 
 /**
- * Detect linting/QA setup (stage 08)
+ * Detect linting/QA setup (stage 07)
  */
 function detectQA(projectRoot: string): StageDetection {
   const evidence: string[] = [];
@@ -254,7 +254,7 @@ function detectQA(projectRoot: string): StageDetection {
   }
 
   return {
-    stageId: '08-qa',
+    stageId: '07-qa',
     detected: evidence.length >= 2,
     confidence: evidence.length >= 3 ? 'high' : 'medium',
     evidence,
@@ -292,20 +292,18 @@ function analyzeProject(projectRoot: string): StageDetection[] {
   // Implementation
   detections.push(detectImplementation(projectRoot));
 
-  // Refactoring — skip if implementation exists (assume done)
-  const impl = detections.find((d) => d.stageId === '06-implementation');
+  // QA & Testing (stage 07)
+  const qaDetection = detectQA(projectRoot);
+  const testDetection = detectTests(projectRoot);
+  // Merge test evidence into QA detection since stage 07 covers both
+  const mergedEvidence = [...qaDetection.evidence, ...testDetection.evidence];
+  const mergedDetected = qaDetection.detected || testDetection.detected;
   detections.push({
-    stageId: '07-refactoring',
-    detected: impl?.detected ?? false,
-    confidence: 'low',
-    evidence: impl?.detected ? ['Inferred from existing implementation'] : [],
+    stageId: '07-qa',
+    detected: mergedDetected,
+    confidence: mergedEvidence.length >= 3 ? 'high' : mergedEvidence.length >= 2 ? 'medium' : 'low',
+    evidence: mergedEvidence,
   });
-
-  // QA
-  detections.push(detectQA(projectRoot));
-
-  // Testing
-  detections.push(detectTests(projectRoot));
 
   // Deployment
   detections.push(detectDeployment(projectRoot));

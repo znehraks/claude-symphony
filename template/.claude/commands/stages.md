@@ -1,6 +1,6 @@
 # /stages
 
-Display all stage list and details for the 10-stage pipeline.
+Display all stage list and details for the 8-stage pipeline.
 
 ## Usage
 ```
@@ -43,10 +43,8 @@ scripts/list-stages.sh "$ARGUMENTS"
  04  ui-ux            Claude          standard  Plan Mode     🔄 ←
  05  task-management  Claude          light     Plan Mode     ⏳
  06  implementation   Claude          full      Plan+Sandbox  ⏳
- 07  refactoring      Claude          full      Plan+Sandbox  ⏳
- 08  qa               Claude          full      Plan+Sandbox  ⏳
- 09  testing          Claude          standard  Playwright    ⏳
- 10  deployment       Claude          light     Headless      ⏳
+ 07  qa & testing     Claude          full      Plan+Sandbox  ⏳
+ 08  deployment       Claude          light     Headless      ⏳
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Current: 04-ui-ux | Next: /run-stage 05 or /tasks
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -95,10 +93,8 @@ Checkpoint:  Required
 | 04-ui-ux | PRD.md | wireframes/, components.md | Visual design |
 | 05-task-mgmt | PRD, wireframes | tasks.json, sprints.md | Task breakdown |
 | 06-implementation | tasks.json | src/, tests/ | Core implementation |
-| 07-refactoring | src/ | src/ (improved) | Code quality |
-| 08-qa | src/ | qa-report.md | Quality verification |
-| 09-testing | src/, qa | test-results.md | E2E testing |
-| 10-deployment | all | CI/CD, deploy | Deployment automation |
+| 07-qa | src/, e2e-test-sheet | qa-report.md, test_report.md | QA & full testing |
+| 08-deployment | all | CI/CD, deploy | Deployment automation |
 
 ## Options
 

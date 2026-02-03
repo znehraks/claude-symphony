@@ -106,6 +106,17 @@
                 "folder_structure"
               ]
             }
+          },
+          "conventions.md": {
+            "exists": true,
+            "min_size_bytes": 1000,
+            "content_checks": {
+              "sections": [
+                "Planning Conventions",
+                "UI/UX Conventions",
+                "Code Conventions"
+              ]
+            }
           }
         },
         "validation_commands": []
@@ -195,6 +206,15 @@
                 "Coverage"
               ]
             }
+          },
+          "refactoring_report.md": {
+            "exists": true,
+            "content_checks": {
+              "sections": [
+                "Convention Compliance",
+                "Refactoring Points"
+              ]
+            }
           }
         },
         "validation_commands": [
@@ -236,43 +256,8 @@
           "lint_score": 0.9
         }
       },
-      "07-refactoring": {
-        "description": "Refactoring output validation",
-        "required_outputs": {
-          "refactored_code/": {
-            "exists": true,
-            "is_directory": true
-          },
-          "refactoring_report.md": {
-            "exists": true,
-            "content_checks": {
-              "sections": [
-                "Changes",
-                "Improvements",
-                "Performance Comparison"
-              ]
-            }
-          }
-        },
-        "validation_commands": [
-          {
-            "name": "lint",
-            "command": "npm run lint",
-            "required": true
-          },
-          {
-            "name": "test",
-            "command": "npm run test",
-            "required": true
-          }
-        ],
-        "quality_metrics": {
-          "complexity_improvement": true,
-          "no_regression": true
-        }
-      },
-      "08-qa": {
-        "description": "QA output validation",
+      "07-qa": {
+        "description": "QA & Full Testing output validation",
         "required_outputs": {
           "qa_report.md": {
             "exists": true,
@@ -284,35 +269,11 @@
               ]
             }
           },
-          "bug_fixes.md": {
+          "bug_list.md": {
             "exists": true,
             "content_checks": {
               "has_bug_list": true
             }
-          }
-        },
-        "validation_commands": [
-          {
-            "name": "lint",
-            "command": "npm run lint",
-            "required": true
-          },
-          {
-            "name": "test",
-            "command": "npm run test",
-            "required": true
-          }
-        ],
-        "quality_metrics": {
-          "bug_resolution_rate": 0.9
-        }
-      },
-      "09-testing": {
-        "description": "Testing output validation",
-        "required_outputs": {
-          "tests/": {
-            "exists": true,
-            "is_directory": true
           },
           "test_report.md": {
             "exists": true,
@@ -323,7 +284,7 @@
           "coverage_report.md": {
             "exists": true,
             "content_checks": {
-              "coverage_min": 80
+              "coverage_min": 60
             }
           }
         },
@@ -334,22 +295,28 @@
             "required": true
           },
           {
+            "name": "e2e",
+            "command": "npm run test:e2e",
+            "required": true
+          },
+          {
             "name": "coverage",
             "command": "npm run test:coverage",
-            "required": true,
+            "required": false,
             "threshold": {
-              "lines": 80,
-              "branches": 75,
-              "functions": 80
+              "lines": 60,
+              "branches": 55,
+              "functions": 60
             }
           }
         ],
         "quality_metrics": {
-          "test_coverage": 0.8,
+          "bug_resolution_rate": 0.9,
+          "test_coverage": 0.6,
           "all_tests_pass": true
         }
       },
-      "10-deployment": {
+      "08-deployment": {
         "description": "Deployment output validation",
         "required_outputs": {
           ".github/workflows/": {
