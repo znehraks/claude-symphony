@@ -1,6 +1,6 @@
 # Claude Symphony Project
 
-This is a Claude Symphony project — a 10-stage software development workflow with quality gates and checkpoints.
+This is a Claude Symphony project — an 8-stage software development workflow with quality gates and checkpoints.
 
 ## Quick Start
 
@@ -24,15 +24,13 @@ This is a Claude Symphony project — a 10-stage software development workflow w
 | Stage | Command | Description |
 |-------|---------|-------------|
 | 01 | `/brainstorm` | Idea generation and requirements exploration |
-| 02 | `/research` | Technical research and market analysis |
-| 03 | `/planning` | System architecture and tech decisions |
-| 04 | `/ui-ux` | UI/UX design and wireframes |
+| 02 | `/research` | Technical research and feasibility analysis |
+| 03 | `/planning` | Architecture, data models, API, conventions |
+| 04 | `/ui-ux` | UI/UX design, wireframes, design tokens |
 | 05 | `/tasks` | Task breakdown and sprint planning |
-| 06 | `/implement` | Core feature implementation |
-| 07 | `/refactor` | Code quality and optimization |
-| 08 | `/qa` | Quality assurance and testing |
-| 09 | `/test` | E2E testing and coverage |
-| 10 | `/deploy` | CI/CD and deployment |
+| 06 | `/implement` | TDD implementation + refactoring + E2E sheet |
+| 07 | `/qa` | Security, accessibility, full test execution |
+| 08 | `/deploy` | CI/CD and deployment |
 
 ## Key Commands
 

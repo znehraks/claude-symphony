@@ -4,38 +4,36 @@
   <img src="https://raw.githubusercontent.com/znehraks/claude-symphony/main/assets/claude_symphony.webp" alt="Claude Symphony Logo" width="400">
 </p>
 
-**Structured AI development. 10 stages. Quality gates. Checkpoints.**
+**Structured AI development. 8 stages. Quality gates. Checkpoints.**
 
 [![npm version](https://badge.fury.io/js/claude-symphony.svg)](https://www.npmjs.com/package/claude-symphony)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## What is claude-symphony?
 
-Describe your app. claude-symphony runs a 10-stage AI pipeline — from brainstorming to deployment — producing a tested, deployable codebase with quality gates at every step.
+Describe your app. claude-symphony runs an 8-stage AI pipeline — from brainstorming to deployment — producing a tested, deployable codebase with quality gates at every step.
 
 ```bash
 npx claude-symphony init
 # > "What do you want to build?"
 # > "A real-time team collaboration tool with chat, file sharing, and video calls"
-# > Pipeline starts automatically → 10 stages → tested, deployable codebase
+# > Pipeline starts automatically → 8 stages → tested, deployable codebase
 ```
 
 ## How It Works
 
-claude-symphony orchestrates a 10-stage pipeline where AI agents execute each stage:
+claude-symphony orchestrates an 8-stage pipeline where AI agents execute each stage:
 
 | # | Stage | What happens |
 |---|-------|-------------|
 | 01 | **Brainstorm** | Generate features, user stories, requirements |
 | 02 | **Research** | Evaluate tech options, analyze feasibility |
-| 03 | **Planning** | Design architecture, data models, API |
+| 03 | **Planning** | Design architecture, data models, API, conventions |
 | 04 | **UI/UX** | Create wireframes, component tree, design tokens |
 | 05 | **Tasks** | Decompose into implementable tasks with priorities |
-| 06 | **Implementation** | Write code using a test-first workflow |
-| 07 | **Refactoring** | Improve code quality, maintain test coverage |
-| 08 | **QA** | Security audit, accessibility, E2E test expansion |
-| 09 | **Testing** | Edge-case tests, performance benchmarks |
-| 10 | **Deployment** | CI/CD pipeline, hosting, production deploy |
+| 06 | **Implementation** | TDD workflow + integrated refactoring + E2E sheet |
+| 07 | **QA** | Security audit, accessibility, full test execution |
+| 08 | **Deployment** | CI/CD pipeline, hosting, production deploy |
 
 > **Multi-agent debate**: Stages can run multiple Claude agents with different perspectives (e.g., Visionary vs Skeptic). This is a prompt-based protocol — agents are instructed to critique and refine each other's outputs within the conversation.
 
@@ -82,7 +80,7 @@ claude
 /auto-pilot
 ```
 
-That's it. The pipeline runs through all 10 stages automatically.
+That's it. The pipeline runs through all 8 stages automatically.
 
 See [Getting Started](docs/getting-started.md) for more details. You can also drop reference files into `references/<stage>/` to give the AI additional context.
 

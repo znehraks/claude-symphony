@@ -35,7 +35,7 @@ Used for framework validation and CI/CD pipelines.
 
 | Script | npm Command | Purpose |
 |--------|-------------|---------|
-| `test-pipeline.ts` | `npm run test:pipeline` | Validate 10-stage pipeline structure |
+| `test-pipeline.ts` | `npm run test:pipeline` | Validate 8-stage pipeline structure |
 | `test-mcp-fallback.ts` | `npm run test:mcp-fallback` | Test MCP server availability |
 | `test-quota-management.ts` | `npm run test:quota` | Test MCP quota tracking |
 
