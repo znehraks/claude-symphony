@@ -79,9 +79,32 @@ Save all files to `stages/07-qa/outputs/`:
 - Accessibility basics met (keyboard nav, screen reader, contrast)
 - **ALL tests pass** — unit, integration, AND E2E (zero failures)
 - Convention compliance audit: verify code, UI, and documentation follow conventions.md
+- Verify conventions-changelog.md exists if any deviations detected
+- Ensure all amendments follow the Amendment Protocol
 - **E2E test sheet fully executed** — every scenario shows PASS
 - Test coverage >= 60% for core modules (target: 80%)
 - Every bug found has a regression test
+
+### Best Practice Audit
+- Verify implementation follows adopted conventions from conventions.md
+- For React/Next.js: check against Vercel React Best Practices (critical + high priority rules)
+- For web UI: check against Web Interface Guidelines anti-patterns list
+- Document violations in qa_report.md with rule references
+
+### QA-Triggered Loop-Backs (Emergency Only)
+If QA discovers a flaw that cannot be fixed within the QA or implementation stage:
+
+**Criteria** (ALL must be true):
+- Bug stems from architectural or design flaw (not a simple code bug)
+- Fixing in-place would create more problems than it solves
+- The flaw affects the integrity of the entire system
+
+If criteria are met:
+1. Document in `qa_report.md` > Critical Flaw Report section
+2. `/checkpoint "Pre-loopback from 07 — [flaw]"`
+3. `/goto <target-stage> -r "CRITICAL: [description]"`
+
+Simple bugs, test failures, and coverage gaps are NEVER loop-back triggers — fix them in the current stage.
 
 ## CRITICAL: Process Enforcement
 

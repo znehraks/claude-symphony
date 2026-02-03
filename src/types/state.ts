@@ -11,6 +11,12 @@ export const SprintStatusSchema = z.enum(['pending', 'in_progress', 'completed']
 export type SprintStatus = z.infer<typeof SprintStatusSchema>;
 
 /**
+ * Sprint milestone status
+ */
+export const SprintMilestoneStatusSchema = z.enum(['pending', 'done']);
+export type SprintMilestoneStatus = z.infer<typeof SprintMilestoneStatusSchema>;
+
+/**
  * Sprint state
  */
 export const SprintStateSchema = z.object({
@@ -18,6 +24,11 @@ export const SprintStateSchema = z.object({
   tasks_total: z.number(),
   tasks_completed: z.number(),
   checkpoint_id: z.string().nullable(),
+  milestones: z.object({
+    pre_sprint: SprintMilestoneStatusSchema,
+    mid_sprint: SprintMilestoneStatusSchema,
+    sprint_review: SprintMilestoneStatusSchema,
+  }).optional(),
 });
 
 export type SprintState = z.infer<typeof SprintStateSchema>;
@@ -66,6 +77,22 @@ export const MultiModelStatusSchema = z.object({
 
 export type MultiModelStatus = z.infer<typeof MultiModelStatusSchema>;
 
+/**
+ * Refactoring metrics for Stage 06
+ */
+const FileIssueMapSchema = z.record(z.string(), z.array(z.string()))
+  .describe('Map of relative file path (or "_general" for cross-cutting issues) to list of issue descriptions');
+
+export const RefactoringMetricsSchema = z.object({
+  files_reviewed: z.array(z.string()).describe('Relative paths of reviewed files'),
+  violations: FileIssueMapSchema.describe('Convention violations found per file'),
+  violations_fixed: FileIssueMapSchema.describe('Convention violations fixed per file'),
+  duplication_removed: FileIssueMapSchema.describe('Duplications removed per file'),
+  complexity_hotspots: FileIssueMapSchema.describe('Complexity issues per file'),
+});
+
+export type RefactoringMetrics = z.infer<typeof RefactoringMetricsSchema>;
+
 export const ProgressSchema = z.object({
   project_name: z.string(),
   current_stage: StageIdSchema,
@@ -84,6 +111,7 @@ export const ProgressSchema = z.object({
     completed_at: z.string().nullable(),
     checkpoint_id: z.string().nullable(),
     multi_model: MultiModelStatusSchema.optional(),
+    refactoring_metrics: RefactoringMetricsSchema.optional(),
   })),
   current_iteration: CurrentIterationSchema.optional(),
   sprints: z.record(z.string(), SprintStateSchema).optional(),

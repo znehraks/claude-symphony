@@ -44,6 +44,7 @@ Run `/auto-pilot` to start the automatic 8-stage pipeline. The orchestrator will
 | `/stages` | List all stages with status |
 | `/run-stage [id]` | Run a specific stage manually |
 | `/debate` | Run multi-agent debate for current stage |
+| `/goto <stage>` | Emergency loop-back to a previous stage (critical flaws only) |
 
 ## Reference Materials
 
@@ -89,6 +90,55 @@ your-project/
     ├── commands/          # Slash commands
     └── agents/            # Sub-agent definitions
 ```
+
+## Stage Loop-Back Guide (Emergency Only)
+
+Loop-back is an **exceptional measure** reserved for critical flaws that make forward progress impossible. Most issues should be resolved in-place within the current stage.
+
+### Critical Flaw Criteria (ALL must be true)
+
+A loop-back is justified ONLY when ALL of the following conditions are met:
+1. **Blocking**: The flaw makes it impossible to proceed (not just inconvenient)
+2. **Unfixable in-place**: Cannot be resolved by the current stage alone
+3. **Root cause is in a previous stage**: The flaw originates from an earlier stage's output
+
+### Decision Matrix
+
+| Severity | Example | Action |
+|----------|---------|--------|
+| **CRITICAL** — Pipeline blocked | Architecture fundamentally incompatible with requirements | Loop back with `/goto` |
+| **CRITICAL** — Pipeline blocked | Convention makes implementation technically impossible | Loop back with `/goto` |
+| **HIGH** — Significant but workable | Design asset needs substantial changes | Fix in-place + document in changelog |
+| **MEDIUM** — Inconvenient | Task decomposition slightly off | Fix in-place + update tasks.md |
+| **LOW** — Minor | Typo, unclear wording | Fix in-place |
+
+### Loop-Back Protocol
+
+When a critical flaw is confirmed:
+
+1. **Checkpoint first**: `/checkpoint "Pre-loopback to XX — [flaw description]"`
+2. **Document the flaw**: Write a Critical Flaw Report in current stage's `implementation_log.md` or `qa_report.md`
+3. **Execute**: `/goto <target-stage> -r "CRITICAL: [description]"`
+4. **Focused re-execution**: ONLY re-work the affected parts — do NOT re-execute the entire target stage
+5. **Forward cascade**: Re-validate all intermediate stages' outputs after the fix
+6. **Resume**: Return to original stage and continue
+
+### Loop-Back Decision Process
+
+Loop-backs are NOT triggered unilaterally. Before any loop-back, the orchestrator runs a **focused debate**:
+
+1. **Flaw Report**: The agent that discovered the flaw writes a Critical Flaw Report
+2. **Debate**: Launch a mini-debate (2 agents) to evaluate the flaw:
+   - **Advocate**: Argues why loop-back is necessary (presents evidence)
+   - **Skeptic**: Challenges whether an in-place fix is possible
+3. **Decision**: If both agents agree loop-back is unavoidable → proceed. If the Skeptic proposes a viable in-place alternative → use it instead.
+4. **Log**: Record the debate outcome in `state/ai-call-log.jsonl`
+
+This ensures loop-backs only happen when genuinely necessary, not as a reflex.
+
+### Loop-Back History
+
+All loop-backs are recorded in `state/loopback_history.json` and appended to HANDOFF.md.
 
 ## Stage Transition Protocol
 

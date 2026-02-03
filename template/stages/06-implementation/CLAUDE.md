@@ -62,6 +62,50 @@ When implementing UI components:
 
 If Pencil.dev MCP is available during implementation, use `pencil__get_screenshot` to compare your implementation against the original designs.
 
+### React Best Practices Compliance (React/Next.js projects)
+When implementing React/Next.js code, validate against Vercel React Best Practices:
+- Source: `https://raw.githubusercontent.com/vercel-labs/agent-skills/main/skills/react-best-practices/AGENTS.md`
+- **Critical**: No waterfall chains (use Promise.all), no barrel file imports, strategic Suspense boundaries
+- **High**: Server Action authentication, minimize RSC serialization, per-request deduplication
+- **Medium**: Derive state during render, narrow effect dependencies, CSS content-visibility for long lists
+
+### Design Asset Change Management
+If implementation requires design changes:
+1. Update JSON asset with version bump (1.0 → 1.1)
+2. Add entry to `stages/04-ui-ux/outputs/design_assets/screen_inventory.md` changelog
+3. Document in implementation_log.md: "Modified component_specs.json v1.0 → v1.1 (reason)"
+4. DO NOT silently implement differently from the design
+
+### Convention Amendment During Implementation
+If a convention blocks implementation:
+
+**In-place amendment (default — most cases):**
+1. Document the issue in `stages/03-planning/outputs/conventions-changelog.md`
+2. Apply the amendment (version bump in conventions.md) and continue
+3. Note in `implementation_log.md`
+
+**Loop-back (emergency only — convention makes implementation impossible):**
+Only when: convention is technically impossible to follow AND no in-place workaround exists.
+1. Document critical flaw in conventions-changelog.md
+2. `/checkpoint "Pre-loopback — Convention critical flaw"`
+3. `/goto 03-planning -r "CRITICAL: Convention [description] blocks implementation"`
+
+NEVER silently deviate — all deviations must be documented.
+
+### Critical Flaw Loop-Back (Emergency Only)
+Loop-back is a last resort. Exhaust all in-place solutions first.
+
+A loop-back is justified ONLY when the flaw is:
+- **Blocking**: Cannot write correct code that satisfies requirements
+- **Unfixable here**: Requires changes to architecture, design, or task structure from an earlier stage
+- **Documented**: Critical Flaw Report written in `implementation_log.md`
+
+If all criteria are met:
+1. `/checkpoint "Pre-loopback from 06 — [flaw]"`
+2. `/goto <target-stage> -r "CRITICAL: [description]"`
+
+Most issues (convention tweaks, design adjustments, task updates) should be handled in-place with changelog documentation.
+
 ## Tasks
 
 ### 1. Project Scaffolding (Framework-Agnostic)
@@ -129,6 +173,48 @@ For each feature in priority order (P0 first):
 
 **Repeat A→B→C→D→E for every feature. No exceptions.**
 
+### Refactoring Quality Metrics
+
+Track in `refactoring_report.md` > Metrics Summary section:
+
+| Metric | Type | Description | Target |
+|--------|------|-------------|--------|
+| files_reviewed | `string[]` | Relative paths of reviewed files | 100% of modified files |
+| violations | `Record<string, string[]>` | File path → list of violation descriptions | Document all |
+| violations_fixed | `Record<string, string[]>` | File path → list of fixed violations | 100% |
+| duplication_removed | `Record<string, string[]>` | File path → list of removed duplications | Track all |
+| complexity_hotspots | `Record<string, string[]>` | File path → list of complex functions/issues | List each |
+
+**Key naming convention:**
+- Use relative file paths as keys (e.g., `"src/auth/login.ts"`)
+- Use `"_general"` as a reserved key for cross-cutting issues not attributable to a single file
+  - e.g., `"_general": ["Inconsistent naming convention across 12 files", "No shared error handling pattern"]`
+
+**Example:**
+```json
+{
+  "files_reviewed": ["src/auth/login.ts", "src/api/users.ts", "src/utils/validate.ts"],
+  "violations": {
+    "src/auth/login.ts": ["Missing input validation on password field", "No error type narrowing"],
+    "src/api/users.ts": ["Hardcoded timeout value"],
+    "_general": ["Inconsistent error response format across API handlers"]
+  },
+  "violations_fixed": {
+    "src/auth/login.ts": ["Added zod validation for password", "Added type guard"],
+    "src/api/users.ts": ["Extracted timeout to config constant"]
+  },
+  "duplication_removed": {
+    "src/auth/login.ts": ["Duplicate token refresh logic (extracted to src/utils/token.ts)"]
+  },
+  "complexity_hotspots": {
+    "src/api/users.ts": ["processUserUpdate — cyclomatic complexity 15, refactored to 8"],
+    "_general": ["Deep callback nesting pattern in 3 API handlers"]
+  }
+}
+```
+
+**Why file-path keys?** Enables git-based traceability: `git log -- <path>` and `git diff <path>` to verify each reviewed file's change history.
+
 ### 4. E2E Test Sheet (Mandatory — Updated Per Task)
 
 Maintain `e2e-test-sheet.md` in the project root throughout implementation.
@@ -157,6 +243,11 @@ At each Sprint completion, you MUST:
    - Code review across Sprint scope (duplication, structure, consistency)
 5. Re-run full test suite after refactoring (unit + integration + E2E regression)
 6. **All tests must pass before the next Sprint can begin**
+
+#### Sprint Milestone Checklist
+- [ ] **Pre-Sprint**: Sprint goal defined, dependencies verified
+- [ ] **Mid-Sprint**: Unit tests passing, integration tests written, refactoring metrics updated
+- [ ] **Sprint Review**: All tests pass, convention compliance checked, metrics finalized
 
 Sprint transition checklist:
 - [ ] All tasks in this Sprint completed
@@ -206,6 +297,7 @@ If any test fails: fix the issue and re-run. Do NOT proceed to the next Sprint w
 - Final codebase review results (convention compliance, architecture alignment)
 - Refactoring points identified and addressed
 - Convention compliance results (pass/fail per convention category)
+- Must include **Metrics Summary** section with quantitative data (files_reviewed, violations_found/fixed, duplication_removed, complexity_hotspots)
 
 ## Quality Gate — Stage Completion Checklist
 

@@ -178,6 +178,40 @@ Task tool parameters:
   <synthesized content from the debate Final Round or sequential step outputs>
   ```
 
+### Loop-Back Handling (Emergency Only)
+
+Loop-backs are exceptional — only triggered when a **critical flaw** blocks the pipeline. Normal issues MUST be resolved in-place.
+
+If a critical flaw triggers a loop-back:
+
+1. **Verify criticality**: Confirm the flaw meets ALL criteria (blocking + unfixable in-place + root cause in previous stage)
+2. **Save current state**: `/checkpoint "Pre-loopback"`
+3. **Record in ai-call-log.jsonl**:
+   ```jsonl
+   {"stage":"<current-stage>","type":"loopback","severity":"critical","target":"<target-stage>","reason":"<reason>","ts":"<ISO-8601>"}
+   ```
+4. **Execute target stage** with focused scope:
+   - Pass the critical flaw description as context
+   - ONLY re-execute tasks that address the flaw
+   - Do NOT re-execute unrelated tasks
+5. **Forward cascade**: Re-validate each intermediate stage's outputs
+6. **Resume**: Return to the original stage and continue
+7. **Update progress.json**: Record loop-back in stage history
+
+#### Loop-Back Decision Debate
+Before executing any loop-back, the orchestrator MUST run a mini-debate:
+
+1. Launch 2 Task agents in parallel:
+   - **Advocate agent**: "Given this flaw, explain why loop-back to [target stage] is the only viable solution."
+   - **Skeptic agent**: "Propose an in-place alternative that avoids loop-back. If none exists, explain why."
+2. Evaluate results:
+   - If Skeptic finds a viable in-place fix → use it, no loop-back
+   - If both agents agree loop-back is unavoidable → proceed with loop-back
+3. Log debate outcome:
+   ```jsonl
+   {"stage":"<current>","type":"loopback_debate","target":"<target>","decision":"loopback|in_place","reason":"<summary>","ts":"<ISO-8601>"}
+   ```
+
 ### 4. Validate outputs
 Verify the required outputs exist (see Validation section below).
 

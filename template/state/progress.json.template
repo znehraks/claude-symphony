@@ -23,19 +23,34 @@
       "status": "pending",
       "tasks_total": 0,
       "tasks_completed": 0,
-      "checkpoint_id": null
+      "checkpoint_id": null,
+      "milestones": {
+        "pre_sprint": "pending",
+        "mid_sprint": "pending",
+        "sprint_review": "pending"
+      }
     },
     "Sprint 2": {
       "status": "pending",
       "tasks_total": 0,
       "tasks_completed": 0,
-      "checkpoint_id": null
+      "checkpoint_id": null,
+      "milestones": {
+        "pre_sprint": "pending",
+        "mid_sprint": "pending",
+        "sprint_review": "pending"
+      }
     },
     "Sprint 3": {
       "status": "pending",
       "tasks_total": 0,
       "tasks_completed": 0,
-      "checkpoint_id": null
+      "checkpoint_id": null,
+      "milestones": {
+        "pre_sprint": "pending",
+        "mid_sprint": "pending",
+        "sprint_review": "pending"
+      }
     }
   },
   "loop_back_history": [],
@@ -92,7 +107,14 @@
       "handoff_generated": false,
       "checkpoint_id": null,
       "outputs": [],
-      "errors": []
+      "errors": [],
+      "refactoring_metrics": {
+        "files_reviewed": [],
+        "violations": {},
+        "violations_fixed": {},
+        "duplication_removed": {},
+        "complexity_hotspots": {}
+      }
     },
     "07-qa": {
       "status": "pending",

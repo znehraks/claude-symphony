@@ -54,11 +54,34 @@ This is the project's dedicated research stage. Conduct thorough, systematic inv
 
 Research findings from this stage form the foundation for ALL subsequent stages. Be exhaustive.
 
+## Research Entry Template
+
+Each technology/topic in `tech_research.md` MUST follow this format:
+
+```markdown
+## [Technology Name]
+### Hypothesis
+[What we're evaluating]
+### Key Findings
+- [Finding with data]
+### Evidence & Sources
+- [Title](URL) — accessed YYYY-MM-DD
+### Impact Assessment: High | Medium | Low
+### Recommendation: Adopt | Consider | Reject
+[Rationale]
+```
+
+### Citation Format
+All sources: `[Title](URL) — accessed YYYY-MM-DD`
+Minimum 3 credible sources per major technology decision.
+
 ## Quality Criteria
 - Every recommendation has a clear rationale
 - Trade-offs are explicitly documented
 - At least 2 alternatives considered per major decision
 - Research is based on current (2024+) information
+- Each technology evaluation follows the Research Entry Template
+- All sources cited using the required format
 
 ## HANDOFF
 Generate `stages/02-research/HANDOFF.md` summarizing:

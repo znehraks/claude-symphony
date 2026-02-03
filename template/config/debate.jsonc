@@ -122,6 +122,8 @@
         "execution_mode": "debate",
         "intensity": "full",
         "default_model": "balanced",
+        "timebox_minutes": 30,
+        "decision_owner": "UX Designer",
         "roles": [
           {
             "name": "UX Designer",

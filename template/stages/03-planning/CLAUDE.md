@@ -78,6 +78,10 @@ Save all files to `stages/03-planning/outputs/`:
 - Code conventions (file structure, style, testing, git)
 - Each convention must be specific and enforceable (not vague guidelines)
 
+### `conventions-changelog.md` (optional)
+- Convention amendment log (created if any amendments are proposed)
+- Tracks version, stage, category, change, and justification
+
 ## Quality Criteria
 - Architecture supports all must-have features from Stage 01
 - Data model covers all entities without redundancy
@@ -86,6 +90,71 @@ Save all files to `stages/03-planning/outputs/`:
 - Conventions are specific enough to verify compliance (not vague like "write clean code")
 - UI/UX conventions cover design tokens, component patterns, and accessibility
 - Code conventions cover file structure, naming, testing patterns, and git workflow
+
+### Convention Reference Sources
+
+When defining Code Conventions and UI/UX Conventions, reference these industry-validated guidelines:
+
+**Code Conventions (React/Next.js projects):**
+- Vercel React Best Practices: https://github.com/vercel-labs/agent-skills/tree/main/skills/react-best-practices
+- Key areas to address: waterfall elimination, bundle optimization, server-side performance, re-render prevention, rendering performance
+- Use WebFetch to retrieve latest rules from: `https://raw.githubusercontent.com/vercel-labs/agent-skills/main/skills/react-best-practices/AGENTS.md`
+
+**UI/UX Conventions (Web projects):**
+- Vercel Web Interface Guidelines: https://github.com/vercel-labs/web-interface-guidelines
+- Key areas: accessibility (aria-label, semantic HTML, keyboard handlers), forms (autocomplete, validation, error handling), animation (prefers-reduced-motion, transform/opacity only), typography, anti-patterns
+- Use WebFetch to retrieve latest rules from: `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md`
+
+These are **reference sources**, not mandatory adoption. Select relevant rules based on the project's tech stack and requirements. Document adopted rules in conventions.md with source attribution.
+
+For non-React/non-web projects, adapt the principles or identify equivalent best-practice references for the chosen stack.
+
+## Convention Amendment Protocol
+
+Conventions established in this stage may need updates during later stages (04-08). Follow this process:
+
+### Amendment Rules
+- Any stage can propose amendments when a convention blocks progress or proves impractical
+- Amendments require: justification, impact analysis, and documented rationale
+- Version numbering: v1.0 (initial), v1.1, v1.2... (amendments)
+- Amendments that weaken quality standards should be rejected
+
+### Amendment Log
+Save to `stages/03-planning/outputs/conventions-changelog.md`:
+
+| # | Date | Stage | Category | Change | Justification |
+|---|------|-------|----------|--------|---------------|
+| 1 | YYYY-MM-DD | 06 | Code | Changed X to Y | Technical constraint |
+
+### When to Amend (vs. When NOT to)
+- YES: Convention blocks implementation (technical impossibility)
+- YES: Convention conflicts with chosen tech stack
+- NO: Convention is merely inconvenient
+- NO: Team wants to skip enforcement
+
+### In-Place vs. Loop-Back Amendments
+Most amendments should be made **in-place** from the current stage. Loop-back is a last resort.
+
+**In-place amendment (default):**
+- Clarification of ambiguous wording
+- Adding missing detail to an existing convention
+- Exception for a single edge case
+- Convention adjustment that affects only the current stage
+- Any change that does NOT block forward progress
+
+**Loop-back (emergency only — critical flaw):**
+Only when a convention makes forward progress **impossible** (not just inconvenient):
+1. Document the critical flaw and proposed amendment in conventions-changelog.md
+2. `/checkpoint "Pre-loopback — Convention critical flaw"`
+3. `/goto 03-planning -r "CRITICAL: Convention [description] blocks implementation"`
+4. Stage 03 re-executes with FOCUSED SCOPE: only re-debate the affected conventions
+5. Update conventions.md with the amendment (version bump)
+6. Resume forward — affected stages re-validate against updated conventions
+
+**Loop-back criteria (ALL must be true):**
+- Convention makes implementation technically impossible
+- Cannot be resolved with an in-place exception or adjustment
+- Affects the architectural integrity of the project
 
 ## Debate Emphasis
 

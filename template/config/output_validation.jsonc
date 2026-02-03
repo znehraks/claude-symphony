@@ -45,7 +45,8 @@
             "min_size_bytes": 2000,
             "content_checks": {
               "has_sources": true,
-              "min_sources": 3
+              "min_sources": 3,
+              "has_sections": ["Hypothesis", "Key Findings", "Evidence & Sources", "Recommendation"]
             }
           },
           "feasibility_report.md": {
@@ -117,6 +118,11 @@
                 "Code Conventions"
               ]
             }
+          },
+          "conventions-changelog.md": {
+            "exists": false,
+            "required": false,
+            "description": "Convention amendment log (optional)"
           }
         },
         "validation_commands": []
@@ -148,6 +154,24 @@
           }
         },
         "optional_outputs": {
+          "component_specs.json": {
+            "exists": false,
+            "required": false,
+            "format": "json",
+            "description": "Component specifications with version metadata",
+            "content_checks": {
+              "required_keys": ["version", "last_updated"]
+            }
+          },
+          "design_tokens.json": {
+            "exists": false,
+            "required": false,
+            "format": "json",
+            "description": "Design tokens with version metadata",
+            "content_checks": {
+              "required_keys": ["version", "last_updated"]
+            }
+          },
           "stitch_generated/": {
             "exists": false,
             "is_directory": true,
@@ -212,7 +236,8 @@
             "content_checks": {
               "sections": [
                 "Convention Compliance",
-                "Refactoring Points"
+                "Refactoring Points",
+                "Metrics Summary"
               ]
             }
           }
