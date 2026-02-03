@@ -4,17 +4,14 @@
 import { z } from 'zod';
 
 /**
- * Valid stage IDs
+ * Valid stage IDs (v2: 5-stage quality-based pipeline)
  */
 export const STAGE_IDS = [
-  '01-brainstorm',
-  '02-research',
-  '03-planning',
-  '04-ui-ux',
-  '05-task-management',
-  '06-implementation',
-  '07-qa',
-  '08-deployment',
+  '01-planning',
+  '02-ui-ux',
+  '03-implementation',
+  '04-qa',
+  '05-deployment',
 ] as const;
 
 export type StageId = (typeof STAGE_IDS)[number];
@@ -22,7 +19,7 @@ export type StageId = (typeof STAGE_IDS)[number];
 /**
  * Stage ID schema
  */
-export const StageIdSchema = z.enum(STAGE_IDS).describe('Unique identifier for a pipeline stage (01-brainstorm through 08-deployment)');
+export const StageIdSchema = z.enum(STAGE_IDS).describe('Unique identifier for a pipeline stage (01-planning through 05-deployment)');
 
 /**
  * AI models available in the pipeline
@@ -70,31 +67,25 @@ export interface StageInfo {
 }
 
 /**
- * Stage name mapping
+ * Stage name mapping (v2: 5-stage quality-based pipeline)
  */
 export const STAGE_NAMES: Record<StageId, string> = {
-  '01-brainstorm': 'Brainstorming',
-  '02-research': 'Research',
-  '03-planning': 'Planning',
-  '04-ui-ux': 'UI/UX Design',
-  '05-task-management': 'Task Management',
-  '06-implementation': 'Implementation',
-  '07-qa': 'QA & Full Testing',
-  '08-deployment': 'Deployment',
+  '01-planning': 'Planning & Architecture',
+  '02-ui-ux': 'UI/UX Design',
+  '03-implementation': 'Implementation',
+  '04-qa': 'QA & E2E Testing',
+  '05-deployment': 'Deployment',
 };
 
 /**
- * Stage AI model mapping
+ * Stage AI model mapping (v2: SuperClaude commands)
  */
 export const STAGE_AI_MODELS: Record<StageId, string> = {
-  '01-brainstorm': 'Gemini + ClaudeCode',
-  '02-research': 'Claude',
-  '03-planning': 'Gemini',
-  '04-ui-ux': 'Gemini',
-  '05-task-management': 'ClaudeCode',
-  '06-implementation': 'ClaudeCode',
-  '07-qa': 'ClaudeCode',
-  '08-deployment': 'ClaudeCode',
+  '01-planning': '/sc:workflow + /sc:design',
+  '02-ui-ux': '/sc:design --type component',
+  '03-implementation': '/sc:implement --with-tests',
+  '04-qa': '/sc:test --type e2e',
+  '05-deployment': '/sc:build',
 };
 
 /**

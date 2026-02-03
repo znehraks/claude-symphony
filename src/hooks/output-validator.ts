@@ -6,7 +6,7 @@
  * Now supports both legacy validation and Agent SDK-based validation
  */
 import path from 'path';
-import { existsSync, statSync, readFileSync, readdirSync } from 'fs';
+import { existsSync, readFileSync, readdirSync } from 'fs';
 import { readJson, writeJson, ensureDirAsync } from '../utils/fs.js';
 import { logInfo, logSuccess, logWarning, logError } from '../utils/logger.js';
 import { execShell } from '../utils/shell.js';
@@ -103,36 +103,6 @@ function checkFileExists(
   );
 
   return exists;
-}
-
-/**
- * Check file minimum size
- */
-function checkFileSize(
-  state: ValidationState,
-  projectRoot: string,
-  relativePath: string,
-  minSize: number
-): boolean {
-  const fullPath = path.join(projectRoot, relativePath);
-
-  if (!existsSync(fullPath)) {
-    return false;
-  }
-
-  const stats = statSync(fullPath);
-  const meets = stats.size >= minSize;
-
-  state.addCheck(
-    'File size',
-    meets,
-    meets
-      ? `${relativePath} size met (${stats.size} bytes >= ${minSize})`
-      : `${relativePath} size insufficient (${stats.size} bytes < ${minSize})`,
-    true
-  );
-
-  return meets;
 }
 
 /**
@@ -360,62 +330,49 @@ async function validateStageOutputs(
   // HANDOFF.md check (common for all stages)
   checkFileExists(state, projectRoot, `stages/${stageId}/HANDOFF.md`, true);
 
-  // Stage-specific validation
+  // Stage-specific validation (v2: 5 stages)
   switch (stageId) {
-    case '01-brainstorm':
-      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/ideas.md`, true);
-      checkFileSize(state, projectRoot, `stages/${stageId}/outputs/ideas.md`, 500);
-      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/requirements_analysis.md`, true);
-      checkMarkdownSections(state, projectRoot, `stages/${stageId}/outputs/requirements_analysis.md`, [
-        'Functional',
-        'Non-functional',
+    case '01-planning':
+      // Requirements and architecture outputs
+      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/requirements.md`, true);
+      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/architecture.md`, true);
+      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/tech_stack.md`, true);
+      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/conventions.md`, true);
+      checkMarkdownSections(state, projectRoot, `stages/${stageId}/outputs/requirements.md`, [
+        'Overview',
+        'Requirements',
+      ]);
+      checkMarkdownSections(state, projectRoot, `stages/${stageId}/outputs/architecture.md`, [
+        'Architecture',
       ]);
       break;
 
-    case '02-research':
-      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/tech_research.md`, true);
-      checkFileSize(state, projectRoot, `stages/${stageId}/outputs/tech_research.md`, 2000);
-      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/feasibility_report.md`, true);
+    case '02-ui-ux':
+      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/design_tokens.json`, true);
+      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/component_specs.md`, true);
       break;
 
-    case '03-planning':
-      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/architecture.md`, true);
-      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/tech_stack.md`, true);
-      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/project_plan.md`, true);
-      break;
-
-    case '04-ui-ux':
-      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/wireframes.md`, true);
-      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/design_system.md`, false);
-      break;
-
-    case '05-task-management':
-      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/tasks.md`, true);
-      break;
-
-    case '06-implementation':
+    case '03-implementation':
       // Documentation outputs
+      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/tasks.md`, true);
       checkFileExists(state, projectRoot, `stages/${stageId}/outputs/implementation_log.md`, true);
       checkFileExists(state, projectRoot, `stages/${stageId}/outputs/test_summary.md`, true);
-      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/refactoring_report.md`, true);
 
       // Source code verification + build/test (HARD FAIL if missing)
       await validateCodeProducingStage(state, projectRoot, stageId, 5);
       break;
 
-    case '07-qa':
+    case '04-qa':
+      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/e2e_report.md`, true);
       checkFileExists(state, projectRoot, `stages/${stageId}/outputs/qa_report.md`, true);
-      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/bug_list.md`, true);
-      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/test_report.md`, true);
-      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/coverage_report.md`, true);
-
-      // Verify source code and build/test pass after QA + testing
-      await validateCodeProducingStage(state, projectRoot, stageId, 5);
+      checkMarkdownSections(state, projectRoot, `stages/${stageId}/outputs/e2e_report.md`, [
+        'Scenario',
+      ]);
       break;
 
-    case '08-deployment':
+    case '05-deployment':
       checkFileExists(state, projectRoot, `stages/${stageId}/outputs/deployment_guide.md`, true);
-      checkFileExists(state, projectRoot, `stages/${stageId}/outputs/ci_config.yaml`, false);
+      checkFileExists(state, projectRoot, 'deploy.sh', true);
       break;
 
     default:
@@ -500,42 +457,26 @@ async function runValidationWithAgent(
 }
 
 /**
- * Get validation rules for a stage
+ * Get validation rules for a stage (v2: 5 stages)
  */
 function getValidationRulesForStage(stageId: StageId): Record<string, any> {
   // Map stage ID to validation rules
   const rules: Record<StageId, any> = {
-    '01-brainstorm': {
+    '01-planning': {
       files: [
-        { path: 'stages/01-brainstorm/outputs/ideas.md', required: true, minSize: 500 },
-        { path: 'stages/01-brainstorm/outputs/requirements_analysis.md', required: true, sections: ['Functional', 'Non-functional'] },
+        { path: 'stages/01-planning/outputs/requirements.md', required: true, sections: ['Overview', 'Requirements'] },
+        { path: 'stages/01-planning/outputs/architecture.md', required: true, sections: ['Architecture'] },
+        { path: 'stages/01-planning/outputs/tech_stack.md', required: true },
+        { path: 'stages/01-planning/outputs/conventions.md', required: true },
       ],
     },
-    '02-research': {
+    '02-ui-ux': {
       files: [
-        { path: 'stages/02-research/outputs/tech_research.md', required: true, minSize: 2000 },
-        { path: 'stages/02-research/outputs/feasibility_report.md', required: true },
+        { path: 'stages/02-ui-ux/outputs/design_tokens.json', required: true },
+        { path: 'stages/02-ui-ux/outputs/component_specs.md', required: true },
       ],
     },
-    '03-planning': {
-      files: [
-        { path: 'stages/03-planning/outputs/architecture.md', required: true },
-        { path: 'stages/03-planning/outputs/tech_stack.md', required: true },
-        { path: 'stages/03-planning/outputs/project_plan.md', required: true },
-      ],
-    },
-    '04-ui-ux': {
-      files: [
-        { path: 'stages/04-ui-ux/outputs/wireframes.md', required: true },
-        { path: 'stages/04-ui-ux/outputs/design_system.md', required: false },
-      ],
-    },
-    '05-task-management': {
-      files: [
-        { path: 'stages/05-task-management/outputs/tasks.md', required: true },
-      ],
-    },
-    '06-implementation': {
+    '03-implementation': {
       sourceCodeCheck: {
         minFiles: 5,
         requireManifest: true,
@@ -543,27 +484,21 @@ function getValidationRulesForStage(stageId: StageId): Record<string, any> {
         requireTest: true,
       },
       files: [
-        { path: 'stages/06-implementation/outputs/implementation_log.md', required: true },
-        { path: 'stages/06-implementation/outputs/test_summary.md', required: true },
-        { path: 'stages/06-implementation/outputs/refactoring_report.md', required: true },
+        { path: 'stages/03-implementation/outputs/tasks.md', required: true },
+        { path: 'stages/03-implementation/outputs/implementation_log.md', required: true },
+        { path: 'stages/03-implementation/outputs/test_summary.md', required: true },
       ],
     },
-    '07-qa': {
-      sourceCodeCheck: {
-        minFiles: 5,
-        requireManifest: true,
-        requireBuild: true,
-        requireTest: true,
-      },
+    '04-qa': {
       files: [
-        { path: 'stages/07-qa/outputs/qa_report.md', required: true },
-        { path: 'stages/07-qa/outputs/bug_list.md', required: false },
+        { path: 'stages/04-qa/outputs/e2e_report.md', required: true, sections: ['Scenario'] },
+        { path: 'stages/04-qa/outputs/qa_report.md', required: true },
       ],
     },
-    '08-deployment': {
+    '05-deployment': {
       files: [
-        { path: 'stages/08-deployment/outputs/deployment_guide.md', required: true },
-        { path: 'stages/08-deployment/outputs/ci_config.yaml', required: false },
+        { path: 'stages/05-deployment/outputs/deployment_guide.md', required: true },
+        { path: 'deploy.sh', required: true },
       ],
     },
   };

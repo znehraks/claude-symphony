@@ -78,7 +78,7 @@ async function checkPrerequisites(
   stageId: StageId
 ): Promise<{ name: string; passed: boolean; message: string }> {
   // Stage 01 has no prerequisites
-  if (stageId === '01-brainstorm') {
+  if (stageId === '01-planning') {
     logSuccess('First stage - No prerequisites');
     return {
       name: 'prerequisites',
@@ -127,7 +127,7 @@ async function checkHandoff(
   stageId: StageId
 ): Promise<{ name: string; passed: boolean; message: string }> {
   // Stage 01 doesn't need handoff
-  if (stageId === '01-brainstorm') {
+  if (stageId === '01-planning') {
     logSuccess('First stage - No handoff needed');
     return {
       name: 'handoff',
@@ -178,14 +178,14 @@ async function checkInputs(
   // Stage-specific input requirements
   switch (stageNum) {
     case '01': {
-      const brief = path.join(projectRoot, 'stages', '01-brainstorm', 'inputs', 'project_brief.md');
+      const brief = path.join(projectRoot, 'stages', '01-planning', 'inputs', 'project_brief.md');
       if (!existsSync(brief)) {
         missingFiles.push('project_brief.md');
       }
       break;
     }
     case '02': {
-      const req = path.join(projectRoot, 'stages', '01-brainstorm', 'outputs', 'requirements_analysis.md');
+      const req = path.join(projectRoot, 'stages', '01-planning', 'outputs', 'requirements_analysis.md');
       if (!existsSync(req)) {
         missingFiles.push('requirements_analysis.md from Stage 01');
       }

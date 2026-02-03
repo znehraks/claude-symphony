@@ -236,8 +236,8 @@ export function buildStagePrompt(
   }
 
   // 5. Project brief (for first stage)
-  if (stageId === '01-brainstorm') {
-    const briefPath = path.join(projectRoot, 'stages', '01-brainstorm', 'inputs', 'project_brief.md');
+  if (stageId === '01-planning') {
+    const briefPath = path.join(projectRoot, 'stages', '01-planning', 'inputs', 'project_brief.md');
     if (fs.existsSync(briefPath)) {
       const brief = fs.readFileSync(briefPath, 'utf-8');
       parts.push(`## Project Brief\n\n${brief}`);

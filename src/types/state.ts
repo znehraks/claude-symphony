@@ -172,14 +172,11 @@ export function createInitialProgress(projectName: string): Progress {
   const stages: Progress['stages'] = {} as Progress['stages'];
 
   const stageIds = [
-    '01-brainstorm',
-    '02-research',
-    '03-planning',
-    '04-ui-ux',
-    '05-task-management',
-    '06-implementation',
-    '07-qa',
-    '08-deployment',
+    '01-planning',
+    '02-ui-ux',
+    '03-implementation',
+    '04-qa',
+    '05-deployment',
   ] as const;
 
   for (const id of stageIds) {
@@ -193,7 +190,7 @@ export function createInitialProgress(projectName: string): Progress {
 
   return {
     project_name: projectName,
-    current_stage: '01-brainstorm',
+    current_stage: '01-planning',
     stage_status: 'pending',
     started_at: now,
     last_updated: now,
@@ -217,8 +214,8 @@ export function createInitialProgress(projectName: string): Progress {
       current_cycle: 1,
       total_cycles: 1,
       scope: {
-        start_stage: '01-brainstorm',
-        end_stage: '05-task-management',
+        start_stage: '01-planning',
+        end_stage: '03-implementation',
       },
     },
     implementation_order: {

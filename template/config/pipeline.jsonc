@@ -1,201 +1,229 @@
-// claude-symphony Pipeline Configuration
+// claude-symphony v2: Quality-Based Pipeline Configuration
+// SuperClaude integration + 2-layer quality validation
 {
   "$schema": "https://raw.githubusercontent.com/znehraks/claude-symphony/main/schemas/pipeline.schema.json",
   "pipeline": {
-    "name": "Claude Code Development Pipeline",
-    "version": "1.0.0",
-    "description": "8-stage software development pipeline with TDD-first quality gates"
+    "name": "Claude Symphony Quality Pipeline",
+    "version": "2.0.0",
+    "description": "5-stage quality-based development pipeline with SuperClaude integration"
   },
   "stages": [
     {
-      "id": "01-brainstorm",
-      "name": "Brainstorming",
-      "description": "Divergent idea generation and requirements exploration",
-      "models": ["claudecode"],
-      "debate_mode": "full",
-      "mode": "yolo",
-      "inputs": [
-        "project_brief.md",
-        "user_requirements.md"
-      ],
-      "outputs": [
-        "ideas.md",
-        "requirements_analysis.md",
-        "HANDOFF.md"
-      ],
-      "timeout": 3600
-    },
-    {
-      "id": "02-research",
-      "name": "Research",
-      "description": "Technical research and market analysis",
-      "models": ["claudecode"],
-      "debate_mode": "standard",
-      "mode": "plan",
-      "mcp_servers": [
-        "context7"
-      ],
-      "inputs": [
-        "requirements_analysis.md"
-      ],
-      "outputs": [
-        "tech_research.md",
-        "market_analysis.md",
-        "feasibility_report.md",
-        "HANDOFF.md"
+      "id": "01-planning",
+      "name": "Planning & Architecture",
+      "description": "Requirements gathering, tech research, architecture design, and conventions",
+      "superclaude_commands": ["/sc:workflow", "/sc:design --type architecture"],
+      "recommended_mcp": ["context7"],
+      "required_outputs": ["requirements.md", "architecture.md", "tech_stack.md", "conventions.md"],
+      "quality_checks": [
+        {
+          "name": "sections_exist",
+          "type": "section",
+          "sections": ["Overview", "Requirements", "Architecture"],
+          "target_files": ["requirements.md", "architecture.md"],
+          "level": "blocking"
+        },
+        {
+          "name": "tech_stack_defined",
+          "type": "file_exists",
+          "files": ["tech_stack.md"],
+          "level": "blocking"
+        },
+        {
+          "name": "conventions_defined",
+          "type": "file_exists",
+          "files": ["conventions.md"],
+          "level": "critical"
+        }
       ],
       "timeout": 7200
     },
     {
-      "id": "03-planning",
-      "name": "Planning",
-      "description": "System architecture and tech stack decisions",
-      "models": ["claudecode"],
-      "debate_mode": "full",
-      "mode": "plan",
-      "inputs": [
-        "tech_research.md",
-        "feasibility_report.md"
-      ],
-      "outputs": [
-        "architecture.md",
-        "tech_stack.md",
-        "project_plan.md",
-        "HANDOFF.md"
-      ],
-      "timeout": 3600
-    },
-    {
-      "id": "04-ui-ux",
-      "name": "UI/UX Planning",
-      "description": "User interface and experience design",
-      "models": ["claudecode"],
-      "debate_mode": "standard",
-      "mode": "plan",
-      "inputs": [
-        "requirements_analysis.md",
-        "architecture.md"
-      ],
-      "outputs": [
-        "wireframes.md",
-        "user_flows.md",
-        "design_system.md",
-        "HANDOFF.md"
+      "id": "02-ui-ux",
+      "name": "UI/UX Design",
+      "description": "Component design, wireframes, design tokens, and design system",
+      "superclaude_commands": ["/sc:design --type component"],
+      "recommended_mcp": ["stitch", "pencil"],
+      "required_outputs": ["design_tokens.json", "wireframes/", "component_specs.md"],
+      "quality_checks": [
+        {
+          "name": "design_tokens",
+          "type": "file_exists",
+          "files": ["design_tokens.json"],
+          "level": "critical"
+        },
+        {
+          "name": "component_count",
+          "type": "component_count",
+          "min": 5,
+          "target_files": ["component_specs.md"],
+          "level": "critical"
+        },
+        {
+          "name": "wireframes_exist",
+          "type": "directory_not_empty",
+          "directories": ["wireframes/"],
+          "level": "non-critical"
+        }
       ],
       "timeout": 3600
     },
     {
-      "id": "05-task-management",
-      "name": "Task Management",
-      "description": "Task breakdown and sprint planning",
-      "models": ["claudecode"],
-      "debate_mode": "light",
-      "mode": "plan",
-      "inputs": [
-        "project_plan.md",
-        "architecture.md"
-      ],
-      "outputs": [
-        "tasks.md",
-        "sprint_plan.md",
-        "milestones.md",
-        "HANDOFF.md"
-      ],
-      "timeout": 1800
-    },
-    {
-      "id": "06-implementation",
-      "name": "Implementation (TDD-First)",
-      "description": "TDD implementation: write tests first, then code, verify before moving on",
-      "models": ["claudecode"],
-      "debate_mode": "full",
-      "mode": "plan_sandbox",
-      "sandbox": true,
-      "inputs": [
-        "tasks.md",
-        "architecture.md",
-        "design_system.md"
-      ],
-      "outputs": [
-        "source_code/",
-        "implementation_log.md",
-        "test_summary.md",
-        "HANDOFF.md"
+      "id": "03-implementation",
+      "name": "Implementation",
+      "description": "Task decomposition, TDD implementation, source code with tests",
+      "superclaude_commands": ["/sc:implement --with-tests"],
+      "recommended_mcp": ["magic", "context7"],
+      "required_outputs": ["src/", "package.json", "tasks.md"],
+      "quality_checks": [
+        {
+          "name": "build",
+          "type": "command",
+          "command": "npm run build",
+          "level": "blocking"
+        },
+        {
+          "name": "test",
+          "type": "command",
+          "command": "npm run test",
+          "min_pass_rate": 0.8,
+          "level": "critical"
+        },
+        {
+          "name": "source_files",
+          "type": "file_count",
+          "pattern": "src/**/*.{ts,tsx,js,jsx}",
+          "min": 5,
+          "level": "blocking"
+        },
+        {
+          "name": "manifest_exists",
+          "type": "file_exists",
+          "files": ["package.json"],
+          "level": "blocking"
+        }
       ],
       "timeout": 14400,
       "checkpoint_required": true
     },
     {
-      "id": "07-qa",
-      "name": "QA & Full Testing",
-      "description": "Security audit, accessibility review, bug fixing, full E2E + test suite execution until all pass",
-      "models": ["claudecode"],
-      "debate_mode": "full",
-      "mode": "plan_sandbox",
-      "sandbox": true,
-      "mcp_servers": [
-        "playwright"
-      ],
-      "inputs": [
-        "source_code/",
-        "refactoring_report.md",
-        "e2e-test-sheet.md"
-      ],
-      "outputs": [
-        "qa_report.md",
-        "bug_list.md",
-        "test_report.md",
-        "coverage_report.md",
-        "HANDOFF.md"
+      "id": "04-qa",
+      "name": "QA & E2E Testing",
+      "description": "Security audit, accessibility review, E2E testing, full test execution",
+      "superclaude_commands": ["/sc:test --type e2e"],
+      "recommended_mcp": ["playwright"],
+      "required_outputs": ["e2e_report.md", "qa_report.md"],
+      "quality_checks": [
+        {
+          "name": "e2e_scenarios",
+          "type": "section_count",
+          "section_pattern": "## Scenario",
+          "target_files": ["e2e_report.md"],
+          "min": 5,
+          "level": "critical"
+        },
+        {
+          "name": "e2e_test",
+          "type": "command",
+          "command": "npm run test:e2e",
+          "level": "critical"
+        },
+        {
+          "name": "security_audit",
+          "type": "section",
+          "sections": ["Security Findings", "OWASP"],
+          "target_files": ["qa_report.md"],
+          "level": "non-critical"
+        }
       ],
       "timeout": 7200
     },
     {
-      "id": "08-deployment",
-      "name": "CI/CD & Deployment",
-      "description": "Deployment pipeline setup and deployment",
-      "models": ["claudecode"],
-      "debate_mode": "light",
-      "mode": "headless",
-      "inputs": [
-        "source_code/",
-        "qa_report.md",
-        "test_report.md"
-      ],
-      "outputs": [
-        ".github/workflows/",
-        "deployment_config/",
-        "deployment_log.md"
+      "id": "05-deployment",
+      "name": "Deployment",
+      "description": "CI/CD pipeline setup, deployment configuration, production deployment",
+      "superclaude_commands": ["/sc:build"],
+      "recommended_mcp": [],
+      "required_outputs": [".github/workflows/", "deploy.sh"],
+      "quality_checks": [
+        {
+          "name": "ci_config_exists",
+          "type": "directory_not_empty",
+          "directories": [".github/workflows/"],
+          "level": "blocking"
+        },
+        {
+          "name": "ci_syntax",
+          "type": "command",
+          "command": "npx yaml-lint .github/workflows/*.yml 2>/dev/null || echo 'yaml-lint not installed, skipping'",
+          "level": "non-critical"
+        },
+        {
+          "name": "deploy_script",
+          "type": "file_exists",
+          "files": ["deploy.sh"],
+          "level": "critical"
+        }
       ],
       "timeout": 3600
     }
   ],
-  "debate": {
-    "enabled": true,
-    "config_file": "config/debate.jsonc",
-    "description": "Claude multi-agent debate system for all pipeline stages"
+  "phases": {
+    "discovery": {
+      "description": "Socratic questioning to gather requirements and API keys",
+      "superclaude_command": "/sc:brainstorm",
+      "config_file": "config/discovery.jsonc"
+    },
+    "preparation": {
+      "description": "Tech stack research and pattern caching",
+      "superclaude_command": "/sc:research",
+      "mcp": ["context7"],
+      "memory_storage": "serena"
+    },
+    "execution": {
+      "description": "5-stage pipeline execution with quality validation",
+      "superclaude_command": "/sc:pm",
+      "stages": ["01-planning", "02-ui-ux", "03-implementation", "04-qa", "05-deployment"]
+    }
+  },
+  "quality_validation": {
+    "layer1_objective": {
+      "description": "Automated checks: build, test, file existence, section presence",
+      "on_failure": {
+        "blocking": "halt_stage",
+        "critical": "pdca_retry",
+        "non-critical": "warn_and_proceed"
+      },
+      "max_retries": 2
+    },
+    "layer2_ai_review": {
+      "enabled": true,
+      "description": "AI review using Serena MCP think_about_task_adherence()",
+      "trigger": "layer1_passed",
+      "on_needs_improvement": "pdca_retry",
+      "max_retries": 1
+    }
   },
   "state_management": {
     "progress_file": "state/progress.json",
     "checkpoints_dir": "state/checkpoints",
     "context_dir": "state/context",
     "handoffs_dir": "state/handoffs",
+    "memory_backend": "serena",
+    "memory_keys": {
+      "session_context": "session/context",
+      "session_checkpoint": "session/checkpoint",
+      "stage_output_pattern": "plan/<stage>/output",
+      "execution_log_pattern": "execution/<stage>/log",
+      "learning_patterns": "learning/patterns/",
+      "learning_mistakes": "learning/mistakes/"
+    },
     "context_thresholds": {
       "warning": 60,
       "action": 50,
       "critical": 40
     },
     "task_save_frequency": 5,
-    "auto_actions": {
-      "on_warning": ["display_banner"],
-      "on_action": ["save_snapshot", "suggest_compact"],
-      "on_critical": ["save_snapshot", "require_compact"]
-    },
-    "statusline": {
-      "enabled": true,
-      "script": ".claude/hooks/statusline.sh",
-      "update_interval_ms": 300
-    },
     "auto_checkpoint": true,
     "auto_handoff": true,
     "preserve_failed_states": true
@@ -204,84 +232,55 @@
     "pre_stage": [
       "validate_inputs",
       "check_previous_handoff",
-      "verify_prerequisites"
+      "verify_prerequisites",
+      "load_serena_memory"
     ],
     "post_stage": [
+      "run_quality_checks",
+      "ai_review",
       "generate_handoff",
       "update_progress",
-      "create_checkpoint",
-      "notify_completion"
+      "save_serena_memory",
+      "create_checkpoint"
     ]
   },
   "transitions": {
     "allow_skip": false,
     "require_handoff": true,
-    "require_checkpoint": [
-      "06-implementation"
-    ],
+    "require_checkpoint": ["03-implementation"],
     "rollback": {
       "enabled": true,
-      "max_rollback_stages": 2
+      "max_rollback_stages": 1
     }
   },
-  "quality_gates": {
-    "enabled": true,
-    "description": "TDD-first quality gates: tests must pass before stage completion",
-    "gates": [
-      {
-        "stage": "06-implementation",
-        "required_checks": [
-          {
-            "name": "build",
-            "command": "npm run build",
-            "description": "Level 1: Project compiles",
-            "required": true
-          },
-          {
-            "name": "test",
-            "command": "npm run test",
-            "description": "Level 2: All unit/integration tests pass",
-            "required": true
-          },
-          {
-            "name": "e2e",
-            "command": "npm run test:e2e",
-            "description": "Level 3: E2E tests pass (mandatory — test sheet scenarios)",
-            "required": true
-          }
-        ],
-        "on_failure": {
-          "action": "block_handoff",
-          "message": "Tests failed — resolve issues before proceeding"
-        }
+  "mcp_policy": {
+    "enforcement": "recommended_not_required",
+    "description": "MCP usage is recommended but not required. Quality is measured by output, not by tools used.",
+    "available_mcps": {
+      "context7": {
+        "purpose": "Library documentation retrieval",
+        "stages": ["01-planning", "03-implementation"]
       },
-      {
-        "stage": "07-qa",
-        "required_checks": [
-          {
-            "name": "test",
-            "command": "npm run test",
-            "description": "Full unit + integration test suite",
-            "required": true
-          },
-          {
-            "name": "e2e",
-            "command": "npm run test:e2e",
-            "description": "Full E2E test sheet — all scenarios must pass",
-            "required": true
-          },
-          {
-            "name": "coverage",
-            "command": "npm run test:coverage",
-            "description": "Coverage report — target 80%",
-            "required": false
-          }
-        ],
-        "on_failure": {
-          "action": "block_handoff",
-          "message": "Tests failed — fix and re-run until all pass"
-        }
+      "stitch": {
+        "purpose": "UI component generation",
+        "stages": ["02-ui-ux"]
+      },
+      "pencil": {
+        "purpose": "Design file editing",
+        "stages": ["02-ui-ux"]
+      },
+      "magic": {
+        "purpose": "Component building",
+        "stages": ["03-implementation"]
+      },
+      "playwright": {
+        "purpose": "E2E testing",
+        "stages": ["04-qa"]
+      },
+      "serena": {
+        "purpose": "Memory and code analysis",
+        "stages": ["all"]
       }
-    ]
+    }
   }
 }

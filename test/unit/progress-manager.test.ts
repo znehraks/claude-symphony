@@ -1,5 +1,6 @@
 /**
  * Unit Tests for ProgressManager (new methods)
+ * Updated for v2 5-stage pipeline
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import fs from 'fs';
@@ -37,15 +38,15 @@ describe('ProgressManager', () => {
   });
 
   describe('getNextStage', () => {
-    it('should return 02-research when current is 01-brainstorm', async () => {
+    it('should return 02-ui-ux when current is 01-planning', async () => {
       const pm = new ProgressManager(tmpDir);
       const next = await pm.getNextStage();
-      expect(next).toBe('02-research');
+      expect(next).toBe('02-ui-ux');
     });
 
     it('should return null at last stage', async () => {
       const progress = createInitialProgress('test');
-      progress.current_stage = '08-deployment';
+      progress.current_stage = '05-deployment';
       fs.writeFileSync(
         path.join(tmpDir, 'state', 'progress.json'),
         JSON.stringify(progress, null, 2)
@@ -97,21 +98,21 @@ describe('ProgressManager', () => {
   });
 
   describe('getStageStatuses', () => {
-    it('should return all 8 stages', async () => {
+    it('should return all 5 stages', async () => {
       const pm = new ProgressManager(tmpDir);
       const statuses = await pm.getStageStatuses();
-      expect(statuses).toHaveLength(8);
+      expect(statuses).toHaveLength(5);
     });
 
     it('should reflect updated status', async () => {
       const pm = new ProgressManager(tmpDir);
-      await pm.setCurrentStage('01-brainstorm', 'in_progress');
+      await pm.setCurrentStage('01-planning', 'in_progress');
 
       // Reload to get fresh data
       const pm2 = new ProgressManager(tmpDir);
       const statuses = await pm2.getStageStatuses();
-      const brainstorm = statuses.find((s) => s.id === '01-brainstorm');
-      expect(brainstorm?.status).toBe('in_progress');
+      const planning = statuses.find((s) => s.id === '01-planning');
+      expect(planning?.status).toBe('in_progress');
     });
 
     it('should return empty array for missing progress', async () => {
@@ -129,25 +130,25 @@ describe('ProgressManager', () => {
   describe('setCurrentStage', () => {
     it('should set stage and status', async () => {
       const pm = new ProgressManager(tmpDir);
-      const result = await pm.setCurrentStage('03-planning', 'in_progress');
+      const result = await pm.setCurrentStage('03-implementation', 'in_progress');
       expect(result).toBe(true);
 
       const pm2 = new ProgressManager(tmpDir);
       const current = await pm2.getCurrentStage();
-      expect(current).toBe('03-planning');
+      expect(current).toBe('03-implementation');
     });
   });
 
   describe('completeCurrentStage', () => {
     it('should mark current stage as completed', async () => {
       const pm = new ProgressManager(tmpDir);
-      await pm.setCurrentStage('01-brainstorm', 'in_progress');
+      await pm.setCurrentStage('01-planning', 'in_progress');
       await pm.completeCurrentStage();
 
       const pm2 = new ProgressManager(tmpDir);
       const statuses = await pm2.getStageStatuses();
-      const brainstorm = statuses.find((s) => s.id === '01-brainstorm');
-      expect(brainstorm?.status).toBe('completed');
+      const planning = statuses.find((s) => s.id === '01-planning');
+      expect(planning?.status).toBe('completed');
     });
   });
 });

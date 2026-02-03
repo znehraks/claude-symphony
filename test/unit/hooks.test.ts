@@ -1,5 +1,6 @@
 /**
  * Unit tests for hooks module
+ * Updated for v2 5-stage pipeline
  */
 import { describe, it, expect } from 'vitest';
 import {
@@ -11,24 +12,24 @@ import { isDestructiveOperation } from '../../src/hooks/auto-checkpoint.js';
 
 describe('AI Selector Hook', () => {
   describe('getStageModel', () => {
-    it('should return gemini for brainstorm stage', () => {
-      expect(getStageModel('01-brainstorm')).toBe('gemini');
+    it('should return claude for planning stage', () => {
+      expect(getStageModel('01-planning')).toBe('claude');
     });
 
-    it('should return claude for research stage', () => {
-      expect(getStageModel('02-research')).toBe('claude');
+    it('should return gemini for ui-ux stage (creative work)', () => {
+      expect(getStageModel('02-ui-ux')).toBe('gemini');
     });
 
     it('should return claudecode for implementation stage', () => {
-      expect(getStageModel('06-implementation')).toBe('claudecode');
+      expect(getStageModel('03-implementation')).toBe('claudecode');
     });
 
     it('should return claudecode for qa stage', () => {
-      expect(getStageModel('07-qa')).toBe('claudecode');
+      expect(getStageModel('04-qa')).toBe('claudecode');
     });
 
     it('should return claudecode for deployment stage', () => {
-      expect(getStageModel('08-deployment')).toBe('claudecode');
+      expect(getStageModel('05-deployment')).toBe('claudecode');
     });
   });
 

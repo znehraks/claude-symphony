@@ -41,17 +41,14 @@ export interface ModelSelectionResult {
 }
 
 /**
- * Stage to model mapping
+ * Stage to model mapping (v2: 5 stages)
  */
 const STAGE_MODEL_MAP: Record<StageId, AIModelType> = {
-  '01-brainstorm': 'gemini',
-  '02-research': 'claude',
-  '03-planning': 'gemini',
-  '04-ui-ux': 'gemini',
-  '05-task-management': 'claudecode',
-  '06-implementation': 'claudecode',
-  '07-qa': 'claudecode',
-  '08-deployment': 'claudecode',
+  '01-planning': 'claude',
+  '02-ui-ux': 'gemini',
+  '03-implementation': 'claudecode',
+  '04-qa': 'claudecode',
+  '05-deployment': 'claudecode',
 };
 
 /**

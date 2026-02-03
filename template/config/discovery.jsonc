@@ -1,0 +1,93 @@
+// claude-symphony v2: Discovery Phase Configuration
+// Phase 1: Socratic questioning to gather requirements and API keys
+{
+  "$schema": "https://raw.githubusercontent.com/znehraks/claude-symphony/main/schemas/discovery.schema.json",
+
+  // ── Completion Criteria ──────────────────────────────────────────────
+  // Discovery phase completes when all criteria are met
+  "completion_criteria": {
+    "project_description_min_length": 100,
+    "tech_preferences_defined": true,
+    "user_confirmed": true
+  },
+
+  // ── API Keys ─────────────────────────────────────────────────────────
+  // Keys checked before pipeline execution
+  "api_keys": {
+    "required": [
+      "ANTHROPIC_API_KEY"
+    ],
+    "optional": [
+      "SUPABASE_URL",
+      "SUPABASE_ANON_KEY",
+      "SUPABASE_SERVICE_ROLE_KEY",
+      "OPENAI_API_KEY",
+      "GITHUB_TOKEN",
+      "VERCEL_TOKEN",
+      "AWS_ACCESS_KEY_ID",
+      "AWS_SECRET_ACCESS_KEY"
+    ]
+  },
+
+  // ── Discovery Questions ──────────────────────────────────────────────
+  // Questions used by /sc:brainstorm for Socratic dialogue
+  "questions": {
+    "initial": [
+      "What problem does this project solve?",
+      "Who are the target users?",
+      "What are the core features you want to build?",
+      "Do you have any technology preferences (frontend, backend, database)?",
+      "What is the expected scale (users, data volume)?",
+      "Are there any existing systems this needs to integrate with?",
+      "What is your timeline and budget constraint?",
+      "Do you have any design references or inspirations?"
+    ],
+    "follow_up": {
+      "frontend": [
+        "Do you prefer React, Vue, Svelte, or another framework?",
+        "Do you need SSR (Next.js, Nuxt, SvelteKit)?",
+        "What styling approach (Tailwind, CSS-in-JS, plain CSS)?",
+        "Do you need mobile support (responsive, PWA, native)?"
+      ],
+      "backend": [
+        "Do you prefer Node.js, Python, Go, or Rust?",
+        "REST API, GraphQL, or tRPC?",
+        "Do you need real-time features (WebSockets, SSE)?",
+        "Do you need background job processing?"
+      ],
+      "database": [
+        "PostgreSQL, MySQL, MongoDB, or SQLite?",
+        "Do you need Supabase for BaaS features?",
+        "Do you need caching (Redis)?",
+        "Do you need full-text search (Elasticsearch, Meilisearch)?"
+      ],
+      "authentication": [
+        "What auth providers do you need (email, Google, GitHub)?",
+        "Do you need role-based access control (RBAC)?",
+        "Do you need multi-tenancy support?"
+      ],
+      "deployment": [
+        "Where do you want to deploy (Vercel, AWS, GCP, self-hosted)?",
+        "Do you need containerization (Docker, Kubernetes)?",
+        "What is your CI/CD preference (GitHub Actions, GitLab CI)?"
+      ]
+    }
+  },
+
+  // ── SuperClaude Integration ──────────────────────────────────────────
+  "superclaude": {
+    "discovery_command": "/sc:brainstorm",
+    "options": {
+      "mode": "socratic",
+      "depth": "thorough",
+      "output_format": "structured"
+    }
+  },
+
+  // ── Transition to Preparation Phase ──────────────────────────────────
+  "transition": {
+    "auto_transition": true,
+    "require_user_confirmation": true,
+    "confirmation_prompt": "I have gathered the following requirements. Shall I proceed with researching the tech stack and begin the development pipeline?"
+  }
+}

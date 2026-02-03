@@ -62,8 +62,8 @@ export async function runPreTransition(
     console.log(chalk.gray('  Check state/progress.json or provide stage as argument'));
     return {
       allowed: false,
-      currentStage: '01-brainstorm',
-      nextStage: '02-research',
+      currentStage: '01-planning',
+      nextStage: '02-ui-ux',
       blockers: ['Cannot determine current stage'],
       summary: 'Pre-transition failed: Cannot determine current stage',
     };

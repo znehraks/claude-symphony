@@ -28,16 +28,13 @@
                   "items": {
                     "type": "string",
                     "enum": [
-                      "01-brainstorm",
-                      "02-research",
-                      "03-planning",
-                      "04-ui-ux",
-                      "05-task-management",
-                      "06-implementation",
-                      "07-qa",
-                      "08-deployment"
+                      "01-planning",
+                      "02-ui-ux",
+                      "03-implementation",
+                      "04-qa",
+                      "05-deployment"
                     ],
-                    "description": "Unique identifier for a pipeline stage (01-brainstorm through 08-deployment)"
+                    "description": "Unique identifier for a pipeline stage (01-planning through 05-deployment)"
                   },
                   "description": "Stages supporting parallel execution"
                 },
@@ -46,16 +43,13 @@
                   "items": {
                     "type": "string",
                     "enum": [
-                      "01-brainstorm",
-                      "02-research",
-                      "03-planning",
-                      "04-ui-ux",
-                      "05-task-management",
-                      "06-implementation",
-                      "07-qa",
-                      "08-deployment"
+                      "01-planning",
+                      "02-ui-ux",
+                      "03-implementation",
+                      "04-qa",
+                      "05-deployment"
                     ],
-                    "description": "Unique identifier for a pipeline stage (01-brainstorm through 08-deployment)"
+                    "description": "Unique identifier for a pipeline stage (01-planning through 05-deployment)"
                   },
                   "description": "Stages requiring sequential execution"
                 }
